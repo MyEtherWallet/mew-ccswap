@@ -147,9 +147,9 @@ grid-template-columns: 1fr 1fr;
         } // .input-form
     } // .price-amount
 
-    .amount {
+    // .amount {
 
-    }
+    // }
 
     .btc-address {
         margin-bottom: 60px;
@@ -185,9 +185,23 @@ grid-template-columns: 1fr 1fr;
         right: 30%;
         top: 70%;
         }
-
     }
+// ========================= Button UI placeholder only ========================//
+// ========================= Button UI placeholder only ========================//
+    button {
+        position: relative;
+        border: none;
+    }
+    button i {
+        position: absolute;
+        right: 44px;
+        top: 16px;
+        font-size: 30px;
+    }
+// ========================= Button UI placeholder only ========================//
+// ========================= Button UI placeholder only ========================//
 
+    //============
     .submit-button-container {
         text-align: center;
 

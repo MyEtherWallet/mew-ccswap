@@ -17,11 +17,13 @@ export default {
 </script>
 
 <template>
-  <PageHeader />
-  <BuyCrypto />
-  <Promo1 />
-  <Promo2 />
-  <PageFooter />
+<div class="landing-page">
+    <PageHeader />
+    <BuyCrypto />
+    <Promo1 />
+    <Promo2 />
+    <PageFooter />
+</div>
 </template>
 
 <style lang="scss" scoped>

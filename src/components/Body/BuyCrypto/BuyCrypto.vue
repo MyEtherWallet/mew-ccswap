@@ -4,7 +4,7 @@
       <div class="block-division">
         <div class="block-1">
           <div class="mew-logo-container">
-            <img class="mew-logo-image" src="./assets/images/logo.png" />
+            <img class="mew-logo-image" src="@/assets/images/logo.png" />
           </div>
           <div class="text-contents">
             <h1 class="large-title">Buy Ethereum at Lower Rates</h1>
@@ -12,13 +12,13 @@
           <div class="powered-by">
             <div class="simplex">
               <span>Powered by</span>
-              <img class="mew-logo-image" src="./assets/images/simplex.png" />
+              <img class="mew-logo-image" src="@/assets/images/simplex.png" />
             </div>
             <div class="visa-master">
               <span>We accept Visa and MasterCard</span>
               <img
                 class="mew-logo-image"
-                src="./assets/images/visa-master.png"
+                src="@/assets/images/visa-master.png"
               />
             </div>
           </div>
@@ -38,13 +38,23 @@
                       :class="{ 'invalid-field': isInvalidFiatAmount }"
                     />
                   </div>
+<!-------------------------------vv Hard Coded Placeholder Area For Fiat Select vv---------------------------------->
+<!-------------------------------vv Hard Coded Placeholder Area For Fiat Select vv---------------------------------->                   
                   <div>
-                    <select v-model="fiatCurrency">
-                      <!-- eslint-disable vue/require-v-for-key -->
-                      <option v-for="fiat in validFiat" v-bind:value="fiat">
+                    <!-- <select v-model="fiatCurrency"> -->
+                    <!-- eslint-disable vue/require-v-for-key -->
+                      <!-- <option v-for="fiat in validFiat" v-bind:value="fiat">
                         {{ fiat }}
                       </option>
+                    </select> -->
+
+                    <select>
+                      <option>
+                        USD
+                      </option>
                     </select>
+<!---------------------------------- Ends Here ---------------------------------------------------------->
+<!---------------------------------- Ends Here ---------------------------------------------------------->
                   </div>
                 </div>
                 <span v-if="isInvalidFiatBelow" style="color: red"
@@ -66,22 +76,33 @@
                       :class="{ 'invalid-field': isInvalidDigitalAmount }"
                     />
                   </div>
+<!-------------------------------vv Hard Coded Placeholder Area For Crypto Select vv---------------------------------->
+<!-------------------------------vv Hard Coded Placeholder Area For Crypto Select  vv---------------------------------->
                   <div>
-                    <select v-model="digitalCurrency">
-                      <!-- eslint-disable vue/require-v-for-key -->
-                      <option
+                    <!-- <select v-model="digitalCurrency"> -->
+                    <!-- eslint-disable vue/require-v-for-key -->
+                      <!-- <option
                         v-for="digital in validDigital"
                         v-bind:value="digital"
                       >
                         {{ digital }}
-                      </option>
+                      </option> -->
                       <!--TODO: <option v-for=""></option-->
+                    <!-- </select> -->
+
+                    <select>
+                      <option>
+                        ETH
+                      </option>
                     </select>
+<!---------------------------------- Ends Here ---------------------------------------------------------->
+<!---------------------------------- Ends Here ---------------------------------------------------------->
                   </div>
                 </div>
               </div>
             </div>
-            <!-- .price-amount -->
+
+            <!-- .price-amount --> 
             <div class="btc-address">
               <h4 v-if="digitalCurrency === 'BTC'">
                 BTC Address
@@ -94,6 +115,20 @@
                   ></span
                 >
               </h4>
+<!-------------------------------vv Hard Coded Placeholder Area For Above vv---------------------------------->
+<!-------------------------------vv Hard Coded Placeholder Area For Above vv---------------------------------->
+              <h4>
+                <span
+                  ><a
+                    href="https://www.myetherwallet.com"
+                    target="_blank"
+                    style="text-decoration: none"
+                    >Don't have one?</a
+                  ></span
+                >
+              </h4>
+<!---------------------------------- Ends Here ---------------------------------------------------------->
+<!---------------------------------- Ends Here ---------------------------------------------------------->
               <h4
                 v-if="
                   digitalCurrency === 'ETH' ||
@@ -111,6 +146,12 @@
                   ></span
                 >
               </h4>
+<!-------------------------------vv Hard Coded Placeholder Area For Above vv---------------------------------->
+<!-------------------------------vv Hard Coded Placeholder Area For Above vv---------------------------------->
+                  <h4>ETH Address</h4>
+<!---------------------------------- Ends Here ---------------------------------------------------------->
+<!---------------------------------- Ends Here ---------------------------------------------------------->
+
               <input
                 v-model="digitalAddress"
                 type="text"
@@ -137,21 +178,26 @@
               :valid-inputs="canOrder"
               :formData="formData"
             />
+<!-------------------------------vv Hard Coded Placeholder Area For Above vv---------------------------------->
+<!-------------------------------vv Hard Coded Placeholder Area For Above vv---------------------------------->
             <div class="submit-button-container">
+              <button class="button-1">Continue<i class="fa fa-long-arrow-right"></i></button>
               <p>You will be redirected to the partner's site</p>
             </div>
           </div>
+<!---------------------------------- Ends Here ---------------------------------------------------------->
+<!---------------------------------- Ends Here ---------------------------------------------------------->
           <!-- .buy-form-container -->
           <div class="powered-by-mobile">
             <div class="simplex">
               <span>Powered by</span>
-              <img class="mew-logo-image" src="./assets/images/simplex.png" />
+              <img class="mew-logo-image" src="@/assets/images/simplex.png" />
             </div>
             <div class="visa-master">
               <span>We accept Visa and MasterCard</span>
               <img
                 class="mew-logo-image"
-                src="./assets/images/visa-master.png"
+                src="@/assets/images/visa-master.png"
               />
             </div>
           </div>
@@ -164,19 +210,21 @@
 
 <script>
 // import _ from 'lodash';
-// import VueRecaptcha from 'vue-recaptcha';
+// import { getOrder } from '@/simplex-api';
+// import { simplex, recaptcha } from '@/config';
+// import { VueRecaptcha } from 'vue-recaptcha-v3';
 export default {
   name: "BuyCrypto",
-  data() {
-    return {
-      // validFiat: simplex.validFiat,
-      // validDigital: simplex.validDigital,
-      loading: false,
-      formData: null,
-      // r_site_key: recaptcha.siteKey,
-      recaptchaResponse: "",
-    };
-  },
+  // data() {
+  //   return {
+  //     validFiat: simplex.validFiat,
+  //     validDigital: simplex.validDigital,
+  //     loading: false,
+  //     formData: null,
+  //     r_site_key: recaptcha.siteKey,
+  //     recaptchaResponse: "",
+  //   };
+  // },
   //     methods: {
   //         onVerify(response) {
   //             this.recaptchaResponse = response;

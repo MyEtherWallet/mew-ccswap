@@ -11,7 +11,7 @@
         <div class="promo-content-container">
             <div>
                 <div class="image-container">
-                    <img class="mew-logo-image" src="./assets/images/icons/money.png">
+                    <img class="mew-logo-image" src="@/assets/icons/money.png">
                 </div>
                 <div class="text-container">
                     <h3>Reasonable fee</h3>
@@ -20,7 +20,7 @@
             </div>
             <div>
                 <div class="image-container">
-                    <img class="mew-logo-image" src="./assets/images/icons/clock.png">
+                    <img class="mew-logo-image" src="@/assets/icons/clock.png">
                 </div>
                 <div class="text-container">
                     <h3>Quick transactions</h3>
@@ -29,7 +29,7 @@
             </div>
             <div>
                 <div class="image-container">
-                    <img class="mew-logo-image" src="./assets/images/icons/calendar.png">
+                    <img class="mew-logo-image" src="@/assets/icons/calendar.png">
                 </div>
                 <div class="text-container">
                     <h3>Easy verification</h3>
@@ -38,7 +38,7 @@
             </div>
             <div>
                 <div class="image-container">
-                    <img class="mew-logo-image" src="./assets/images/icons/support.png">
+                    <img class="mew-logo-image" src="@/assets/icons/support.png">
                 </div>
                 <div class="text-container">
                     <h3>Instant support</h3>

@@ -27,14 +27,14 @@ export default {
         'continueAction',
         'validInputs'
     ],
-    data() {
-        return {};
-    },
-//     methods: {
-//         submit() {
-//             document.querySelector('#payment_form').submit();
-//         }
-//     }
+    // data() {
+    //     return {};
+    // },
+    // methods: {
+    //     submit() {
+    //         document.querySelector('#payment_form').submit();
+    //     }
+    // }
 };
 </script>
 
