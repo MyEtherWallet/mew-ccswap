@@ -1,23 +1,30 @@
-<template>
-<div class="landing-page">
-    <page-header />
-    <buy-crypto />
-    <promo1 />
-    <promo2 />
-    <page-footer />
-</div>
-</template>
+<script setup lang="js">
+import PageHeader from "./Header/Header.vue";
+import BuyCrypto from "./Body/BuyCrypto/BuyCrypto.vue";
+import Promo1 from "./Body/promo1/Promo1.vue";
+import Promo2 from "./Body/promo2/Promo2.vue";
+import PageFooter from "./Footer/Footer.vue";
 
-<script>
 export default {
-    name: 'LandingPage',
-    data() {
-        return {}
+    components: {
+        PageHeader,
+        BuyCrypto,
+        Promo1,
+        Promo2,
+        PageFooter
     }
 }
 </script>
 
+<template>
+  <PageHeader />
+  <BuyCrypto />
+  <Promo1 />
+  <Promo2 />
+  <PageFooter />
+</template>
+
 <style lang="scss" scoped>
-@import '@/var.scss';
-@import 'LandingPage.scss';
+@import "@/var.scss";
+@import "LandingPage.scss";
 </style>

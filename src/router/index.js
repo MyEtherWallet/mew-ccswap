@@ -1,30 +1,27 @@
-import Vue from 'vue'
 import { createWebHistory, createRouter } from "vue-router";
-import LandingPage from '@/components/LandingPage.vue'
-import OrderStatus from '@/components/Body/OrderStatus/OrderStatus.vue'
 
+const routes = [
+  {
+    path: "/",
+    name: "LandingPage",
+    component: () => import("@/components/LandingPage.vue"),
+  },
+  {
+    path: "/status/:userId",
+    name: "OrderStatus",
+    component: () => import("@/components/Body/OrderStatus/OrderStatus.vue"),
+    props: true,
+  },
+  {
+    path: "/:pathMatch(.*)*",
+    name: "catchAll",
+    component: () => import("@/components/LandingPage.vue"),
+  },
+];
 
-Vue.use(createRouter);
-
-const routes = createRouter({
-history: createWebHistory(),
-routes: [
-{ 
-    path: '/', 
-    name: 'LandingPage', 
-    component: LandingPage 
-}, 
-{ 
-    path: '/status/:userId', 
-    name: 'OrderStatus', 
-    component: OrderStatus, 
-    props: true },
-{
-    path: '*',
-    name: 'catchAll',
-    component: LandingPage
-}
-]
+const router = createRouter({
+  history: createWebHistory(),
+  routes,
 });
 
-export default routes
+export default router;
