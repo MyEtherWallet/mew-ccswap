@@ -161,14 +161,13 @@
             </div>
 
             <!-- .btc-address -->
-            <template>
-              <div class="recaptcha" v-if="false">
-                <vue-recaptcha
-                  :sitekey="r_site_key"
-                  @verify="onVerify"
-                ></vue-recaptcha>
-              </div>
-            </template>
+            <div class="recaptcha">
+              <vue-recaptcha
+                :sitekey="r_site_key"
+                @verify="onVerify"
+              ></vue-recaptcha>
+            </div>
+
             <checkout-form
               :continueAction="order"
               :valid-inputs="canOrder"
