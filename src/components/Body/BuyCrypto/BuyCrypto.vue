@@ -38,23 +38,21 @@
                       :class="{ 'invalid-field': isInvalidFiatAmount }"
                     />
                   </div>
-<!-------------------------------vv Hard Coded Placeholder Area For Fiat Select vv---------------------------------->
-<!-------------------------------vv Hard Coded Placeholder Area For Fiat Select vv---------------------------------->                   
+                  <!-------------------------------vv Hard Coded Placeholder Area For Fiat Select vv---------------------------------->
+                  <!-------------------------------vv Hard Coded Placeholder Area For Fiat Select vv---------------------------------->
                   <div>
                     <!-- <select v-model="fiatCurrency"> -->
                     <!-- eslint-disable vue/require-v-for-key -->
-                      <!-- <option v-for="fiat in validFiat" v-bind:value="fiat">
+                    <!-- <option v-for="fiat in validFiat" v-bind:value="fiat">
                         {{ fiat }}
                       </option>
                     </select> -->
 
                     <select>
-                      <option>
-                        USD
-                      </option>
+                      <option>USD</option>
                     </select>
-<!---------------------------------- Ends Here ---------------------------------------------------------->
-<!---------------------------------- Ends Here ---------------------------------------------------------->
+                    <!---------------------------------- Ends Here ---------------------------------------------------------->
+                    <!---------------------------------- Ends Here ---------------------------------------------------------->
                   </div>
                 </div>
                 <span v-if="isInvalidFiatBelow" style="color: red"
@@ -76,33 +74,31 @@
                       :class="{ 'invalid-field': isInvalidDigitalAmount }"
                     />
                   </div>
-<!-------------------------------vv Hard Coded Placeholder Area For Crypto Select vv---------------------------------->
-<!-------------------------------vv Hard Coded Placeholder Area For Crypto Select  vv---------------------------------->
+                  <!-------------------------------vv Hard Coded Placeholder Area For Crypto Select vv---------------------------------->
+                  <!-------------------------------vv Hard Coded Placeholder Area For Crypto Select  vv---------------------------------->
                   <div>
                     <!-- <select v-model="digitalCurrency"> -->
                     <!-- eslint-disable vue/require-v-for-key -->
-                      <!-- <option
+                    <!-- <option
                         v-for="digital in validDigital"
                         v-bind:value="digital"
                       >
                         {{ digital }}
                       </option> -->
-                      <!--TODO: <option v-for=""></option-->
+                    <!--TODO: <option v-for=""></option-->
                     <!-- </select> -->
 
                     <select>
-                      <option>
-                        ETH
-                      </option>
+                      <option>ETH</option>
                     </select>
-<!---------------------------------- Ends Here ---------------------------------------------------------->
-<!---------------------------------- Ends Here ---------------------------------------------------------->
+                    <!---------------------------------- Ends Here ---------------------------------------------------------->
+                    <!---------------------------------- Ends Here ---------------------------------------------------------->
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- .price-amount --> 
+            <!-- .price-amount -->
             <div class="btc-address">
               <h4 v-if="digitalCurrency === 'BTC'">
                 BTC Address
@@ -115,8 +111,8 @@
                   ></span
                 >
               </h4>
-<!-------------------------------vv Hard Coded Placeholder Area For Above vv---------------------------------->
-<!-------------------------------vv Hard Coded Placeholder Area For Above vv---------------------------------->
+              <!-------------------------------vv Hard Coded Placeholder Area For Above vv---------------------------------->
+              <!-------------------------------vv Hard Coded Placeholder Area For Above vv---------------------------------->
               <h4>
                 <span
                   ><a
@@ -127,8 +123,8 @@
                   ></span
                 >
               </h4>
-<!---------------------------------- Ends Here ---------------------------------------------------------->
-<!---------------------------------- Ends Here ---------------------------------------------------------->
+              <!---------------------------------- Ends Here ---------------------------------------------------------->
+              <!---------------------------------- Ends Here ---------------------------------------------------------->
               <h4
                 v-if="
                   digitalCurrency === 'ETH' ||
@@ -146,11 +142,11 @@
                   ></span
                 >
               </h4>
-<!-------------------------------vv Hard Coded Placeholder Area For Above vv---------------------------------->
-<!-------------------------------vv Hard Coded Placeholder Area For Above vv---------------------------------->
-                  <h4>ETH Address</h4>
-<!---------------------------------- Ends Here ---------------------------------------------------------->
-<!---------------------------------- Ends Here ---------------------------------------------------------->
+              <!-------------------------------vv Hard Coded Placeholder Area For Above vv---------------------------------->
+              <!-------------------------------vv Hard Coded Placeholder Area For Above vv---------------------------------->
+              <h4>ETH Address</h4>
+              <!---------------------------------- Ends Here ---------------------------------------------------------->
+              <!---------------------------------- Ends Here ---------------------------------------------------------->
 
               <input
                 v-model="digitalAddress"
@@ -166,7 +162,7 @@
 
             <!-- .btc-address -->
             <template>
-              <div class="recaptcha">
+              <div class="recaptcha" v-if="false">
                 <vue-recaptcha
                   :sitekey="r_site_key"
                   @verify="onVerify"
@@ -178,15 +174,17 @@
               :valid-inputs="canOrder"
               :formData="formData"
             />
-<!-------------------------------vv Hard Coded Placeholder Area For Above vv---------------------------------->
-<!-------------------------------vv Hard Coded Placeholder Area For Above vv---------------------------------->
+            <!-------------------------------vv Hard Coded Placeholder Area For Above vv---------------------------------->
+            <!-------------------------------vv Hard Coded Placeholder Area For Above vv---------------------------------->
             <div class="submit-button-container">
-              <button class="button-1">Continue<i class="fa fa-long-arrow-right"></i></button>
+              <button class="button-1">
+                Continue<i class="fa fa-long-arrow-right"></i>
+              </button>
               <p>You will be redirected to the partner's site</p>
             </div>
           </div>
-<!---------------------------------- Ends Here ---------------------------------------------------------->
-<!---------------------------------- Ends Here ---------------------------------------------------------->
+          <!---------------------------------- Ends Here ---------------------------------------------------------->
+          <!---------------------------------- Ends Here ---------------------------------------------------------->
           <!-- .buy-form-container -->
           <div class="powered-by-mobile">
             <div class="simplex">
@@ -211,20 +209,25 @@
 <script>
 // import _ from 'lodash';
 // import { getOrder } from '@/simplex-api';
-// import { simplex, recaptcha } from '@/config';
-// import { VueRecaptcha } from 'vue-recaptcha-v3';
+//import { simplex, recaptcha } from "@/config";
+import { VueRecaptcha } from "vue-recaptcha";
+
 export default {
   name: "BuyCrypto",
-  // data() {
-  //   return {
-  //     validFiat: simplex.validFiat,
-  //     validDigital: simplex.validDigital,
-  //     loading: false,
-  //     formData: null,
-  //     r_site_key: recaptcha.siteKey,
-  //     recaptchaResponse: "",
-  //   };
-  // },
+  components: {
+    VueRecaptcha
+  },
+  data() {
+    return {
+      //     validFiat: simplex.validFiat,
+      //     validDigital: simplex.validDigital,
+      //     loading: false,
+      //     formData: null,
+      //r_site_key: recaptcha.siteKey
+      r_site_key: "6LczzE0fAAAAALKiUYa2POyGx41EnRs0zjpAxfOI"
+      //     recaptchaResponse: "",
+    };
+  }
   //     methods: {
   //         onVerify(response) {
   //             this.recaptchaResponse = response;
@@ -392,9 +395,6 @@ export default {
   //             }
   //         }
   //     },
-  //     components: {
-  //         VueRecaptcha
-  //     }
 };
 </script>
 

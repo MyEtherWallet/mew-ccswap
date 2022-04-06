@@ -1,21 +1,16 @@
-import { minFiat, maxFiat, fiat, crypto } from '../currencyConfig';
+import { minFiat, maxFiat, fiat, crypto } from "../currencyConfig";
 
 let simplex = {
-    validFiat: process.env.FIAT_CURRENCIES.split(',') || fiat,
-    validDigital: process.env.DIGITAL_CURRENCIES.split(',') || crypto,
-    minFiat: minFiat,
-    maxFiat: maxFiat
-    };
+  validFiat: process.env.FIAT_CURRENCIES.split(",") || fiat,
+  validDigital: process.env.DIGITAL_CURRENCIES.split(",") || crypto,
+  minFiat: minFiat,
+  maxFiat: maxFiat
+};
 let host = {
-    url: process.env.API_HOST || 'http://localhost:3000/'
-    };
+  url: process.env.API_HOST || "http://localhost:3000/"
+};
 let recaptcha = {
-    siteKey: process.env.RECAPTCHA_SITE_KEY || ''
-    };
-
-export {
-    simplex,
-    host,
-    recaptcha
+  siteKey: process.env.RECAPTCHA_SITE_KEY || ""
 };
 
+export { simplex, host, recaptcha };
