@@ -8,7 +8,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import LandingPage from '@/components/LandingPage.vue';
+import LandingPage from '@/layouts/LandingPage.vue';
 
 export default defineComponent({
   name: 'App',

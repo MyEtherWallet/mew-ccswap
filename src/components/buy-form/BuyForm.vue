@@ -1,29 +1,9 @@
 <template>
-  <div class="component--buy-form elevated-box pa-2">
+  <div class="component--buy-form elevated-box pa-6">
     <v-container>
       <v-row>
         <v-col>
-          <div class="mb-2 font-weight-bold">Purchasing price</div>
-          <div class="d-flex">
-            <v-text-field
-              v-model.number="fiatAmount"
-              label="Price in USD"
-              required
-              dense
-              hide-details
-            ></v-text-field>
-
-            <div style="width: 110px">
-              <v-select
-                v-model="fiatCurrencySelected"
-                label="Currency"
-                :items="fiatCurrencyItems"
-              ></v-select>
-            </div>
-          </div>
-        </v-col>
-        <v-col>
-          <div class="mb-2 font-weight-bold">Coin amount</div>
+          <div class="mb-2 font-weight-bold">Coin amount to buy</div>
           <div class="d-flex">
             <v-text-field
               v-model.number="cryptoAmount"
@@ -38,6 +18,27 @@
                 v-model="cryptoCurrencySelected"
                 label="Currency"
                 :items="cryptoCurrencyItems"
+              ></v-select>
+            </div>
+          </div>
+        </v-col>
+        <v-col>
+          <div class="mb-2 font-weight-bold">Purchasing price</div>
+          <div class="d-flex">
+            <v-text-field
+              v-model.number="fiatAmount"
+              label="Price in USD"
+              prefix="$"
+              required
+              dense
+              hide-details
+            ></v-text-field>
+
+            <div style="width: 110px">
+              <v-select
+                v-model="fiatCurrencySelected"
+                label="Currency"
+                :items="fiatCurrencyItems"
               ></v-select>
             </div>
           </div>
@@ -64,13 +65,15 @@
           ></v-text-field>
         </v-col>
       </v-row>
+
       <v-row>
         <v-col class="text-center">
-          <v-btn min-height="50px" min-width="200px" color="#05C0A5">
-            <div class="text-white">Buy</div>
-          </v-btn>
-
-          <h4 class="mt-4">You will be redirected to the partner's site</h4>
+          <div class="pt-10">
+            <v-btn min-height="50px" min-width="200px" color="#05C0A5">
+              <div class="text-white">Buy</div>
+            </v-btn>
+            <h4 class="mt-4">You will be redirected to the partner's site</h4>
+          </div>
         </v-col>
       </v-row>
     </v-container>
@@ -79,9 +82,13 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import ReCaptcha from '@/components/recaptcha/ReCaptcha.vue';
 
 export default defineComponent({
   name: 'BuyForm',
+  components: {
+    ReCaptcha,
+  },
   data() {
     return {
       fiatAmount: 1873,

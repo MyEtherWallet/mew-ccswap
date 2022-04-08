@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <div></div>
+    <div>Footer</div>
   </v-container>
 </template>
 

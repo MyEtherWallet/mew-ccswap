@@ -1,0 +1,60 @@
+<template>
+  <div
+    class="pt-15 component--landing-page background"
+    :style="{ 'background-image': `url(${bg1})` }"
+  >
+    <v-container>
+      <v-row>
+        <v-col cols="5">
+          <Header />
+        </v-col>
+        <v-col cols="7">
+          <BuyForm />
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col>
+          <Promo />
+        </v-col>
+      </v-row>
+    </v-container>
+
+    <Footer />
+  </div>
+</template>
+
+<script lang="ts">
+import { defineComponent } from 'vue';
+import Header from '@/components/header/Header.vue';
+import Footer from '@/components/footer/Footer.vue';
+import BuyForm from '@/components/buy-form/BuyForm.vue';
+import Promo from '@/components/promo/Promo.vue';
+import bg1 from '@/assets/images/bg-bar-1.svg';
+
+export default defineComponent({
+  name: 'Landing',
+  components: {
+    Header,
+    Footer,
+    BuyForm,
+    Promo,
+  },
+  data() {
+    return {
+      bg1: bg1,
+    };
+  },
+});
+</script>
+
+<style lang="scss" scoped>
+.component--landing-page {
+  min-height: 100vh;
+}
+
+.background {
+  background-size: 1200px;
+  background-position: right -100px top -374px;
+}
+</style>
