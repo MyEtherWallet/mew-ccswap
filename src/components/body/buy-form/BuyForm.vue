@@ -45,7 +45,16 @@
       </v-row>
       <v-row>
         <v-col>
-          <div class="mb-2 font-weight-bold">Address to receive coin</div>
+          <div class="d-flex align-center mb-2">
+            <div class="font-weight-bold">Address to receive coin</div>
+            <a
+              class="small ml-2"
+              href="https://www.myetherwallet.com/wallet/create"
+              target="_blank"
+            >
+              Don't have a wallet?
+            </a>
+          </div>
           <v-text-field
             v-model.number="address"
             label="ETH address"

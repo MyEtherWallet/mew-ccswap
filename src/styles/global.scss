@@ -23,6 +23,13 @@ h4 {
   font-weight: 300;
 }
 
+a {
+  color: $text-color-mew;
+  &.small {
+    font-size: 0.84rem;
+  }
+}
+
 .heading-1 {
   font-size: 3.8rem;
   line-height: 4.2rem;

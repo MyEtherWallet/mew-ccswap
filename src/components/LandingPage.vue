@@ -1,5 +1,8 @@
 <template>
-  <div class="pt-10 background" :style="{ 'background-image': `url(${bg1})` }">
+  <div
+    class="pt-10 component--landing-page background"
+    :style="{ 'background-image': `url(${bg1})` }"
+  >
     <Header />
     <Footer />
   </div>
@@ -26,6 +29,10 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.component--landing-page {
+  min-height: 100vh;
+}
+
 .background {
   background-size: 1200px;
   background-position: right -100px top -374px;
