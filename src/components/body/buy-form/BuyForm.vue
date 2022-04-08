@@ -1,5 +1,5 @@
 <template>
-  <div class="elevated-box pa-2">
+  <div class="component--buy-form elevated-box pa-2">
     <v-container>
       <v-row>
         <v-col>
@@ -13,7 +13,7 @@
               hide-details
             ></v-text-field>
 
-            <div style="width: 140px">
+            <div style="width: 110px">
               <v-select
                 v-model="fiatCurrencySelected"
                 label="Currency"
@@ -33,7 +33,7 @@
               hide-details
             ></v-text-field>
 
-            <div style="width: 140px">
+            <div style="width: 110px">
               <v-select
                 v-model="cryptoCurrencySelected"
                 label="Currency"
@@ -96,4 +96,12 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+// Fix v-select(currency select) height issue
+.component--buy-form {
+  .v-select .v-field .v-field__input > input {
+    height: 0;
+    width: 0;
+  }
+}
+</style>
