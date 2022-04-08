@@ -1,0 +1,49 @@
+// Variables
+$text-color-primary: #5c5c5c;
+$text-color-gray: #a7a7a7;
+$text-color-mew: #05c0a5;
+$box-shadow-color: rgb(0 0 0 / 25%);
+$box-shadow-border-radius: 20px;
+
+// Typography
+div,
+p,
+span,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: $text-color-primary;
+}
+
+h4 {
+  font-size: 0.84rem;
+  font-weight: 300;
+}
+
+.heading-1 {
+  font-size: 3.8rem;
+  line-height: 4.2rem;
+  font-weight: 300;
+}
+
+.text-gray {
+  color: $text-color-gray;
+}
+
+.text-white {
+  color: white;
+}
+
+.text-transform--none {
+  text-transform: none;
+}
+
+// Custom elements
+.elevated-box {
+  box-shadow: 0 8px 20px $box-shadow-color;
+  border-radius: $box-shadow-border-radius;
+  background-color: white;
+}

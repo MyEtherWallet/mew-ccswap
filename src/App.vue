@@ -8,7 +8,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import LandingPage from './components/LandingPage.vue';
+import LandingPage from '@/components/LandingPage.vue';
 
 export default defineComponent({
   name: 'App',
@@ -22,3 +22,7 @@ export default defineComponent({
   },
 });
 </script>
+
+<style lang="scss">
+@import '@/styles/global.scss';
+</style>

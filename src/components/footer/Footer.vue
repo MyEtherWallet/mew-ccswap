@@ -1,5 +1,7 @@
 <template>
-  <div>Footer</div>
+  <v-container>
+    <div></div>
+  </v-container>
 </template>
 
 <script lang="ts">
