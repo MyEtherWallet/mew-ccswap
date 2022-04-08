@@ -21,15 +21,24 @@
           />
         </div>
 
-        <div class="d-flex align-center mt-2">
-          <div class="mr-2">We accept Visa and MasterCard</div>
+        <div class="d-flex align-center mt-4">
+          <div class="mr-2">
+            We accept
+            <span class="font-weight-medium text-decoration-underline"
+              >Visa</span
+            >
+            and
+            <span class="font-weight-medium text-decoration-underline"
+              >MasterCard</span
+            >
+          </div>
           <img
             class="mr-2"
             src="@/assets/images/icon-visa.svg"
             alt="Visa"
-            height="12"
+            height="16"
           />
-          <img src="@/assets/images/icon-master.svg" alt="Master" height="18" />
+          <img src="@/assets/images/icon-master.svg" alt="Master" height="22" />
         </div>
       </v-col>
       <v-col cols="7">
