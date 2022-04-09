@@ -46,7 +46,11 @@
               >
                 {{ p2.description }}
               </div>
-              <div v-else="p2.description" style="max-width: 400px">
+              <div
+                class="font-weight-light"
+                v-else="p2.description"
+                style="max-width: 400px"
+              >
                 Feel free to contact
                 <a href="mailto:support@simplex.com">support@simplex.com</a>
                 should you have questions
