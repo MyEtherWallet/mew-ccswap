@@ -53,7 +53,7 @@
           <div class="d-sm-flex align-center mb-2">
             <div class="font-weight-bold mr-2">Address to receive coin</div>
             <a
-              class="small"
+              class="small d-block mt-n1 mt-sm-0"
               href="https://www.myetherwallet.com/wallet/create"
               target="_blank"
             >
