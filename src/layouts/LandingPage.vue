@@ -1,7 +1,7 @@
 <template>
   <div
     class="pt-15 component--landing-page background"
-    :style="{ 'background-image': `url(${bg1})` }"
+    :style="{ 'background-image': `url(${bg})` }"
   >
     <v-container>
       <v-row>
@@ -30,7 +30,7 @@ import Header from '@/components/header/Header.vue';
 import Footer from '@/components/footer/Footer.vue';
 import BuyForm from '@/components/buy-form/BuyForm.vue';
 import Promo from '@/components/promo/Promo.vue';
-import bg1 from '@/assets/images/bg-bar-1.svg';
+import bg from '@/assets/images/bg-bar-2.svg';
 
 export default defineComponent({
   name: 'Landing',
@@ -42,7 +42,7 @@ export default defineComponent({
   },
   data() {
     return {
-      bg1: bg1,
+      bg: bg,
     };
   },
 });
@@ -54,7 +54,8 @@ export default defineComponent({
 }
 
 .background {
-  background-size: 1200px;
-  background-position: right -100px top -374px;
+  background-size: 100vw;
+  //background-size: 1200px;
+  background-position: left 0px top 0px;
 }
 </style>
