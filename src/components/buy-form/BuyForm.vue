@@ -11,6 +11,7 @@
               required
               dense
               hide-details
+              @keydown="updateUrlParameters"
             ></v-text-field>
 
             <div style="width: 110px">
@@ -18,6 +19,7 @@
                 v-model="cryptoCurrencySelected"
                 label="Currency"
                 :items="cryptoCurrencyItems"
+                @blur="updateUrlParameters"
               ></v-select>
             </div>
           </div>
@@ -32,6 +34,7 @@
               required
               dense
               hide-details
+              @keydown="updateUrlParameters"
             ></v-text-field>
 
             <div style="width: 110px">
@@ -39,6 +42,7 @@
                 v-model="fiatCurrencySelected"
                 label="Currency"
                 :items="fiatCurrencyItems"
+                @blur="updateUrlParameters"
               ></v-select>
             </div>
           </div>
@@ -46,10 +50,10 @@
       </v-row>
       <v-row>
         <v-col>
-          <div class="d-flex align-center mb-2">
-            <div class="font-weight-bold">Address to receive coin</div>
+          <div class="d-sm-flex align-center mb-2">
+            <div class="font-weight-bold mr-2">Address to receive coin</div>
             <a
-              class="small ml-2"
+              class="small"
               href="https://www.myetherwallet.com/wallet/create"
               target="_blank"
             >
@@ -57,11 +61,12 @@
             </a>
           </div>
           <v-text-field
-            v-model.number="address"
+            v-model="address"
             label="ETH address"
             required
             dense
             hide-details
+            @keydown="updateUrlParameters"
           ></v-text-field>
         </v-col>
       </v-row>
@@ -91,14 +96,49 @@ export default defineComponent({
   },
   data() {
     return {
-      fiatAmount: 1873,
+      fiatAmount: 0,
       fiatCurrencySelected: 'USD',
       fiatCurrencyItems: ['USD', 'EUR'],
-      cryptoAmount: 1,
+      cryptoAmount: 0,
       cryptoCurrencySelected: 'ETH',
       cryptoCurrencyItems: ['ETH', 'BTC'],
-      address: '0x3cd751e6b0078be393132286c442345e5dc49699',
+      address: '',
     };
+  },
+  watch: {},
+  methods: {
+    updateUrlParameters() {
+      let urlParameters = '?';
+      urlParameters += `fiat=${this.fiatCurrencySelected}&`;
+      urlParameters += `fiat_amount=${this.fiatAmount}&`;
+      urlParameters += `crypto=${this.cryptoCurrencySelected}&`;
+      urlParameters += `crypto_amount=${this.cryptoAmount}&`;
+      urlParameters += `to=${this.address}`;
+
+      if (history.pushState) {
+        const newurl =
+          window.location.protocol +
+          '//' +
+          window.location.host +
+          window.location.pathname +
+          urlParameters;
+        window.history.pushState({ path: newurl }, '', newurl);
+      }
+    },
+    useUrlParameters() {
+      const queryString = window.location.search;
+      if (queryString) {
+        const urlParams = new URLSearchParams(queryString);
+        this.fiatCurrencySelected = urlParams.get('fiat');
+        this.fiatAmount = urlParams.get('fiat_amount');
+        this.cryptoCurrencySelected = urlParams.get('crypto');
+        this.cryptoAmount = urlParams.get('crypto_amount');
+        this.address = urlParams.get('to');
+      }
+    },
+  },
+  mounted() {
+    this.useUrlParameters();
   },
 });
 </script>

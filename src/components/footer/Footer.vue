@@ -30,9 +30,7 @@ export default defineComponent({
       window.open(url, '_blank').focus();
     },
   },
-  mounted() {
-    console.log(this.$vuetify.display.mdAndUp);
-  },
+  mounted() {},
 });
 </script>
 
