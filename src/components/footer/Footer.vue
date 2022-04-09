@@ -1,10 +1,10 @@
 <template>
-  <div class="component--footer">
+  <div class="component--footer py-6">
     <v-container class="text-center">
       <div>©2018 MyEtherWallet Inc. All rights reserved</div>
       <div class="mb-2">
         Need an Ethereum wallet? Get one from
-        <span class="font-weight-bold">myetherwallet.com</span> for free.
+        <span class="font-weight-bold">myetherwallet.com</span>.
       </div>
       <v-btn
         @click="openInNewTab('https://www.myetherwallet.com/wallet/create')"
