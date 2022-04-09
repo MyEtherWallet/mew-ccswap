@@ -2,7 +2,7 @@
   <div
     class="component--promo"
     :style="
-      $vuetify.display.lgAndUp ? 'padding-top: 300px' : 'padding-top: 100px'
+      $vuetify.display.lgAndUp ? 'padding-top: 200px' : 'padding-top: 100px'
     "
   >
     <div>
@@ -127,6 +127,6 @@ export default defineComponent({
 }
 
 h1 {
-  max-width: 700px;
+  max-width: 600px;
 }
 </style>
