@@ -1,11 +1,16 @@
 <template>
-  <div class="component--promo">
+  <div
+    class="component--promo"
+    :style="
+      $vuetify.display.lgAndUp ? 'padding-top: 300px' : 'padding-top: 100px'
+    "
+  >
     <div>
       <h1 class="mb-9">
         We have increased maximum buy limits for hassle free transactions
       </h1>
       <v-row>
-        <v-col v-for="(p1, key1) in promo1" :key="key1">
+        <v-col cols="12" md="4" v-for="(p1, key1) in promo1" :key="key1">
           <div class="elevated-box-small pa-6">
             <h2 class="font-weight-light mb-2">{{ p1.title }}</h2>
             <div class="font-weight-light">
@@ -20,12 +25,16 @@
       </v-row>
     </div>
 
-    <div style="margin-top: 200px">
+    <div
+      :style="
+        $vuetify.display.mdAndUp ? 'margin-top: 200px' : 'margin-top: 100px'
+      "
+    >
       <h1 class="mb-9">
         That is the reason why millions of our users choose us
       </h1>
       <v-row>
-        <v-col cols="6" v-for="(p2, key2) in promo2" :key="key2">
+        <v-col cols="12" md="6" v-for="(p2, key2) in promo2" :key="key2">
           <div class="d-flex align-center pb-8">
             <img class="mr-4" :src="p2.icon" alt="Promo" />
             <div>
@@ -114,7 +123,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .component--promo {
-  padding: 300px 0 200px 0;
+  padding-bottom: 200px;
 }
 
 h1 {

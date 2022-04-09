@@ -1,5 +1,5 @@
 <template>
-  <div class="component--buy-form elevated-box pa-6">
+  <div class="component--buy-form elevated-box pa-6 mt-10">
     <v-container>
       <v-row>
         <v-col>

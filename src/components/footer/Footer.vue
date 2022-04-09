@@ -1,7 +1,7 @@
 <template>
   <div class="component--footer">
     <v-container class="text-center">
-      <div>© 2018 MyEtherWallet Inc. All rights reserved</div>
+      <div>©2018 MyEtherWallet Inc. All rights reserved</div>
       <div class="mb-2">
         Need an Ethereum wallet? Get one from
         <span class="font-weight-bold">myetherwallet.com</span> for free.
@@ -9,7 +9,7 @@
       <v-btn
         @click="openInNewTab('https://www.myetherwallet.com/wallet/create')"
         x-small
-        height="32px"
+        height="42px"
         >Get a wallet</v-btn
       >
     </v-container>
@@ -29,6 +29,9 @@ export default defineComponent({
     openInNewTab(url) {
       window.open(url, '_blank').focus();
     },
+  },
+  mounted() {
+    console.log(this.$vuetify.display.mdAndUp);
   },
 });
 </script>

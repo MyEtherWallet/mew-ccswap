@@ -1,14 +1,15 @@
 <template>
   <div
-    class="pt-15 component--landing-page background"
+    class="pt-15 component--landing-page"
+    :class="$vuetify.display.mdAndUp ? 'background-lg' : 'background-sm'"
     :style="{ 'background-image': `url(${bg})` }"
   >
     <v-container>
       <v-row>
-        <v-col cols="5">
+        <v-col cols="12" md="5">
           <Header />
         </v-col>
-        <v-col cols="7">
+        <v-col cols="12" md="7">
           <BuyForm />
         </v-col>
       </v-row>
@@ -53,9 +54,13 @@ export default defineComponent({
   min-height: 100vh;
 }
 
-.background {
+.background-lg {
   background-size: 100vw;
-  //background-size: 1200px;
   background-position: left 0px top 0px;
+}
+
+.background-sm {
+  background-size: cover;
+  background-position: right top;
 }
 </style>
