@@ -2,7 +2,7 @@
   <div class="component--buy-form elevated-box pa-6 mt-10">
     <v-container>
       <v-row>
-        <v-col>
+        <v-col cols="12" lg="6">
           <div class="mb-2 font-weight-bold">Coin amount to buy</div>
           <div class="d-flex">
             <v-text-field
@@ -24,7 +24,7 @@
             </div>
           </div>
         </v-col>
-        <v-col>
+        <v-col cols="12" lg="6">
           <div class="mb-2 font-weight-bold">Purchasing price</div>
           <div class="d-flex">
             <v-text-field
