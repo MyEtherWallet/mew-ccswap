@@ -11,7 +11,7 @@
               required
               dense
               hide-details
-              @keydown="updateUrlParameters"
+              @keyup="updateUrlParameters"
             ></v-text-field>
 
             <div style="width: 110px">
@@ -34,7 +34,7 @@
               required
               dense
               hide-details
-              @keydown="updateUrlParameters"
+              @keyup="updateUrlParameters"
             ></v-text-field>
 
             <div style="width: 110px">
@@ -66,7 +66,7 @@
             required
             dense
             hide-details
-            @keydown="updateUrlParameters"
+            @keyup="updateUrlParameters"
           ></v-text-field>
         </v-col>
       </v-row>
