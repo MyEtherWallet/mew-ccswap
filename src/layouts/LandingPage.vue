@@ -1,7 +1,7 @@
 <template>
   <div
     class="pt-15 component--landing-page"
-    :class="$vuetify.display.mdAndUp ? 'background-lg' : 'background-sm'"
+    :class="[$vuetify.display.mdAndUp ? 'background-lg' : 'background-sm']"
     :style="{ 'background-image': `url(${bg})` }"
   >
     <v-container>
@@ -46,6 +46,7 @@ export default defineComponent({
       bg: bg,
     };
   },
+  mounted() {},
 });
 </script>
 
