@@ -2,13 +2,13 @@ import axios from 'axios';
 
 const supportedCrypto = ['ETH', 'BTC', 'BNB', 'MATIC'];
 const supportedFiat = ['USD', 'RUB', 'EUR', 'JPY', 'AUD', 'CAD', 'GBP'];
+const defaultApiUrl =
+  'https://mainnet.mewwallet.dev/v3/purchase/providers/web?iso=us&cryptoCurrency=';
 
-async function getPrices(crypto) {
-  const api =
-    'https://mainnet.mewwallet.dev/v3/purchase/providers/web?iso=us&cryptoCurrency=' +
-    crypto.toUpperCase();
+async function getCryptoData(crypto) {
+  const fullApiUrl = defaultApiUrl + crypto.toUpperCase();
 
-  return await axios.get(api).then(
+  return await axios.get(fullApiUrl).then(
     (response) => {
       return response.data;
     },
@@ -18,15 +18,18 @@ async function getPrices(crypto) {
   );
 }
 
-async function getSimplexPrices(crypto) {
-  console.log('getSimplexPrices =================================');
+async function getFiatPrice(provider, crypto, fiat) {
+  const allProviders = await getCryptoData(crypto);
 
-  const prices = await getPrices(crypto);
-
-  const simplexPrices = prices.filter(
-    (provider) => provider.name.toLowerCase() === 'simplex'
+  const theProvider = allProviders.filter(
+    (p) => p.name.toLowerCase() === provider.toLowerCase()
   )[0];
-  return simplexPrices;
+
+  const fiatPriceForCrypto = theProvider.prices.filter((p) => {
+    return p.fiat_currency === fiat;
+  })[0];
+
+  return fiatPriceForCrypto.price;
 }
 
-export { supportedCrypto, supportedFiat, getSimplexPrices };
+export { supportedCrypto, supportedFiat, getFiatPrice };

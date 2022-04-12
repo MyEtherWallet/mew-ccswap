@@ -7,11 +7,10 @@
           <div class="d-flex">
             <v-text-field
               v-model.number="cryptoAmount"
-              label="Amount of ETH"
+              :label="`Amount of ${cryptoSelected}`"
               required
               dense
               hide-details
-              @keyup="updateUrlParameters"
             ></v-text-field>
 
             <div style="width: 110px">
@@ -19,7 +18,6 @@
                 v-model="cryptoSelected"
                 label="Currency"
                 :items="cryptoItems"
-                @blur="updateUrlParameters"
               ></v-select>
             </div>
           </div>
@@ -29,12 +27,11 @@
           <div class="d-flex">
             <v-text-field
               v-model.number="fiatAmount"
-              label="Price in USD"
+              :label="`Price in ${fiatSelected}`"
               prefix="$"
               required
               dense
               hide-details
-              @keyup="updateUrlParameters"
             ></v-text-field>
 
             <div style="width: 110px">
@@ -42,7 +39,6 @@
                 v-model="fiatSelected"
                 label="Currency"
                 :items="fiatItems"
-                @blur="updateUrlParameters"
               ></v-select>
             </div>
           </div>
@@ -66,7 +62,6 @@
             required
             dense
             hide-details
-            @keyup="updateUrlParameters"
           ></v-text-field>
         </v-col>
       </v-row>
@@ -86,10 +81,10 @@
 </template>
 
 <script lang="ts">
-import _ from 'lodash';
 import { defineComponent } from 'vue';
 import ReCaptcha from '@/components/recaptcha/ReCaptcha.vue';
-import { supportedCrypto, supportedFiat, getSimplexPrices } from './prices.js';
+import { supportedCrypto, supportedFiat, getFiatPrice } from './prices.js';
+import _ from 'lodash';
 
 export default defineComponent({
   name: 'BuyForm',
@@ -98,6 +93,7 @@ export default defineComponent({
   },
   data() {
     return {
+      provider: 'simplex',
       fiatAmount: 1,
       fiatSelected: 'USD',
       fiatItems: supportedFiat,
@@ -105,11 +101,20 @@ export default defineComponent({
       cryptoSelected: 'ETH',
       cryptoItems: supportedCrypto,
       address: '',
-      simplexPrices: null,
+      fiatPricePerCrypto: null,
     };
   },
   watch: {
+    fiatAmount() {
+      this.getPrice();
+    },
+    fiatSelected() {
+      this.getPrice();
+    },
     cryptoAmount() {
+      this.getPrice();
+    },
+    cryptoSelected() {
       this.getPrice();
     },
   },
@@ -142,29 +147,35 @@ export default defineComponent({
         this.cryptoSelected = urlParams.get('crypto');
         this.cryptoAmount = urlParams.get('crypto_amount');
         this.address = urlParams.get('to');
-        return true;
       }
-
-      return false;
     },
+    throttle_getFiatPrice: _.throttle(
+      async function () {
+        this.fiatPricePerCrypto = await getFiatPrice(
+          this.provider,
+          this.cryptoSelected,
+          this.fiatSelected
+        );
+      },
+      1500,
+      { trailing: false }
+    ),
     async getPrice() {
-      const crypto = this.cryptoSelected;
-      const cryptoAmount = this.cryptoAmount;
-      const fiat = this.fiatSelected;
+      await this.throttle_getFiatPrice();
 
-      this.simplexPrices = await getSimplexPrices(crypto);
-
-      const fiatPriceForCrypto = this.simplexPrices.prices.filter((price) => {
-        return price.fiat_currency === fiat;
-      })[0];
-
-      this.fiatAmount = fiatPriceForCrypto.price * cryptoAmount;
-
-      //console.log(fiatPriceForCrypto);
+      /*
+      const fiatPricePerCrypto = await getFiatPrice(
+        this.provider,
+        this.cryptoSelected,
+        this.fiatSelected
+      );
+      */
+      this.fiatAmount = this.fiatPricePerCrypto * this.cryptoAmount;
+      this.updateUrlParameters();
     },
   },
   mounted() {
-    //this.useUrlParametersOnLoad();
+    this.useUrlParametersOnLoad();
     this.getPrice();
   },
 });
