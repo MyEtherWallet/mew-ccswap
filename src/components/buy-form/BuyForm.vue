@@ -16,9 +16,9 @@
 
             <div style="width: 110px">
               <v-select
-                v-model="cryptoCurrencySelected"
+                v-model="cryptoSelected"
                 label="Currency"
-                :items="cryptoCurrencyItems"
+                :items="cryptoItems"
                 @blur="updateUrlParameters"
               ></v-select>
             </div>
@@ -39,9 +39,9 @@
 
             <div style="width: 110px">
               <v-select
-                v-model="fiatCurrencySelected"
+                v-model="fiatSelected"
                 label="Currency"
-                :items="fiatCurrencyItems"
+                :items="fiatItems"
                 @blur="updateUrlParameters"
               ></v-select>
             </div>
@@ -86,8 +86,10 @@
 </template>
 
 <script lang="ts">
+import _ from 'lodash';
 import { defineComponent } from 'vue';
 import ReCaptcha from '@/components/recaptcha/ReCaptcha.vue';
+import { supportedCrypto, supportedFiat, getSimplexPrices } from './prices.js';
 
 export default defineComponent({
   name: 'BuyForm',
@@ -96,22 +98,27 @@ export default defineComponent({
   },
   data() {
     return {
-      fiatAmount: 0,
-      fiatCurrencySelected: 'USD',
-      fiatCurrencyItems: ['USD', 'EUR'],
-      cryptoAmount: 0,
-      cryptoCurrencySelected: 'ETH',
-      cryptoCurrencyItems: ['ETH', 'BTC'],
+      fiatAmount: 1,
+      fiatSelected: 'USD',
+      fiatItems: supportedFiat,
+      cryptoAmount: 1,
+      cryptoSelected: 'ETH',
+      cryptoItems: supportedCrypto,
       address: '',
+      simplexPrices: null,
     };
   },
-  watch: {},
+  watch: {
+    cryptoAmount() {
+      this.getPrice();
+    },
+  },
   methods: {
     updateUrlParameters() {
       let urlParameters = '?';
-      urlParameters += `fiat=${this.fiatCurrencySelected}&`;
+      urlParameters += `fiat=${this.fiatSelected}&`;
       urlParameters += `fiat_amount=${this.fiatAmount}&`;
-      urlParameters += `crypto=${this.cryptoCurrencySelected}&`;
+      urlParameters += `crypto=${this.cryptoSelected}&`;
       urlParameters += `crypto_amount=${this.cryptoAmount}&`;
       urlParameters += `to=${this.address}`;
 
@@ -125,20 +132,40 @@ export default defineComponent({
         window.history.pushState({ path: newurl }, '', newurl);
       }
     },
-    useUrlParameters() {
+    useUrlParametersOnLoad() {
       const queryString = window.location.search;
+
       if (queryString) {
         const urlParams = new URLSearchParams(queryString);
-        this.fiatCurrencySelected = urlParams.get('fiat');
+        this.fiatSelected = urlParams.get('fiat');
         this.fiatAmount = urlParams.get('fiat_amount');
-        this.cryptoCurrencySelected = urlParams.get('crypto');
+        this.cryptoSelected = urlParams.get('crypto');
         this.cryptoAmount = urlParams.get('crypto_amount');
         this.address = urlParams.get('to');
+        return true;
       }
+
+      return false;
+    },
+    async getPrice() {
+      const crypto = this.cryptoSelected;
+      const cryptoAmount = this.cryptoAmount;
+      const fiat = this.fiatSelected;
+
+      this.simplexPrices = await getSimplexPrices(crypto);
+
+      const fiatPriceForCrypto = this.simplexPrices.prices.filter((price) => {
+        return price.fiat_currency === fiat;
+      })[0];
+
+      this.fiatAmount = fiatPriceForCrypto.price * cryptoAmount;
+
+      //console.log(fiatPriceForCrypto);
     },
   },
   mounted() {
-    this.useUrlParameters();
+    //this.useUrlParametersOnLoad();
+    this.getPrice();
   },
 });
 </script>
