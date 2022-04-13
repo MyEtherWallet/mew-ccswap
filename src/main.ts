@@ -2,7 +2,11 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import vuetify from './plugins/vuetify';
 import { loadFonts } from './plugins/webfontloader';
+import { VueReCaptcha } from 'vue-recaptcha-v3';
 
 loadFonts();
 
-createApp(App).use(vuetify).mount('#app');
+createApp(App)
+  .use(VueReCaptcha, { siteKey: '6LcOkkwfAAAAAHs-bw2WrXHJtcdDWKl7S4JktET9' })
+  .use(vuetify)
+  .mount('#app');

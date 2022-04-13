@@ -1,92 +1,91 @@
 <template>
-  <div class="component--buy-form elevated-box pa-6 mt-10">
-    <v-container>
-      <v-row>
-        <v-col cols="12" lg="6">
-          <div class="mb-2 font-weight-bold">Coin amount to buy</div>
-          <div class="d-flex">
-            <v-text-field
-              v-model.number="cryptoAmount"
-              :label="`Amount of ${cryptoSelected}`"
-              required
-              dense
-              hide-details
-              @keyup="getFiatAmount()"
-            ></v-text-field>
-
-            <div style="width: 110px">
-              <v-select
-                v-model="cryptoSelected"
-                label="Currency"
-                :items="cryptoItems"
-              ></v-select>
-            </div>
-          </div>
-        </v-col>
-        <v-col cols="12" lg="6">
-          <div class="mb-2 font-weight-bold">Purchasing price</div>
-          <div class="d-flex">
-            <v-text-field
-              v-model.number="fiatAmount"
-              :label="`Price in ${fiatSelected}`"
-              prefix="$"
-              required
-              dense
-              hide-details
-              @keyup="getCryptoAmount($event)"
-            ></v-text-field>
-
-            <div style="width: 110px">
-              <v-select
-                v-model="fiatSelected"
-                label="Currency"
-                :items="fiatItems"
-              ></v-select>
-            </div>
-          </div>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col>
-          <div class="d-sm-flex align-center mb-2">
-            <div class="font-weight-bold mr-2">Address to receive crypto</div>
-            <a
-              class="small d-block mt-n1 mt-sm-0"
-              href="https://www.myetherwallet.com/wallet/create"
-              target="_blank"
-            >
-              Don't have a wallet?
-            </a>
-          </div>
+  <div class="component--buy-form elevated-box pa-8 mt-10">
+    <ReCaptcha />
+    <v-row>
+      <v-col cols="12" lg="6">
+        <div class="mb-2 font-weight-bold">Coin amount to buy</div>
+        <div class="d-flex">
           <v-text-field
-            v-model="address"
-            :label="`${cryptoSelected} address`"
+            v-model.number="cryptoAmount"
+            :label="`Amount of ${cryptoSelected}`"
             required
             dense
-            :error-messages="addressErrorMsg"
-            @keyup="verifyAddress($event)"
+            hide-details
+            @keyup="getFiatAmount()"
           ></v-text-field>
-        </v-col>
-      </v-row>
 
-      <v-row>
-        <v-col class="text-center">
-          <div class="pt-2">
-            <div>
-              <v-btn min-height="50px" min-width="200px" color="#05C0A5">
-                <div class="text-white">Buy</div>
-              </v-btn>
-            </div>
-            <div class="mt-2">
-              <v-btn @click="clearForms" elevation="0">
-                <h4 class="font-weight-regular">Clear</h4>
-              </v-btn>
-            </div>
-            <h4 class="mt-2">You will be redirected to the partner's site</h4>
+          <div style="width: 110px">
+            <v-select
+              v-model="cryptoSelected"
+              label="Currency"
+              :items="cryptoItems"
+            ></v-select>
           </div>
-        </v-col>
-      </v-row>
-    </v-container>
+        </div>
+      </v-col>
+      <v-col cols="12" lg="6">
+        <div class="mb-2 font-weight-bold">Purchasing price</div>
+        <div class="d-flex">
+          <v-text-field
+            v-model.number="fiatAmount"
+            :label="`Price in ${fiatSelected}`"
+            prefix="$"
+            required
+            dense
+            hide-details
+            @keyup="getCryptoAmount($event)"
+          ></v-text-field>
+
+          <div style="width: 110px">
+            <v-select
+              v-model="fiatSelected"
+              label="Currency"
+              :items="fiatItems"
+            ></v-select>
+          </div>
+        </div>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <div class="d-sm-flex align-center mb-2">
+          <div class="font-weight-bold mr-2">Address to receive crypto</div>
+          <a
+            class="small d-block mt-n1 mt-sm-0"
+            href="https://www.myetherwallet.com/wallet/create"
+            target="_blank"
+          >
+            Need Ethereum wallet?
+          </a>
+        </div>
+        <v-text-field
+          v-model="address"
+          :label="`${cryptoSelected} address`"
+          required
+          dense
+          :error-messages="addressErrorMsg"
+          @keyup="verifyAddress($event)"
+        ></v-text-field>
+      </v-col>
+    </v-row>
+
+    <v-row>
+      <v-col class="text-center">
+        <div class="pt-2">
+          <div>
+            <v-btn min-height="50px" min-width="200px" color="#05C0A5">
+              <div class="text-white">Buy</div>
+            </v-btn>
+          </div>
+          <div class="mt-2">
+            <v-btn @click="clearForms" elevation="0">
+              <h4 class="font-weight-regular">Clear</h4>
+            </v-btn>
+          </div>
+          <h4 class="mt-2">You will be redirected to the partner's site</h4>
+        </div>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -197,6 +196,7 @@ export default defineComponent({
       this.cryptoAmount = 1;
       this.cryptoSelected = 'ETH';
       this.address = '';
+      this.getFiatAmount();
     },
   },
   mounted() {

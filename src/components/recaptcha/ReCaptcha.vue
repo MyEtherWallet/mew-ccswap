@@ -1,12 +1,12 @@
 <template>
-  <VueReCaptcha />
+  <button @click="recaptcha">Execute recaptcha</button>
 </template>
 
-<script lang="ts">
-import { createApp } from 'vue';
-import { VueReCaptcha, useReCaptcha } from 'vue-recaptcha-v3';
+<script>
+import { useReCaptcha } from 'vue-recaptcha-v3';
 
-const component = {
+export default {
+  name: 'ReCaptcha',
   setup() {
     const { executeRecaptcha, recaptchaLoaded } = useReCaptcha();
 
@@ -18,15 +18,15 @@ const component = {
       const token = await executeRecaptcha('login');
 
       // Do stuff with the received token.
+      console.log({ token });
     };
+    recaptcha();
 
     return {
       recaptcha,
     };
   },
 };
-
-createApp(component).use(VueReCaptcha, {
-  siteKey: '6LcOkkwfAAAAAHs-bw2WrXHJtcdDWKl7S4JktET9',
-});
 </script>
+
+<style lang="scss" scoped></style>
