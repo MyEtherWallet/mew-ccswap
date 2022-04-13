@@ -71,11 +71,18 @@
 
       <v-row>
         <v-col class="text-center">
-          <div class="pt-10">
-            <v-btn min-height="50px" min-width="200px" color="#05C0A5">
-              <div class="text-white">Buy</div>
-            </v-btn>
-            <h4 class="mt-4">You will be redirected to the partner's site</h4>
+          <div class="pt-2">
+            <div>
+              <v-btn min-height="50px" min-width="200px" color="#05C0A5">
+                <div class="text-white">Buy</div>
+              </v-btn>
+            </div>
+            <div class="mt-2">
+              <v-btn @click="clearForms" elevation="0">
+                <h4 class="font-weight-regular">Clear</h4>
+              </v-btn>
+            </div>
+            <h4 class="mt-2">You will be redirected to the partner's site</h4>
           </div>
         </v-col>
       </v-row>
@@ -183,6 +190,13 @@ export default defineComponent({
         this.addressErrorMsg = '';
         this.updateUrlParameters();
       }
+    },
+    clearForms() {
+      this.fiatAmount = 1;
+      this.fiatSelected = 'USD';
+      this.cryptoAmount = 1;
+      this.cryptoSelected = 'ETH';
+      this.address = '';
     },
   },
   mounted() {
