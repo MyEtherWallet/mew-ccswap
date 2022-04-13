@@ -63,7 +63,7 @@
             :label="`${cryptoSelected} address`"
             required
             dense
-            hide-details
+            :error-messages="addressErrorMsg"
             @keyup="verifyAddress($event)"
           ></v-text-field>
         </v-col>
@@ -88,7 +88,6 @@ import { defineComponent } from 'vue';
 import ReCaptcha from '@/components/recaptcha/ReCaptcha.vue';
 import { supportedCrypto, supportedFiat, getFiatPrice } from './prices.js';
 import _ from 'lodash';
-//import { ethers } from 'ethers';
 import WAValidator from 'multicoin-address-validator';
 
 export default defineComponent({
@@ -107,20 +106,16 @@ export default defineComponent({
       cryptoItems: supportedCrypto,
       address: '',
       fiatPricePerCrypto: null,
+      addressErrorMsg: '',
     };
   },
   watch: {
-    fiatAmount() {
-      //this.getCryptoAmount();
-    },
     fiatSelected() {
       this.getFiatAmount(true);
     },
-    cryptoAmount() {
-      //this.getFiatAmount();
-    },
     cryptoSelected() {
       this.getFiatAmount(true);
+      this.address = '';
     },
   },
   methods: {
@@ -180,10 +175,14 @@ export default defineComponent({
       this.updateUrlParameters();
     },
     verifyAddress(e) {
-      //console.log(WAValidator);
-      //const address = e.target.value;
-      //const valid = WAValidator.validate(address, this.cryptoSelected);
-      //console.log(valid);
+      const address = e.target.value;
+      const valid = WAValidator.validate(address, this.cryptoSelected);
+      if (!valid) {
+        this.addressErrorMsg = 'Invalid address';
+      } else {
+        this.addressErrorMsg = '';
+        this.updateUrlParameters();
+      }
     },
   },
   mounted() {
