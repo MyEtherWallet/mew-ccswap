@@ -90,8 +90,8 @@ export default {
 
 <style lang="scss" scoped>
 .verified-box {
-  border: 2px solid #d4d4d4;
+  border: 1px solid #bebebe;
   border-radius: 6px;
-  //min-width: 300px;
+  background-color: #f9f9f9;
 }
 </style>
