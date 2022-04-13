@@ -1,6 +1,5 @@
 <template>
   <div class="component--buy-form elevated-box pa-8 mt-10">
-    <ReCaptcha @token="onReCaptchaToken" />
     <v-row>
       <v-col cols="12" lg="6">
         <div class="mb-2 font-weight-bold">Coin amount to buy</div>
@@ -46,46 +45,51 @@
         </div>
       </v-col>
     </v-row>
-    <v-row>
-      <v-col>
-        <div class="d-sm-flex align-center mb-2">
-          <div class="font-weight-bold mr-2">Address to receive crypto</div>
-          <a
-            class="small d-block mt-n1 mt-sm-0"
-            href="https://www.myetherwallet.com/wallet/create"
-            target="_blank"
-          >
-            Need Ethereum wallet?
-          </a>
-        </div>
-        <v-text-field
-          v-model="address"
-          :label="`${cryptoSelected} address`"
-          required
-          dense
-          :error-messages="addressErrorMsg"
-          @keyup="verifyAddress($event)"
-        ></v-text-field>
-      </v-col>
-    </v-row>
 
-    <v-row>
-      <v-col class="text-center">
-        <div class="pt-2">
-          <div>
-            <v-btn min-height="50px" min-width="200px" color="#05C0A5">
-              <div class="text-white">Buy</div>
-            </v-btn>
-          </div>
-          <div class="mt-2">
-            <v-btn @click="clearForms" elevation="0">
-              <h4 class="font-weight-regular">Clear</h4>
-            </v-btn>
-          </div>
-          <h4 class="mt-2">You will be redirected to the partner's site</h4>
-        </div>
-      </v-col>
-    </v-row>
+    <div>
+      <div class="d-sm-flex align-center mb-2">
+        <div class="font-weight-bold mr-2">Address to receive crypto</div>
+        <a
+          class="small d-block mt-n1 mt-sm-0"
+          href="https://www.myetherwallet.com/wallet/create"
+          target="_blank"
+        >
+          Need Ethereum wallet?
+        </a>
+      </div>
+
+      <v-text-field
+        v-model="address"
+        :label="`${cryptoSelected} address`"
+        required
+        dense
+        :error-messages="addressErrorMsg"
+        @keyup="verifyAddress($event)"
+      ></v-text-field>
+    </div>
+
+    <div class="d-flex align-center justify-center mt-5 mb-5">
+      <ReCaptcha @token="onReCaptchaToken" />
+    </div>
+
+    <div class="pt-2 text-center">
+      <div>
+        <v-btn
+          :disabled="!reCaptchaToken"
+          min-height="50px"
+          min-width="200px"
+          color="#05C0A5"
+        >
+          <div class="text-white">Buy</div>
+        </v-btn>
+      </div>
+      <div class="mt-2">
+        <v-btn @click="clearForms" elevation="0">
+          <h4 class="font-weight-regular">Clear</h4>
+        </v-btn>
+      </div>
+      <h4 class="mt-2">You will be redirected to the partner's site</h4>
+    </div>
   </div>
 </template>
 
@@ -113,7 +117,7 @@ export default defineComponent({
       address: '',
       fiatPricePerCrypto: null,
       addressErrorMsg: '',
-      reCaptchaToken: '',
+      reCaptchaToken: null,
     };
   },
   watch: {
