@@ -2,7 +2,7 @@
   <div
     class="component--promo"
     :style="
-      $vuetify.display.lgAndUp ? 'padding-top: 200px' : 'padding-top: 100px'
+      $vuetify.display.lgAndUp ? 'padding-top: 150px' : 'padding-top: 100px'
     "
   >
     <div>
