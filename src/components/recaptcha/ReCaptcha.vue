@@ -1,52 +1,50 @@
 <template>
-  <div>
-    <div class="verified-box d-flex align-center justify-space-between">
-      <div v-if="loading" class="d-flex align-center">
-        <v-progress-circular
-          indeterminate
-          color="#05c0a5"
-        ></v-progress-circular>
-        <h3
-          style="max-width: 150px; color: #05c0a5"
-          class="ml-4 font-weight-medium"
-        >
-          Google reCaptcha is running....
-        </h3>
-      </div>
-
-      <div v-if="!loading && verified">
-        <h4 class="font-weight-medium" style="max-width: 200px; color: #05c0a5">
-          Google reCaptcha verification successful
-        </h4>
-        <h3 class="d-flex align-center">
-          <v-icon size="45" color="#05c0a5">mdi-check</v-icon>
-          <div class="ml-1 font-weight-medium" style="color: #05c0a5">
-            You are not a bot
-          </div>
-        </h3>
-      </div>
-
-      <div v-if="!loading && !verified">
-        <h4
-          class="font-weight-medium warning--text"
-          style="max-width: 200px; color: #fb8c00"
-        >
-          Google reCaptcha verification failed
-        </h4>
-        <h3 class="d-flex align-center">
-          <v-icon size="45" color="warning">mdi-close</v-icon>
-          <div class="ml-1 font-weight-medium" style="color: #fb8c00">
-            Please try again
-          </div>
-        </h3>
-      </div>
-      <img
-        src="@/assets/images/icon-recaptcha.svg"
-        alt="ReCaptcha"
-        height="68"
-        class="mr-n2"
-      />
+  <div
+    class="verified-box d-flex align-center flex-wrap justify-space-between py-3 px-5"
+  >
+    <div v-if="loading" class="d-flex align-center">
+      <v-progress-circular indeterminate color="#05c0a5"></v-progress-circular>
+      <h3
+        style="max-width: 150px; color: #05c0a5"
+        class="ml-4 font-weight-medium"
+      >
+        Google reCaptcha is running....
+      </h3>
     </div>
+
+    <div v-if="!loading && verified">
+      <h4 class="font-weight-medium" style="max-width: 200px; color: #05c0a5">
+        Google reCaptcha verification successful
+      </h4>
+      <h3 class="d-flex align-center">
+        <v-icon size="45" color="#05c0a5">mdi-check</v-icon>
+        <div class="ml-1 font-weight-medium" style="color: #05c0a5">
+          You are not a bot
+        </div>
+      </h3>
+    </div>
+
+    <div v-if="!loading && !verified">
+      <h4
+        class="font-weight-medium warning--text"
+        style="max-width: 200px; color: #fb8c00"
+      >
+        Google reCaptcha verification failed
+      </h4>
+      <h3 class="d-flex align-center">
+        <v-icon size="45" color="warning">mdi-close</v-icon>
+        <div class="ml-1 font-weight-medium" style="color: #fb8c00">
+          Please try again
+        </div>
+      </h3>
+    </div>
+
+    <img
+      src="@/assets/images/icon-recaptcha.svg"
+      alt="ReCaptcha"
+      :height="$vuetify.display.mobile ? 40 : 68"
+      class="mr-n2"
+    />
   </div>
 </template>
 
@@ -92,9 +90,8 @@ export default {
 
 <style lang="scss" scoped>
 .verified-box {
-  padding: 10px 20px;
   border: 2px solid #d4d4d4;
   border-radius: 6px;
-  min-width: 300px;
+  //min-width: 300px;
 }
 </style>

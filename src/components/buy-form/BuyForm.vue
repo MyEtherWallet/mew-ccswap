@@ -1,5 +1,5 @@
 <template>
-  <div class="component--buy-form elevated-box pa-8 mt-10">
+  <div class="component--buy-form elevated-box pa-3 pa-sm-6 pa-md-8 mt-10">
     <v-row>
       <v-col cols="12" lg="6">
         <div class="mb-2 font-weight-bold">Coin amount to buy</div>
