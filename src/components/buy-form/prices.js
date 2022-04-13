@@ -10,6 +10,7 @@ async function getCryptoData(crypto) {
 
   return await axios.get(fullApiUrl).then(
     (response) => {
+      console.log('Loading API data...');
       return response.data;
     },
     (error) => {

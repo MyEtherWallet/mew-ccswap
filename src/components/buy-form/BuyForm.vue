@@ -11,6 +11,7 @@
               required
               dense
               hide-details
+              @keyup="getFiatAmount()"
             ></v-text-field>
 
             <div style="width: 110px">
@@ -32,6 +33,7 @@
               required
               dense
               hide-details
+              @keyup="getCryptoAmount($event)"
             ></v-text-field>
 
             <div style="width: 110px">
@@ -47,7 +49,7 @@
       <v-row>
         <v-col>
           <div class="d-sm-flex align-center mb-2">
-            <div class="font-weight-bold mr-2">Address to receive coin</div>
+            <div class="font-weight-bold mr-2">Address to receive crypto</div>
             <a
               class="small d-block mt-n1 mt-sm-0"
               href="https://www.myetherwallet.com/wallet/create"
@@ -58,10 +60,11 @@
           </div>
           <v-text-field
             v-model="address"
-            label="ETH address"
+            :label="`${cryptoSelected} address`"
             required
             dense
             hide-details
+            @keyup="verifyAddress($event)"
           ></v-text-field>
         </v-col>
       </v-row>
@@ -85,6 +88,8 @@ import { defineComponent } from 'vue';
 import ReCaptcha from '@/components/recaptcha/ReCaptcha.vue';
 import { supportedCrypto, supportedFiat, getFiatPrice } from './prices.js';
 import _ from 'lodash';
+//import { ethers } from 'ethers';
+import WAValidator from 'multicoin-address-validator';
 
 export default defineComponent({
   name: 'BuyForm',
@@ -106,16 +111,16 @@ export default defineComponent({
   },
   watch: {
     fiatAmount() {
-      this.getPrice();
+      //this.getCryptoAmount();
     },
     fiatSelected() {
-      this.getPrice();
+      this.getFiatAmount(true);
     },
     cryptoAmount() {
-      this.getPrice();
+      //this.getFiatAmount();
     },
     cryptoSelected() {
-      this.getPrice();
+      this.getFiatAmount(true);
     },
   },
   methods: {
@@ -157,26 +162,33 @@ export default defineComponent({
           this.fiatSelected
         );
       },
-      1500,
+      500,
       { trailing: false }
     ),
-    async getPrice() {
-      await this.throttle_getFiatPrice();
+    async getFiatAmount(loadOnlineApiData = false) {
+      if (loadOnlineApiData) {
+        await this.throttle_getFiatPrice();
+      }
 
-      /*
-      const fiatPricePerCrypto = await getFiatPrice(
-        this.provider,
-        this.cryptoSelected,
-        this.fiatSelected
-      );
-      */
       this.fiatAmount = this.fiatPricePerCrypto * this.cryptoAmount;
       this.updateUrlParameters();
+    },
+    getCryptoAmount(e) {
+      const fiatAmount = parseFloat(e.target.value);
+      const fiatPricePerCrypto = parseFloat(this.fiatPricePerCrypto);
+      this.cryptoAmount = fiatAmount / fiatPricePerCrypto;
+      this.updateUrlParameters();
+    },
+    verifyAddress(e) {
+      //console.log(WAValidator);
+      //const address = e.target.value;
+      //const valid = WAValidator.validate(address, this.cryptoSelected);
+      //console.log(valid);
     },
   },
   mounted() {
     this.useUrlParametersOnLoad();
-    this.getPrice();
+    this.getFiatAmount(true);
   },
 });
 </script>
