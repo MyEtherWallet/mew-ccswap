@@ -1,6 +1,6 @@
 <template>
   <div class="component--buy-form elevated-box pa-8 mt-10">
-    <ReCaptcha />
+    <ReCaptcha @token="onReCaptchaToken" />
     <v-row>
       <v-col cols="12" lg="6">
         <div class="mb-2 font-weight-bold">Coin amount to buy</div>
@@ -113,6 +113,7 @@ export default defineComponent({
       address: '',
       fiatPricePerCrypto: null,
       addressErrorMsg: '',
+      reCaptchaToken: '',
     };
   },
   watch: {
@@ -125,6 +126,9 @@ export default defineComponent({
     },
   },
   methods: {
+    onReCaptchaToken(token) {
+      this.reCaptchaToken = token;
+    },
     updateUrlParameters() {
       let urlParameters = '?';
       urlParameters += `fiat=${this.fiatSelected}&`;

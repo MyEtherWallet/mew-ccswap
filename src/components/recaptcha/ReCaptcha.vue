@@ -1,5 +1,5 @@
 <template>
-  <button @click="recaptcha">Execute recaptcha</button>
+  <div v-show="false">reCaptcha</div>
 </template>
 
 <script>
@@ -7,7 +7,9 @@ import { useReCaptcha } from 'vue-recaptcha-v3';
 
 export default {
   name: 'ReCaptcha',
-  setup() {
+  emits: ['token'],
+
+  setup(props, { emit }) {
     const { executeRecaptcha, recaptchaLoaded } = useReCaptcha();
 
     const recaptcha = async () => {
@@ -18,8 +20,10 @@ export default {
       const token = await executeRecaptcha('login');
 
       // Do stuff with the received token.
-      console.log({ token });
+      //console.log({ token });
+      emit('token', token);
     };
+
     recaptcha();
 
     return {
