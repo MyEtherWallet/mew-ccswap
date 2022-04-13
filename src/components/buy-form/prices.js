@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const supportedCrypto = ['ETH', 'BTC', 'BNB', 'MATIC'];
+const supportedCrypto = ['ETH', 'BNB', 'MATIC'];
 const supportedFiat = ['USD', 'RUB', 'EUR', 'JPY', 'AUD', 'CAD', 'GBP'];
 const defaultApiUrl =
   'https://mainnet.mewwallet.dev/v3/purchase/providers/web?iso=us&cryptoCurrency=';

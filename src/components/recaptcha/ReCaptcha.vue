@@ -20,7 +20,6 @@ export default {
       const token = await executeRecaptcha('login');
 
       // Do stuff with the received token.
-      //console.log({ token });
       emit('token', token);
     };
 
