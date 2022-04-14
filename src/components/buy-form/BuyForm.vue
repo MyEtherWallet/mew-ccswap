@@ -24,7 +24,7 @@
     </div>
 
     <div>
-      <div class="mb-2 font-weight-bold">Purchasing price</div>
+      <div class="mb-2 font-weight-bold">Buying price</div>
       <div class="d-flex">
         <v-text-field
           hide-details
