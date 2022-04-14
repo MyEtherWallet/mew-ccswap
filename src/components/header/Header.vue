@@ -18,7 +18,7 @@
       </p>
     </div>
 
-    <div class="d-flex align-center mt-12">
+    <div class="d-flex align-center mt-15">
       <div class="mr-2">Powered by</div>
       <img src="@/assets/images/icon-simplex.svg" alt="Simplex" height="30" />
     </div>
