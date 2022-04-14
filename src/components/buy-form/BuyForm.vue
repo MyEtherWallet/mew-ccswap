@@ -68,7 +68,7 @@
       ></v-text-field>
     </div>
 
-    <div class="d-flex align-center justify-center mt-5 mb-2">
+    <div class="d-flex align-center justify-center mt-5 mb-5">
       <ReCaptcha @token="onReCaptchaToken" />
     </div>
 
