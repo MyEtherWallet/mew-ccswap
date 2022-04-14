@@ -1,50 +1,51 @@
 <template>
   <div class="component--buy-form elevated-box pa-3 pa-sm-6 pa-md-8 mt-10">
-    <v-row>
-      <v-col cols="12" lg="6">
-        <div class="mb-2 font-weight-bold">Coin amount to buy</div>
-        <div class="d-flex">
-          <v-text-field
-            v-model.number="cryptoAmount"
-            :label="`Amount of ${cryptoSelected}`"
-            required
-            dense
-            hide-details
-            @keyup="getFiatAmount()"
-          ></v-text-field>
+    <div>
+      <div class="mb-2 font-weight-bold">Coin amount to buy</div>
+      <div class="d-flex">
+        <v-text-field
+          hide-details
+          type="number"
+          v-model.number="cryptoAmount"
+          :label="`Amount of ${cryptoSelected}`"
+          required
+          dense
+          @keyup="getFiatAmount()"
+        ></v-text-field>
 
-          <div style="width: 110px">
-            <v-select
-              v-model="cryptoSelected"
-              label="Currency"
-              :items="cryptoItems"
-            ></v-select>
-          </div>
+        <div style="width: 110px">
+          <v-select
+            v-model="cryptoSelected"
+            label="Currency"
+            :items="cryptoItems"
+          ></v-select>
         </div>
-      </v-col>
-      <v-col cols="12" lg="6">
-        <div class="mb-2 font-weight-bold">Purchasing price</div>
-        <div class="d-flex">
-          <v-text-field
-            v-model.number="fiatAmount"
-            :label="`Price in ${fiatSelected}`"
-            prefix="$"
-            required
-            dense
-            hide-details
-            @keyup="getCryptoAmount($event)"
-          ></v-text-field>
+      </div>
+    </div>
 
-          <div style="width: 110px">
-            <v-select
-              v-model="fiatSelected"
-              label="Currency"
-              :items="fiatItems"
-            ></v-select>
-          </div>
+    <div>
+      <div class="mb-2 font-weight-bold">Purchasing price</div>
+      <div class="d-flex">
+        <v-text-field
+          hide-details
+          type="number"
+          v-model.number="fiatAmount"
+          :label="`Price in ${fiatSelected}`"
+          prefix="$"
+          required
+          dense
+          @keyup="getCryptoAmount($event)"
+        ></v-text-field>
+
+        <div style="width: 110px">
+          <v-select
+            v-model="fiatSelected"
+            label="Currency"
+            :items="fiatItems"
+          ></v-select>
         </div>
-      </v-col>
-    </v-row>
+      </div>
+    </div>
 
     <div>
       <div class="d-sm-flex align-center mb-2">
@@ -68,14 +69,14 @@
       ></v-text-field>
     </div>
 
-    <div class="d-flex align-center justify-center mt-5 mb-5">
+    <div class="d-flex align-center justify-center mt-3 mb-5">
       <ReCaptcha @token="onReCaptchaToken" />
     </div>
 
     <div class="pt-2 text-center">
       <div>
         <v-btn
-          :disabled="!reCaptchaToken"
+          :disabled="!areFormsValid"
           min-height="50px"
           min-width="200px"
           color="#05C0A5"
@@ -116,6 +117,7 @@ export default defineComponent({
       cryptoItems: supportedCrypto,
       address: '',
       fiatPricePerCrypto: null,
+      addressError: true,
       addressErrorMsg: '',
       reCaptchaToken: null,
     };
@@ -127,6 +129,18 @@ export default defineComponent({
     cryptoSelected() {
       this.getFiatAmount(true);
       this.address = '';
+    },
+  },
+  computed: {
+    areFormsValid() {
+      return (
+        this.fiatAmount > 0 &&
+        this.cryptoAmount > 0 &&
+        this.fiatSelected != '' &&
+        this.cryptoSelected != '' &&
+        this.addressError != true &&
+        this.reCaptchaToken != ''
+      );
     },
   },
   methods: {
@@ -156,10 +170,24 @@ export default defineComponent({
 
       if (queryString) {
         const urlParams = new URLSearchParams(queryString);
-        this.fiatSelected = urlParams.get('fiat');
+
+        this.fiatSelected = urlParams.get('fiat')
+          ? urlParams.get('fiat')
+          : 'USD';
+
         this.fiatAmount = urlParams.get('fiat_amount');
-        this.cryptoSelected = urlParams.get('crypto');
-        this.cryptoAmount = urlParams.get('crypto_amount');
+
+        this.cryptoSelected = urlParams.get('crypto')
+          ? urlParams.get('crypto')
+          : 'ETH';
+
+        const cryptoAmount = urlParams.get('crypto_amount');
+        if (_.toNumber(cryptoAmount)) {
+          this.cryptoAmount = cryptoAmount;
+        } else {
+          this.cryptoAmount = 1;
+        }
+
         this.address = urlParams.get('to');
       }
     },
@@ -175,6 +203,7 @@ export default defineComponent({
       { trailing: false }
     ),
     async getFiatAmount(loadOnlineApiData = false) {
+      // Fetch API data only when it is necessary
       if (loadOnlineApiData) {
         await this.throttle_getFiatPrice();
       }
@@ -188,13 +217,21 @@ export default defineComponent({
       this.cryptoAmount = fiatAmount / fiatPricePerCrypto;
       this.updateUrlParameters();
     },
-    verifyAddress(e) {
-      const address = e.target.value;
+    verifyAddress(e = null) {
+      let address = '';
+      if (e) {
+        address = e.target.value;
+      } else {
+        address = this.address;
+      }
+
       const valid = WAValidator.validate(address, this.cryptoSelected);
       if (!valid) {
         this.addressErrorMsg = 'Invalid address';
+        this.addressError = true;
       } else {
         this.addressErrorMsg = '';
+        this.addressError = false;
         this.updateUrlParameters();
       }
     },
@@ -210,6 +247,7 @@ export default defineComponent({
   mounted() {
     this.useUrlParametersOnLoad();
     this.getFiatAmount(true);
+    this.verifyAddress();
   },
 });
 </script>

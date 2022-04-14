@@ -6,10 +6,10 @@
   >
     <v-container>
       <v-row>
-        <v-col cols="12" md="5">
+        <v-col cols="12" md="6">
           <Header />
         </v-col>
-        <v-col cols="12" md="7">
+        <v-col cols="12" md="6">
           <BuyForm />
         </v-col>
       </v-row>

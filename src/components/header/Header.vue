@@ -2,8 +2,20 @@
   <div>
     <img src="@/assets/images/icon-mew-logo-dark.svg" alt="MEW" height="36" />
 
-    <div class="heading-1 mt-15" style="max-width: 350px">
-      Buy Ethereum at Lower Rates
+    <div class="heading-1 mt-15" style="max-width: 400px">
+      Buy Crypto at Great Price!
+    </div>
+
+    <div class="mt-10">
+      <p>
+        Myetherwallet is one of the first movers in the crypto space to be
+        awarded Principal Member of the Visa network, enabling us to offer debit
+        cards to you, so you can offer them directly to your users.
+      </p>
+      <p>
+        As the industry leader, we empower hundreds of partners to enable
+        millions of people to buy billions of dollars in digital assets.
+      </p>
     </div>
 
     <div class="d-flex align-center mt-12">
