@@ -124,11 +124,13 @@ export default defineComponent({
   },
   watch: {
     fiatSelected() {
+      this.verifyAddress();
       this.getFiatAmount(true);
     },
     cryptoSelected() {
-      this.getFiatAmount(true);
       this.address = '';
+      this.verifyAddress();
+      this.getFiatAmount(true);
     },
   },
   computed: {
@@ -227,7 +229,12 @@ export default defineComponent({
 
       const valid = WAValidator.validate(address, this.cryptoSelected);
       if (!valid) {
-        this.addressErrorMsg = 'Invalid address';
+        if (this.address == '') {
+          this.addressErrorMsg = ``;
+        } else {
+          this.addressErrorMsg = `Please type in a valid ${this.cryptoSelected} address`;
+        }
+
         this.addressError = true;
       } else {
         this.addressErrorMsg = '';
@@ -258,6 +265,11 @@ export default defineComponent({
   .v-select .v-field .v-field__input > input {
     height: 0;
     width: 0;
+  }
+
+  .v-messages__message {
+    font-weight: 300;
+    font-size: 0.9rem;
   }
 }
 </style>
