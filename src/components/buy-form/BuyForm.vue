@@ -1,8 +1,8 @@
 <template>
   <div class="component--buy-form elevated-box pa-3 pa-sm-6 pa-md-8 mt-10">
-    <div>
+    <div class="mb-10">
       <div class="mb-2 font-weight-bold">Coin amount to buy</div>
-      <div class="d-flex">
+      <div class="d-flex flex-wrap-reverse">
         <v-text-field
           hide-details
           type="number"
@@ -13,8 +13,9 @@
           @keyup="getFiatAmount()"
         ></v-text-field>
 
-        <div style="width: 110px">
+        <div style="width: 130px">
           <v-select
+            hide-details
             v-model="cryptoSelected"
             label="Currency"
             :items="cryptoItems"
@@ -23,9 +24,9 @@
       </div>
     </div>
 
-    <div>
+    <div class="mb-10">
       <div class="mb-2 font-weight-bold">Buying price</div>
-      <div class="d-flex">
+      <div class="d-flex flex-wrap-reverse">
         <v-text-field
           hide-details
           type="number"
@@ -37,8 +38,9 @@
           @keyup="getCryptoAmount($event)"
         ></v-text-field>
 
-        <div style="width: 110px">
+        <div style="width: 130px">
           <v-select
+            hide-details
             v-model="fiatSelected"
             label="Currency"
             :items="fiatItems"
