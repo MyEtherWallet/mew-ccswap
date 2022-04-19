@@ -79,8 +79,8 @@ export default defineComponent({
         {
           title: 'First time buy limit',
           description:
-            'If you are buying coins very first time, you can buy up to $10,000 worth of coins.',
-          amount: '$50~$10,000',
+            'If you are buying coins very first time, you can buy up to $20,000 worth of coins.',
+          amount: '$50~$20,000',
           rate: 'for first buy',
         },
         {
