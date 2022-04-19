@@ -32,7 +32,7 @@
           type="number"
           v-model.number="fiatAmount"
           :label="`Price in ${fiatSelected}`"
-          prefix="$"
+          :prefix="currencySymbol"
           required
           dense
           @keyup="getCryptoAmount($event)"
@@ -99,7 +99,12 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import ReCaptcha from '@/components/recaptcha/ReCaptcha.vue';
-import { supportedCrypto, supportedFiat, getFiatPrice } from './prices.js';
+import {
+  supportedCrypto,
+  supportedFiat,
+  currencySymbols,
+  getFiatPrice,
+} from './prices.js';
 import _ from 'lodash';
 import WAValidator from 'multicoin-address-validator';
 
@@ -136,6 +141,9 @@ export default defineComponent({
     },
   },
   computed: {
+    currencySymbol() {
+      return currencySymbols[this.fiatSelected];
+    },
     areFormsValid() {
       return (
         this.fiatAmount > 0 &&

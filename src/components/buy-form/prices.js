@@ -2,6 +2,16 @@ import axios from 'axios';
 
 const supportedCrypto = ['ETH', 'BNB', 'MATIC'];
 const supportedFiat = ['USD', 'RUB', 'EUR', 'JPY', 'AUD', 'CAD', 'GBP'];
+const currencySymbols = {
+  USD: '$', // US Dollar
+  RUB: '₽', // Russian Ruble
+  EUR: '€', // Euro
+  JPY: '¥', // Japanese Yen
+  AUD: 'AU$', // Australian dollar
+  CAD: 'CA$', // Canadian dollar
+  GBP: '£', // British Pound Sterling
+};
+
 const defaultApiUrl =
   'https://mainnet.mewwallet.dev/v3/purchase/providers/web?iso=us&cryptoCurrency=';
 
@@ -33,4 +43,4 @@ async function getFiatPrice(provider, crypto, fiat) {
   return fiatPriceForCrypto.price;
 }
 
-export { supportedCrypto, supportedFiat, getFiatPrice };
+export { supportedCrypto, supportedFiat, currencySymbols, getFiatPrice };
