@@ -221,8 +221,9 @@ export default defineComponent({
       if (loadOnlineApiData) {
         await this.throttle_getFiatPrice();
       }
-
-      this.fiatAmount = this.fiatPricePerCrypto * this.cryptoAmount;
+      this.fiatAmount = BigNumber(this.fiatPricePerCrypto)
+        .times(this.cryptoAmount)
+        .toNumber();
       this.updateUrlParameters();
     },
     getCryptoAmount(e) {
@@ -230,7 +231,6 @@ export default defineComponent({
       this.cryptoAmount = BigNumber(fiatAmount)
         .div(this.fiatPricePerCrypto)
         .toNumber();
-
       this.updateUrlParameters();
     },
     verifyAddress(e = null) {
