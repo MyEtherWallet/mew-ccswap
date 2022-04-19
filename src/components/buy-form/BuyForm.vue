@@ -88,7 +88,7 @@
       </div>
       <div class="mt-2">
         <v-btn @click="clearForms" elevation="0">
-          <h4 class="font-weight-regular">Clear</h4>
+          <h5 class="font-weight-regular">Clear</h5>
         </v-btn>
       </div>
       <h4 class="mt-2">You will be redirected to the partner's site</h4>
@@ -135,7 +135,8 @@ export default defineComponent({
       this.getFiatAmount(true);
     },
     cryptoSelected() {
-      this.address = '';
+      // Clear address @ change crypto
+      //this.address = '';
       this.verifyAddress();
       this.getFiatAmount(true);
     },
@@ -280,6 +281,9 @@ export default defineComponent({
   .v-messages__message {
     font-weight: 300;
     font-size: 0.9rem;
+  }
+  .v-text-field__prefix {
+    font-size: 0.8rem;
   }
 }
 </style>

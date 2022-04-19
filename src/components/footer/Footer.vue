@@ -1,5 +1,5 @@
 <template>
-  <div class="component--footer py-6">
+  <div class="component--footer">
     <v-container class="text-center">
       <div>©2018 MyEtherWallet Inc. All rights reserved</div>
       <div class="mb-2">
