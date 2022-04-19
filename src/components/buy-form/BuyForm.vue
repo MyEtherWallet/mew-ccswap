@@ -97,6 +97,7 @@
 </template>
 
 <script lang="ts">
+import BigNumber from 'bignumber.js';
 import { defineComponent } from 'vue';
 import ReCaptcha from '@/components/recaptcha/ReCaptcha.vue';
 import {
@@ -225,9 +226,11 @@ export default defineComponent({
       this.updateUrlParameters();
     },
     getCryptoAmount(e) {
-      const fiatAmount = parseFloat(e.target.value);
-      const fiatPricePerCrypto = parseFloat(this.fiatPricePerCrypto);
-      this.cryptoAmount = fiatAmount / fiatPricePerCrypto;
+      const fiatAmount = e.target.value;
+      this.cryptoAmount = BigNumber(fiatAmount)
+        .div(this.fiatPricePerCrypto)
+        .toNumber();
+
       this.updateUrlParameters();
     },
     verifyAddress(e = null) {
