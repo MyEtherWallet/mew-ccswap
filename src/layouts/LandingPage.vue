@@ -81,13 +81,13 @@ export default defineComponent({
 
 .background-space-man-lg {
   background-size: 603px;
-  background-position: calc(50% + 854px) 9px;
+  background-position: calc(50% + 854px) 54px;
 }
 
 .background-space-man-xl {
   margin: 0 auto;
   max-width: 2565px;
   background-size: 603px;
-  background-position: calc(50% + 944px) 9px;
+  background-position: calc(50% + 944px) 54px;
 }
 </style>

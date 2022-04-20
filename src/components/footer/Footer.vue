@@ -6,7 +6,11 @@
 
       <h3 class="font-weight-regular mb-3">
         Need Ethereum wallet? Get one from
-        <span class="font-weight-bold">myetherwallet.com</span>.
+        <a href="https://www.myetherwallet.com/wallet/create" target="_blank">
+          <span class="text--primary font-weight-bold">
+            myetherwallet.com
+          </span>
+        </a>
       </h3>
 
       <v-btn

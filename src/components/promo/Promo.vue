@@ -16,7 +16,7 @@
             <div class="font-weight-light">
               {{ p1.description }}
             </div>
-            <h2 class="text-mew font-weight-medium mt-3">
+            <h2 class="text--mew font-weight-medium mt-3">
               {{ p1.amount }}
               <span>{{ p1.rate }}</span>
             </h2>

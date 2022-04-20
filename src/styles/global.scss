@@ -81,19 +81,23 @@ a {
   font-weight: 300;
 }
 
-.text-gray {
+.text--primary {
+  color: $primary;
+}
+
+.text--gray {
   color: $gray;
 }
 
-.text-dark {
+.text--dark {
   color: $dark;
 }
 
-.text-white {
+.text--white {
   color: white;
 }
 
-.text-mew {
+.text--mew {
   color: $mew;
 }
 

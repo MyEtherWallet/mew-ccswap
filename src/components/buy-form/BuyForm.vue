@@ -83,7 +83,7 @@
           min-width="200px"
           color="#05C0A5"
         >
-          <div class="text-white">Buy</div>
+          <div class="text--white">Buy</div>
         </v-btn>
       </div>
       <div class="mt-2">
