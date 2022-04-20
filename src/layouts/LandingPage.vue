@@ -88,6 +88,6 @@ export default defineComponent({
   margin: 0 auto;
   max-width: 2565px;
   background-size: 603px;
-  background-position: calc(50% + 944px) 54px;
+  background-position: calc(50% + 854px) 54px;
 }
 </style>
