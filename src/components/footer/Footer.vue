@@ -1,17 +1,21 @@
 <template>
-  <div class="component--footer">
+  <div class="component--footer py-2">
     <v-container class="text-center">
+      <img src="@/assets/images/icon-mew-logo-dark.svg" alt="MEW" height="23" />
       <div>©2018 MyEtherWallet Inc. All rights reserved</div>
-      <div class="mb-2">
-        Need an Ethereum wallet? Get one from
+
+      <h3 class="font-weight-regular mb-3">
+        Need Ethereum wallet? Get one from
         <span class="font-weight-bold">myetherwallet.com</span>.
-      </div>
+      </h3>
+
       <v-btn
         @click="openInNewTab('https://www.myetherwallet.com/wallet/create')"
         x-small
-        height="42px"
-        >Get a wallet</v-btn
+        height="32px"
       >
+        <h4 class="font-weight-medium">Get Ethereum wallet</h4>
+      </v-btn>
     </v-container>
   </div>
 </template>
