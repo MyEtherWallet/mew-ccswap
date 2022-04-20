@@ -1,7 +1,7 @@
 <template>
   <div class="component--footer py-2">
     <v-container class="text-center">
-      <img src="@/assets/images/icon-mew-logo-dark.svg" alt="MEW" height="23" />
+      <img src="@/assets/images/icon-mew-logo-dark.svg" alt="MEW" height="30" />
       <div>©2018 MyEtherWallet Inc. All rights reserved</div>
 
       <h3 class="font-weight-regular mb-3">
@@ -45,5 +45,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 .component--footer {
   background-color: #05c0a5;
+  position: relative;
+  z-index: 1;
 }
 </style>
