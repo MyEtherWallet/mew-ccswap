@@ -1,5 +1,10 @@
 <template>
   <div class="component--buy-form elevated-box pa-3 pa-sm-6 pa-md-8 mt-10">
+    <div class="py-15">
+      <v-btn @click="buy">Get Simplex Quote</v-btn>
+      <v-btn>Get Simplex Order</v-btn>
+    </div>
+
     <div class="mb-10">
       <div class="mb-2 font-weight-bold">Coin amount to buy</div>
       <div class="d-flex flex-wrap-reverse">
@@ -106,6 +111,7 @@ import {
   currencySymbols,
   getFiatPrice,
 } from './prices.js';
+import { getSimplexQuote, getSimplexOrder } from './buy.js';
 import _ from 'lodash';
 import WAValidator from 'multicoin-address-validator';
 
@@ -158,6 +164,17 @@ export default defineComponent({
     },
   },
   methods: {
+    async buy() {
+      const quote = await getSimplexQuote(
+        '0x4Ba926ce1637B6B9179175Db190e288579D8EdfE',
+        'USD',
+        'ETH',
+        2,
+        'ETH'
+      );
+
+      console.log(quote);
+    },
     onReCaptchaToken(token) {
       this.reCaptchaToken = token;
     },
