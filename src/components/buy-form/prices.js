@@ -62,6 +62,7 @@ async function getSimplexFiatPrice(
         fiatCurrency: fiatCurrency,
         requestedCurrency: requestedCurrency,
         requestedAmount: requestedAmount,
+        cryptoCurrency: requestedCurrency,
       },
     })
     .then(

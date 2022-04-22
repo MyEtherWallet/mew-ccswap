@@ -35,7 +35,7 @@
           :prefix="currencySymbol"
           required
           dense
-          @keyup="getCryptoAmount($event)"
+          @keyup="getCryptoForFiat($event)"
         ></v-text-field>
 
         <div style="width: 130px">
@@ -119,7 +119,6 @@ export default defineComponent({
   },
   data() {
     return {
-      provider: 'simplex',
       fiatAmount: 1,
       fiatSelected: 'USD',
       fiatItems: supportedFiat,
@@ -136,13 +135,15 @@ export default defineComponent({
   watch: {
     fiatSelected() {
       this.verifyAddress();
-      this.getFiatAmount(true);
+      this.setFiatPricePerCrypto();
+      this.getFiatForCrypto();
     },
     cryptoSelected() {
       // Clear address @ change crypto
       //this.address = '';
       this.verifyAddress();
-      this.getFiatAmount(true);
+      this.setFiatPricePerCrypto();
+      this.getFiatForCrypto();
     },
   },
   computed: {
@@ -216,54 +217,42 @@ export default defineComponent({
         this.address = urlParams.get('to');
       }
     },
+    async setFiatPricePerCrypto() {
+      console.log('setFiatPricePerCrypto');
+
+      this.fiatPricePerCrypto = await getSimplexFiatPrice(
+        this.fiatSelected,
+        this.cryptoSelected
+      );
+    },
     debounce_getFiatForCrypto: _.debounce(
       async function () {
-        console.log('debounce_getFiatForCrypto');
-
-        this.fiatAmount = await getSimplexFiatPrice(
-          this.fiatSelected,
-          this.cryptoSelected,
-          _.toNumber(this.cryptoAmount)
-        );
-
-        this.updateUrlParameters();
+        await this.getFiatForCrypto();
       },
       1500,
       { trailing: true }
     ),
-    throttle_getFiatPrice: _.throttle(
-      async function () {
-        /*
-        this.fiatPricePerCrypto = await getFiatPrice(
-          this.provider,
-          this.cryptoSelected,
-          this.fiatSelected
-        );
-        */
+    async getFiatForCrypto() {
+      console.log(
+        'getFiatForCrypto ==================================================================='
+      );
 
-        this.fiatPricePerCrypto = await getSimplexFiatPrice(
-          this.fiatSelected,
-          this.cryptoSelected
-        );
-      },
-      500,
-      { trailing: false }
-    ),
-    async getFiatAmount(loadOnlineApiData = true) {
-      // Fetch API data only when it is necessary
-      if (loadOnlineApiData) {
-        await this.throttle_getFiatPrice();
-      }
-      this.fiatAmount = BigNumber(this.fiatPricePerCrypto)
-        .times(this.cryptoAmount)
-        .toNumber();
+      this.fiatAmount = await getSimplexFiatPrice(
+        this.fiatSelected,
+        this.cryptoSelected,
+        _.toNumber(this.cryptoAmount)
+      );
+
       this.updateUrlParameters();
     },
-    getCryptoAmount(e) {
+    async getCryptoForFiat(e) {
       const fiatAmount = e.target.value;
+
       this.cryptoAmount = BigNumber(fiatAmount)
         .div(this.fiatPricePerCrypto)
         .toNumber();
+
+      await this.debounce_getFiatForCrypto();
       this.updateUrlParameters();
     },
     verifyAddress(e = null) {
@@ -295,12 +284,16 @@ export default defineComponent({
       this.cryptoAmount = 1;
       this.cryptoSelected = 'ETH';
       this.address = '';
-      this.getFiatAmount();
+      this.getFiatForCrypto();
     },
   },
-  mounted() {
+  async mounted() {
     this.loadUrlParameters();
-    this.debounce_getFiatForCrypto();
+
+    // Set fiat price per crypto for local price estimation
+    await this.setFiatPricePerCrypto();
+
+    this.getFiatForCrypto();
     this.verifyAddress();
   },
 });
