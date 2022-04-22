@@ -1,7 +1,6 @@
 import axios from 'axios';
 
-const quoteApiUrl =
-  'https://mainnet.mewwallet.dev/purchase/simplex/quote?fiatCurrency=USD&requestedCurrency=ETH&requestedAmount=2&cryptoCurrency=ETH';
+const quoteApiUrl = 'https://mainnet.mewwallet.dev/purchase/simplex/quote';
 const orderApiUrl = 'https://mainnet.mewwallet.dev/purchase/simplex/order';
 
 async function getSimplexQuote(
@@ -63,6 +62,8 @@ async function executeOrder(
     requestedAmount,
     cryptoCurrency
   );
+
+  console.log(quote);
 
   const order = await getSimplexOrder(quote.payment_id, address);
 

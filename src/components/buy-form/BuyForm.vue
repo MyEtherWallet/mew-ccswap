@@ -1,9 +1,5 @@
 <template>
   <div class="component--buy-form elevated-box pa-3 pa-sm-6 pa-md-8 mt-10">
-    <div class="py-15">
-      <v-btn @click="buy">Get Simplex Quote</v-btn>
-    </div>
-
     <div class="mb-10">
       <div class="mb-2 font-weight-bold">Coin amount to buy</div>
       <div class="d-flex flex-wrap-reverse">
@@ -86,6 +82,7 @@
           min-height="50px"
           min-width="200px"
           color="#05C0A5"
+          @click="buy"
         >
           <div class="text--white">Buy</div>
         </v-btn>
@@ -109,6 +106,7 @@ import {
   supportedFiat,
   currencySymbols,
   getFiatPrice,
+  getSimplexFiatPrice,
 } from './prices.js';
 import { executeOrder } from './order.js';
 import _ from 'lodash';
@@ -165,11 +163,10 @@ export default defineComponent({
   methods: {
     async buy() {
       await executeOrder(
-        '0x4Ba926ce1637B6B9179175Db190e288579D8EdfE',
-        'USD',
-        'ETH',
-        2,
-        'ETH'
+        this.address,
+        this.fiatSelected,
+        this.cryptoSelected,
+        this.cryptoAmount
       );
     },
     onReCaptchaToken(token) {
@@ -221,10 +218,17 @@ export default defineComponent({
     },
     throttle_getFiatPrice: _.throttle(
       async function () {
+        /*
         this.fiatPricePerCrypto = await getFiatPrice(
           this.provider,
           this.cryptoSelected,
           this.fiatSelected
+        );
+        */
+
+        this.fiatPricePerCrypto = await getSimplexFiatPrice(
+          this.fiatSelected,
+          this.cryptoSelected
         );
       },
       500,
