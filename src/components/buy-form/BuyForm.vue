@@ -10,7 +10,7 @@
           :label="`Amount of ${cryptoSelected}`"
           required
           dense
-          @keyup="getFiatAmount()"
+          @keyup="debounce_getFiatForCrypto()"
         ></v-text-field>
 
         <div style="width: 130px">
@@ -190,7 +190,7 @@ export default defineComponent({
         window.history.pushState({ path: newurl }, '', newurl);
       }
     },
-    useUrlParametersOnLoad() {
+    loadUrlParameters() {
       const queryString = window.location.search;
 
       if (queryString) {
@@ -216,6 +216,21 @@ export default defineComponent({
         this.address = urlParams.get('to');
       }
     },
+    debounce_getFiatForCrypto: _.debounce(
+      async function () {
+        console.log('debounce_getFiatForCrypto');
+
+        this.fiatAmount = await getSimplexFiatPrice(
+          this.fiatSelected,
+          this.cryptoSelected,
+          _.toNumber(this.cryptoAmount)
+        );
+
+        this.updateUrlParameters();
+      },
+      1500,
+      { trailing: true }
+    ),
     throttle_getFiatPrice: _.throttle(
       async function () {
         /*
@@ -234,7 +249,7 @@ export default defineComponent({
       500,
       { trailing: false }
     ),
-    async getFiatAmount(loadOnlineApiData = false) {
+    async getFiatAmount(loadOnlineApiData = true) {
       // Fetch API data only when it is necessary
       if (loadOnlineApiData) {
         await this.throttle_getFiatPrice();
@@ -284,8 +299,8 @@ export default defineComponent({
     },
   },
   mounted() {
-    this.useUrlParametersOnLoad();
-    this.getFiatAmount(true);
+    this.loadUrlParameters();
+    this.debounce_getFiatForCrypto();
     this.verifyAddress();
   },
 });
