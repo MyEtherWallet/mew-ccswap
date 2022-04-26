@@ -143,11 +143,14 @@ import {
   supportedCrypto,
   supportedFiat,
   currencySymbols,
-  getSimplexFiatPrice,
+  getSimplexQuote,
 } from './prices.js';
 import { executeOrder } from './order.js';
 import _ from 'lodash';
 import WAValidator from 'multicoin-address-validator';
+
+const defaultFiatValue = 100;
+const apiDebounceTime = 1000;
 
 export default defineComponent({
   name: 'BuyForm',
@@ -156,7 +159,7 @@ export default defineComponent({
   },
   data() {
     return {
-      fiatAmount: 60,
+      fiatAmount: defaultFiatValue,
       fiatSelected: 'USD',
       fiatItems: supportedFiat,
 
@@ -273,7 +276,7 @@ export default defineComponent({
       // Turn on loading message
       this.loadingCryptoAmount = true;
 
-      const response = await getSimplexFiatPrice(
+      const response = await getSimplexQuote(
         this.fiatSelected,
         this.cryptoSelected,
         this.fiatSelected,
@@ -291,7 +294,7 @@ export default defineComponent({
       async function () {
         await this.getCryptoForFiat();
       },
-      1000,
+      apiDebounceTime,
       { trailing: true }
     ),
 
@@ -302,7 +305,7 @@ export default defineComponent({
       // Turn on loading message
       this.loadingFiatAmount = true;
 
-      const response = await getSimplexFiatPrice(
+      const response = await getSimplexQuote(
         this.fiatSelected,
         this.cryptoSelected,
         this.cryptoSelected,
@@ -320,7 +323,7 @@ export default defineComponent({
       async function () {
         await this.getFiatForCrypto();
       },
-      1000,
+      apiDebounceTime,
       { trailing: true }
     ),
 
@@ -349,7 +352,7 @@ export default defineComponent({
     /* Clear all forms */
     /* ============================================================================================ */
     clearForms() {
-      this.fiatAmount = 60;
+      this.fiatAmount = defaultFiatValue;
       this.fiatSelected = 'USD';
       this.cryptoAmount = null;
       this.cryptoSelected = 'ETH';

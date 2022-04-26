@@ -15,7 +15,7 @@ const currencySymbols = {
   GBP: '£', // British Pound Sterling
 };
 
-async function getSimplexFiatPrice(
+async function getSimplexQuote(
   fiatCurrency,
   cryptoCurrency,
   requestedCurrency,
@@ -44,4 +44,4 @@ async function getSimplexFiatPrice(
     );
 }
 
-export { supportedCrypto, supportedFiat, currencySymbols, getSimplexFiatPrice };
+export { supportedCrypto, supportedFiat, currencySymbols, getSimplexQuote };
