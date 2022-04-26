@@ -130,13 +130,26 @@
     </div>
 
     <!-- ============================================================================= -->
+    <!-- Buy limit warning -->
+    <!-- ============================================================================= -->
+    <v-snackbar v-model="showAlert" multi-line timeout="7000">
+      <div class="text-center px-3">
+        <h4 class="text--white font-weight-regular">
+          Un oh... The maximum daily crypto buy limit is $20,000
+        </h4>
+        <h3 class="text--white font-weight-bold">
+          The crypto amount must be between $50 and $20,000
+        </h3>
+      </div>
+    </v-snackbar>
+
+    <!-- ============================================================================= -->
     <!-- END of .component--buy-form -->
     <!-- ============================================================================= -->
   </div>
 </template>
 
 <script lang="ts">
-import BigNumber from 'bignumber.js';
 import { defineComponent } from 'vue';
 import ReCaptcha from '@/components/recaptcha/ReCaptcha.vue';
 import {
@@ -175,6 +188,8 @@ export default defineComponent({
       loadingCryptoAmount: false,
 
       reCaptchaToken: null,
+
+      showAlert: false,
     };
   },
   watch: {
@@ -272,16 +287,42 @@ export default defineComponent({
     /* ============================================================================================ */
     /* Get crypto amount for fiat amount from API */
     /* ============================================================================================ */
-    async getCryptoForFiat() {
+    async getCryptoForFiat(options) {
       // Turn on loading message
       this.loadingCryptoAmount = true;
 
-      const response = await getSimplexQuote(
-        this.fiatSelected,
-        this.cryptoSelected,
-        this.fiatSelected,
-        _.toNumber(this.fiatAmount)
-      );
+      let response = null;
+
+      try {
+        response = await getSimplexQuote(
+          this.fiatSelected,
+          this.cryptoSelected,
+          this.fiatSelected,
+          _.toNumber(this.fiatAmount)
+        );
+      } catch (error) {
+        console.log(error);
+        console.log('[ERROR] Simplex API ===============================');
+
+        // Turn off loading message
+        this.loadingCryptoAmount = false;
+
+        this.showAlert = true;
+
+        // Runs only on initial loading.
+        // If URL parameter contains wrong fiat amount,
+        // just reset fiat amount with defaultFiatValue to prevent more errors,
+        // then pull the crypto value one more time.
+        if (options?.initialLoading) {
+          this.fiatAmount = defaultFiatValue;
+          this.getCryptoForFiat();
+          return;
+        }
+
+        // Restore previous fiat value
+        this.getFiatForCrypto();
+        return;
+      }
 
       this.cryptoAmount = response.crypto_amount;
 
@@ -305,12 +346,28 @@ export default defineComponent({
       // Turn on loading message
       this.loadingFiatAmount = true;
 
-      const response = await getSimplexQuote(
-        this.fiatSelected,
-        this.cryptoSelected,
-        this.cryptoSelected,
-        _.toNumber(this.cryptoAmount)
-      );
+      let response = null;
+
+      try {
+        response = await getSimplexQuote(
+          this.fiatSelected,
+          this.cryptoSelected,
+          this.cryptoSelected,
+          _.toNumber(this.cryptoAmount)
+        );
+      } catch (error) {
+        console.log(error);
+        console.log('[ERROR] Simplex API ===============================');
+
+        // Turn off loading message
+        this.loadingFiatAmount = false;
+
+        this.showAlert = true;
+
+        // Restore previous crypto value
+        this.getCryptoForFiat();
+        return;
+      }
 
       this.fiatAmount = response.fiat_amount;
 
@@ -378,7 +435,7 @@ export default defineComponent({
     this.verifyAddress();
 
     // Get crypto amount based on current fiat amount
-    this.getCryptoForFiat();
+    this.getCryptoForFiat({ initialLoading: true });
   },
 });
 </script>

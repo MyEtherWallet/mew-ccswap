@@ -34,14 +34,13 @@ async function getSimplexQuote(
         requestedAmount: requestedAmount,
       },
     })
-    .then(
-      (response) => {
-        return response.data;
-      },
-      (error) => {
-        throw error;
-      }
-    );
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      //throw new Error(error.response.data.message);
+      throw new Error(error.response.data.error);
+    });
 }
 
 export { supportedCrypto, supportedFiat, currencySymbols, getSimplexQuote };
