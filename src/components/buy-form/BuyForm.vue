@@ -25,7 +25,9 @@
           dense
           @keyup="debounce_getFiatForCrypto"
         ></v-text-field>
-        <div style="width: 130px">
+        <div
+          :style="$vuetify.display.smAndDown ? 'width: 100%' : 'width: 130px'"
+        >
           <v-select
             hide-details
             v-model="cryptoSelected"
@@ -62,7 +64,9 @@
           dense
           @keyup="debounce_getCryptoForFiat"
         ></v-text-field>
-        <div style="width: 130px">
+        <div
+          :style="$vuetify.display.smAndDown ? 'width: 100%' : 'width: 130px'"
+        >
           <v-select
             hide-details
             v-model="fiatSelected"
@@ -122,7 +126,7 @@
         </v-btn>
       </div>
       <div class="mt-2">
-        <v-btn @click="clearForms" elevation="0">
+        <v-btn @click="resetForms" elevation="0">
           <h5 class="font-weight-regular">Clear</h5>
         </v-btn>
       </div>
@@ -133,7 +137,12 @@
     <!-- Buy limit warning -->
     <!-- ============================================================================= -->
     <v-snackbar v-model="showAlert" multi-line timeout="7000">
-      <div class="text-center px-3">
+      <div class="text-center pa-3">
+        <img
+          src="@/assets/images/bg-dog.svg"
+          alt="MEW doggy"
+          style="max-width: 100px"
+        />
         <h4 class="text--white font-weight-regular">
           Un oh... The maximum daily crypto buy limit is $20,000
         </h4>
@@ -301,8 +310,7 @@ export default defineComponent({
           _.toNumber(this.fiatAmount)
         );
       } catch (error) {
-        console.log(error);
-        console.log('[ERROR] Simplex API ===============================');
+        console.log(`[ERROR] Simplex API =====> ${error}`);
 
         // Turn off loading message
         this.loadingCryptoAmount = false;
@@ -313,9 +321,8 @@ export default defineComponent({
         // If URL parameter contains wrong fiat amount,
         // just reset fiat amount with defaultFiatValue to prevent more errors,
         // then pull the crypto value one more time.
-        if (options?.initialLoading) {
-          this.fiatAmount = defaultFiatValue;
-          this.getCryptoForFiat();
+        if (options?.isInitialLoading) {
+          this.resetForms();
           return;
         }
 
@@ -406,9 +413,9 @@ export default defineComponent({
     },
 
     /* ============================================================================================ */
-    /* Clear all forms */
+    /* Reset all forms */
     /* ============================================================================================ */
-    clearForms() {
+    resetForms() {
       this.fiatAmount = defaultFiatValue;
       this.fiatSelected = 'USD';
       this.cryptoAmount = null;
@@ -435,7 +442,7 @@ export default defineComponent({
     this.verifyAddress();
 
     // Get crypto amount based on current fiat amount
-    this.getCryptoForFiat({ initialLoading: true });
+    this.getCryptoForFiat({ isInitialLoading: true });
   },
 });
 </script>
