@@ -136,20 +136,19 @@
     <!-- ============================================================================= -->
     <!-- Buy limit warning -->
     <!-- ============================================================================= -->
-    <v-snackbar v-model="showAlert" multi-line timeout="7000" color="orange">
-      <div class="text-center pa-3">
+    <v-snackbar v-model="showAlert" multi-line timeout="10000" color="black">
+      <div class="text-center pa-3" style="max-width: 400px">
         <img
           class="mb-3"
           src="@/assets/images/bg-dog.svg"
           alt="MEW doggy"
           style="max-width: 100px"
         />
-        <h2>Un oh...</h2>
-        <h4 class="text--white1 font-weight-regular">
-          Un oh... The maximum daily crypto buy limit is between $50 and $20,000
-        </h4>
-        <h3 class="text--white1 font-weight-bold">
-          Please type in right amount.
+        <h3 class="text--white">
+          Please type in right amount. Maximum daily crypto buy limit is between
+          <span style="font-size: 1.2rem" class="text--white font-weight-bold">
+            US$50 and US$20,000
+          </span>
         </h3>
       </div>
     </v-snackbar>

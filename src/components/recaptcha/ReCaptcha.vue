@@ -16,12 +16,12 @@
       <h4 class="font-weight-medium" style="max-width: 200px; color: #05c0a5">
         Google reCaptcha verification successful
       </h4>
-      <h3 class="d-flex align-center">
+      <div class="d-flex align-center">
         <v-icon size="45" color="#05c0a5">mdi-check</v-icon>
         <div class="ml-1 font-weight-medium" style="color: #05c0a5">
           You are not a bot
         </div>
-      </h3>
+      </div>
     </div>
 
     <div v-if="!loading && !verified">
