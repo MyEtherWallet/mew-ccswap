@@ -4,7 +4,17 @@
     <!-- Crypto amount -->
     <!-- ============================================================================= -->
     <div class="mb-10">
-      <div class="mb-2 font-weight-bold">Crypto amount to buy</div>
+      <div class="mb-2 d-flex align-center">
+        <div class="font-weight-bold">Crypto amount to buy</div>
+        <div v-if="loadingCryptoAmount" class="ml-2">
+          <span class="h4 font-weight-regular mr-1">Loading</span>
+          <v-progress-circular
+            :size="11"
+            :width="2"
+            indeterminate
+          ></v-progress-circular>
+        </div>
+      </div>
       <div class="d-flex flex-wrap-reverse">
         <v-text-field
           hide-details
@@ -13,7 +23,7 @@
           :label="`Amount of ${cryptoSelected}`"
           required
           dense
-          @keyup="debounce_getFiatForCrypto()"
+          @keyup="debounce_getFiatForCrypto"
         ></v-text-field>
         <div style="width: 130px">
           <v-select
@@ -30,10 +40,19 @@
     <!-- Fiat amount -->
     <!-- ============================================================================= -->
     <div class="mb-10">
-      <div class="mb-2 font-weight-bold">Buying price</div>
+      <div class="mb-2 d-flex align-center">
+        <div class="font-weight-bold">Buying price</div>
+        <div v-if="loadingFiatAmount" class="ml-2">
+          <span class="h4 font-weight-regular mr-1">Loading</span>
+          <v-progress-circular
+            :size="11"
+            :width="2"
+            indeterminate
+          ></v-progress-circular>
+        </div>
+      </div>
       <div class="d-flex flex-wrap-reverse">
         <v-text-field
-          readonly
           hide-details
           type="number"
           v-model.number="fiatAmount"
@@ -41,20 +60,8 @@
           :prefix="currencySymbol"
           required
           dense
+          @keyup="debounce_getCryptoForFiat"
         ></v-text-field>
-        <!--
-        <v-text-field
-          readonly
-          hide-details
-          type="number"
-          v-model.number="fiatAmount"
-          :label="`Price in ${fiatSelected}`"
-          :prefix="currencySymbol"
-          required
-          dense
-          @keyup="getCryptoForFiat($event)"
-        ></v-text-field>
-        -->
         <div style="width: 130px">
           <v-select
             hide-details
@@ -88,7 +95,7 @@
         required
         dense
         :error-messages="addressErrorMsg"
-        @keyup="verifyAddress($event)"
+        @keyup="verifyAddress"
       ></v-text-field>
     </div>
 
@@ -136,7 +143,6 @@ import {
   supportedCrypto,
   supportedFiat,
   currencySymbols,
-  getFiatPrice,
   getSimplexFiatPrice,
 } from './prices.js';
 import { executeOrder } from './order.js';
@@ -150,16 +156,21 @@ export default defineComponent({
   },
   data() {
     return {
-      fiatAmount: 1,
+      fiatAmount: 60,
       fiatSelected: 'USD',
       fiatItems: supportedFiat,
-      cryptoAmount: 1,
+
+      cryptoAmount: null,
       cryptoSelected: 'ETH',
       cryptoItems: supportedCrypto,
+
       address: '',
-      fiatPricePerCrypto: null,
       addressError: true,
       addressErrorMsg: '',
+
+      loadingFiatAmount: false,
+      loadingCryptoAmount: false,
+
       reCaptchaToken: null,
     };
   },
@@ -168,11 +179,8 @@ export default defineComponent({
     /* Watch for crypto currency change */
     /* ============================================================================================ */
     cryptoSelected() {
-      // Clear address @ change crypto
-      //this.address = '';
       this.verifyAddress();
-      this.setFiatPricePerCrypto();
-      this.getFiatForCrypto();
+      this.getCryptoForFiat();
     },
 
     /* ============================================================================================ */
@@ -180,7 +188,6 @@ export default defineComponent({
     /* ============================================================================================ */
     fiatSelected() {
       this.verifyAddress();
-      this.setFiatPricePerCrypto();
       this.getFiatForCrypto();
     },
   },
@@ -260,27 +267,52 @@ export default defineComponent({
     },
 
     /* ============================================================================================ */
-    /* Set fiat price per crypto value */
+    /* Get crypto amount for fiat amount from API */
     /* ============================================================================================ */
-    async setFiatPricePerCrypto() {
-      this.fiatPricePerCrypto = await getSimplexFiatPrice(
+    async getCryptoForFiat() {
+      // Turn on loading message
+      this.loadingCryptoAmount = true;
+
+      const response = await getSimplexFiatPrice(
         this.fiatSelected,
         this.cryptoSelected,
-        1
+        this.fiatSelected,
+        _.toNumber(this.fiatAmount)
       );
+
+      this.cryptoAmount = response.crypto_amount;
+
+      // Turn off loading message
+      this.loadingCryptoAmount = false;
+
+      this.updateUrlParameters();
     },
+    debounce_getCryptoForFiat: _.debounce(
+      async function () {
+        await this.getCryptoForFiat();
+      },
+      1000,
+      { trailing: true }
+    ),
 
     /* ============================================================================================ */
-    /* Get crypto value from API */
+    /* Get fiat amount for crypto amount from API */
     /* ============================================================================================ */
     async getFiatForCrypto() {
-      //console.log(`[BuyForm.vue] Getting quote from API...`);
+      // Turn on loading message
+      this.loadingFiatAmount = true;
 
-      this.fiatAmount = await getSimplexFiatPrice(
+      const response = await getSimplexFiatPrice(
         this.fiatSelected,
+        this.cryptoSelected,
         this.cryptoSelected,
         _.toNumber(this.cryptoAmount)
       );
+
+      this.fiatAmount = response.fiat_amount;
+
+      // Turn off loading message
+      this.loadingFiatAmount = false;
 
       this.updateUrlParameters();
     },
@@ -288,40 +320,21 @@ export default defineComponent({
       async function () {
         await this.getFiatForCrypto();
       },
-      1300,
+      1000,
       { trailing: true }
     ),
-    async getCryptoForFiat(e) {
-      const fiatAmount = e.target.value;
-
-      // Set estimated crypto amount for the fiat amount
-      this.cryptoAmount = BigNumber(fiatAmount)
-        .div(this.fiatPricePerCrypto)
-        .toNumber();
-
-      // Get real fiat amount for the estimated crypto amount from API
-      await this.debounce_getFiatForCrypto();
-
-      this.updateUrlParameters();
-    },
 
     /* ============================================================================================ */
     /* Verify crypto address */
     /* ============================================================================================ */
-    verifyAddress(e = null) {
-      let address = '';
-      if (e) {
-        address = e.target.value;
-      } else {
-        address = this.address;
-      }
-
-      const valid = WAValidator.validate(address, this.cryptoSelected);
+    verifyAddress() {
+      const valid = WAValidator.validate(this.address, this.cryptoSelected);
       if (!valid) {
         if (this.address == '') {
           this.addressErrorMsg = ``;
         } else {
-          this.addressErrorMsg = `Please type in a valid ${this.cryptoSelected} address`;
+          //this.addressErrorMsg = `Please type in a valid ${this.cryptoSelected} address`;
+          this.addressErrorMsg = `Please type in a valid ETH address`;
         }
 
         this.addressError = true;
@@ -336,12 +349,12 @@ export default defineComponent({
     /* Clear all forms */
     /* ============================================================================================ */
     clearForms() {
-      this.fiatAmount = 1;
+      this.fiatAmount = 60;
       this.fiatSelected = 'USD';
-      this.cryptoAmount = 1;
+      this.cryptoAmount = null;
       this.cryptoSelected = 'ETH';
       this.address = '';
-      this.debounce_getFiatForCrypto();
+      this.debounce_getCryptoForFiat();
     },
 
     /* ============================================================================================ */
@@ -361,11 +374,8 @@ export default defineComponent({
     this.loadUrlParameters();
     this.verifyAddress();
 
-    // Set fiat price per crypto for local price estimation
-    await this.setFiatPricePerCrypto();
-
-    // Get fiat value based on current crypto amount
-    this.getFiatForCrypto();
+    // Get crypto amount based on current fiat amount
+    this.getCryptoForFiat();
   },
 });
 </script>

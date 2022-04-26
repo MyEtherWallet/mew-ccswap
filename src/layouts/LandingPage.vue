@@ -80,8 +80,10 @@ export default defineComponent({
 }
 
 .background-space-man-lg {
-  background-size: 347px;
-  background-position: calc(50% - 43px) 379px;
+  //background-size: 347px;
+  //background-position: calc(50% - 43px) 379px;
+  background-size: 603px;
+  background-position: calc(50% + 854px) 54px;
 }
 
 .background-space-man-xl {

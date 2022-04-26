@@ -15,41 +15,9 @@ const currencySymbols = {
   GBP: '£', // British Pound Sterling
 };
 
-/*
-const defaultApiUrl =
-  'https://mainnet.mewwallet.dev/v3/purchase/providers/web?iso=us&cryptoCurrency=';
-
-async function getCryptoData(crypto) {
-  const fullApiUrl = defaultApiUrl + crypto.toUpperCase();
-
-  return await axios.get(fullApiUrl).then(
-    (response) => {
-      //console.log('Loading API data...');
-
-      return response.data;
-    },
-    (error) => {
-      console.log(error);
-    }
-  );
-}
-async function getFiatPrice(provider, crypto, fiat) {
-  const allProviders = await getCryptoData(crypto);
-
-  const theProvider = allProviders.filter(
-    (p) => p.name.toLowerCase() === provider.toLowerCase()
-  )[0];
-
-  const fiatPriceForCrypto = theProvider.prices.filter((p) => {
-    return p.fiat_currency === fiat;
-  })[0];
-
-  return fiatPriceForCrypto.price;
-}
-*/
-
 async function getSimplexFiatPrice(
   fiatCurrency,
+  cryptoCurrency,
   requestedCurrency,
   requestedAmount = 1,
   address = '0x2d27851680eB0A41d6F77CB7b38F64752bC1DEFD'
@@ -61,18 +29,17 @@ async function getSimplexFiatPrice(
       params: {
         id: `WEB|${address}`,
         fiatCurrency: fiatCurrency,
+        cryptoCurrency: cryptoCurrency,
         requestedCurrency: requestedCurrency,
         requestedAmount: requestedAmount,
-        cryptoCurrency: requestedCurrency,
       },
     })
     .then(
       (response) => {
-        //console.log(response.data.fiat_amount);
-        return response.data.fiat_amount;
+        return response.data;
       },
       (error) => {
-        console.log(error);
+        throw error;
       }
     );
 }

@@ -32,7 +32,8 @@ p {
   margin-bottom: 1rem;
 }
 
-h1 {
+h1,
+.h1 {
   font-size: 2rem;
   line-height: 2.6rem;
   font-weight: 300;
@@ -50,19 +51,22 @@ h2,
   }
 }
 
-h3 {
+h3,
+.h3 {
   font-size: 0.93rem;
   line-height: 1.2rem;
   font-weight: 300;
 }
 
-h4 {
+h4,
+.h4 {
   font-size: 0.84rem;
   line-height: 1.1rem;
   font-weight: 300;
 }
 
-h5 {
+h5,
+.h5 {
   font-size: 0.64rem;
   line-height: 1rem;
   font-weight: 400;
