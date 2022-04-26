@@ -136,18 +136,20 @@
     <!-- ============================================================================= -->
     <!-- Buy limit warning -->
     <!-- ============================================================================= -->
-    <v-snackbar v-model="showAlert" multi-line timeout="7000">
+    <v-snackbar v-model="showAlert" multi-line timeout="7000" color="orange">
       <div class="text-center pa-3">
         <img
+          class="mb-3"
           src="@/assets/images/bg-dog.svg"
           alt="MEW doggy"
           style="max-width: 100px"
         />
-        <h4 class="text--white font-weight-regular">
-          Un oh... The maximum daily crypto buy limit is $20,000
+        <h2>Un oh...</h2>
+        <h4 class="text--white1 font-weight-regular">
+          Un oh... The maximum daily crypto buy limit is between $50 and $20,000
         </h4>
-        <h3 class="text--white font-weight-bold">
-          The crypto amount must be between $50 and $20,000
+        <h3 class="text--white1 font-weight-bold">
+          Please type in right amount.
         </h3>
       </div>
     </v-snackbar>
@@ -202,17 +204,17 @@ export default defineComponent({
     };
   },
   watch: {
-    /* ============================================================================================ */
-    /* Watch for crypto currency change */
-    /* ============================================================================================ */
+    // ============================================================================================
+    // Watch for crypto currency change
+    // ============================================================================================
     cryptoSelected() {
       this.verifyAddress();
       this.getCryptoForFiat();
     },
 
-    /* ============================================================================================ */
-    /* Watch for fiat currency change */
-    /* ============================================================================================ */
+    // ============================================================================================
+    // Watch for fiat currency change
+    // ============================================================================================
     fiatSelected() {
       this.verifyAddress();
       this.getFiatForCrypto();
@@ -223,9 +225,9 @@ export default defineComponent({
       return currencySymbols[this.fiatSelected];
     },
 
-    /* ============================================================================================ */
-    /* Validate forms to Enable/Disable buy button */
-    /* ============================================================================================ */
+    // ============================================================================================
+    // Validate forms to Enable/Disable buy button
+    // ============================================================================================
     areFormsValid() {
       return (
         this.fiatAmount > 0 &&
@@ -238,16 +240,16 @@ export default defineComponent({
     },
   },
   methods: {
-    /* ============================================================================================ */
-    /* Set ReCaptcha token */
-    /* ============================================================================================ */
+    // ============================================================================================
+    // Set ReCaptcha token
+    // ============================================================================================
     onReCaptchaToken(token) {
       this.reCaptchaToken = token;
     },
 
-    /* ============================================================================================ */
-    /* URL parameter */
-    /* ============================================================================================ */
+    // ============================================================================================
+    // URL parameter
+    // ============================================================================================
     updateUrlParameters() {
       let urlParameters = '?';
       urlParameters += `fiat=${this.fiatSelected}&`;
@@ -293,10 +295,10 @@ export default defineComponent({
       }
     },
 
-    /* ============================================================================================ */
-    /* Get crypto amount for fiat amount from API */
-    /* ============================================================================================ */
-    async getCryptoForFiat(options) {
+    // ============================================================================================
+    // Get crypto amount for fiat amount from API
+    // ============================================================================================
+    async getCryptoForFiat(options = { isInitialLoading: false }) {
       // Turn on loading message
       this.loadingCryptoAmount = true;
 
@@ -315,18 +317,21 @@ export default defineComponent({
         // Turn off loading message
         this.loadingCryptoAmount = false;
 
+        // Show alert message to the user
         this.showAlert = true;
 
+        // ==============================================================================
         // Runs only on initial loading.
         // If URL parameter contains wrong fiat amount,
         // just reset fiat amount with defaultFiatValue to prevent more errors,
         // then pull the crypto value one more time.
-        if (options?.isInitialLoading) {
+        // ==============================================================================
+        if (options.isInitialLoading) {
           this.resetForms();
           return;
         }
 
-        // Restore previous fiat value
+        // Restore valid(before error) fiat value
         this.getFiatForCrypto();
         return;
       }
@@ -346,9 +351,9 @@ export default defineComponent({
       { trailing: true }
     ),
 
-    /* ============================================================================================ */
-    /* Get fiat amount for crypto amount from API */
-    /* ============================================================================================ */
+    // ============================================================================================
+    // Get fiat amount for crypto amount from API
+    // ============================================================================================
     async getFiatForCrypto() {
       // Turn on loading message
       this.loadingFiatAmount = true;
@@ -363,15 +368,14 @@ export default defineComponent({
           _.toNumber(this.cryptoAmount)
         );
       } catch (error) {
-        console.log(error);
-        console.log('[ERROR] Simplex API ===============================');
+        console.log(`[ERROR] Simplex API =====> ${error}`);
 
         // Turn off loading message
         this.loadingFiatAmount = false;
 
         this.showAlert = true;
 
-        // Restore previous crypto value
+        // Restore valid(before error) crypto value
         this.getCryptoForFiat();
         return;
       }
@@ -391,9 +395,9 @@ export default defineComponent({
       { trailing: true }
     ),
 
-    /* ============================================================================================ */
-    /* Verify crypto address */
-    /* ============================================================================================ */
+    // ============================================================================================
+    // Verify crypto address
+    // ============================================================================================
     verifyAddress() {
       const valid = WAValidator.validate(this.address, this.cryptoSelected);
       if (!valid) {
@@ -412,9 +416,9 @@ export default defineComponent({
       }
     },
 
-    /* ============================================================================================ */
-    /* Reset all forms */
-    /* ============================================================================================ */
+    // ============================================================================================
+    // Reset all forms
+    // ============================================================================================
     resetForms() {
       this.fiatAmount = defaultFiatValue;
       this.fiatSelected = 'USD';
@@ -424,9 +428,9 @@ export default defineComponent({
       this.debounce_getCryptoForFiat();
     },
 
-    /* ============================================================================================ */
-    /* Buy button click */
-    /* ============================================================================================ */
+    // ============================================================================================
+    // Buy button click
+    // ============================================================================================
     async buy() {
       await executeOrder(
         this.address,
