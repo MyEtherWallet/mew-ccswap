@@ -24,7 +24,7 @@
           :label="`Amount of ${cryptoSelected}`"
           required
           dense
-          @keyup="debounce_getFiatForCrypto"
+          @update:modelValue="debounce_getFiatForCrypto"
         ></v-text-field>
         <div
           :style="$vuetify.display.smAndDown ? 'width: 100%' : 'width: 130px'"
@@ -63,7 +63,7 @@
           :prefix="currencySymbol"
           required
           dense
-          @keyup="debounce_getCryptoForFiat"
+          @update:modelValue="debounce_getCryptoForFiat"
         ></v-text-field>
         <div
           :style="$vuetify.display.smAndDown ? 'width: 100%' : 'width: 130px'"
