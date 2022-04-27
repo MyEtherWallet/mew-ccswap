@@ -1,5 +1,6 @@
 <template>
   <div class="component--buy-form elevated-box pa-3 pa-sm-6 pa-md-8 mt-10">
+    <SubmitForm :form-data="formData" />
     <!-- ============================================================================= -->
     <!-- Crypto amount -->
     <!-- ============================================================================= -->
@@ -126,9 +127,11 @@
         </v-btn>
       </div>
 
-      <v-btn class="my-3" @click="resetForms" variant="text" size="small">
-        Clear
-      </v-btn>
+      <div>
+        <v-btn class="my-3" @click="resetForms" variant="text" size="small">
+          Clear
+        </v-btn>
+      </div>
 
       <h4>You will be redirected to the partner's site</h4>
     </div>
@@ -146,14 +149,17 @@
         />
         <h3 class="text--white">
           Please type in right amount. Maximum daily crypto buy limit is between
-          <span style="font-size: 1.2rem" class="text--white font-weight-bold">
+          <span
+            style="font-size: 1.2rem"
+            class="text--white font-weight-bold text-decoration-underline"
+          >
             US$50 and US$20,000
           </span>
         </h3>
 
-        <v-btn class="mt-3" @click="showAlert = false" size="small"
-          >Okay. Got it!</v-btn
-        >
+        <v-btn class="mt-5" @click="showAlert = false" size="small">
+          Close
+        </v-btn>
       </div>
     </v-snackbar>
 
@@ -172,9 +178,10 @@ import {
   currencySymbols,
   getSimplexQuote,
 } from './prices.js';
-import { executeOrder } from './order.js';
+import { executeSimplexPayment } from './order.js';
 import _ from 'lodash';
 import WAValidator from 'multicoin-address-validator';
+import SubmitForm from './components/SubmitForm.vue';
 
 const defaultFiatValue = 100;
 const apiDebounceTime = 1000;
@@ -183,6 +190,7 @@ export default defineComponent({
   name: 'BuyForm',
   components: {
     ReCaptcha,
+    SubmitForm,
   },
   data() {
     return {
@@ -204,6 +212,8 @@ export default defineComponent({
       reCaptchaToken: null,
 
       showAlert: false,
+
+      formData: null,
     };
   },
   watch: {
@@ -431,13 +441,15 @@ export default defineComponent({
     // Buy button click
     // ============================================================================================
     async buy() {
-      await executeOrder(
+      const response = await executeSimplexPayment(
         this.fiatSelected,
         this.cryptoSelected,
         this.fiatSelected,
         this.fiatAmount,
         this.address
       );
+
+      this.formData = response;
     },
   },
   async mounted() {

@@ -23,10 +23,10 @@ async function getSimplexQuote(
   requestedAmount,
   address = '0x2d27851680eB0A41d6F77CB7b38F64752bC1DEFD'
 ) {
-  const quoteApiUrl = 'https://mainnet.mewwallet.dev/purchase/simplex/quote';
+  const apiQuote = 'https://mainnet.mewwallet.dev/purchase/simplex/quote';
 
   return await axios
-    .get(quoteApiUrl, {
+    .get(apiQuote, {
       params: {
         id: `WEB|${address}`,
         fiatCurrency: fiatCurrency,

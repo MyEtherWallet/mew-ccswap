@@ -15,10 +15,9 @@
 
       <v-btn
         @click="openInNewTab('https://www.myetherwallet.com/wallet/create')"
-        x-small
-        height="30px"
+        size="small"
       >
-        <h4 class="font-weight-medium">Get Ethereum wallet</h4>
+        Get Ethereum wallet
       </v-btn>
     </v-container>
   </div>
