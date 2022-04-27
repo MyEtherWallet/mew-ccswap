@@ -89,7 +89,6 @@ form > div {
 input {
   display: block;
   border: 1px solid black;
-  margin: 10px 0;
   padding: 10px;
   background-color: white;
   border-radius: 5px;
