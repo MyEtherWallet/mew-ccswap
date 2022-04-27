@@ -1,10 +1,9 @@
 <template>
   <div v-if="formData" class="component--submit-form">
     <h1 class="font-weight-bold">(Simplex) form submit</h1>
-    <h2 class="font-weight-bold">
-      for development only. This block will be hidden when eveything is done.
-    </h2>
-    <div class="mt-3">Simplex API document about form submission</div>
+    <h2 class="font-weight-bold">for development only.</h2>
+    <h3 class="font-weight-bold">Hide this block when eveything is done.</h3>
+    <h3 class="mt-3">Simplex API document about form submission</h3>
     <a
       href="https://integrations.simplex.com/wallet-api-integration#payment-form"
       target="_blank"
