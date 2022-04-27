@@ -1,6 +1,6 @@
 <template>
   <div class="component--buy-form elevated-box pa-3 pa-sm-6 pa-md-8 mt-10">
-    <SubmitForm :form-data="formData" :return-url="currentUrl" />
+    <SubmitForm class="mb-15" :form-data="formData" :return-url="currentUrl" />
     <!-- ============================================================================= -->
     <!-- Crypto amount -->
     <!-- ============================================================================= -->

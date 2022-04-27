@@ -49,7 +49,9 @@
         <input type="text" name="payment_id" :value="formData.payment_id" />
       </div>
 
-      <input type="submit" value="Submit" />
+      <div class="mt-15">
+        <input type="submit" value="Submit" />
+      </div>
     </form>
   </div>
 </template>
@@ -74,7 +76,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .component--submit-form {
-  border: 3px solid black;
+  border: 10px solid black;
   padding: 30px;
   border-radius: 20px;
   background-color: #efefef;
@@ -88,8 +90,9 @@ input {
   display: block;
   border: 1px solid black;
   margin: 10px 0;
-  padding: 5px;
+  padding: 10px;
   background-color: white;
+  border-radius: 5px;
 }
 
 * {
