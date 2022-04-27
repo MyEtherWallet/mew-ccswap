@@ -1,7 +1,18 @@
 <template>
   <div v-if="formData" class="component--submit-form">
-    <h1 class="font-weight-bold">Simplex form submit</h1>
-    <h2 class="font-weight-bold">for dev only</h2>
+    <h1 class="font-weight-bold">(Simplex) form submit</h1>
+    <h2 class="font-weight-bold">
+      for development only. This block will be hidden when eveything is done.
+    </h2>
+    <div class="mt-3">Simplex API document about form submission</div>
+    <a
+      href="https://integrations.simplex.com/wallet-api-integration#payment-form"
+      target="_blank"
+    >
+      <h4 style="color: blue">
+        https://integrations.simplex.com/wallet-api-integration#payment-form
+      </h4>
+    </a>
 
     <form action="https://checkout.simplexcc.com/payments/new" method="post">
       <div>
@@ -59,6 +70,7 @@ export default defineComponent({
   components: {},
   props: {
     formData: Object,
+    returnUrl: String,
   },
   data() {
     return {};
@@ -73,6 +85,7 @@ export default defineComponent({
   border: 3px solid black;
   padding: 30px;
   border-radius: 20px;
+  background-color: #efefef;
 }
 
 form > div {
@@ -84,5 +97,10 @@ input {
   border: 1px solid black;
   margin: 10px 0;
   padding: 5px;
+  background-color: white;
+}
+
+* {
+  color: black;
 }
 </style>
