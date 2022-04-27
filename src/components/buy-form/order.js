@@ -3,10 +3,6 @@ import { getSimplexQuote } from './prices.js';
 
 const apiOrder = 'https://mainnet.mewwallet.dev/purchase/simplex/order';
 
-//const apiPaymentFormSubmission = 'https://checkout.simplexcc.com/payments/new';
-const apiPaymentFormSubmission =
-  'https://sandbox.test-simplexcc.com/payments/new';
-
 // ===================================================================================================
 // Get the quote confirmed by Simplex
 // ===================================================================================================
@@ -23,21 +19,6 @@ async function confirmSimplexOrder(paymentId, address) {
     })
     .catch((e) => {});
 }
-
-// ===================================================================================================
-// Send payment form to Simplex to get the buy page link
-// ===================================================================================================
-/*
-async function sendPaymentForm(form) {
-  return await axios
-    .post(apiPaymentFormSubmission, form)
-    .then((response) => {
-      console.log(response.data);
-      return response.data;
-    })
-    .catch((e) => {});
-}
-*/
 
 // ===================================================================================================
 // Execute Simplex payment
@@ -72,11 +53,6 @@ async function executeSimplexPayment(
   );
 
   return responseOrder.form;
-
-  // =====================================================
-  // (3) Get the buy page link from Simplex
-  // =====================================================
-  //await sendPaymentForm(responseOrder.form);
 }
 
 export { executeSimplexPayment };
