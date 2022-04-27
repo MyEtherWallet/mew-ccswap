@@ -125,18 +125,18 @@
           <div class="text--white">Buy</div>
         </v-btn>
       </div>
-      <div class="mt-2">
-        <v-btn @click="resetForms" elevation="0">
-          <h5 class="font-weight-regular">Clear</h5>
-        </v-btn>
-      </div>
-      <h4 class="mt-2">You will be redirected to the partner's site</h4>
+
+      <v-btn class="my-3" @click="resetForms" variant="text" size="small">
+        Clear
+      </v-btn>
+
+      <h4>You will be redirected to the partner's site</h4>
     </div>
 
     <!-- ============================================================================= -->
     <!-- Buy limit warning -->
     <!-- ============================================================================= -->
-    <v-snackbar v-model="showAlert" multi-line timeout="10000" color="black">
+    <v-snackbar v-model="showAlert" multi-line timeout="12000" color="black">
       <div class="text-center pa-3" style="max-width: 400px">
         <img
           class="mb-3"
@@ -150,6 +150,10 @@
             US$50 and US$20,000
           </span>
         </h3>
+
+        <v-btn class="mt-3" @click="showAlert = false" size="small"
+          >Okay. Got it!</v-btn
+        >
       </div>
     </v-snackbar>
 
