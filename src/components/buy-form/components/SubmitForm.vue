@@ -36,20 +36,12 @@
 
       <div>
         <div>return_url_success</div>
-        <input
-          type="text"
-          name="return_url_success"
-          :value="formData.return_url_success"
-        />
+        <input type="text" name="return_url_success" :value="returnUrl" />
       </div>
 
       <div>
         <div>return_url_fail</div>
-        <input
-          type="text"
-          name="return_url_fail"
-          :value="formData.return_url_fail"
-        />
+        <input type="text" name="return_url_fail" :value="returnUrl" />
       </div>
 
       <div>

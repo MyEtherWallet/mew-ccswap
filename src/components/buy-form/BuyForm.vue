@@ -1,6 +1,6 @@
 <template>
   <div class="component--buy-form elevated-box pa-3 pa-sm-6 pa-md-8 mt-10">
-    <SubmitForm :form-data="formData" />
+    <SubmitForm :form-data="formData" :return-url="currentUrl" />
     <!-- ============================================================================= -->
     <!-- Crypto amount -->
     <!-- ============================================================================= -->
@@ -114,7 +114,7 @@
     <!-- ============================================================================= -->
     <!-- Buy/Rest button -->
     <!-- ============================================================================= -->
-    <div class="pt-2 text-center">
+    <div v-if="!processingBuyForm" class="pt-2 text-center">
       <div>
         <v-btn
           :disabled="!areFormsValid"
@@ -134,6 +134,21 @@
       </div>
 
       <h4>You will be redirected to the partner's site</h4>
+    </div>
+
+    <div v-else class="text-center py-5">
+      <v-progress-circular
+        :size="70"
+        :width="7"
+        indeterminate
+        color="#05c0a5"
+      ></v-progress-circular>
+      <div
+        class="text-center font-weight-bold mt-3"
+        style="line-height: 1.4rem"
+      >
+        Processing purchase....
+      </div>
     </div>
 
     <!-- ============================================================================= -->
@@ -214,6 +229,8 @@ export default defineComponent({
       showAlert: false,
 
       formData: null,
+
+      processingBuyForm: false,
     };
   },
   watch: {
@@ -234,6 +251,9 @@ export default defineComponent({
     },
   },
   computed: {
+    currentUrl() {
+      return window.location.href;
+    },
     currencySymbol() {
       return currencySymbols[this.fiatSelected];
     },
@@ -441,6 +461,8 @@ export default defineComponent({
     // Buy button click
     // ============================================================================================
     async buy() {
+      this.processingBuyForm = true;
+
       const response = await executeSimplexPayment(
         this.fiatSelected,
         this.cryptoSelected,
@@ -450,6 +472,8 @@ export default defineComponent({
       );
 
       this.formData = response;
+
+      this.processingBuyForm = false;
     },
   },
   async mounted() {
