@@ -1,34 +1,7 @@
 import axios from 'axios';
+import { getSimplexQuote } from './prices.js';
 
-const quoteApiUrl = 'https://mainnet.mewwallet.dev/purchase/simplex/quote';
 const orderApiUrl = 'https://mainnet.mewwallet.dev/purchase/simplex/order';
-
-async function getSimplexQuote(
-  address,
-  fiatCurrency,
-  requestedCurrency,
-  requestedAmount,
-  cryptoCurrency
-) {
-  return await axios
-    .get(quoteApiUrl, {
-      params: {
-        id: `WEB|${address}`,
-        fiatCurrency: fiatCurrency,
-        requestedCurrency: requestedCurrency,
-        requestedAmount: requestedAmount,
-        cryptoCurrency: cryptoCurrency,
-      },
-    })
-    .then(
-      (response) => {
-        return response.data;
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
-}
 
 async function getSimplexOrder(paymentId, address) {
   return await axios
@@ -38,36 +11,37 @@ async function getSimplexOrder(paymentId, address) {
         address: address,
       },
     })
-    .then(
-      (response) => {
-        return response.data;
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+    .then((response) => {
+      return response.data;
+    })
+    .catch((e) => {});
 }
 
 async function executeOrder(
-  address,
   fiatCurrency,
+  cryptoCurrency,
   requestedCurrency,
   requestedAmount,
-  cryptoCurrency
+  address
 ) {
-  const quote = await getSimplexQuote(
-    address,
-    fiatCurrency,
-    requestedCurrency,
-    requestedAmount,
-    cryptoCurrency
+  let responseQuote = null;
+
+  try {
+    responseQuote = await getSimplexQuote(
+      fiatCurrency,
+      cryptoCurrency,
+      requestedCurrency,
+      requestedAmount,
+      address
+    );
+  } catch (e) {}
+
+  const responseOrder = await getSimplexOrder(
+    responseQuote.payment_id,
+    address
   );
 
-  console.log(quote);
-
-  const order = await getSimplexOrder(quote.payment_id, address);
-
-  console.log(order);
+  console.log(responseOrder);
 }
 
 export { executeOrder };

@@ -308,11 +308,9 @@ export default defineComponent({
           this.fiatSelected,
           this.cryptoSelected,
           this.fiatSelected,
-          _.toNumber(this.fiatAmount)
+          this.fiatAmount
         );
-      } catch (error) {
-        console.log(`[ERROR] Simplex API =====> ${error}`);
-
+      } catch (e) {
         // Turn off loading message
         this.loadingCryptoAmount = false;
 
@@ -364,11 +362,9 @@ export default defineComponent({
           this.fiatSelected,
           this.cryptoSelected,
           this.cryptoSelected,
-          _.toNumber(this.cryptoAmount)
+          this.cryptoAmount
         );
-      } catch (error) {
-        console.log(`[ERROR] Simplex API =====> ${error}`);
-
+      } catch (e) {
         // Turn off loading message
         this.loadingFiatAmount = false;
 
@@ -432,10 +428,11 @@ export default defineComponent({
     // ============================================================================================
     async buy() {
       await executeOrder(
-        this.address,
         this.fiatSelected,
         this.cryptoSelected,
-        this.cryptoAmount
+        this.fiatSelected,
+        this.fiatAmount,
+        this.address
       );
     },
   },

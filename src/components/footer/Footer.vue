@@ -1,7 +1,7 @@
 <template>
   <div class="component--footer py-2">
     <v-container class="text-center">
-      <img src="@/assets/images/icon-mew-logo-dark.svg" alt="MEW" height="30" />
+      <img src="@/assets/images/icon-mew-logo-dark.svg" alt="MEW" height="20" />
       <div>©2018 MyEtherWallet Inc. All rights reserved</div>
 
       <h3 class="font-weight-regular mb-3">
@@ -16,7 +16,7 @@
       <v-btn
         @click="openInNewTab('https://www.myetherwallet.com/wallet/create')"
         x-small
-        height="32px"
+        height="30px"
       >
         <h4 class="font-weight-medium">Get Ethereum wallet</h4>
       </v-btn>
