@@ -1,8 +1,8 @@
 <template>
   <div v-if="formData" class="component--submit-form">
     <h1 class="font-weight-bold">(Simplex) form submit</h1>
-    <h2 class="font-weight-bold">for development only.</h2>
-    <h3 class="font-weight-bold">Hide this block when eveything is done.</h3>
+    <h2 class="font-weight-bold">for development only</h2>
+    <h3 class="font-weight-bold">Hide this block when eveything is done</h3>
     <h3 class="mt-3">Simplex API document about form submission</h3>
     <a
       href="https://integrations.simplex.com/wallet-api-integration#payment-form"
@@ -49,6 +49,11 @@
       </div>
 
       <div class="mt-15">
+        <div>Manual submit button for testing/development</div>
+        <h4 class="font-weight-bold">
+          Click to submit the form manually. This will redirect this page to
+          Simplex payment confirmation page.
+        </h4>
         <input type="submit" value="Submit" />
       </div>
     </form>
@@ -82,7 +87,7 @@ export default defineComponent({
 }
 
 form > div {
-  margin: 20px 0;
+  margin: 20px 0 0 0;
 }
 
 input {
