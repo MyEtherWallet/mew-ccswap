@@ -24,65 +24,51 @@
       <!------------------------------------->
       <!-- version -->
       <!------------------------------------->
-      <div>
-        <div>version</div>
-        <input type="text" name="version" :value="formData.version" />
-      </div>
+      <div>version</div>
+      <input type="text" name="version" :value="formData.version" />
 
       <!------------------------------------->
       <!-- partner -->
       <!------------------------------------->
-      <div>
-        <div>partner</div>
-        <input type="text" name="partner" :value="formData.partner" />
-      </div>
+      <div>partner</div>
+      <input type="text" name="partner" :value="formData.partner" />
 
       <!------------------------------------->
       <!-- payment_flow_type -->
       <!------------------------------------->
-      <div>
-        <div>payment_flow_type</div>
-        <input
-          type="text"
-          name="payment_flow_type"
-          :value="formData.payment_flow_type"
-        />
-      </div>
+      <div>payment_flow_type</div>
+      <input
+        type="text"
+        name="payment_flow_type"
+        :value="formData.payment_flow_type"
+      />
 
       <!------------------------------------->
       <!-- return_url_success -->
       <!------------------------------------->
-      <div>
-        <div>return_url_success</div>
-        <input type="text" name="return_url_success" :value="returnUrl" />
-      </div>
+      <div>return_url_success</div>
+      <input type="text" name="return_url_success" :value="returnUrl" />
 
       <!------------------------------------->
       <!-- return_url_fail -->
       <!------------------------------------->
-      <div>
-        <div>return_url_fail</div>
-        <input type="text" name="return_url_fail" :value="returnUrl" />
-      </div>
+      <div>return_url_fail</div>
+      <input type="text" name="return_url_fail" :value="returnUrl" />
 
       <!------------------------------------->
       <!-- payment_id -->
       <!------------------------------------->
-      <div>
-        <div>payment_id</div>
-        <input type="text" name="payment_id" :value="formData.payment_id" />
-      </div>
+      <div>payment_id</div>
+      <input type="text" name="payment_id" :value="formData.payment_id" />
 
       <!------------------------------------->
       <!-- submit button -->
       <!------------------------------------->
       <div>
-        <div>
-          Click to submit the form manually. This will redirect this page to
-          Simplex payment confirmation page.
-        </div>
-        <input type="submit" value="Submit" />
+        Click to submit the form manually. This will redirect this page to
+        Simplex payment confirmation page.
       </div>
+      <input type="submit" value="Submit" />
     </form>
     <!-- ========================================================================================= -->
     <!-- Simplex payment form (END) -->
