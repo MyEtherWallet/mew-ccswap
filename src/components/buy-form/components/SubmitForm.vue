@@ -13,17 +13,33 @@
       </h4>
     </a>
 
-    <form action="https://checkout.simplexcc.com/payments/new" method="post">
+    <!-- ========================================================================================= -->
+    <!-- Simplex payment form (START) -->
+    <!-- ========================================================================================= -->
+    <form
+      action="https://checkout.simplexcc.com/payments/new"
+      method="POST"
+      target="_self"
+    >
+      <!------------------------------------->
+      <!-- version -->
+      <!------------------------------------->
       <div>
         <div>version</div>
         <input type="text" name="version" :value="formData.version" />
       </div>
 
+      <!------------------------------------->
+      <!-- partner -->
+      <!------------------------------------->
       <div>
         <div>partner</div>
         <input type="text" name="partner" :value="formData.partner" />
       </div>
 
+      <!------------------------------------->
+      <!-- payment_flow_type -->
+      <!------------------------------------->
       <div>
         <div>payment_flow_type</div>
         <input
@@ -33,30 +49,44 @@
         />
       </div>
 
+      <!------------------------------------->
+      <!-- return_url_success -->
+      <!------------------------------------->
       <div>
         <div>return_url_success</div>
         <input type="text" name="return_url_success" :value="returnUrl" />
       </div>
 
+      <!------------------------------------->
+      <!-- return_url_fail -->
+      <!------------------------------------->
       <div>
         <div>return_url_fail</div>
         <input type="text" name="return_url_fail" :value="returnUrl" />
       </div>
 
+      <!------------------------------------->
+      <!-- payment_id -->
+      <!------------------------------------->
       <div>
         <div>payment_id</div>
         <input type="text" name="payment_id" :value="formData.payment_id" />
       </div>
 
-      <div class="mt-15">
-        <div>Manual submit button for testing/development</div>
-        <h4 class="font-weight-bold">
+      <!------------------------------------->
+      <!-- submit button -->
+      <!------------------------------------->
+      <div>
+        <div>
           Click to submit the form manually. This will redirect this page to
           Simplex payment confirmation page.
-        </h4>
+        </div>
         <input type="submit" value="Submit" />
       </div>
     </form>
+    <!-- ========================================================================================= -->
+    <!-- Simplex payment form (END) -->
+    <!-- ========================================================================================= -->
   </div>
 </template>
 
