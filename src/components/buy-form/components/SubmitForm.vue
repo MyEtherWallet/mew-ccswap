@@ -1,20 +1,19 @@
 <template>
-  <div v-if="formData" class="component--submit-form">
-    <h1 class="font-weight-bold">(Simplex) form submit</h1>
-    <h2 class="font-weight-bold">for development only</h2>
-    <h3 class="font-weight-bold">Hide this block when eveything is done</h3>
+  <div v-if="formData && false" class="component--submit-form">
+    <h2 class="font-weight-bold">
+      Simplex payment form submit for development only
+    </h2>
+    <h3 class="mt-3">Hide this block when eveything is done</h3>
     <h3 class="mt-3">Simplex API document about form submission</h3>
     <a
       href="https://integrations.simplex.com/wallet-api-integration#payment-form"
       target="_blank"
     >
-      <h4 style="color: blue">
-        https://integrations.simplex.com/wallet-api-integration#payment-form
-      </h4>
+      https://integrations.simplex.com/wallet-api-integration#payment-form
     </a>
 
     <!-- ========================================================================================= -->
-    <!-- Simplex payment form (START) -->
+    <!-- form START -->
     <!-- ========================================================================================= -->
     <form
       action="https://checkout.simplexcc.com/payments/new"
@@ -71,7 +70,7 @@
       <input type="submit" value="Submit" />
     </form>
     <!-- ========================================================================================= -->
-    <!-- Simplex payment form (END) -->
+    <!-- form END -->
     <!-- ========================================================================================= -->
   </div>
 </template>

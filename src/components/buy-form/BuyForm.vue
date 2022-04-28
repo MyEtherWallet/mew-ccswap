@@ -179,7 +179,7 @@
     </v-snackbar>
 
     <!-- ============================================================================= -->
-    <!-- END of .component--buy-form -->
+    <!-- END -->
     <!-- ============================================================================= -->
   </div>
 </template>
@@ -471,9 +471,8 @@ export default defineComponent({
         this.address
       );
 
+      // Manual form submission for development only
       this.formData = response;
-
-      this.processingBuyForm = false;
     },
   },
   async mounted() {

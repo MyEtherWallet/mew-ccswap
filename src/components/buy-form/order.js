@@ -20,6 +20,11 @@ async function confirmSimplexOrder(paymentId, address) {
     .catch((e) => {});
 }
 
+async function submitForm(form) {
+  const url = `https://mainnet.mewwallet.dev/v2/purchase/simplex/order?id=web%7C0xB17b4bF46d6BF4d57434d3Dd199a9964b67b7e1C&fiatCurrency=${form['fiat_total_amount[currency]']}&requestedCurrency=${form['fiat_total_amount[currency]']}&requestedAmount=${form['fiat_total_amount[amount]']}&address=${form['destination_wallet[address]']}`;
+  window.location = url;
+}
+
 // ===================================================================================================
 // Execute Simplex payment
 // ===================================================================================================
@@ -52,6 +57,10 @@ async function executeSimplexPayment(
     address
   );
 
+  // Submit payment form data and goto Simplex payment page.
+  await submitForm(responseOrder.form);
+
+  // Manual form submission for development only
   return responseOrder.form;
 }
 
