@@ -18,7 +18,7 @@
         </div>
       </div>
       <h4 class="mb-2">
-        * Daily buy limit:
+        ** Daily buy limit:
         <span class="font-weight-medium">USD $50 ~ $20,000</span>
       </h4>
       <div class="d-flex flex-wrap-reverse">
@@ -60,7 +60,7 @@
         </div>
       </div>
       <h4 class="mb-2">
-        * Daily buy limit:
+        ** Daily buy limit:
         <span class="font-weight-medium">USD $50 ~ $20,000</span>
       </h4>
       <div class="d-flex flex-wrap-reverse">
@@ -439,7 +439,7 @@ export default defineComponent({
           this.addressErrorMsg = ``;
         } else {
           //this.addressErrorMsg = `Please type in a valid ${this.cryptoSelected} address`;
-          this.addressErrorMsg = `Please type in a valid ETH address`;
+          this.addressErrorMsg = `Please type in valid ETH address`;
         }
 
         this.addressError = true;
