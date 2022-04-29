@@ -1,11 +1,12 @@
 <template>
   <div class="component--buy-form elevated-box pa-3 pa-sm-6 pa-md-8 mt-10">
     <SubmitForm class="mb-15" :form-data="formData" :return-url="currentUrl" />
+
     <!-- ============================================================================= -->
     <!-- Crypto amount -->
     <!-- ============================================================================= -->
     <div class="mb-10">
-      <div class="mb-2 d-flex align-center">
+      <div class="d-flex align-center">
         <div class="font-weight-bold">Crypto amount to buy</div>
         <div v-if="loadingCryptoAmount" class="ml-2">
           <span class="h4 font-weight-regular mr-1">Loading</span>
@@ -16,6 +17,10 @@
           ></v-progress-circular>
         </div>
       </div>
+      <h4 class="mb-2">
+        * Daily buy limit:
+        <span class="font-weight-medium">USD $50 ~ $20,000</span>
+      </h4>
       <div class="d-flex flex-wrap-reverse">
         <v-text-field
           hide-details
@@ -43,7 +48,7 @@
     <!-- Fiat amount -->
     <!-- ============================================================================= -->
     <div class="mb-10">
-      <div class="mb-2 d-flex align-center">
+      <div class="d-flex align-center">
         <div class="font-weight-bold">Buying price</div>
         <div v-if="loadingFiatAmount" class="ml-2">
           <span class="h4 font-weight-regular mr-1">Loading</span>
@@ -54,6 +59,10 @@
           ></v-progress-circular>
         </div>
       </div>
+      <h4 class="mb-2">
+        * Daily buy limit:
+        <span class="font-weight-medium">USD $50 ~ $20,000</span>
+      </h4>
       <div class="d-flex flex-wrap-reverse">
         <v-text-field
           hide-details
@@ -154,25 +163,21 @@
     <!-- ============================================================================= -->
     <!-- Buy limit warning -->
     <!-- ============================================================================= -->
-    <v-snackbar v-model="showAlert" multi-line timeout="12000" color="black">
-      <div class="text-center pa-3" style="max-width: 400px">
+    <v-snackbar v-model="showAlert" multi-line timeout="12000">
+      <div class="text-center pa-3" style="max-width: 350px">
         <img
-          class="mb-3"
-          src="@/assets/images/bg-dog.svg"
+          src="@/assets/images/icon-mew-wallet.png"
           alt="MEW doggy"
-          style="max-width: 100px"
+          style="max-width: 80px"
         />
         <h3 class="text--white">
-          Please type in right amount. Maximum daily crypto buy limit is between
-          <span
-            style="font-size: 1.2rem"
-            class="text--white font-weight-bold text-decoration-underline"
-          >
-            US$50 and US$20,000
+          Uh oh... Maximum daily crypto buy limit is between
+          <span style="font-size: 1.2rem" class="text--white font-weight-bold">
+            USD $50 ~ $20,000
           </span>
         </h3>
 
-        <v-btn class="mt-5" @click="showAlert = false" size="small">
+        <v-btn class="mt-3" @click="showAlert = false" size="small">
           Close
         </v-btn>
       </div>
