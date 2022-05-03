@@ -6,7 +6,7 @@
     "build": "vite build",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
     "dev": "vite",
-    "preview": "vite preview --port 5050"
+    "preview": "vite preview --port=8080"
   },
   "dependencies": {
     "@mdi/font": "5.9.55",
