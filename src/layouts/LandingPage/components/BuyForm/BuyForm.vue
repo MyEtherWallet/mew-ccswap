@@ -1,55 +1,15 @@
 <template>
-  <div class="component--buy-form elevated-box pa-3 pa-sm-6 pa-md-8 mt-10">
+  <div class="component--buy-form elevated-box pa-3 pa-sm-6 pa-md-8">
     <SubmitForm class="mb-15" :form-data="formData" :return-url="currentUrl" />
-
-    <!-- ============================================================================= -->
-    <!-- Crypto amount -->
-    <!-- ============================================================================= -->
-    <div class="mb-10">
-      <div class="d-flex align-center">
-        <div class="font-weight-bold">Crypto amount to buy</div>
-        <div v-if="loadingCryptoAmount" class="ml-2">
-          <span class="h4 font-weight-regular mr-1">Loading</span>
-          <v-progress-circular
-            :size="11"
-            :width="2"
-            indeterminate
-          ></v-progress-circular>
-        </div>
-      </div>
-      <h4 class="mb-2">
-        ** Daily buy limit:
-        <span class="font-weight-medium">USD $50 ~ $20,000</span>
-      </h4>
-      <div class="d-flex">
-        <v-text-field
-          hide-details
-          type="number"
-          v-model.number="cryptoAmount"
-          :label="`Amount of ${cryptoSelected}`"
-          required
-          dense
-          @update:modelValue="debounce_getFiatForCrypto"
-        ></v-text-field>
-
-        <v-select
-          style="max-width: 105px"
-          hide-details
-          v-model="cryptoSelected"
-          label="Currency"
-          :items="cryptoItems"
-        ></v-select>
-      </div>
-    </div>
 
     <!-- ============================================================================= -->
     <!-- Fiat amount -->
     <!-- ============================================================================= -->
     <div class="mb-10">
       <div class="d-flex align-center">
-        <div class="font-weight-bold">Buying price</div>
+        <div class="heading-4 text-uppercase">Price</div>
         <div v-if="loadingFiatAmount" class="ml-2">
-          <span class="h4 font-weight-regular mr-1">Loading</span>
+          <span class="h3 font-weight-regular mr-1 text--mew">Loading</span>
           <v-progress-circular
             :size="11"
             :width="2"
@@ -57,28 +17,65 @@
           ></v-progress-circular>
         </div>
       </div>
-      <h4 class="mb-2">
+      <!--
+      <h4>
         ** Daily buy limit:
         <span class="font-weight-medium">USD $50 ~ $20,000</span>
       </h4>
-      <div class="d-flex">
+      -->
+      <div class="d-flex mt-2">
         <v-text-field
           hide-details
           type="number"
           v-model.number="fiatAmount"
-          :label="`Price in ${fiatSelected}`"
-          :prefix="currencySymbol"
           required
           dense
           @update:modelValue="debounce_getCryptoForFiat"
         ></v-text-field>
-
         <v-select
-          style="max-width: 105px"
+          style="max-width: 100px"
           hide-details
           v-model="fiatSelected"
-          label="Currency"
           :items="fiatItems"
+        ></v-select>
+      </div>
+    </div>
+
+    <!-- ============================================================================= -->
+    <!-- Crypto amount -->
+    <!-- ============================================================================= -->
+    <div class="mb-10">
+      <div class="d-flex align-center">
+        <div class="heading-4 text-uppercase">Amount</div>
+        <div v-if="loadingCryptoAmount" class="ml-2">
+          <span class="h3 font-weight-regular mr-1 text--mew">Loading</span>
+          <v-progress-circular
+            :size="11"
+            :width="2"
+            indeterminate
+          ></v-progress-circular>
+        </div>
+      </div>
+      <!--
+      <h4>
+        ** Daily buy limit:
+        <span class="font-weight-medium">USD $50 ~ $20,000</span>
+      </h4>
+      -->
+      <div class="d-flex mt-2">
+        <v-text-field
+          hide-details
+          type="number"
+          v-model.number="cryptoAmount"
+          required
+          dense
+          @update:modelValue="debounce_getFiatForCrypto"
+        ></v-text-field>
+        <v-select
+          style="max-width: 100px"
+          hide-details
+          v-model="cryptoSelected"
+          :items="cryptoItems"
         ></v-select>
       </div>
     </div>
@@ -87,21 +84,18 @@
     <!-- Wallet address -->
     <!-- ============================================================================= -->
     <div>
-      <div class="d-sm-flex align-center mb-2">
-        <div class="font-weight-bold mr-2">
-          Wallet address to receive crypto
-        </div>
+      <div class="d-sm-flex align-center justify-space-between mb-2">
+        <div class="heading-4 text-uppercase mr-2">ETH Address</div>
         <a
           class="small d-block mt-n1 mt-sm-0"
           href="https://www.myetherwallet.com/wallet/create"
           target="_blank"
         >
-          Need Ethereum wallet?
+          Don't have one?
         </a>
       </div>
       <v-text-field
         v-model="address"
-        :label="`${cryptoSelected} address`"
         required
         dense
         :error-messages="addressErrorMsg"
@@ -122,23 +116,28 @@
     <div v-if="!processingBuyForm" class="pt-2 text-center">
       <div>
         <v-btn
+          rounded="pill"
           :disabled="!areFormsValid"
-          min-height="50px"
+          min-height="60px"
           min-width="200px"
           color="#05C0A5"
           @click="buy"
         >
-          <div class="text--white">Buy</div>
+          <div class="text--white">Continue</div>
         </v-btn>
       </div>
 
+      <!--
       <div>
         <v-btn class="my-3" @click="resetForms" variant="text" size="small">
           Clear
         </v-btn>
       </div>
+      -->
 
-      <h4>You will be redirected to the partner's site</h4>
+      <div class="text--secondary mt-6">
+        You will be redirected to the partner's site
+      </div>
     </div>
 
     <div v-else class="text-center py-5">
@@ -185,7 +184,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from 'vue';
 import ReCaptcha from '@/components/recaptcha/ReCaptcha.vue';
 import {
@@ -307,25 +306,22 @@ export default defineComponent({
 
       if (queryString) {
         const urlParams = new URLSearchParams(queryString);
-
-        this.fiatSelected = urlParams.get('fiat')
-          ? urlParams.get('fiat')
-          : 'USD';
-
         this.fiatAmount = urlParams.get('fiat_amount');
-
-        this.cryptoSelected = urlParams.get('crypto')
-          ? urlParams.get('crypto')
-          : 'ETH';
-
         const cryptoAmount = urlParams.get('crypto_amount');
-        if (_.toNumber(cryptoAmount)) {
+        if (_.isNumber(cryptoAmount)) {
           this.cryptoAmount = cryptoAmount;
         } else {
           this.cryptoAmount = 1;
         }
 
         this.address = urlParams.get('to');
+        this.fiatSelected = urlParams.get('fiat')
+          ? urlParams.get('fiat').toUpperCase()
+          : 'USD';
+
+        this.cryptoSelected = urlParams.get('crypto')
+          ? urlParams.get('crypto').toUpperCase()
+          : 'ETH';
       }
     },
 
@@ -373,7 +369,7 @@ export default defineComponent({
       // Turn off loading message
       this.loadingCryptoAmount = false;
 
-      this.updateUrlParameters();
+      // this.updateUrlParameters();
     },
     debounce_getCryptoForFiat: _.debounce(
       async function () {
@@ -415,7 +411,7 @@ export default defineComponent({
       // Turn off loading message
       this.loadingFiatAmount = false;
 
-      this.updateUrlParameters();
+      // this.updateUrlParameters();
     },
     debounce_getFiatForCrypto: _.debounce(
       async function () {
@@ -435,14 +431,14 @@ export default defineComponent({
           this.addressErrorMsg = ``;
         } else {
           //this.addressErrorMsg = `Please type in a valid ${this.cryptoSelected} address`;
-          this.addressErrorMsg = `Please type in valid ETH address`;
+          this.addressErrorMsg = `Please type in a valid ETH address`;
         }
 
         this.addressError = true;
       } else {
         this.addressErrorMsg = '';
         this.addressError = false;
-        this.updateUrlParameters();
+        // this.updateUrlParameters();
       }
     },
 
@@ -495,6 +491,35 @@ export default defineComponent({
     width: 0;
   }
 
+  .v-field--appended {
+    background-color: black;
+    .v-select__selection-text {
+      color: white;
+    }
+
+    .v-field__append-inner {
+      .v-icon {
+        opacity: 1;
+        &::before {
+          color: white;
+        }
+      }
+    }
+  }
+
+  .v-field__field {
+    padding: 0;
+  }
+
+  .v-field__input {
+    padding-top: 0;
+  }
+
+  .v-select__selection-text {
+    display: flex;
+    align-items: center;
+  }
+
   // Adjust (text field) prefix font size
   .v-messages__message {
     font-weight: 300;
@@ -502,13 +527,6 @@ export default defineComponent({
   }
   .v-text-field__prefix {
     font-size: 0.8rem;
-  }
-
-  .v-field__input {
-    input {
-      //width: 0;
-      //height: 0;
-    }
   }
 }
 </style>
