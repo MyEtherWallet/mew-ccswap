@@ -5,7 +5,7 @@
     "serve": "vite preview",
     "build": "vite build",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
-    "dev": "vite",
+    "dev": "vite --port=8080",
     "preview": "vite preview --port=8080"
   },
   "dependencies": {

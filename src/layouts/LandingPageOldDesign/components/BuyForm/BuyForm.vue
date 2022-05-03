@@ -1,6 +1,6 @@
 <template>
   <div class="component--buy-form elevated-box pa-3 pa-sm-6 pa-md-8">
-    <SubmitForm class="mb-15" :form-data="formData" :return-url="currentUrl" />
+    <!-- <SubmitForm class="mb-15" :form-data="formData" :return-url="currentUrl" /> -->
 
     <!-- ============================================================================= -->
     <!-- Fiat amount -->
@@ -106,9 +106,9 @@
     <!-- ============================================================================= -->
     <!-- Google ReCaptcha v3 -->
     <!-- ============================================================================= -->
-    <div class="d-flex align-center justify-center mt-3 mb-5">
+    <!-- <div class="d-flex align-center justify-center mt-3 mb-5">
       <ReCaptcha @token="onReCaptchaToken" />
-    </div>
+    </div> -->
 
     <!-- ============================================================================= -->
     <!-- Buy/Rest button -->
@@ -121,7 +121,7 @@
           min-height="60px"
           min-width="200px"
           color="#05C0A5"
-          @click="buy"
+          @click="submitForm"
         >
           <div class="text--white">Continue</div>
         </v-btn>
@@ -457,19 +457,19 @@ export default defineComponent({
     // ============================================================================================
     // Buy button click
     // ============================================================================================
-    async buy() {
+    submitForm() {
       this.processingBuyForm = true;
-
-      const response = await executeSimplexPayment(
+      executeSimplexPayment(
         this.fiatSelected,
         this.cryptoSelected,
         this.fiatSelected,
         this.fiatAmount,
         this.address
-      );
+      ).then(response => {
+        this.formData = response;
+      });
 
       // Manual form submission for development only
-      this.formData = response;
     }
   },
   async mounted() {
