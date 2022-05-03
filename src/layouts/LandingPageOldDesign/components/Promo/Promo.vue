@@ -65,7 +65,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from 'vue';
 import iconFee from '@/assets/images/promo/icon-fee.png';
 import iconQuick from '@/assets/images/promo/icon-quick.png';

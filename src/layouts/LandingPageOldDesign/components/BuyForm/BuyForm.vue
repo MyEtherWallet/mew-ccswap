@@ -184,7 +184,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from 'vue';
 import ReCaptcha from '@/components/recaptcha/ReCaptcha.vue';
 import {
@@ -306,22 +306,25 @@ export default defineComponent({
 
       if (queryString) {
         const urlParams = new URLSearchParams(queryString);
+
+        this.fiatSelected = urlParams.get('fiat')
+          ? urlParams.get('fiat')
+          : 'USD';
+
         this.fiatAmount = urlParams.get('fiat_amount');
+
+        this.cryptoSelected = urlParams.get('crypto')
+          ? urlParams.get('crypto')
+          : 'ETH';
+
         const cryptoAmount = urlParams.get('crypto_amount');
-        if (_.isNumber(cryptoAmount)) {
+        if (_.toNumber(cryptoAmount)) {
           this.cryptoAmount = cryptoAmount;
         } else {
           this.cryptoAmount = 1;
         }
 
         this.address = urlParams.get('to');
-        this.fiatSelected = urlParams.get('fiat')
-          ? urlParams.get('fiat').toUpperCase()
-          : 'USD';
-
-        this.cryptoSelected = urlParams.get('crypto')
-          ? urlParams.get('crypto').toUpperCase()
-          : 'ETH';
       }
     },
 
@@ -369,7 +372,7 @@ export default defineComponent({
       // Turn off loading message
       this.loadingCryptoAmount = false;
 
-      // this.updateUrlParameters();
+      this.updateUrlParameters();
     },
     debounce_getCryptoForFiat: _.debounce(
       async function () {
@@ -411,7 +414,7 @@ export default defineComponent({
       // Turn off loading message
       this.loadingFiatAmount = false;
 
-      // this.updateUrlParameters();
+      this.updateUrlParameters();
     },
     debounce_getFiatForCrypto: _.debounce(
       async function () {
@@ -438,7 +441,7 @@ export default defineComponent({
       } else {
         this.addressErrorMsg = '';
         this.addressError = false;
-        // this.updateUrlParameters();
+        this.updateUrlParameters();
       }
     },
 

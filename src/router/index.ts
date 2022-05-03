@@ -11,6 +11,7 @@ const router = createRouter({
       component: LandingPage
     }
     /*
+    ,
     {
       path: '/about',
       name: 'about',
