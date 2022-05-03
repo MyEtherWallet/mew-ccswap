@@ -3,7 +3,9 @@
     <div class="fade-effect-init" :class="[fadeIn ? 'fade-in' : '']">
       <v-main>
         <LandingPageOldDesign />
-        <LandingPage />
+        <!--
+          <LandingPage />
+        -->
       </v-main>
     </div>
   </v-app>
@@ -12,13 +14,13 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import LandingPageOldDesign from '@/layouts/LandingPageOldDesign/LandingPageOldDesign.vue';
-import LandingPage from '@/layouts/LandingPage/LandingPage.vue';
+//import LandingPage from '@/layouts/LandingPage/LandingPage.vue';
 
 export default defineComponent({
   name: 'App',
   components: {
-    //LandingPageOldDesign,
-    LandingPage,
+    LandingPageOldDesign,
+    //LandingPage,
   },
   data() {
     return {

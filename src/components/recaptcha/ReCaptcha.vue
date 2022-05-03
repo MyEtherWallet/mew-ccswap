@@ -1,6 +1,7 @@
 <template>
   <div
-    class="verified-box d-flex align-center flex-wrap justify-space-between py-3 px-5"
+    class="verified-box d-flex align-center flex-wrap justify-space-between"
+    style="padding: 13px 18px 13px 18px"
   >
     <div v-if="loading" class="d-flex align-center">
       <v-progress-circular indeterminate color="#05c0a5"></v-progress-circular>
@@ -14,10 +15,10 @@
 
     <div v-if="!loading && verified">
       <h4 class="font-weight-medium" style="max-width: 200px; color: #05c0a5">
-        Google reCaptcha verification successful
+        Google reCaptcha v3 verification successful
       </h4>
       <div class="d-flex align-center">
-        <v-icon size="45" color="#05c0a5">mdi-check</v-icon>
+        <v-icon size="35" color="#05c0a5">mdi-check</v-icon>
         <div class="ml-1 font-weight-medium" style="color: #05c0a5">
           You are not a bot
         </div>
@@ -43,7 +44,6 @@
       src="@/assets/images/icon-recaptcha.svg"
       alt="ReCaptcha"
       :height="$vuetify.display.mobile ? 40 : 68"
-      class="mr-n2"
     />
   </div>
 </template>

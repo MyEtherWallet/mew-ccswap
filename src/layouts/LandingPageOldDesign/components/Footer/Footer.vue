@@ -4,7 +4,7 @@
       <img
         src="@/assets/images/icon-mew-logo-light.svg"
         alt="MEW"
-        height="30"
+        height="25"
       />
       <div>©2018 MyEtherWallet Inc. All rights reserved</div>
 
