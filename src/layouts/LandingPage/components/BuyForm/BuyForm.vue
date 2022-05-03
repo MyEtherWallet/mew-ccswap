@@ -506,8 +506,8 @@ export default defineComponent({
 
   .v-field__input {
     input {
-      width: 0;
-      height: 0;
+      //width: 0;
+      //height: 0;
     }
   }
 }

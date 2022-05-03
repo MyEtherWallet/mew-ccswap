@@ -2,8 +2,6 @@ import axios from 'axios';
 import _ from 'lodash';
 
 const supportedCrypto = ['ETH', 'BNB', 'MATIC'];
-
-//const supportedFiat = ['USD', 'RUB', 'EUR', 'JPY', 'AUD', 'CAD', 'GBP'];
 const supportedFiat = ['USD', 'EUR', 'JPY', 'AUD', 'CAD', 'GBP'];
 
 const currencySymbols = {
