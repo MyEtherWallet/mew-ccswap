@@ -283,24 +283,6 @@ export default defineComponent({
     // ============================================================================================
     // URL parameter
     // ============================================================================================
-    updateUrlParameters() {
-      let urlParameters = '?';
-      urlParameters += `fiat=${this.fiatSelected}&`;
-      urlParameters += `fiat_amount=${this.fiatAmount}&`;
-      urlParameters += `crypto=${this.cryptoSelected}&`;
-      urlParameters += `crypto_amount=${this.cryptoAmount}&`;
-      urlParameters += `to=${this.address}`;
-
-      if (history.pushState) {
-        const newurl =
-          window.location.protocol +
-          '//' +
-          window.location.host +
-          window.location.pathname +
-          urlParameters;
-        window.history.pushState({ path: newurl }, '', newurl);
-      }
-    },
     loadUrlParameters() {
       const queryString = window.location.search;
 
@@ -371,8 +353,6 @@ export default defineComponent({
 
       // Turn off loading message
       this.loadingCryptoAmount = false;
-
-      this.updateUrlParameters();
     },
     debounce_getCryptoForFiat: _.debounce(
       async function () {
@@ -413,8 +393,6 @@ export default defineComponent({
 
       // Turn off loading message
       this.loadingFiatAmount = false;
-
-      this.updateUrlParameters();
     },
     debounce_getFiatForCrypto: _.debounce(
       async function () {
@@ -441,7 +419,6 @@ export default defineComponent({
       } else {
         this.addressErrorMsg = '';
         this.addressError = false;
-        this.updateUrlParameters();
       }
     },
 
