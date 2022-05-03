@@ -158,7 +158,7 @@
     <!-- ============================================================================= -->
     <!-- Buy limit warning -->
     <!-- ============================================================================= -->
-    <v-snackbar v-model="showAlert" multi-line timeout="12000">
+    <v-snackbar v-model="showAlert" multi-line timeout="5000">
       <div class="text-center pa-3" style="max-width: 350px">
         <img
           src="@/assets/images/icon-mew-wallet.png"
