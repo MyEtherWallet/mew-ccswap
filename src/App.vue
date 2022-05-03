@@ -1,17 +1,14 @@
 <template>
-<div id="app">
-    <router-view />
-</div>
+  <v-app>
+    <v-main>
+      <router-view />
+    </v-main>
+  </v-app>
 </template>
 
 <script>
-import { defineComponent } from 'vue'
-export default defineComponent({
-    name: 'App'
-})
+export default {
+  name: 'App',
+  data: () => ({})
+};
 </script>
-
-<style lang="scss">
-@import '@/var.scss';
-@import './main.scss';
-</style>

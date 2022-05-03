@@ -1,25 +1,54 @@
-import { defineConfig } from "vite";
-import vue from "@vitejs/plugin-vue";
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
+import vuetify from '@vuetify/vite-plugin';
+// multicoin-address-validator requires this
+import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill';
 
-const path = require("path");
+const path = require('path');
 
+// https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [
+    vue(),
+    // https://github.com/vuetifyjs/vuetify-loader/tree/next/packages/vite-plugin
+    vuetify({
+      autoImport: true
+    })
+  ],
+  define: { 'process.env': {} },
   resolve: {
-    extensions: [".mjs", ".js", ".ts", ".jsx", ".tsx", ".json", ".vue"],
     alias: {
-      "@": path.resolve(__dirname, "./src"),
-      "~@": path.resolve(__dirname, "./src")
-    },
-    build: {
-      assetsPublicPath: ""
-    },
-    dev: {
-      assetsPublicPath: "/"
-    },
-    vue: "vue/dist/vue.esm-bundler.js"
+      '@': path.resolve(__dirname, 'src')
+    }
   },
   server: {
     https: true
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      // Node.js global to browser globalThis
+      define: {
+        global: 'globalThis'
+      },
+      // Enable esbuild polyfill plugins
+      plugins: [
+        NodeGlobalsPolyfillPlugin({
+          buffer: true
+        })
+      ]
+    }
   }
+  /* remove the need to specify .vue files https://vitejs.dev/config/#resolve-extensions
+  resolve: {
+    extensions: [
+      '.js',
+      '.json',
+      '.jsx',
+      '.mjs',
+      '.ts',
+      '.tsx',
+      '.vue',
+    ]
+  },
+  */
 });

@@ -1,43 +1,26 @@
-import { createWebHistory, createRouter } from "vue-router";
-// import store from '@/store/actions'
-import xss from 'xss'
-
-const routes = [
-  {
-    path: "/",
-    name: "LandingPage",
-    component: () => import("@/components/LandingPage.vue"),
-  },
-  {
-    path: "/status/:userId",
-    name: "OrderStatus",
-    component: () => import("@/components/Body/OrderStatus/OrderStatus.vue"),
-    props: true,
-  },
-  {
-    path: "/:pathMatch(.*)*",
-    name: "catchAll",
-    component: () => import("@/components/LandingPage.vue"),
-  },
-];
+import { createRouter, createWebHistory } from 'vue-router';
+//import LandingPage from '@/layouts/LandingPage/LandingPage.vue';
+import LandingPageOldDesign from '@/layouts/LandingPageOldDesign/LandingPageOldDesign.vue';
 
 const router = createRouter({
-  history: createWebHistory(),
-  routes,
-});
-
-router.beforeResolve((to, ___, next) => {
-  const queryKeys = Object.keys(to.query)
-  if (queryKeys.length > 0) {
-    const blankObj = {}
-    for (const key in to.query) {
-      blankObj[key] = xss(to.query[key])
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes: [
+    {
+      path: '/',
+      name: 'home',
+      component: LandingPageOldDesign
     }
-    store.dispatch('saveQueryVal', blankObj)
-    next()
-  } else {
-    next()
-  }
-})
+    /*
+    {
+      path: '/about',
+      name: 'about',
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../views/AboutView.vue')
+    }
+    */
+  ]
+});
 
 export default router;
