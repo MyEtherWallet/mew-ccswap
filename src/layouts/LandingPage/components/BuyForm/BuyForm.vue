@@ -201,7 +201,7 @@ import {
 import { executeSimplexPayment } from './order.js';
 import _ from 'lodash';
 import WAValidator from 'multicoin-address-validator';
-import SubmitForm from './components/SubmitForm.vue';
+import SubmitForm from './SubmitForm.vue';
 
 const defaultFiatValue = 100;
 const apiDebounceTime = 1000;

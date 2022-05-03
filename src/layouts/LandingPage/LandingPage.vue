@@ -35,10 +35,10 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import Header from '@/components/header/Header.vue';
-import Footer from '@/components/footer/Footer.vue';
-import BuyForm from '@/components/buy-form/BuyForm.vue';
-import Promo from '@/components/promo/Promo.vue';
+import Header from './components/Header/Header.vue';
+import Footer from './components/Footer/Footer.vue';
+import BuyForm from './components/BuyForm/BuyForm.vue';
+import Promo from './components/Promo/Promo.vue';
 import BgBar from '@/assets/images/bg-bar.svg';
 import BgSpaceMan from '@/assets/images/bg-space-man.svg';
 
