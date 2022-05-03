@@ -1,15 +1,18 @@
 @media (min-width: 1920px) {
   .v-container {
-    max-width: 1200px;
+    max-width: 1040px;
   }
 }
 // Variables
-$primary: #5c5c5c;
+$primary: #202030;
+$secondary: #8799ab;
 $dark: rgb(77, 77, 77);
 $gray: #a7a7a7;
 $mew: #05c0a5;
+$blue: #0000ee;
 
 html {
+  font-size: 14px !important;
   min-width: 365px;
 }
 
@@ -38,9 +41,9 @@ p {
 
 h1,
 .h1 {
-  font-size: 2rem;
-  line-height: 2.6rem;
-  font-weight: 300;
+  font-size: 2.4rem;
+  line-height: 2.8rem;
+  font-weight: 700;
 }
 
 h2,
@@ -79,18 +82,53 @@ h5,
 a {
   color: $mew;
   &.small {
-    font-size: 0.84rem;
+    //color: $blue;
+    font-size: 1rem;
+    text-decoration: none;
   }
 }
 
 .heading-1 {
+  /*
   font-size: 3.8rem;
   line-height: 4.8rem;
   font-weight: 300;
+  */
+  font-size: 4.2rem;
+  line-height: 5rem;
+  font-weight: 700;
+}
+
+.heading-2 {
+  font-size: 2.2rem;
+  line-height: 3rem;
+  font-weight: 700;
+}
+
+.heading-3 {
+  font-size: 1.7rem;
+  line-height: 3rem;
+  font-weight: 500;
+}
+
+.heading-4 {
+  font-size: 1.2rem;
+  line-height: 2rem;
+  font-weight: 700;
+}
+
+.heading-5 {
+  font-size: 1.23rem;
+  line-height: 1.8rem;
+  font-weight: 400;
 }
 
 .text--primary {
   color: $primary;
+}
+
+.text--secondary {
+  color: $secondary;
 }
 
 .text--gray {

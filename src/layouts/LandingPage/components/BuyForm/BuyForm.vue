@@ -21,7 +21,7 @@
         ** Daily buy limit:
         <span class="font-weight-medium">USD $50 ~ $20,000</span>
       </h4>
-      <div class="d-flex flex-wrap-reverse">
+      <div class="d-flex">
         <v-text-field
           hide-details
           type="number"
@@ -31,16 +31,14 @@
           dense
           @update:modelValue="debounce_getFiatForCrypto"
         ></v-text-field>
-        <div
-          :style="$vuetify.display.smAndDown ? 'width: 100%' : 'width: 130px'"
-        >
-          <v-select
-            hide-details
-            v-model="cryptoSelected"
-            label="Currency"
-            :items="cryptoItems"
-          ></v-select>
-        </div>
+
+        <v-select
+          style="max-width: 105px"
+          hide-details
+          v-model="cryptoSelected"
+          label="Currency"
+          :items="cryptoItems"
+        ></v-select>
       </div>
     </div>
 
@@ -63,7 +61,7 @@
         ** Daily buy limit:
         <span class="font-weight-medium">USD $50 ~ $20,000</span>
       </h4>
-      <div class="d-flex flex-wrap-reverse">
+      <div class="d-flex">
         <v-text-field
           hide-details
           type="number"
@@ -74,16 +72,14 @@
           dense
           @update:modelValue="debounce_getCryptoForFiat"
         ></v-text-field>
-        <div
-          :style="$vuetify.display.smAndDown ? 'width: 100%' : 'width: 130px'"
-        >
-          <v-select
-            hide-details
-            v-model="fiatSelected"
-            label="Currency"
-            :items="fiatItems"
-          ></v-select>
-        </div>
+
+        <v-select
+          style="max-width: 105px"
+          hide-details
+          v-model="fiatSelected"
+          label="Currency"
+          :items="fiatItems"
+        ></v-select>
       </div>
     </div>
 
@@ -506,6 +502,13 @@ export default defineComponent({
   }
   .v-text-field__prefix {
     font-size: 0.8rem;
+  }
+
+  .v-field__input {
+    input {
+      width: 0;
+      height: 0;
+    }
   }
 }
 </style>

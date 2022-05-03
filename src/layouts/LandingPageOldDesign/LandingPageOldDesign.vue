@@ -1,34 +1,25 @@
 <template>
   <div
-    class="pt-15 component--landing-page"
+    class="pt-15 component--landing-page-old-design"
     :class="[$vuetify.display.mdAndUp ? 'background-lg' : 'background-sm']"
     :style="{ 'background-image': `url(${bgBar})` }"
   >
-    <div
-      class="background-space-man"
-      :class="[
-        $vuetify.display.lg ? 'background-space-man-lg' : '',
-        $vuetify.display.xlAndUp ? 'background-space-man-xl' : '',
-      ]"
-      :style="{ 'background-image': `url(${bgSpaceMan})` }"
-    >
-      <v-container>
-        <v-row>
-          <v-col cols="12" md="5" lg="6">
-            <Header />
-          </v-col>
-          <v-col cols="12" md="7" lg="6">
-            <BuyForm />
-          </v-col>
-        </v-row>
+    <v-container>
+      <v-row>
+        <v-col cols="12" md="5" lg="6">
+          <Header />
+        </v-col>
+        <v-col cols="12" md="7" lg="6">
+          <BuyForm />
+        </v-col>
+      </v-row>
 
-        <v-row>
-          <v-col>
-            <Promo />
-          </v-col>
-        </v-row>
-      </v-container>
-    </div>
+      <v-row>
+        <v-col>
+          <Promo />
+        </v-col>
+      </v-row>
+    </v-container>
     <Footer />
   </div>
 </template>
@@ -43,7 +34,7 @@ import BgBar from '@/assets/images/bg-bar.svg';
 import BgSpaceMan from '@/assets/images/bg-space-man.svg';
 
 export default defineComponent({
-  name: 'Landing',
+  name: 'LandingOld',
   components: {
     Header,
     Footer,
@@ -60,8 +51,12 @@ export default defineComponent({
 });
 </script>
 
+<style lang="scss">
+@import '@/styles/globalOldDesign.scss';
+</style>
+
 <style lang="scss" scoped>
-.component--landing-page {
+.component--landing-page-old-design {
   min-height: 100vh;
 }
 

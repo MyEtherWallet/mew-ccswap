@@ -11,15 +11,11 @@
       </h1>
       <v-row>
         <v-col cols="12" md="4" v-for="(p1, key1) in promo1" :key="key1">
-          <div class="elevated-box-small pa-6">
-            <h2 class="font-weight-light mb-2">{{ p1.title }}</h2>
-            <div class="font-weight-light">
-              {{ p1.description }}
-            </div>
-            <h2 class="text--mew font-weight-medium mt-3">
+          <div class="elevated-box-small pa-10">
+            <div class="heading-2 text--mew mb-2">
               {{ p1.amount }}
-              <span>{{ p1.rate }}</span>
-            </h2>
+            </div>
+            <h2 class="font-weight-medium text--secondary">{{ p1.title }}</h2>
           </div>
         </v-col>
       </v-row>
@@ -34,22 +30,28 @@
         That is the reason why millions of our users choose us
       </h1>
       <v-row>
-        <v-col cols="12" md="6" v-for="(p2, key2) in promo2" :key="key2">
+        <v-col
+          cols="12"
+          md="6"
+          v-for="(p2, key2) in promo2"
+          :key="key2"
+          :class="$vuetify.display.mdAndUp ? '' : 'd-flex justify-center'"
+        >
           <div class="d-flex align-center pb-8">
             <img class="mr-4" :src="p2.icon" alt="Promo" />
             <div>
-              <h2 class="font-weight-light mb-2">{{ p2.title }}</h2>
+              <div class="heading-3 mb-1">{{ p2.title }}</div>
               <div
-                class="font-weight-light"
                 v-if="p2.description"
-                style="max-width: 400px"
+                style="max-width: 350px"
+                class="text--secondary heading-5"
               >
                 {{ p2.description }}
               </div>
               <div
-                class="font-weight-light"
+                class="text--secondary heading-5"
                 v-else="p2.description"
-                style="max-width: 400px"
+                style="max-width: 350px"
               >
                 Feel free to contact
                 <a href="mailto:support@simplex.com">support@simplex.com</a>
@@ -77,22 +79,22 @@ export default defineComponent({
     return {
       promo1: [
         {
-          title: 'First time buy limit',
+          title: 'For your first transaction',
           description:
             'If you are buying coins very first time, you can buy up to $20,000 worth of coins.',
-          amount: '$50~$20,000',
+          amount: '$50 to $20,000',
           rate: 'for first buy',
         },
         {
-          title: 'Daily buy limit',
+          title: 'Daily limit',
           description: 'You can buy up to $20,000 worth of coins daily.',
-          amount: 'Max $20,000',
+          amount: 'Up to $20,000',
           rate: '/day',
         },
         {
-          title: 'Monthly buy limit',
+          title: 'Monthly limit',
           description: 'You can buy up to $50,000 worth of coins monthly.',
-          amount: 'Max $50,000',
+          amount: 'Up to $50,000',
           rate: '/month',
         },
       ],

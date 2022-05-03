@@ -60,6 +60,10 @@ export default defineComponent({
 });
 </script>
 
+<style lang="scss">
+@import '@/styles/global.scss';
+</style>
+
 <style lang="scss" scoped>
 .component--landing-page {
   min-height: 100vh;
