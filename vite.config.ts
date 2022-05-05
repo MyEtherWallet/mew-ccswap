@@ -1,10 +1,9 @@
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import vuetify from '@vuetify/vite-plugin';
-// multicoin-address-validator requires this
 import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill';
-
-const path = require('path');
+import path from 'path';
+// const path = require('path');
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -18,7 +17,9 @@ export default defineConfig({
   define: { 'process.env': {} },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'src')
+      '@': path.resolve(__dirname, 'src'),
+      vue: 'vue/dist/vue.esm-bundler.js',
+      web3: path.resolve(__dirname, './node_modules/web3/dist/web3.min.js')
     }
   },
   server: {
@@ -38,17 +39,4 @@ export default defineConfig({
       ]
     }
   }
-  /* remove the need to specify .vue files https://vitejs.dev/config/#resolve-extensions
-  resolve: {
-    extensions: [
-      '.js',
-      '.json',
-      '.jsx',
-      '.mjs',
-      '.ts',
-      '.tsx',
-      '.vue',
-    ]
-  },
-  */
 });
