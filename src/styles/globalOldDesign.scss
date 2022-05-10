@@ -3,6 +3,7 @@
     max-width: 1040px;
   }
 }
+
 // Variables
 $primary: #202030;
 $secondary: #8799ab;
@@ -51,6 +52,7 @@ h2,
   font-size: 1.4rem;
   line-height: 1.8rem;
   font-weight: 400;
+
   span {
     font-size: 1rem;
     line-height: 1.2rem;
@@ -81,6 +83,7 @@ h5,
 
 a {
   color: $mew;
+
   &.small {
     //color: $blue;
     font-size: 1rem;

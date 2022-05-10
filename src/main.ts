@@ -1,13 +1,7 @@
-import { createApp } from 'vue';
-import App from './App.vue';
-import router from './router';
-import vuetify from './plugins/vuetify';
-import { loadFonts } from './plugins/webfontloader';
-import { VueReCaptcha } from 'vue-recaptcha-v3';
+import { createApp } from "vue";
+import App from "./App.vue";
+import "./registerServiceWorker";
+import router from "./router";
+import store from "./store";
 
-loadFonts();
-
-createApp(App)
-  .use(router)
-  .use(vuetify)
-  .mount('#app');
+createApp(App).use(store).use(router).mount("#app");

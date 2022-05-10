@@ -49,12 +49,12 @@
 </template>
 
 <script>
-import { ref } from 'vue';
-import { useReCaptcha } from 'vue-recaptcha-v3';
+import { ref } from "vue";
+import { useReCaptcha } from "vue-recaptcha-v3";
 
 export default {
-  name: 'ReCaptcha',
-  emits: ['token'],
+  name: "ReCaptcha",
+  emits: ["token"],
 
   setup(props, { emit }) {
     const loading = ref(true);
@@ -67,11 +67,11 @@ export default {
       await recaptchaLoaded();
 
       // Execute reCAPTCHA with action "login".
-      const token = await executeRecaptcha('login');
+      const token = await executeRecaptcha("login");
 
       // Do stuff with the received token.
       if (token) {
-        emit('token', token);
+        emit("token", token);
         loading.value = false;
         verified.value = true;
       }
@@ -82,9 +82,9 @@ export default {
     return {
       recaptcha,
       verified,
-      loading
+      loading,
     };
-  }
+  },
 };
 </script>
 

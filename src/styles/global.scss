@@ -3,6 +3,7 @@
     max-width: 1200px;
   }
 }
+
 // Variables
 $primary: #5c5c5c;
 $dark: rgb(77, 77, 77);
@@ -48,6 +49,7 @@ h2,
   font-size: 1.4rem;
   line-height: 1.8rem;
   font-weight: 400;
+
   span {
     font-size: 1rem;
     line-height: 1.2rem;
@@ -78,6 +80,7 @@ h5,
 
 a {
   color: $mew;
+
   &.small {
     font-size: 0.84rem;
   }

@@ -1,15 +1,15 @@
-import { createRouter, createWebHistory } from 'vue-router';
-import LandingPage from '@/layouts/LandingPageOldDesign/LandingPageOldDesign.vue';
+import { createRouter, createWebHistory } from "vue-router";
+import LandingPage from "@/layouts/LandingPage.vue";
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(),
   routes: [
     {
-      path: '/',
-      name: 'home',
-      component: LandingPage
-    }
-  ]
+      path: "/",
+      name: "home",
+      component: LandingPage,
+    },
+  ],
 });
 
 export default router;
