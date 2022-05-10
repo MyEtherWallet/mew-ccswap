@@ -1,12 +1,12 @@
 import axios from "axios";
-import { getSimplexQuote } from "./prices.js";
+import { getSimplexQuote } from "./prices";
 
 const apiOrder = "https://mainnet.mewwallet.dev/purchase/simplex/order";
 
 // ===================================================================================================
 // Get the quote confirmed by Simplex
 // ===================================================================================================
-async function confirmSimplexOrder(paymentId, address) {
+async function confirmSimplexOrder(paymentId: string, address: string) {
   return await axios
     .get(apiOrder, {
       params: {
@@ -22,20 +22,20 @@ async function confirmSimplexOrder(paymentId, address) {
     });
 }
 
-async function submitForm(form) {
+async function submitForm(form: any) {
   const url = `https://mainnet.mewwallet.dev/v2/purchase/simplex/order?id=web%7C0xB17b4bF46d6BF4d57434d3Dd199a9964b67b7e1C&fiatCurrency=${form["fiat_total_amount[currency]"]}&requestedCurrency=${form["fiat_total_amount[currency]"]}&requestedAmount=${form["fiat_total_amount[amount]"]}&address=${form["destination_wallet[address]"]}`;
-  window.location = url;
+  window.location.href = url;
 }
 
 // ===================================================================================================
 // Execute Simplex payment
 // ===================================================================================================
 async function executeSimplexPayment(
-  fiatCurrency,
-  cryptoCurrency,
-  requestedCurrency,
-  requestedAmount,
-  address
+  fiatCurrency: string,
+  cryptoCurrency: string,
+  requestedCurrency: string,
+  requestedAmount: string,
+  address: string
 ) {
   // =====================================================
   // (1) Get quote for crypto amount

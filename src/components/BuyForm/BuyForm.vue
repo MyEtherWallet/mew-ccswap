@@ -190,8 +190,8 @@ import {
   supportedFiat,
   currencySymbols,
   getSimplexQuote,
-} from "./prices.js";
-import { executeSimplexPayment } from "./order.js";
+} from "./prices";
+import { executeSimplexPayment } from "./order";
 import _ from "lodash";
 import WAValidator from "multicoin-address-validator";
 // import SubmitForm from "./SubmitForm.vue";
