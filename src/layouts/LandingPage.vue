@@ -24,16 +24,15 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { defineComponent } from "vue";
-import Header from "@/components/Header/Header.vue";
-import Footer from "@/components/Footer/Footer.vue";
-import BuyForm from "@/components/BuyForm/BuyForm.vue";
-import Promo from "@/components/Promo/Promo.vue";
+import * as Header from "@/components/Header/Header.vue";
+import * as Footer from "@/components/Footer/Footer.vue";
+import * as BuyForm from "@/components/BuyForm/BuyForm.vue";
+import * as Promo from "@/components/Promo/Promo.vue";
 import BgBar from "@/assets/images/bg-bar-old.svg";
-import BgSpaceMan from "@/assets/images/bg-space-man.svg";
 
-export default defineComponent({
+defineComponent({
   name: "LandingPageOld",
   components: {
     Header,
@@ -41,13 +40,9 @@ export default defineComponent({
     BuyForm,
     Promo,
   },
-  data() {
-    return {
-      bgBar: BgBar,
-      bgSpaceMan: BgSpaceMan,
-    };
-  },
 });
+
+const bgBar = BgBar;
 </script>
 
 <style lang="scss">

@@ -115,7 +115,7 @@
       <div>
         <v-btn
           rounded="pill"
-          :disabled="!areFormsValid"
+          :disabled="!isValidForm"
           min-height="60px"
           min-width="200px"
           color="#05C0A5"
@@ -182,8 +182,9 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script setup lang="ts">
+import { computed, defineComponent, reactive, ref, watch } from "vue";
+import BigNumber from "bignumber.js";
 // import ReCaptcha from "@/components/recaptcha/ReCaptcha.vue";
 import {
   supportedCrypto,
@@ -192,269 +193,173 @@ import {
   getSimplexQuote,
 } from "./prices";
 import { executeSimplexPayment } from "./order";
-import _ from "lodash";
+import { toNumber, debounce } from "lodash";
 import WAValidator from "multicoin-address-validator";
 // import SubmitForm from "./SubmitForm.vue";
 
-const defaultFiatValue = 100;
+const defaultFiatValue = "100";
 const apiDebounceTime = 1000;
 
-export default defineComponent({
+defineComponent({
   name: "BuyForm",
-  data() {
-    return {
-      fiatAmount: defaultFiatValue,
-      fiatSelected: "USD",
-      fiatItems: supportedFiat,
-
-      cryptoAmount: null,
-      cryptoSelected: "ETH",
-      cryptoItems: supportedCrypto,
-
-      address: "",
-      addressError: true,
-      addressErrorMsg: "",
-
-      loadingFiatAmount: false,
-      loadingCryptoAmount: false,
-
-      reCaptchaToken: null,
-
-      showAlert: false,
-
-      formData: null,
-
-      processingBuyForm: false,
-    };
-  },
-  watch: {
-    // ============================================================================================
-    // Watch for crypto currency change
-    // ============================================================================================
-    cryptoSelected() {
-      this.verifyAddress();
-      this.getCryptoForFiat();
-    },
-
-    // ============================================================================================
-    // Watch for fiat currency change
-    // ============================================================================================
-    fiatSelected() {
-      this.verifyAddress();
-      this.getFiatForCrypto();
-    },
-  },
-  computed: {
-    currentUrl() {
-      return window.location.href;
-    },
-    currencySymbol() {
-      return currencySymbols[this.fiatSelected];
-    },
-
-    // ============================================================================================
-    // Validate forms to Enable/Disable buy button
-    // ============================================================================================
-    areFormsValid() {
-      return (
-        this.fiatAmount > 0 &&
-        this.cryptoAmount > 0 &&
-        this.fiatSelected != "" &&
-        this.cryptoSelected != "" &&
-        this.addressError != true &&
-        this.reCaptchaToken != ""
-      );
-    },
-  },
-  methods: {
-    // ============================================================================================
-    // Set ReCaptcha token
-    // ============================================================================================
-    onReCaptchaToken(token: string) {
-      this.reCaptchaToken = token;
-    },
-
-    // ============================================================================================
-    // URL parameter
-    // ============================================================================================
-    loadUrlParameters() {
-      const queryString = window.location.search;
-
-      if (queryString) {
-        const urlParams = new URLSearchParams(queryString);
-
-        this.fiatSelected = urlParams.get("fiat")
-          ? urlParams.get("fiat")
-          : "USD";
-
-        this.fiatAmount = urlParams.get("fiat_amount");
-
-        this.cryptoSelected = urlParams.get("crypto")
-          ? urlParams.get("crypto")
-          : "ETH";
-
-        const cryptoAmount = urlParams.get("crypto_amount");
-        if (_.toNumber(cryptoAmount)) {
-          this.cryptoAmount = cryptoAmount;
-        } else {
-          this.cryptoAmount = 1;
-        }
-
-        this.address = urlParams.get("to");
-      }
-    },
-
-    // ============================================================================================
-    // Get crypto amount for fiat amount from API
-    // ============================================================================================
-    async getCryptoForFiat(options = { isInitialLoading: false }) {
-      // Turn on loading message
-      this.loadingCryptoAmount = true;
-
-      let response = null;
-
-      try {
-        response = await getSimplexQuote(
-          this.fiatSelected,
-          this.cryptoSelected,
-          this.fiatSelected,
-          this.fiatAmount
-        );
-      } catch (e) {
-        // Turn off loading message
-        this.loadingCryptoAmount = false;
-
-        // Show alert message to the user
-        this.showAlert = true;
-
-        // ==============================================================================
-        // Runs only on initial loading.
-        // If URL parameter contains wrong fiat amount,
-        // just reset fiat amount with defaultFiatValue to prevent more errors,
-        // then pull the crypto value one more time.
-        // ==============================================================================
-        if (options.isInitialLoading) {
-          this.resetForms();
-          return;
-        }
-
-        // Restore valid(before error) fiat value
-        this.getFiatForCrypto();
-        return;
-      }
-
-      this.cryptoAmount = response.crypto_amount;
-
-      // Turn off loading message
-      this.loadingCryptoAmount = false;
-    },
-    debounce_getCryptoForFiat: _.debounce(
-      async function () {
-        await this.getCryptoForFiat();
-      },
-      apiDebounceTime,
-      { trailing: true }
-    ),
-
-    // ============================================================================================
-    // Get fiat amount for crypto amount from API
-    // ============================================================================================
-    async getFiatForCrypto() {
-      // Turn on loading message
-      this.loadingFiatAmount = true;
-
-      let response = null;
-
-      try {
-        response = await getSimplexQuote(
-          this.fiatSelected,
-          this.cryptoSelected,
-          this.cryptoSelected,
-          this.cryptoAmount
-        );
-      } catch (e) {
-        // Turn off loading message
-        this.loadingFiatAmount = false;
-
-        this.showAlert = true;
-
-        // Restore valid(before error) crypto value
-        this.getCryptoForFiat();
-        return;
-      }
-
-      this.fiatAmount = response.fiat_amount;
-
-      // Turn off loading message
-      this.loadingFiatAmount = false;
-    },
-    debounce_getFiatForCrypto: _.debounce(
-      async function () {
-        await this.getFiatForCrypto();
-      },
-      apiDebounceTime,
-      { trailing: true }
-    ),
-
-    // ============================================================================================
-    // Verify crypto address
-    // ============================================================================================
-    verifyAddress() {
-      const valid = WAValidator.validate(this.address, this.cryptoSelected);
-      if (!valid) {
-        if (this.address == "") {
-          this.addressErrorMsg = ``;
-        } else {
-          //this.addressErrorMsg = `Please type in a valid ${this.cryptoSelected} address`;
-          this.addressErrorMsg = `Please type in a valid ETH address`;
-        }
-
-        this.addressError = true;
-      } else {
-        this.addressErrorMsg = "";
-        this.addressError = false;
-      }
-    },
-
-    // ============================================================================================
-    // Reset all forms
-    // ============================================================================================
-    resetForms() {
-      this.fiatAmount = defaultFiatValue;
-      this.fiatSelected = "USD";
-      this.cryptoAmount = null;
-      this.cryptoSelected = "ETH";
-      this.address = "";
-      this.debounce_getCryptoForFiat();
-    },
-
-    // ============================================================================================
-    // Buy button click
-    // ============================================================================================
-    submitForm() {
-      this.processingBuyForm = true;
-      executeSimplexPayment(
-        this.fiatSelected,
-        this.cryptoSelected,
-        this.fiatSelected,
-        this.fiatAmount,
-        this.address
-      ).then((response) => {
-        this.formData = response;
-      });
-
-      // Manual form submission for development only
-    },
-  },
-  async mounted() {
+  setup() {
     // Load URL parameter value and verify crypto address
-    this.loadUrlParameters();
-    this.verifyAddress();
+    loadUrlParameters();
+    verifyAddress();
 
     // Get crypto amount based on current fiat amount
-    this.getCryptoForFiat({ isInitialLoading: true });
+    getCryptoForFiat(true);
   },
 });
+
+// data
+
+// non-reactive
+const fiatItems: string[] = supportedFiat;
+const cryptoItems: string[] = supportedCrypto;
+
+// reactive
+const form = reactive({
+  fiatAmount: defaultFiatValue,
+  fiatSelected: "USD",
+  cryptoAmount: "0",
+  cryptoSelected: "ETH",
+  address: "",
+  addressErrorMsg: "",
+  reCaptchaToken: "",
+  addressError: false,
+});
+
+const loading = reactive({
+  fiatAmount: false,
+  cryptoAmount: false,
+  showAlert: false,
+  processingBuyForm: false,
+});
+
+let formData = ref(null);
+
+// watchers
+watch([form.cryptoSelected, form.fiatSelected], () => {
+  verifyAddress();
+  getCryptoForFiat(false);
+});
+
+const isValidForm = computed(() => {
+  const fiatBn = new BigNumber(form.fiatAmount);
+  const cryptoBn = new BigNumber(form.cryptoAmount);
+  return (
+    fiatBn.gt(0) &&
+    cryptoBn.gt(0) &&
+    form.fiatSelected &&
+    form.cryptoSelected &&
+    !form.addressError &&
+    form.reCaptchaToken
+  );
+});
+
+// methods
+const loadUrlParameters = () => {
+  const queryString = window.location.search;
+
+  if (queryString) {
+    const urlParams = new URLSearchParams(queryString);
+    const queryCryptoAmount = urlParams.get("crypto_amount");
+    const queryFiat = urlParams.get("fiat");
+    const queryCrypto = urlParams.get("crypto");
+    const queryTo = urlParams.get("to");
+    form.fiatSelected = queryFiat ? queryFiat : "USD";
+    form.fiatAmount = queryCryptoAmount ? queryCryptoAmount : "100";
+    form.cryptoSelected = queryCrypto ? queryCrypto : "ETH";
+    form.cryptoAmount = queryCryptoAmount ? queryCryptoAmount : "1";
+    form.address = queryTo ? queryTo : "";
+  }
+};
+const onReCaptchaToken = (token: string): void => {
+  form.reCaptchaToken = token;
+};
+
+const getCryptoForFiat = async (isLoading: boolean): Promise<void> => {
+  loading.cryptoAmount = true;
+  try {
+    const response = await getSimplexQuote(
+      form.fiatSelected,
+      form.cryptoSelected,
+      form.cryptoSelected,
+      form.fiatAmount
+    );
+    form.cryptoAmount = response.crypto_amount;
+    loading.cryptoAmount = false;
+  } catch (e) {
+    loading.cryptoAmount = false;
+    loading.showAlert = true;
+
+    if (isLoading) {
+      return resetForm();
+    }
+
+    return getFiatForCrypto();
+  }
+};
+
+const getFiatForCrypto = async (): Promise<void> => {
+  loading.fiatAmount = true;
+  try {
+    const response = await getSimplexQuote(
+      form.fiatSelected,
+      form.cryptoSelected,
+      form.cryptoSelected,
+      form.cryptoAmount
+    );
+    form.fiatAmount = response.fiat_amount;
+    loading.fiatAmount = false;
+  } catch (e) {
+    loading.fiatAmount = false;
+    loading.showAlert = true;
+    getCryptoForFiat(false);
+  }
+};
+
+const resetForm = (): void => {
+  form.fiatAmount = defaultFiatValue;
+  form.fiatSelected = "USD";
+  form.cryptoAmount = "0";
+  form.cryptoSelected = "ETH";
+  form.address = "";
+  debounce_getCryptoForFiat();
+};
+
+const debounce_getCryptoForFiat = debounce(() => {
+  getCryptoForFiat(false);
+}, apiDebounceTime);
+const debounce_getFiatForCrypto = debounce(() => {
+  getFiatForCrypto();
+}, apiDebounceTime);
+
+const verifyAddress = (): void => {
+  const valid = WAValidator.validate(form.address, form.cryptoSelected);
+  if (valid) {
+    form.addressErrorMsg = "";
+    form.addressError = false;
+  } else {
+    if (!form.address) {
+      form.addressErrorMsg = "";
+    } else {
+      form.addressErrorMsg = `Please provide a valid ${form.cryptoSelected} address`;
+    }
+  }
+};
+
+const submitForm = (): void => {
+  loading.processingBuyForm = true;
+  executeSimplexPayment(
+    form.fiatSelected,
+    form.cryptoSelected,
+    form.fiatSelected,
+    form.fiatAmount,
+    form.address
+  );
+};
 </script>
 
 <style lang="scss">

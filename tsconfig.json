@@ -15,7 +15,7 @@
     "types": [
       "webpack-env",
       "jest",
-      "src/index.d.ts"
+      "./src/index.d.ts"
     ],
     "paths": {
       "@/*": [
@@ -28,6 +28,12 @@
       "dom.iterable",
       "scripthost"
     ]
+  },
+  "parserOptions": {
+    "parser": "@typescript-eslint/parser",
+    "ecmaFeatures": {
+      "jsx": false
+    }
   },
   "include": [
     "src/**/*.ts",

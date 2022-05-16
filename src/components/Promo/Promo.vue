@@ -65,66 +65,61 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { defineComponent } from "vue";
 import iconFee from "@/assets/images/promo/icon-fee.png";
 import iconQuick from "@/assets/images/promo/icon-quick.png";
 import iconVerification from "@/assets/images/promo/icon-verification.png";
 import iconSupport from "@/assets/images/promo/icon-support.png";
 
-export default defineComponent({
+defineComponent({
   name: "PromoComponent",
-  components: {},
-  data() {
-    return {
-      promo1: [
-        {
-          title: "For your first transaction",
-          description:
-            "If you are buying coins very first time, you can buy up to $20,000 worth of coins.",
-          amount: "$50 to $20,000",
-          rate: "for first buy",
-        },
-        {
-          title: "Daily limit",
-          description: "You can buy up to $20,000 worth of coins daily.",
-          amount: "Up to $20,000",
-          rate: "/day",
-        },
-        {
-          title: "Monthly limit",
-          description: "You can buy up to $50,000 worth of coins monthly.",
-          amount: "Up to $50,000",
-          rate: "/month",
-        },
-      ],
-      promo2: [
-        {
-          icon: iconFee,
-          title: "Reasonable fee",
-          description:
-            "Extra charges apply in addition to the rate provided, including a 1% MyEtherWallet fee.",
-        },
-        {
-          icon: iconQuick,
-          title: "Quick transactions",
-          description:
-            "We offer lightning-fast transactions typically taking just minutes.",
-        },
-        {
-          icon: iconVerification,
-          title: "Easy verification",
-          description:
-            "Payment process is pretty simple and takes just a few steps.",
-        },
-        {
-          icon: iconSupport,
-          title: "Instant support",
-        },
-      ],
-    };
-  },
 });
+
+const promo1 = [
+  {
+    title: "For your first transaction",
+    description:
+      "If you are buying coins very first time, you can buy up to $20,000 worth of coins.",
+    amount: "$50 to $20,000",
+    rate: "for first buy",
+  },
+  {
+    title: "Daily limit",
+    description: "You can buy up to $20,000 worth of coins daily.",
+    amount: "Up to $20,000",
+    rate: "/day",
+  },
+  {
+    title: "Monthly limit",
+    description: "You can buy up to $50,000 worth of coins monthly.",
+    amount: "Up to $50,000",
+    rate: "/month",
+  },
+];
+const promo2 = [
+  {
+    icon: iconFee,
+    title: "Reasonable fee",
+    description:
+      "Extra charges apply in addition to the rate provided, including a 1% MyEtherWallet fee.",
+  },
+  {
+    icon: iconQuick,
+    title: "Quick transactions",
+    description:
+      "We offer lightning-fast transactions typically taking just minutes.",
+  },
+  {
+    icon: iconVerification,
+    title: "Easy verification",
+    description: "Payment process is pretty simple and takes just a few steps.",
+  },
+  {
+    icon: iconSupport,
+    title: "Instant support",
+  },
+];
 </script>
 
 <style lang="scss" scoped>

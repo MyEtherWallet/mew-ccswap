@@ -1,5 +1,5 @@
 import axios from "axios";
-import _ from "lodash";
+import { toNumber } from "lodash";
 
 const supportedCrypto = ["ETH", "BNB", "MATIC"];
 
@@ -17,10 +17,10 @@ const currencySymbols = {
 };
 
 async function getSimplexQuote(
-  fiatCurrency,
-  cryptoCurrency,
-  requestedCurrency,
-  requestedAmount,
+  fiatCurrency: string,
+  cryptoCurrency: string,
+  requestedCurrency: string,
+  requestedAmount: string,
   address = "0x2d27851680eB0A41d6F77CB7b38F64752bC1DEFD"
 ) {
   const apiQuote = "https://mainnet.mewwallet.dev/purchase/simplex/quote";
@@ -32,7 +32,7 @@ async function getSimplexQuote(
         fiatCurrency: fiatCurrency,
         cryptoCurrency: cryptoCurrency,
         requestedCurrency: requestedCurrency,
-        requestedAmount: _.toNumber(requestedAmount),
+        requestedAmount: toNumber(requestedAmount),
       },
     })
     .then((response) => {

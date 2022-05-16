@@ -27,21 +27,16 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { defineComponent } from "vue";
 
-export default defineComponent({
+defineComponent({
   name: "FooterComponent",
-  components: {},
-  data() {
-    return {};
-  },
-  methods: {
-    openInNewTab(url: string) {
-      window.open(url, "_blank").focus();
-    },
-  },
 });
+
+const openInNewTab = (url: string) => {
+  window.open(url, "_blank")!.focus();
+};
 </script>
 
 <style lang="scss" scoped>

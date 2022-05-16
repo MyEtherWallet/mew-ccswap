@@ -8,7 +8,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-
+import { Buffer } from "buffer";
 export default defineComponent({
   name: "App",
 });
