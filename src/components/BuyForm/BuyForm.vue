@@ -6,7 +6,7 @@
     <div class="mb-10">
       <div class="d-flex align-center">
         <div class="heading-4 text-uppercase">Price</div>
-        <div v-if="loadingFiatAmount" class="ml-2">
+        <div v-if="loading.fiatAmount" class="ml-2">
           <span class="h3 font-weight-regular mr-1 text--mew">Loading</span>
           <v-progress-circular
             :size="11"
@@ -23,17 +23,15 @@
       -->
       <div class="d-flex mt-2">
         <v-text-field
-          hide-details
           type="number"
-          v-model.number="fiatAmount"
+          v-model.number="form.fiatAmount"
           required
           dense
           @update:modelValue="debounce_getCryptoForFiat"
         ></v-text-field>
         <v-select
           style="max-width: 100px"
-          hide-details
-          v-model="fiatSelected"
+          v-model="form.fiatSelected"
           :items="fiatItems"
         ></v-select>
       </div>
@@ -45,7 +43,7 @@
     <div class="mb-10">
       <div class="d-flex align-center">
         <div class="heading-4 text-uppercase">Amount</div>
-        <div v-if="loadingCryptoAmount" class="ml-2">
+        <div v-if="loading.cryptoAmount" class="ml-2">
           <span class="h3 font-weight-regular mr-1 text--mew">Loading</span>
           <v-progress-circular
             :size="11"
@@ -62,17 +60,15 @@
       -->
       <div class="d-flex mt-2">
         <v-text-field
-          hide-details
           type="number"
-          v-model.number="cryptoAmount"
+          v-model.number="form.cryptoAmount"
           required
           dense
           @update:modelValue="debounce_getFiatForCrypto"
         ></v-text-field>
         <v-select
           style="max-width: 100px"
-          hide-details
-          v-model="cryptoSelected"
+          v-model="form.cryptoSelected"
           :items="cryptoItems"
         ></v-select>
       </div>
@@ -93,10 +89,10 @@
         </a>
       </div>
       <v-text-field
-        v-model="address"
+        v-model="form.address"
         required
         dense
-        :error-messages="addressErrorMsg"
+        :error-messages="form.addressErrorMsg"
         @keyup="verifyAddress"
       ></v-text-field>
     </div>
@@ -156,13 +152,9 @@
     <!-- ============================================================================= -->
     <!-- Buy limit warning -->
     <!-- ============================================================================= -->
-    <v-snackbar v-model="showAlert" multi-line timeout="5000">
+    <v-snackbar v-model="loading.showAlert" multi-line timeout="5000">
       <div class="text-center pa-3" style="max-width: 350px">
-        <img
-          src="@/assets/images/icon-mew-wallet.png"
-          alt="MEW doggy"
-          style="max-width: 80px"
-        />
+        <img :src="mewWalletImg" alt="MEW doggy" style="max-width: 80px" />
         <h3 class="text--white">
           Uh oh... Maximum daily crypto buy limit is between
           <span style="font-size: 1.2rem" class="text--white font-weight-bold">
@@ -170,7 +162,7 @@
           </span>
         </h3>
 
-        <v-btn class="mt-3" @click="showAlert = false" size="small">
+        <v-btn class="mt-3" @click="loading.showAlert = false" size="small">
           Close
         </v-btn>
       </div>
@@ -183,20 +175,17 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineComponent, reactive, ref, watch } from "vue";
+import { computed, defineComponent, reactive, watch } from "vue";
 import BigNumber from "bignumber.js";
 // import ReCaptcha from "@/components/recaptcha/ReCaptcha.vue";
-import {
-  supportedCrypto,
-  supportedFiat,
-  currencySymbols,
-  getSimplexQuote,
-} from "./prices";
+import { supportedCrypto, supportedFiat, getSimplexQuote } from "./prices";
 import { executeSimplexPayment } from "./order";
-import { toNumber, debounce } from "lodash";
+import { debounce } from "lodash";
 import WAValidator from "multicoin-address-validator";
+import mewWallet from "@/assets/images/icon-mew-wallet.png";
 // import SubmitForm from "./SubmitForm.vue";
 
+const mewWalletImg = mewWallet;
 const defaultFiatValue = "100";
 const apiDebounceTime = 1000;
 
@@ -237,7 +226,7 @@ const loading = reactive({
   processingBuyForm: false,
 });
 
-let formData = ref(null);
+// const formData = ref(null);
 
 // watchers
 watch([form.cryptoSelected, form.fiatSelected], () => {
@@ -275,9 +264,9 @@ const loadUrlParameters = () => {
     form.address = queryTo ? queryTo : "";
   }
 };
-const onReCaptchaToken = (token: string): void => {
-  form.reCaptchaToken = token;
-};
+// const onReCaptchaToken = (token: string): void => {
+//   form.reCaptchaToken = token;
+// };
 
 const getCryptoForFiat = async (isLoading: boolean): Promise<void> => {
   loading.cryptoAmount = true;

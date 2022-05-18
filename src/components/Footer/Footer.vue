@@ -1,12 +1,8 @@
 <template>
   <div class="component--footer py-2">
     <v-container class="text-center">
-      <img
-        src="@/assets/images/icon-mew-logo-light.svg"
-        alt="MEW"
-        height="25"
-      />
-      <div>©2018 MyEtherWallet Inc. All rights reserved</div>
+      <img :src="footerImg" alt="MEW" height="25" />
+      <div>©{{ presentDate }} MyEtherWallet Inc. All rights reserved</div>
 
       <div class="font-weight-regular mb-3">
         Need Ethereum wallet? Get one from
@@ -29,14 +25,16 @@
 
 <script setup lang="ts">
 import { defineComponent } from "vue";
-
+import mewIconLight from "@/assets/images/icon-mew-logo-light.svg";
 defineComponent({
   name: "FooterComponent",
 });
-
+const footerImg = mewIconLight;
 const openInNewTab = (url: string) => {
-  window.open(url, "_blank")!.focus();
+  const newWindow = window.open(url, "_blank");
+  newWindow?.focus();
 };
+const presentDate = new Date().getFullYear();
 </script>
 
 <style lang="scss" scoped>
