@@ -4,7 +4,25 @@ import { toNumber } from "lodash";
 const supportedCrypto = ["ETH", "BNB", "MATIC"];
 
 //const supportedFiat = ['USD', 'RUB', 'EUR', 'JPY', 'AUD', 'CAD', 'GBP'];
-const supportedFiat = ["USD", "EUR", "JPY", "AUD", "CAD", "GBP"];
+const supportedFiat = [
+  "USD",
+  "EUR",
+  "JPY",
+  "AUD",
+  "CAD",
+  "GBP",
+  "KRW",
+  "CHF",
+  "CZK",
+  "DKK",
+  "NOK",
+  "NZD",
+  "PLN",
+  "SEK",
+  "TRY",
+  "ZAR",
+  "HUF",
+];
 
 const currencySymbols = {
   USD: "$", // US Dollar

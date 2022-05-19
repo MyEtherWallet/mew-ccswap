@@ -7,7 +7,7 @@
     <v-container>
       <v-row>
         <v-col cols="12" md="5" lg="6">
-          <Header />
+          <HeaderComponent />
         </v-col>
         <v-col cols="12" md="7" lg="6">
           <BuyForm />
@@ -16,33 +16,20 @@
 
       <v-row>
         <v-col>
-          <Promo />
+          <PromoComponent />
         </v-col>
       </v-row>
     </v-container>
-    <Footer />
+    <FooterComponent />
   </div>
 </template>
 
 <script setup lang="ts">
-import { defineComponent } from "vue";
-import Header from "@/components/Header/Header.vue";
-import Footer from "@/components/Footer/Footer.vue";
+import HeaderComponent from "@/components/Header/HeaderComponent.vue";
+import FooterComponent from "@/components/Footer/FooterComponent.vue";
 import BuyForm from "@/components/BuyForm/BuyForm.vue";
-import Promo from "@/components/Promo/Promo.vue";
-import BgBar from "@/assets/images/bg-bar-old.svg";
-
-defineComponent({
-  name: "LandingPageOld",
-  components: {
-    Header,
-    Footer,
-    BuyForm,
-    Promo,
-  },
-});
-
-const bgBar = BgBar;
+import PromoComponent from "@/components/Promo/PromoComponent.vue";
+import bgBar from "@/assets/images/bg-bar-old.svg";
 </script>
 
 <style lang="scss">

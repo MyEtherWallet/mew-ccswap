@@ -66,16 +66,10 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent } from "vue";
 import iconFee from "@/assets/images/promo/icon-fee.png";
 import iconQuick from "@/assets/images/promo/icon-quick.png";
 import iconVerification from "@/assets/images/promo/icon-verification.png";
 import iconSupport from "@/assets/images/promo/icon-support.png";
-
-defineComponent({
-  name: "PromoComponent",
-});
-
 const promo1 = [
   {
     title: "For your first transaction",

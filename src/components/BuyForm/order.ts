@@ -1,6 +1,6 @@
 import axios from "axios";
 import { getSimplexQuote } from "./prices";
-
+const API = "https://mainnet.mewwallet.dev";
 const apiOrder = "https://mainnet.mewwallet.dev/purchase/simplex/order";
 
 // ===================================================================================================
@@ -23,7 +23,8 @@ async function confirmSimplexOrder(paymentId: string, address: string) {
 }
 
 async function submitForm(form: any) {
-  const url = `https://mainnet.mewwallet.dev/v2/purchase/simplex/order?id=web%7C0xB17b4bF46d6BF4d57434d3Dd199a9964b67b7e1C&fiatCurrency=${form["fiat_total_amount[currency]"]}&requestedCurrency=${form["fiat_total_amount[currency]"]}&requestedAmount=${form["fiat_total_amount[amount]"]}&address=${form["destination_wallet[address]"]}`;
+  const id = `WEB|${form["destination_wallet[address]"]}`;
+  const url = `${API}/v2/purchase/simplex/order?id=${id}&fiatCurrency=${form["fiat_total_amount[currency]"]}&requestedCurrency=${form["fiat_total_amount[currency]"]}&requestedAmount=${form["fiat_total_amount[amount]"]}&address=${form["destination_wallet[address]"]}`;
   window.location.href = url;
 }
 

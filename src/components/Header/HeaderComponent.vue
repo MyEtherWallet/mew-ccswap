@@ -1,6 +1,6 @@
 <template>
   <div>
-    <img :src="mewDarkLogoImg" alt="MEW" height="36" />
+    <img :src="mewDarkLogo" alt="MEW" height="36" />
 
     <div
       :class="$vuetify.display.smAndUp ? 'heading-1' : 'heading-1'"
@@ -15,7 +15,7 @@
 
     <div class="d-flex align-center" style="margin-top: 60px">
       <div class="mr-2 text--secondary">Powered by</div>
-      <img :src="simplexImg" alt="Simplex" height="30" />
+      <img :src="simplex" alt="Simplex" height="30" />
     </div>
 
     <div class="d-flex flex-wrap align-center mt-4">
@@ -28,31 +28,20 @@
         <u class="font-weight-medium text--secondary"> MasterCard </u>
       </div>
       <div class="d-flex align-center">
-        <img class="mr-2" :src="visaImg" alt="Visa" height="22" />
-        <img class="mr-2" :src="applePayImg" alt="Visa" height="22" />
-        <img :src="masterImg" alt="Master" height="22" />
+        <img class="mr-2" :src="visa" alt="Visa" height="22" />
+        <img class="mr-2" :src="applePay" alt="Visa" height="22" />
+        <img :src="master" alt="Master" height="22" />
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { defineComponent } from "vue";
 import visa from "@/assets/images/icon-visa.svg";
 import master from "@/assets/images/icon-master.svg";
 import applePay from "@/assets/images/icon-apple-pay.svg";
 import simplex from "@/assets/images/icon-simplex.svg";
 import mewDarkLogo from "@/assets/images/icon-mew-logo-dark.svg";
-
-defineComponent({
-  name: "HeaderComponent",
-});
-
-const visaImg = visa;
-const masterImg = master;
-const applePayImg = applePay;
-const simplexImg = simplex;
-const mewDarkLogoImg = mewDarkLogo;
 </script>
 
 <style lang="scss" scoped>

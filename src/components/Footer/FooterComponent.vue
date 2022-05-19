@@ -1,7 +1,7 @@
 <template>
   <div class="component--footer py-2">
     <v-container class="text-center">
-      <img :src="footerImg" alt="MEW" height="25" />
+      <img :src="mewIconLight" alt="MEW" height="25" />
       <div>©{{ presentDate }} MyEtherWallet Inc. All rights reserved</div>
 
       <div class="font-weight-regular mb-3">
@@ -24,12 +24,8 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent } from "vue";
 import mewIconLight from "@/assets/images/icon-mew-logo-light.svg";
-defineComponent({
-  name: "FooterComponent",
-});
-const footerImg = mewIconLight;
+
 const openInNewTab = (url: string) => {
   const newWindow = window.open(url, "_blank");
   newWindow?.focus();

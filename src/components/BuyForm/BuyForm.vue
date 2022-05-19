@@ -27,7 +27,7 @@
           v-model.number="form.fiatAmount"
           required
           dense
-          @update:modelValue="debounce_getCryptoForFiat"
+          @update:modelValue="debounce_getFiatForCrypto"
         ></v-text-field>
         <v-select
           style="max-width: 100px"
@@ -64,7 +64,7 @@
           v-model.number="form.cryptoAmount"
           required
           dense
-          @update:modelValue="debounce_getFiatForCrypto"
+          @update:modelValue="debounce_getCryptoForFiat"
         ></v-text-field>
         <v-select
           style="max-width: 100px"
@@ -107,7 +107,7 @@
     <!-- ============================================================================= -->
     <!-- Buy/Rest button -->
     <!-- ============================================================================= -->
-    <div v-if="!processingBuyForm" class="pt-2 text-center">
+    <div v-if="!loading.processingBuyForm" class="pt-2 text-center">
       <div>
         <v-btn
           rounded="pill"
@@ -175,7 +175,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineComponent, reactive, watch } from "vue";
+import { computed, reactive, watch, onMounted } from "vue";
 import BigNumber from "bignumber.js";
 // import ReCaptcha from "@/components/recaptcha/ReCaptcha.vue";
 import { supportedCrypto, supportedFiat, getSimplexQuote } from "./prices";
@@ -186,19 +186,16 @@ import mewWallet from "@/assets/images/icon-mew-wallet.png";
 // import SubmitForm from "./SubmitForm.vue";
 
 const mewWalletImg = mewWallet;
-const defaultFiatValue = "100";
+const defaultFiatValue = "0";
 const apiDebounceTime = 1000;
 
-defineComponent({
-  name: "BuyForm",
-  setup() {
-    // Load URL parameter value and verify crypto address
-    loadUrlParameters();
-    verifyAddress();
+onMounted(() => {
+  // Load URL parameter value and verify crypto address
+  loadUrlParameters();
+  verifyAddress();
 
-    // Get crypto amount based on current fiat amount
-    getCryptoForFiat(true);
-  },
+  // Get crypto amount based on current fiat amount
+  getCryptoForFiat(true);
 });
 
 // data
@@ -211,7 +208,7 @@ const cryptoItems: string[] = supportedCrypto;
 const form = reactive({
   fiatAmount: defaultFiatValue,
   fiatSelected: "USD",
-  cryptoAmount: "0",
+  cryptoAmount: "1",
   cryptoSelected: "ETH",
   address: "",
   addressErrorMsg: "",
@@ -226,13 +223,22 @@ const loading = reactive({
   processingBuyForm: false,
 });
 
-// const formData = ref(null);
-
 // watchers
-watch([form.cryptoSelected, form.fiatSelected], () => {
-  verifyAddress();
-  getCryptoForFiat(false);
-});
+watch(
+  () => form.cryptoSelected,
+  () => {
+    verifyAddress();
+    getCryptoForFiat(false);
+  }
+);
+
+watch(
+  () => form.fiatSelected,
+  () => {
+    verifyAddress();
+    getCryptoForFiat(false);
+  }
+);
 
 const isValidForm = computed(() => {
   const fiatBn = new BigNumber(form.fiatAmount);
@@ -242,8 +248,9 @@ const isValidForm = computed(() => {
     cryptoBn.gt(0) &&
     form.fiatSelected &&
     form.cryptoSelected &&
+    form.address &&
     !form.addressError &&
-    form.reCaptchaToken
+    form.addressErrorMsg === ""
   );
 });
 
@@ -275,9 +282,10 @@ const getCryptoForFiat = async (isLoading: boolean): Promise<void> => {
       form.fiatSelected,
       form.cryptoSelected,
       form.cryptoSelected,
-      form.fiatAmount
+      form.cryptoAmount
     );
     form.cryptoAmount = response.crypto_amount;
+    form.fiatAmount = response.fiat_amount;
     loading.cryptoAmount = false;
   } catch (e) {
     loading.cryptoAmount = false;
@@ -286,8 +294,6 @@ const getCryptoForFiat = async (isLoading: boolean): Promise<void> => {
     if (isLoading) {
       return resetForm();
     }
-
-    return getFiatForCrypto();
   }
 };
 
@@ -297,10 +303,10 @@ const getFiatForCrypto = async (): Promise<void> => {
     const response = await getSimplexQuote(
       form.fiatSelected,
       form.cryptoSelected,
-      form.cryptoSelected,
-      form.cryptoAmount
+      form.fiatSelected,
+      form.fiatAmount
     );
-    form.fiatAmount = response.fiat_amount;
+    form.cryptoAmount = response.crypto_amount;
     loading.fiatAmount = false;
   } catch (e) {
     loading.fiatAmount = false;
