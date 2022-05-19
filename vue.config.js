@@ -1,6 +1,5 @@
 const webpack = require("webpack");
 const { defineConfig } = require("@vue/cli-service");
-const path = require("path");
 module.exports = defineConfig({
   publicPath: process.env.NODE_ENV === "production" ? "/mew-ccswap/" : "/",
   transpileDependencies: true,
@@ -11,13 +10,7 @@ module.exports = defineConfig({
         Buffer: ["buffer", "Buffer"],
       }),
     ],
-    resolve: {
-      alias: {
-        "@": path.resolve("src"),
-      },
-    },
   },
-
   pluginOptions: {
     vuetify: {
       // https://github.com/vuetifyjs/vuetify-loader/tree/next/packages/vuetify-loader
