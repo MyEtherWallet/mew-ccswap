@@ -2,7 +2,7 @@ const webpack = require("webpack");
 const { defineConfig } = require("@vue/cli-service");
 const path = require("path");
 module.exports = defineConfig({
-  publicPath: "/",
+  publicPath: process.env.NODE_ENV === "production" ? "/mew-ccswap/" : "/",
   transpileDependencies: true,
   lintOnSave: true,
   configureWebpack: {
