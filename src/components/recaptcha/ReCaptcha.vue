@@ -48,30 +48,31 @@
   </div>
 </template>
 
-<script>
-import { ref } from 'vue';
-import { useReCaptcha } from 'vue-recaptcha-v3';
+<script setup lang="ts">
+import { ref, defineComponent } from "vue";
+import { useReCaptcha } from "vue-recaptcha-v3";
 
-export default {
-  name: 'ReCaptcha',
-  emits: ['token'],
-
+defineComponent({
+  name: "ReCaptcha",
+  emits: ["token"],
   setup(props, { emit }) {
     const loading = ref(true);
     const verified = ref(false);
 
-    const { executeRecaptcha, recaptchaLoaded } = useReCaptcha();
-
     const recaptcha = async () => {
+      const recaptchaLib = useReCaptcha();
+      if (!recaptchaLib) {
+        throw new Error("reCaptcha couldn't load!");
+      }
       // (optional) Wait until recaptcha has been loaded.
-      await recaptchaLoaded();
+      await recaptchaLib.recaptchaLoaded();
 
       // Execute reCAPTCHA with action "login".
-      const token = await executeRecaptcha('login');
+      const token = await recaptchaLib.executeRecaptcha("login");
 
       // Do stuff with the received token.
       if (token) {
-        emit('token', token);
+        emit("token", token);
         loading.value = false;
         verified.value = true;
       }
@@ -82,10 +83,10 @@ export default {
     return {
       recaptcha,
       verified,
-      loading
+      loading,
     };
-  }
-};
+  },
+});
 </script>
 
 <style lang="scss" scoped>
