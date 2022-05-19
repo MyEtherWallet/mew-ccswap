@@ -25,7 +25,7 @@ async function confirmSimplexOrder(paymentId: string, address: string) {
 async function submitForm(form: any) {
   const id = `WEB|${form["destination_wallet[address]"]}`;
   const url = `${API}/v2/purchase/simplex/order?id=${id}&fiatCurrency=${form["fiat_total_amount[currency]"]}&requestedCurrency=${form["fiat_total_amount[currency]"]}&requestedAmount=${form["fiat_total_amount[amount]"]}&address=${form["destination_wallet[address]"]}`;
-  window.location.href = url;
+  window.location.href = encodeURI(url);
 }
 
 // ===================================================================================================

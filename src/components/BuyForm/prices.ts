@@ -39,7 +39,7 @@ async function getSimplexQuote(
   cryptoCurrency: string,
   requestedCurrency: string,
   requestedAmount: string,
-  address = "0x2d27851680eB0A41d6F77CB7b38F64752bC1DEFD"
+  address = "0xDECAF9CD2367cdbb726E904cD6397eDFcAe6068D"
 ) {
   const apiQuote = "https://mainnet.mewwallet.dev/purchase/simplex/quote";
 
@@ -57,10 +57,7 @@ async function getSimplexQuote(
       return response.data;
     })
     .catch((e) => {
-      console.log(
-        `[USER INPUT ERROR] Simplex Quote API =====> ${e.response.data.error}`
-      );
-      throw new Error(e);
+      throw e;
     });
 }
 

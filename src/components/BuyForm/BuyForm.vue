@@ -157,8 +157,19 @@
         <img :src="mewWalletImg" alt="MEW doggy" style="max-width: 80px" />
         <h3 class="text--white">
           Uh oh... Maximum daily crypto buy limit is between
-          <span style="font-size: 1.2rem" class="text--white font-weight-bold">
+          <span
+            v-if="loading.alertMessage === ''"
+            style="font-size: 1.2rem"
+            class="text--white font-weight-bold"
+          >
             USD $50 ~ $20,000
+          </span>
+          <span
+            v-else
+            style="font-size: 1.2rem"
+            class="text--white font-weight-bold"
+          >
+            {{ loading.alertMessage }}
           </span>
         </h3>
 
@@ -221,6 +232,7 @@ const loading = reactive({
   cryptoAmount: false,
   showAlert: false,
   processingBuyForm: false,
+  alertMessage: "",
 });
 
 // watchers
@@ -236,7 +248,7 @@ watch(
   () => form.fiatSelected,
   () => {
     verifyAddress();
-    getCryptoForFiat(false);
+    getFiatForCrypto();
   }
 );
 
@@ -287,9 +299,13 @@ const getCryptoForFiat = async (isLoading: boolean): Promise<void> => {
     form.cryptoAmount = response.crypto_amount;
     form.fiatAmount = response.fiat_amount;
     loading.cryptoAmount = false;
-  } catch (e) {
+  } catch (e: any) {
     loading.cryptoAmount = false;
     loading.showAlert = true;
+    const value = new BigNumber(form.cryptoAmount).gt(0);
+    if (value) {
+      loading.alertMessage = e.response.data.error;
+    }
 
     if (isLoading) {
       return resetForm();
@@ -308,9 +324,13 @@ const getFiatForCrypto = async (): Promise<void> => {
     );
     form.cryptoAmount = response.crypto_amount;
     loading.fiatAmount = false;
-  } catch (e) {
+  } catch (e: any) {
     loading.fiatAmount = false;
     loading.showAlert = true;
+    const value = new BigNumber(form.fiatAmount).gt(0);
+    if (value) {
+      loading.alertMessage = e.response.data.error;
+    }
     getCryptoForFiat(false);
   }
 };
