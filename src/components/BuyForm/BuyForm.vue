@@ -191,7 +191,7 @@ import BigNumber from "bignumber.js";
 // import ReCaptcha from "@/components/recaptcha/ReCaptcha.vue";
 import { supportedCrypto, supportedFiat, getSimplexQuote } from "./prices";
 import { executeSimplexPayment } from "./order";
-import { debounce } from "lodash";
+import { debounce, isObject } from "lodash";
 import WAValidator from "multicoin-address-validator";
 import mewWallet from "@/assets/images/icon-mew-wallet.png";
 // import SubmitForm from "./SubmitForm.vue";
@@ -302,10 +302,7 @@ const getCryptoForFiat = async (isLoading: boolean): Promise<void> => {
   } catch (e: any) {
     loading.cryptoAmount = false;
     loading.showAlert = true;
-    const value = new BigNumber(form.cryptoAmount).gt(0);
-    if (value) {
-      loading.alertMessage = e.response.data.error;
-    }
+    errorHandler(e);
 
     if (isLoading) {
       return resetForm();
@@ -327,11 +324,24 @@ const getFiatForCrypto = async (): Promise<void> => {
   } catch (e: any) {
     loading.fiatAmount = false;
     loading.showAlert = true;
-    const value = new BigNumber(form.fiatAmount).gt(0);
-    if (value) {
+    errorHandler(e);
+    getCryptoForFiat(false);
+  }
+};
+
+const errorHandler = (e: any): void => {
+  const value = new BigNumber(form.fiatAmount).gt(0);
+  if (value) {
+    const isErrorObj = isObject(e.response.data.error);
+    if (isErrorObj) {
+      // eslint-disable-next-line
+      const hasErr = e.response.data.error.hasOwnProperty("errors");
+      if (hasErr) {
+        loading.alertMessage = e.response.data.error.errors[0].message;
+      }
+    } else {
       loading.alertMessage = e.response.data.error;
     }
-    getCryptoForFiat(false);
   }
 };
 
