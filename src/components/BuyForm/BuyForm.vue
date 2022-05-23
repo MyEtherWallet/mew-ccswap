@@ -155,22 +155,18 @@
     <v-snackbar v-model="loading.showAlert" multi-line timeout="5000">
       <div class="text-center pa-3" style="max-width: 350px">
         <img :src="mewWalletImg" alt="MEW doggy" style="max-width: 80px" />
-        <h3 class="text--white">
+        <h3 class="text--white" v-if="loading.alertMessage === ''">
           Uh oh... Maximum daily crypto buy limit is between
-          <span
-            v-if="loading.alertMessage === ''"
-            style="font-size: 1.2rem"
-            class="text--white font-weight-bold"
-          >
+          <span style="font-size: 1.2rem" class="text--white font-weight-bold">
             USD $50 ~ $20,000
           </span>
-          <span
-            v-else
-            style="font-size: 1.2rem"
-            class="text--white font-weight-bold"
-          >
-            {{ loading.alertMessage }}
-          </span>
+        </h3>
+        <h3
+          style="font-size: 1.2rem"
+          class="text--white font-weight-bold"
+          v-else
+        >
+          {{ loading.alertMessage }}
         </h3>
 
         <v-btn class="mt-3" @click="loading.showAlert = false" size="small">
