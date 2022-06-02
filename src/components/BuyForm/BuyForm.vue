@@ -94,6 +94,7 @@
         dense
         :error-messages="form.addressErrorMsg"
         @keyup="verifyAddress"
+        ref="address"
       ></v-text-field>
     </div>
 
@@ -182,7 +183,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, watch, onMounted } from "vue";
+import { computed, reactive, watch, onMounted, ref } from "vue";
 import BigNumber from "bignumber.js";
 // import ReCaptcha from "@/components/recaptcha/ReCaptcha.vue";
 import { supportedCrypto, supportedFiat, getSimplexQuote } from "./prices";
@@ -222,7 +223,7 @@ const form = reactive({
   reCaptchaToken: "",
   addressError: false,
 });
-
+const address = ref("address");
 const loading = reactive({
   fiatAmount: false,
   cryptoAmount: false,
@@ -251,15 +252,16 @@ watch(
 const isValidForm = computed(() => {
   const fiatBn = new BigNumber(form.fiatAmount);
   const cryptoBn = new BigNumber(form.cryptoAmount);
-  return (
-    fiatBn.gt(0) &&
+  return fiatBn.gt(0) &&
     cryptoBn.gt(0) &&
     form.fiatSelected &&
     form.cryptoSelected &&
     form.address &&
     !form.addressError &&
-    form.addressErrorMsg === ""
-  );
+    form.addressErrorMsg === "" &&
+    loading.alertMessage === ""
+    ? true
+    : false;
 });
 
 // methods
@@ -285,6 +287,7 @@ const loadUrlParameters = () => {
 
 const getCryptoForFiat = async (isLoading: boolean): Promise<void> => {
   loading.cryptoAmount = true;
+  loading.alertMessage = "";
   try {
     const response = await getSimplexQuote(
       form.fiatSelected,
@@ -308,6 +311,7 @@ const getCryptoForFiat = async (isLoading: boolean): Promise<void> => {
 
 const getFiatForCrypto = async (): Promise<void> => {
   loading.fiatAmount = true;
+  loading.alertMessage = "";
   try {
     const response = await getSimplexQuote(
       form.fiatSelected,
@@ -347,6 +351,7 @@ const resetForm = (): void => {
   form.cryptoAmount = "0";
   form.cryptoSelected = "ETH";
   form.address = "";
+  address.value = "";
   debounce_getCryptoForFiat();
 };
 
