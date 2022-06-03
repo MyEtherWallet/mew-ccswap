@@ -204,6 +204,9 @@ onMounted(() => {
 
   // Get crypto amount based on current fiat amount
   getCryptoForFiat(true);
+
+  // Clear Address field
+  address.value = "";
 });
 
 // data
@@ -252,7 +255,8 @@ watch(
 const isValidForm = computed(() => {
   const fiatBn = new BigNumber(form.fiatAmount);
   const cryptoBn = new BigNumber(form.cryptoAmount);
-  return fiatBn.gt(0) &&
+  return (
+    fiatBn.gt(0) &&
     cryptoBn.gt(0) &&
     form.fiatSelected &&
     form.cryptoSelected &&
@@ -260,8 +264,7 @@ const isValidForm = computed(() => {
     !form.addressError &&
     form.addressErrorMsg === "" &&
     loading.alertMessage === ""
-    ? true
-    : false;
+  );
 });
 
 // methods
