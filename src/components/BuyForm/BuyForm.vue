@@ -30,7 +30,7 @@
           @update:modelValue="debounce_getFiatForCrypto"
         ></v-text-field>
         <v-select
-          style="max-width: 100px"
+          style="max-width: 120px"
           v-model="form.fiatSelected"
           :items="fiatItems"
         ></v-select>
@@ -67,7 +67,7 @@
           @update:modelValue="debounce_getCryptoForFiat"
         ></v-text-field>
         <v-select
-          style="max-width: 100px"
+          style="max-width: 120px"
           v-model="form.cryptoSelected"
           :items="cryptoItems"
         ></v-select>
