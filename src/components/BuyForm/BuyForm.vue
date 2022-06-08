@@ -222,6 +222,7 @@ const form = reactive({
   cryptoAmount: "1",
   cryptoSelected: "ETH",
   address: "",
+  validAddress: false,
   addressErrorMsg: "",
   reCaptchaToken: "",
   addressError: false,
@@ -263,7 +264,8 @@ const isValidForm = computed(() => {
     form.address &&
     !form.addressError &&
     form.addressErrorMsg === "" &&
-    loading.alertMessage === ""
+    loading.alertMessage === "" &&
+    form.validAddress
   );
 });
 
@@ -370,11 +372,14 @@ const verifyAddress = (): void => {
   if (valid) {
     form.addressErrorMsg = "";
     form.addressError = false;
+    form.validAddress = true;
   } else {
     if (!form.address) {
       form.addressErrorMsg = "";
+      form.validAddress = false;
     } else {
       form.addressErrorMsg = `Please provide a valid ${form.cryptoSelected} address`;
+      form.validAddress = false;
     }
   }
 };
