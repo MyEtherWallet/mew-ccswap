@@ -191,6 +191,7 @@ import { executeSimplexPayment } from "./order";
 import { debounce, isObject } from "lodash";
 import WAValidator from "multicoin-address-validator";
 import mewWallet from "@/assets/images/icon-mew-wallet.png";
+import { isHexStrict, isAddress } from "web3-utils";
 // import SubmitForm from "./SubmitForm.vue";
 
 const mewWalletImg = mewWallet;
@@ -350,6 +351,10 @@ const errorHandler = (e: any): void => {
   }
 };
 
+const validAddress = (address: string) => {
+  return address && isHexStrict(address) && isAddress(address);
+};
+
 const resetForm = (): void => {
   form.fiatAmount = defaultFiatValue;
   form.fiatSelected = "USD";
@@ -369,7 +374,7 @@ const debounce_getFiatForCrypto = debounce(() => {
 
 const verifyAddress = (): void => {
   const valid = WAValidator.validate(form.address, form.cryptoSelected);
-  if (valid) {
+  if (valid && validAddress(form.address)) {
     form.addressErrorMsg = "";
     form.addressError = false;
     form.validAddress = true;

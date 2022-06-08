@@ -27,6 +27,7 @@
     "vue-router": "^4.0.3",
     "vuetify": "npm:@vuetify/nightly@next",
     "vuex": "^4.0.0",
+    "web3-utils": "^1.7.3",
     "webfontloader": "^1.0.0",
     "webpack": "^5.72.1"
   },
