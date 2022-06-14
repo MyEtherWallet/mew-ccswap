@@ -1,5 +1,8 @@
 <template>
-  <div class="component--buy-form elevated-box pa-3 pa-sm-6 pa-md-8">
+  <div
+    class="component--buy-form elevated-box pa-3 pa-sm-6 pa-md-8"
+    ref="formDiv"
+  >
     <!-- ============================================================================= -->
     <!-- Fiat amount -->
     <!-- ============================================================================= -->
@@ -31,6 +34,7 @@
         ></v-text-field>
         <v-select
           style="max-width: 120px"
+          @click="handleDropdown('fiat')"
           v-model="form.fiatSelected"
           :items="fiatItems"
         ></v-select>
@@ -68,6 +72,7 @@
         ></v-text-field>
         <v-select
           style="max-width: 120px"
+          :focus="handleCryptoDropdown"
           v-model="form.cryptoSelected"
           :items="cryptoItems"
         ></v-select>
@@ -183,7 +188,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, watch, onMounted, ref } from "vue";
+import {
+  computed,
+  reactive,
+  watch,
+  onMounted,
+  ref,
+  ComponentPublicInstance,
+} from "vue";
 import BigNumber from "bignumber.js";
 // import ReCaptcha from "@/components/recaptcha/ReCaptcha.vue";
 import { supportedCrypto, supportedFiat, getSimplexQuote } from "./prices";
@@ -228,7 +240,9 @@ const form = reactive({
   reCaptchaToken: "",
   addressError: false,
 });
-const address = ref("address");
+const dropdown = reactive({ fiat: false, crypto: false });
+const address = ref();
+const formDiv = ref<ComponentPublicInstance<HTMLDivElement>>();
 const loading = reactive({
   fiatAmount: false,
   cryptoAmount: false,
@@ -269,7 +283,13 @@ const isValidForm = computed(() => {
     form.validAddress
   );
 });
-
+const handleCryptoDropdown = () => {
+  if (!formDiv.value) return;
+  if (dropdown.crypto) {
+    formDiv.value.focus();
+    dropdown.crypto = false;
+  } else dropdown.crypto = true;
+};
 // methods
 const loadUrlParameters = () => {
   const queryString = window.location.search;
