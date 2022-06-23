@@ -1,19 +1,22 @@
 <template>
-  <div class="component--buy-form elevated-box pa-3 pa-sm-6 pa-md-8">
+  <div
+    class="component--buy-form elevated-box pa-3 pa-sm-6 pa-md-8"
+    ref="formDiv"
+  >
     <!-- ============================================================================= -->
     <!-- Fiat amount -->
     <!-- ============================================================================= -->
     <div class="mb-10">
       <div class="d-flex align-center">
         <div class="heading-4 text-uppercase">Price</div>
-        <div v-if="loading.fiatAmount" class="ml-2">
+        <!-- <div v-if="loading.data" class="ml-2">
           <span class="h3 font-weight-regular mr-1 text--mew">Loading</span>
           <v-progress-circular
             :size="11"
             :width="2"
             indeterminate
           ></v-progress-circular>
-        </div>
+        </div> -->
       </div>
       <!--
       <h4>
@@ -23,16 +26,18 @@
       -->
       <div class="d-flex mt-2">
         <v-text-field
+          @input="fiatToCrypto"
           type="number"
           v-model.number="form.fiatAmount"
           required
           dense
-          @update:modelValue="debounce_getFiatForCrypto"
+          :disabled="loading.data"
         ></v-text-field>
         <v-select
           style="max-width: 120px"
           v-model="form.fiatSelected"
           :items="fiatItems"
+          :disabled="loading.data"
         ></v-select>
       </div>
     </div>
@@ -43,14 +48,14 @@
     <div class="mb-10">
       <div class="d-flex align-center">
         <div class="heading-4 text-uppercase">Amount</div>
-        <div v-if="loading.cryptoAmount" class="ml-2">
+        <!-- <div v-if="loading.cryptoAmount" class="ml-2">
           <span class="h3 font-weight-regular mr-1 text--mew">Loading</span>
           <v-progress-circular
             :size="11"
             :width="2"
             indeterminate
           ></v-progress-circular>
-        </div>
+        </div> -->
       </div>
       <!--
       <h4>
@@ -60,16 +65,18 @@
       -->
       <div class="d-flex mt-2">
         <v-text-field
+          @input="cryptoToFiat"
           type="number"
           v-model.number="form.cryptoAmount"
           required
           dense
-          @update:modelValue="debounce_getCryptoForFiat"
+          :disabled="loading.data"
         ></v-text-field>
         <v-select
           style="max-width: 120px"
           v-model="form.cryptoSelected"
           :items="cryptoItems"
+          :disabled="loading.data"
         ></v-select>
       </div>
     </div>
@@ -121,7 +128,6 @@
           <div class="text--white">Continue</div>
         </v-btn>
       </div>
-
       <!--
       <div>
         <v-btn class="my-3" @click="resetForms" variant="text" size="small">
@@ -129,7 +135,6 @@
         </v-btn>
       </div>
       -->
-
       <div class="text--secondary mt-6">
         You will be redirected to the partner's site
       </div>
@@ -186,9 +191,14 @@
 import { computed, reactive, watch, onMounted, ref } from "vue";
 import BigNumber from "bignumber.js";
 // import ReCaptcha from "@/components/recaptcha/ReCaptcha.vue";
-import { supportedCrypto, supportedFiat, getSimplexQuote } from "./prices";
+import {
+  supportedCrypto,
+  supportedFiat,
+  getSimplexPrices,
+  currencySymbols,
+} from "./prices";
 import { executeSimplexPayment } from "./order";
-import { debounce, isObject } from "lodash";
+import { isObject } from "lodash";
 import WAValidator from "multicoin-address-validator";
 import mewWallet from "@/assets/images/icon-mew-wallet.png";
 import { isHexStrict, isAddress } from "web3-utils";
@@ -196,18 +206,19 @@ import { isHexStrict, isAddress } from "web3-utils";
 
 const mewWalletImg = mewWallet;
 const defaultFiatValue = "0";
-const apiDebounceTime = 1000;
 
-onMounted(() => {
+onMounted(async () => {
   // Load URL parameter value and verify crypto address
   loadUrlParameters();
   verifyAddress();
 
-  // Get crypto amount based on current fiat amount
-  getCryptoForFiat(true);
-
   // Clear Address field
   address.value = "";
+
+  // Get crypto Data
+  await getPrices();
+  cryptoToFiat();
+  setInterval(getPrices, 1000 * 60 * 2);
 });
 
 // data
@@ -215,7 +226,29 @@ onMounted(() => {
 // non-reactive
 const fiatItems: string[] = supportedFiat;
 const cryptoItems: string[] = supportedCrypto;
+interface Data {
+  conversion_rates: { [currency: string]: number };
+  limits: { [currency: string]: { min: number; max: number } };
+  prices: { [currency: string]: string };
+}
 
+let simplexData: { [key: string]: Data } = {
+  ETH: {
+    conversion_rates: {},
+    limits: {},
+    prices: {},
+  },
+  MATIC: {
+    conversion_rates: {},
+    limits: {},
+    prices: {},
+  },
+  BNB: {
+    conversion_rates: {},
+    limits: {},
+    prices: {},
+  },
+};
 // reactive
 const form = reactive({
   fiatAmount: defaultFiatValue,
@@ -228,10 +261,9 @@ const form = reactive({
   reCaptchaToken: "",
   addressError: false,
 });
-const address = ref("address");
+const address = ref();
 const loading = reactive({
-  fiatAmount: false,
-  cryptoAmount: false,
+  data: false,
   showAlert: false,
   processingBuyForm: false,
   alertMessage: "",
@@ -242,7 +274,7 @@ watch(
   () => form.cryptoSelected,
   () => {
     verifyAddress();
-    getCryptoForFiat(false);
+    fiatToCrypto();
   }
 );
 
@@ -250,16 +282,22 @@ watch(
   () => form.fiatSelected,
   () => {
     verifyAddress();
-    getFiatForCrypto();
+    cryptoToFiat();
   }
 );
 
+watch(
+  () => form.fiatAmount,
+  () => minMaxError()
+);
+watch(
+  () => form.cryptoAmount,
+  () => minMaxError()
+);
+// methods
 const isValidForm = computed(() => {
-  const fiatBn = new BigNumber(form.fiatAmount);
-  const cryptoBn = new BigNumber(form.cryptoAmount);
   return (
-    fiatBn.gt(0) &&
-    cryptoBn.gt(0) &&
+    minMax.value &&
     form.fiatSelected &&
     form.cryptoSelected &&
     form.address &&
@@ -270,7 +308,66 @@ const isValidForm = computed(() => {
   );
 });
 
-// methods
+const minMax = computed(() => {
+  const { cryptoSelected, fiatAmount, fiatSelected } = form;
+  if (!simplexData[cryptoSelected].limits[fiatSelected]) return false;
+  const limit = simplexData[cryptoSelected].limits[fiatSelected];
+  const amount = new BigNumber(fiatAmount || 0);
+  const valid =
+    amount.gte(new BigNumber(limit.min)) &&
+    amount.lte(new BigNumber(limit.max));
+  return valid;
+});
+
+const minMaxError = () => {
+  const limit = simplexData[form.cryptoSelected].limits[form.fiatSelected];
+  if (!minMax.value) {
+    loading.showAlert = true;
+    loading.alertMessage = `Price must be between ${
+      currencySymbols[form.fiatSelected]
+    }${limit.min} and ${currencySymbols[form.fiatSelected]}${limit.max}`;
+    return;
+  }
+  loading.showAlert = false;
+  loading.alertMessage = "";
+};
+const getPrices = async () => {
+  try {
+    loading.data = true;
+    const data: [] = await getSimplexPrices();
+    data.forEach((d: any) => {
+      const tmp: Data = { conversion_rates: {}, limits: {}, prices: {} };
+
+      d.conversion_rates.forEach(
+        (r: any) => (tmp.conversion_rates[r.fiat_currency] = r.exchange_rate)
+      );
+      d.limits.forEach((l: any) => {
+        if (l.type === "WEB") tmp.limits[l.fiat_currency] = l.limit;
+      });
+      d.prices.forEach((p: any) => (tmp.prices[p.fiat_currency] = p.price));
+      simplexData[d.crypto_currencies[0]] = tmp;
+    });
+    loading.data = false;
+  } catch (e: any) {
+    errorHandler(e);
+  }
+};
+
+const fiatToCrypto = () => {
+  const { fiatSelected, fiatAmount, cryptoSelected } = form;
+  const price = new BigNumber(simplexData[cryptoSelected].prices[fiatSelected]);
+  const amount = new BigNumber(fiatAmount || "0");
+  form.cryptoAmount = amount.dividedBy(price).toString();
+};
+
+const cryptoToFiat = () => {
+  const price = new BigNumber(
+    simplexData[form.cryptoSelected].prices[form.fiatSelected]
+  );
+  const amount = new BigNumber(form.cryptoAmount || "0");
+  form.fiatAmount = amount.times(price).toFixed(2).toString();
+};
+
 const loadUrlParameters = () => {
   const queryString = window.location.search;
 
@@ -290,50 +387,6 @@ const loadUrlParameters = () => {
 // const onReCaptchaToken = (token: string): void => {
 //   form.reCaptchaToken = token;
 // };
-
-const getCryptoForFiat = async (isLoading: boolean): Promise<void> => {
-  loading.cryptoAmount = true;
-  loading.alertMessage = "";
-  try {
-    const response = await getSimplexQuote(
-      form.fiatSelected,
-      form.cryptoSelected,
-      form.cryptoSelected,
-      form.cryptoAmount
-    );
-    form.cryptoAmount = response.crypto_amount;
-    form.fiatAmount = response.fiat_amount;
-    loading.cryptoAmount = false;
-  } catch (e: any) {
-    loading.cryptoAmount = false;
-    loading.showAlert = true;
-    errorHandler(e);
-
-    if (isLoading) {
-      return resetForm();
-    }
-  }
-};
-
-const getFiatForCrypto = async (): Promise<void> => {
-  loading.fiatAmount = true;
-  loading.alertMessage = "";
-  try {
-    const response = await getSimplexQuote(
-      form.fiatSelected,
-      form.cryptoSelected,
-      form.fiatSelected,
-      form.fiatAmount
-    );
-    form.cryptoAmount = response.crypto_amount;
-    loading.fiatAmount = false;
-  } catch (e: any) {
-    loading.fiatAmount = false;
-    loading.showAlert = true;
-    errorHandler(e);
-    getCryptoForFiat(false);
-  }
-};
 
 const errorHandler = (e: any): void => {
   const value = new BigNumber(form.fiatAmount).gt(0);
@@ -358,19 +411,12 @@ const validAddress = (address: string) => {
 const resetForm = (): void => {
   form.fiatAmount = defaultFiatValue;
   form.fiatSelected = "USD";
-  form.cryptoAmount = "0";
+  form.cryptoAmount = "1";
   form.cryptoSelected = "ETH";
   form.address = "";
   address.value = "";
-  debounce_getCryptoForFiat();
+  getPrices();
 };
-
-const debounce_getCryptoForFiat = debounce(() => {
-  getCryptoForFiat(false);
-}, apiDebounceTime);
-const debounce_getFiatForCrypto = debounce(() => {
-  getFiatForCrypto();
-}, apiDebounceTime);
 
 const verifyAddress = (): void => {
   const valid = WAValidator.validate(form.address, form.cryptoSelected);
