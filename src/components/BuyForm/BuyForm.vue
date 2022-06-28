@@ -32,6 +32,7 @@
           required
           dense
           :disabled="loading.data"
+          :rules="rules"
         ></v-text-field>
         <v-select
           style="max-width: 120px"
@@ -70,6 +71,7 @@
           v-model.number="form.cryptoAmount"
           required
           dense
+          :rules="rules"
           :disabled="loading.data"
         ></v-text-field>
         <v-select
@@ -198,7 +200,7 @@ import {
   currencySymbols,
 } from "./prices";
 import { executeSimplexPayment } from "./order";
-import { isObject } from "lodash";
+import { isObject, isNumber, isString } from "lodash";
 import WAValidator from "multicoin-address-validator";
 import mewWallet from "@/assets/images/icon-mew-wallet.png";
 import { isHexStrict, isAddress } from "web3-utils";
@@ -308,6 +310,13 @@ const isValidForm = computed(() => {
   );
 });
 
+const rules = [
+  (e: any) => {
+    if (isString(e) && e?.length > 1) return true;
+    if (!isNumber(e)) return "Must be a valid number";
+    return true;
+  },
+];
 const minMax = computed(() => {
   const { cryptoSelected, fiatAmount, fiatSelected } = form;
   if (!simplexData[cryptoSelected].limits[fiatSelected]) return false;
