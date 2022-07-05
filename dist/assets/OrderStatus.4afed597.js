@@ -1,0 +1,1 @@
+import{_ as t}from"./index.90583603.js";import{e as r,i as s,u as a,o}from"./vendor.b3a10337.js";const _={name:"OrderStatus",props:["userId"],data(){return{status:{}}}};function n(u,c,p,d,e,l){return o(),r("div",null,[s("pre",null,a(e.status),1)])}var m=t(_,[["render",n],["__scopeId","data-v-4c8d796c"]]);export{m as default};

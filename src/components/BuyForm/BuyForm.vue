@@ -318,10 +318,14 @@ const rules = [
   },
 ];
 const minMax = computed(() => {
+  console.log("minMax:", minMax);
+  console.log("simplexData:", simplexData);
   const { cryptoSelected, fiatAmount, fiatSelected } = form;
   if (!simplexData[cryptoSelected].limits[fiatSelected]) return false;
   const limit = simplexData[cryptoSelected].limits[fiatSelected];
+  console.log("limit:", limit);
   const amount = new BigNumber(fiatAmount || 0);
+  console.log("amount:", amount);
   const valid =
     amount.gte(new BigNumber(limit.min)) &&
     amount.lte(new BigNumber(limit.max));
@@ -332,7 +336,7 @@ const minMaxError = () => {
   const limit = simplexData[form.cryptoSelected].limits[form.fiatSelected];
   if (!minMax.value) {
     loading.showAlert = true;
-    loading.alertMessage = `Price must be between ${
+    loading.alertMessage = `Fiat price must be between ${
       currencySymbols[form.fiatSelected]
     }${limit.min} and ${currencySymbols[form.fiatSelected]}${limit.max}`;
     return;
