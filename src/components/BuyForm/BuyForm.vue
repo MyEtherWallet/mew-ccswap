@@ -312,7 +312,7 @@ const isValidForm = computed(() => {
 
 const rules = [
   (e: any) => {
-    if (isString(e) && e?.length > 1) return true;
+    if (isString(e) && e?.length >= 1) return true;
     if (!isNumber(e)) return "Must be a valid number";
     return true;
   },
