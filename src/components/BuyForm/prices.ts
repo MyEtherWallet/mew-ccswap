@@ -1,7 +1,7 @@
 import axios from "axios";
 import { toNumber } from "lodash";
 
-const supportedCrypto = ["ETH", "BNB", "MATIC"];
+const supportedCrypto = ["ETH", "BNB", "MATIC", "DOT"];
 
 const supportedFiat = ["USD", "EUR", "JPY", "AUD", "CAD", "GBP"];
 // const supportedFiat = [
@@ -65,7 +65,9 @@ const filterData = (res: any) => {
   if (Array.isArray(data)) return data.find((i) => i.name === "SIMPLEX");
 };
 
-async function getSimplexPrices(cryptoCurrency?: "ETH" | "MATIC" | "BNB") {
+async function getSimplexPrices(
+  cryptoCurrency?: "ETH" | "MATIC" | "BNB" | "DOT"
+) {
   const apiQuote = "https://mainnet.mewwallet.dev/v3/purchase/providers/ios";
   if (cryptoCurrency)
     return await axios
@@ -79,7 +81,7 @@ async function getSimplexPrices(cryptoCurrency?: "ETH" | "MATIC" | "BNB") {
       .catch((e) => {
         throw e;
       });
-  const cryptos = ["ETH", "MATIC", "BNB"];
+  const cryptos = ["ETH", "MATIC", "BNB", "DOT"];
   return Promise.all(
     cryptos.map((c) =>
       axios

@@ -250,6 +250,11 @@ let simplexData: { [key: string]: Data } = {
     limits: {},
     prices: {},
   },
+  DOT: {
+    conversion_rates: {},
+    limits: {},
+    prices: {},
+  },
 };
 // reactive
 const form = reactive({
