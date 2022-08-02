@@ -204,6 +204,7 @@ import { isObject, isNumber, isString } from "lodash";
 import WAValidator from "multicoin-address-validator";
 import mewWallet from "@/assets/images/icon-mew-wallet.png";
 import { isHexStrict, isAddress } from "web3-utils";
+import { isAddress as isPolkadotAddress } from "@polkadot/util-crypto";
 // import SubmitForm from "./SubmitForm.vue";
 
 const mewWalletImg = mewWallet;
@@ -246,6 +247,16 @@ let simplexData: { [key: string]: Data } = {
     prices: {},
   },
   BNB: {
+    conversion_rates: {},
+    limits: {},
+    prices: {},
+  },
+  DOT: {
+    conversion_rates: {},
+    limits: {},
+    prices: {},
+  },
+  KSM: {
     conversion_rates: {},
     limits: {},
     prices: {},
@@ -318,14 +329,10 @@ const rules = [
   },
 ];
 const minMax = computed(() => {
-  console.log("minMax:", minMax);
-  console.log("simplexData:", simplexData);
   const { cryptoSelected, fiatAmount, fiatSelected } = form;
   if (!simplexData[cryptoSelected].limits[fiatSelected]) return false;
   const limit = simplexData[cryptoSelected].limits[fiatSelected];
-  console.log("limit:", limit);
   const amount = new BigNumber(fiatAmount || 0);
-  console.log("amount:", amount);
   const valid =
     amount.gte(new BigNumber(limit.min)) &&
     amount.lte(new BigNumber(limit.max));
@@ -432,8 +439,17 @@ const resetForm = (): void => {
 };
 
 const verifyAddress = (): void => {
-  const valid = WAValidator.validate(form.address, form.cryptoSelected);
-  if (valid && validAddress(form.address)) {
+  const polkdadot_chains = ["DOT", "KSM"];
+  const valid = !polkdadot_chains.includes(form.cryptoSelected)
+    ? WAValidator.validate(form.address, form.cryptoSelected) &&
+      validAddress(form.address)
+    : isPolkadotAddress(
+        form.address,
+        false,
+        form.cryptoSelected === "DOT" ? 0 : 2
+      );
+
+  if (valid) {
     form.addressErrorMsg = "";
     form.addressError = false;
     form.validAddress = true;
