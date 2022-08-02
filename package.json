@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@mdi/font": "5.9.55",
+    "@polkadot/util-crypto": "^10.1.2",
     "@types/lodash": "^4.14.182",
     "assert": "^2.0.0",
     "axios": "^0.27.2",
