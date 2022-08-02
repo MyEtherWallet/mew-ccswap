@@ -88,7 +88,7 @@
     <!-- ============================================================================= -->
     <div>
       <div class="d-sm-flex align-center justify-space-between mb-2">
-        <div class="heading-4 text-uppercase mr-2">ETH Address</div>
+        <div class="heading-4 text-uppercase mr-2">To Address</div>
         <a
           class="small d-block mt-n1 mt-sm-0"
           href="https://www.myetherwallet.com/wallet/create"
