@@ -9,14 +9,14 @@
     <div class="mb-10">
       <div class="d-flex align-center">
         <div class="heading-4 text-uppercase">Price</div>
-        <!-- <div v-if="loading.data" class="ml-2">
+        <div v-if="loading.data" class="ml-2">
           <span class="h3 font-weight-regular mr-1 text--mew">Loading</span>
           <v-progress-circular
             :size="11"
             :width="2"
             indeterminate
           ></v-progress-circular>
-        </div> -->
+        </div>
       </div>
       <!--
       <h4>
@@ -49,14 +49,6 @@
     <div class="mb-10">
       <div class="d-flex align-center">
         <div class="heading-4 text-uppercase">Amount</div>
-        <!-- <div v-if="loading.cryptoAmount" class="ml-2">
-          <span class="h3 font-weight-regular mr-1 text--mew">Loading</span>
-          <v-progress-circular
-            :size="11"
-            :width="2"
-            indeterminate
-          ></v-progress-circular>
-        </div> -->
       </div>
       <!--
       <h4>
@@ -190,7 +182,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, watch, onMounted, ref } from "vue";
+import { computed, reactive, watch, onMounted } from "vue";
 import BigNumber from "bignumber.js";
 // import ReCaptcha from "@/components/recaptcha/ReCaptcha.vue";
 import {
@@ -216,7 +208,7 @@ onMounted(async () => {
   verifyAddress();
 
   // Clear Address field
-  address.value = "";
+  // address.value = "";
 
   // Get crypto Data
   await getPrices();
@@ -274,7 +266,6 @@ const form = reactive({
   reCaptchaToken: "",
   addressError: false,
 });
-const address = ref();
 const loading = reactive({
   data: false,
   showAlert: false,
@@ -301,11 +292,19 @@ watch(
 
 watch(
   () => form.fiatAmount,
-  () => minMaxError()
+  () => {
+    if (!loading.data) {
+      minMaxError();
+    }
+  }
 );
 watch(
   () => form.cryptoAmount,
-  () => minMaxError()
+  () => {
+    if (!loading.data) {
+      minMaxError();
+    }
+  }
 );
 // methods
 const isValidForm = computed(() => {
@@ -390,7 +389,6 @@ const cryptoToFiat = () => {
 
 const loadUrlParameters = () => {
   const queryString = window.location.search;
-
   if (queryString) {
     const urlParams = new URLSearchParams(queryString);
     const queryCryptoAmount = urlParams.get("crypto_amount");
@@ -428,15 +426,14 @@ const validAddress = (address: string) => {
   return address && isHexStrict(address) && isAddress(address);
 };
 
-const resetForm = (): void => {
-  form.fiatAmount = defaultFiatValue;
-  form.fiatSelected = "USD";
-  form.cryptoAmount = "1";
-  form.cryptoSelected = "ETH";
-  form.address = "";
-  address.value = "";
-  getPrices();
-};
+// const resetForm = (): void => {
+//   form.fiatAmount = defaultFiatValue;
+//   form.fiatSelected = "USD";
+//   form.cryptoAmount = "1";
+//   form.cryptoSelected = "ETH";
+//   form.address = "";
+//   getPrices();
+// };
 
 const verifyAddress = (): void => {
   const polkdadot_chains = ["DOT", "KSM"];
