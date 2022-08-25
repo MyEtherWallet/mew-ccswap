@@ -205,8 +205,8 @@ const mewWalletImg = mewWallet;
 const defaultFiatValue = "0";
 
 onMounted(async () => {
-  form.address = '';
-  
+  form.address = "";
+
   // Load URL parameter value and verify crypto address
   loadUrlParameters();
   verifyAddress();
@@ -440,8 +440,12 @@ const addressInput = (value: string): void => {
   form.address = value;
 };
 const addressFocus = (event: Event): void => {
-  if (event.type === 'focus') // event must be used
-    form.address = form.address ? form.address : '';
+  form.address = form.address ? form.address : "";
+  if (event.type === "focus") {
+    setTimeout(() => {
+      event.target?.dispatchEvent(new Event("blur"));
+    }, 100);
+  }
 };
 
 const verifyAddress = (): void => {
