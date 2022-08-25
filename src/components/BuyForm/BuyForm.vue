@@ -90,12 +90,14 @@
         </a>
       </div>
       <v-text-field
-        v-model="form.address"
+        :model-value="form.address"
         required
         dense
         :error-messages="form.addressErrorMsg"
+        :autofocus="true"
         @keyup="verifyAddress"
-        ref="address"
+        @update:model-value="addressInput"
+        @focus.once="addressFocus"
       ></v-text-field>
     </div>
 
@@ -203,12 +205,11 @@ const mewWalletImg = mewWallet;
 const defaultFiatValue = "0";
 
 onMounted(async () => {
+  form.address = "";
+
   // Load URL parameter value and verify crypto address
   loadUrlParameters();
   verifyAddress();
-
-  // Clear Address field
-  // address.value = "";
 
   // Get crypto Data
   await getPrices();
@@ -434,6 +435,18 @@ const validAddress = (address: string) => {
 //   form.address = "";
 //   getPrices();
 // };
+
+const addressInput = (value: string): void => {
+  form.address = value;
+};
+const addressFocus = (event: Event): void => {
+  form.address = form.address ? form.address : "";
+  if (event.type === "focus") {
+    setTimeout(() => {
+      event.target?.dispatchEvent(new Event("blur"));
+    }, 100);
+  }
+};
 
 const verifyAddress = (): void => {
   const polkdadot_chains = ["DOT", "KSM"];
