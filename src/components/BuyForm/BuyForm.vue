@@ -198,8 +198,10 @@ import { isObject, isNumber, isString } from "lodash";
 import WAValidator from "multicoin-address-validator";
 import mewWallet from "@/assets/images/icon-mew-wallet.png";
 import { isHexStrict, isAddress } from "web3-utils";
-import { isAddress as isPolkadotAddress } from "@polkadot/util-crypto";
+// import { isAddress as isPolkadotAddress } from "@polkadot/util-crypto";
 // import SubmitForm from "./SubmitForm.vue";
+import { decodeAddress, encodeAddress } from "@polkadot/keyring";
+import { hexToU8a, isHex } from "@polkadot/util";
 
 const mewWalletImg = mewWallet;
 const defaultFiatValue = "0";
@@ -427,6 +429,15 @@ const validAddress = (address: string) => {
   return address && isHexStrict(address) && isAddress(address);
 };
 
+const isValidAddressPolkadotAddress = (address: string) => {
+  try {
+    encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address));
+
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
 // const resetForm = (): void => {
 //   form.fiatAmount = defaultFiatValue;
 //   form.fiatSelected = "USD";
@@ -453,12 +464,7 @@ const verifyAddress = (): void => {
   const valid = !polkdadot_chains.includes(form.cryptoSelected)
     ? WAValidator.validate(form.address, form.cryptoSelected) &&
       validAddress(form.address)
-    : isPolkadotAddress(
-        form.address,
-        false,
-        form.cryptoSelected === "DOT" ? 0 : 2
-      );
-
+    : isValidAddressPolkadotAddress(form.address);
   if (valid) {
     form.addressErrorMsg = "";
     form.addressError = false;

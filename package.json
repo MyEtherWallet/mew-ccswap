@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@mdi/font": "5.9.55",
+    "@polkadot/keyring": "^10.1.7",
+    "@polkadot/util": "^10.1.7",
     "@polkadot/util-crypto": "^10.1.2",
     "@types/lodash": "^4.14.182",
     "assert": "^2.0.0",
