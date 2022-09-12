@@ -465,9 +465,6 @@ const verifyAddress = (): void => {
     ? WAValidator.validate(form.address, form.cryptoSelected) &&
       validAddress(form.address)
     : isValidAddressPolkadotAddress(form.address);
-  console.log("valid", valid);
-  console.log("cryptoSelected", form.cryptoSelected);
-  console.log("form address", form.address);
   if (valid) {
     form.addressErrorMsg = "";
     form.addressError = false;
