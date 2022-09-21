@@ -1,7 +1,9 @@
 import axios from "axios";
 import { getSimplexQuote } from "./prices";
-const API = "https://mainnet.mewwallet.dev";
-const apiOrder = "https://mainnet.mewwallet.dev/purchase/simplex/order";
+// const API = "https://mainnet.mewwallet.dev";
+// const apiOrder = "https://mainnet.mewwallet.dev/purchase/simplex/order";
+const API = "https://development.mewwallet.dev";
+const apiOrder = "https://development.mewwallet.dev/purchase/simplex/order";
 
 // ===================================================================================================
 // Get the quote confirmed by Simplex
