@@ -1,5 +1,6 @@
 import axios from "axios";
 import { toNumber } from "lodash";
+import { sha3 } from "web3-utils";
 
 const supportedCrypto = ["ETH", "BNB", "MATIC", "DOT", "KSM"];
 
@@ -46,7 +47,7 @@ async function getSimplexQuote(
   return await axios
     .get(apiQuote, {
       params: {
-        id: `WEB|${address}`,
+        id: `WEB|${sha3(address)?.substring(0, 42)}`,
         fiatCurrency: fiatCurrency,
         cryptoCurrency: cryptoCurrency,
         requestedCurrency: requestedCurrency,
