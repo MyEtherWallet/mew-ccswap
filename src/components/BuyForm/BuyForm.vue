@@ -64,6 +64,7 @@
           required
           dense
           :rules="rules"
+          :error-messages="loading.alertMessage"
           :disabled="loading.data"
         ></v-text-field>
         <v-select
@@ -154,7 +155,7 @@
     <!-- ============================================================================= -->
     <!-- Buy limit warning -->
     <!-- ============================================================================= -->
-    <v-snackbar v-model="loading.showAlert" multi-line timeout="5000">
+    <!-- <v-snackbar v-model="loading.showAlert" multi-line timeout="5000">
       <div class="text-center pa-3" style="max-width: 350px">
         <img :src="mewWalletImg" alt="MEW doggy" style="max-width: 80px" />
         <h3 class="text--white" v-if="loading.alertMessage === ''">
@@ -175,7 +176,7 @@
           Close
         </v-btn>
       </div>
-    </v-snackbar>
+    </v-snackbar> -->
 
     <!-- ============================================================================= -->
     <!-- END -->
