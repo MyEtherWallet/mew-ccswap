@@ -54,8 +54,8 @@
                 style="max-width: 350px"
               >
                 Feel free to contact
-                <a href="mailto:support@simplex.com">support@simplex.com</a>
-                should you have questions
+                <a href="mailto:support@simplex.com">support@mew.com</a>
+                should you have questions.
               </div>
             </div>
           </div>
@@ -66,52 +66,52 @@
 </template>
 
 <script setup lang="ts">
-import iconFee from "@/assets/images/promo/icon-fee.png";
-import iconQuick from "@/assets/images/promo/icon-quick.png";
-import iconVerification from "@/assets/images/promo/icon-verification.png";
-import iconSupport from "@/assets/images/promo/icon-support.png";
+import iconFee from '@/assets/images/promo/icon-fee.png';
+import iconQuick from '@/assets/images/promo/icon-quick.png';
+import iconVerification from '@/assets/images/promo/icon-verification.png';
+import iconSupport from '@/assets/images/promo/icon-support.png';
 const promo1 = [
   {
-    title: "For your first transaction",
+    title: 'For your first transaction',
     description:
-      "If you are buying coins very first time, you can buy up to $20,000 worth of coins.",
-    amount: "$50 to $20,000",
-    rate: "for first buy",
+      'If you are buying coins very first time, you can buy up to $20,000 worth of coins.',
+    amount: '$50 to $20,000',
+    rate: 'for first buy',
   },
   {
-    title: "Daily limit",
-    description: "You can buy up to $20,000 worth of coins daily.",
-    amount: "Up to $20,000",
-    rate: "/day",
+    title: 'Daily limit',
+    description: 'You can buy up to $20,000 worth of coins daily.',
+    amount: 'Up to $20,000',
+    rate: '/day',
   },
   {
-    title: "Monthly limit",
-    description: "You can buy up to $50,000 worth of coins monthly.",
-    amount: "Up to $50,000",
-    rate: "/month",
+    title: 'Monthly limit',
+    description: 'You can buy up to $50,000 worth of coins monthly.',
+    amount: 'Up to $50,000',
+    rate: '/month',
   },
 ];
 const promo2 = [
   {
     icon: iconFee,
-    title: "Reasonable fee",
+    title: 'Reasonable fee',
     description:
-      "Extra charges apply in addition to the rate provided, including a 1% MyEtherWallet fee.",
+      'Extra charges apply in addition to the rate provided, including a 1.75% MyEtherWallet fee.',
   },
   {
     icon: iconQuick,
-    title: "Quick transactions",
+    title: 'Quick transactions',
     description:
-      "We offer lightning-fast transactions typically taking just minutes.",
+      'We offer lightning-fast transactions typically taking just minutes.',
   },
   {
     icon: iconVerification,
-    title: "Easy verification",
-    description: "Payment process is pretty simple and takes just a few steps.",
+    title: 'Easy verification',
+    description: 'Payment process is pretty simple and takes just a few steps.',
   },
   {
     icon: iconSupport,
-    title: "Instant support",
+    title: 'Instant support',
   },
 ];
 </script>
