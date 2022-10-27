@@ -2,40 +2,46 @@
   <div class="component--footer py-2">
     <v-container class="text-center">
       <img :src="mewIconLight" alt="MEW" height="25" />
-      <div>©{{ presentDate }} MyEtherWallet Inc. All rights reserved</div>
+      <div class="my-5">
+        <div footer--text style="color: white">
+          ©{{ presentDate }} MyEtherWallet Inc. All rights reserved
+        </div>
 
-      <div class="font-weight-regular mb-3">
-        Need Ethereum wallet? Get one from
-        <a href="https://www.myetherwallet.com/wallet/create" target="_blank">
-          <span class="text--primary font-weight-bold">
+        <div class="font-weight-regular" style="color: white">
+          Need Ethereum wallet? Get one from
+          <a
+            href="https://www.myetherwallet.com/wallet/create"
+            target="_blank"
+            style="color: white; text-decoration: none"
+          >
             myetherwallet.com
-          </span>
-        </a>
+          </a>
+        </div>
       </div>
 
       <v-btn
-        @click="openInNewTab('https://www.myetherwallet.com/wallet/create')"
-        size="small"
+        size="x-large"
+        class="rounded-pill white--text mt-3 text-none"
+        color="#7b61ff"
+        href="https://www.myetherwallet.com/wallet/create"
+        target="_blank"
+        style="color: white"
       >
-        Get Ethereum wallet
+        Get a wallet
       </v-btn>
     </v-container>
   </div>
 </template>
 
 <script setup lang="ts">
-import mewIconLight from "@/assets/images/icon-mew-logo-light.svg";
+import mewIconLight from '@/assets/images/icon-mew-logo-light.svg';
 
-const openInNewTab = (url: string) => {
-  const newWindow = window.open(url, "_blank");
-  newWindow?.focus();
-};
 const presentDate = new Date().getFullYear();
 </script>
 
 <style lang="scss" scoped>
 .component--footer {
-  background-color: #05c0a5;
+  background-color: black;
   position: relative;
   z-index: 1;
 }
