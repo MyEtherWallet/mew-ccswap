@@ -8,7 +8,9 @@
     <!-- ============================================================================= -->
     <div class="mb-10">
       <div class="d-flex align-center">
-        <div class="heading-4 text-uppercase">Price</div>
+        <div class="mew-heading-3 textDark--text mb-5">
+          How much do you want to spend?
+        </div>
         <div v-if="loading.data" class="ml-2">
           <span class="h3 font-weight-regular mr-1 text--mew">Loading</span>
           <v-progress-circular
@@ -18,27 +20,24 @@
           ></v-progress-circular>
         </div>
       </div>
-      <!--
-      <h4>
-        ** Daily buy limit:
-        <span class="font-weight-medium">USD $50 ~ $20,000</span>
-      </h4>
-      -->
       <div class="d-flex mt-2">
         <v-text-field
           @input="fiatToCrypto"
           type="number"
           v-model.number="form.fiatAmount"
           required
-          dense
+          variant="outlined"
+          class="rounded-left"
           :disabled="loading.data"
           :rules="rules"
         ></v-text-field>
         <v-select
           style="max-width: 120px"
+          class="rounded-right"
           v-model="form.fiatSelected"
           :items="fiatItems"
           :disabled="loading.data"
+          variant="outlined"
         ></v-select>
       </div>
     </div>
@@ -47,22 +46,15 @@
     <!-- Crypto amount -->
     <!-- ============================================================================= -->
     <div class="mb-10">
-      <div class="d-flex align-center">
-        <div class="heading-4 text-uppercase">Amount</div>
-      </div>
-      <!--
-      <h4>
-        ** Daily buy limit:
-        <span class="font-weight-medium">USD $50 ~ $20,000</span>
-      </h4>
-      -->
+      <div class="mb-2">You will get</div>
       <div class="d-flex mt-2">
         <v-text-field
           @input="cryptoToFiat"
           type="number"
           v-model.number="form.cryptoAmount"
           required
-          dense
+          variant="outlined"
+          rounded="left"
           :rules="rules"
           :error-messages="loading.alertMessage"
           :disabled="loading.data"
@@ -72,6 +64,8 @@
           v-model="form.cryptoSelected"
           :items="cryptoItems"
           :disabled="loading.data"
+          rounded="right"
+          variant="outlined"
         ></v-select>
       </div>
     </div>
@@ -80,34 +74,19 @@
     <!-- Wallet address -->
     <!-- ============================================================================= -->
     <div>
-      <div class="d-sm-flex align-center justify-space-between mb-2">
-        <div class="heading-4 text-uppercase mr-2">To Address</div>
-        <a
-          class="small d-block mt-n1 mt-sm-0"
-          href="https://www.myetherwallet.com/wallet/create"
-          target="_blank"
-        >
-          Don't have one?
-        </a>
+      <div class="mew-heading-3 textDark--text mb-5">
+        Where should we send your crypto?
       </div>
-      <v-text-field
+      <MewAddressSelect
         :model-value="form.address"
         required
-        dense
         :error-messages="form.addressErrorMsg"
         :autofocus="true"
         @keyup="verifyAddress"
         @update:model-value="addressInput"
         @focus.once="addressFocus"
-      ></v-text-field>
+      />
     </div>
-
-    <!-- ============================================================================= -->
-    <!-- Google ReCaptcha v3 -->
-    <!-- ============================================================================= -->
-    <!-- <div class="d-flex align-center justify-center mt-3 mb-5">
-      <ReCaptcha @token="onReCaptchaToken" />
-    </div> -->
 
     <!-- ============================================================================= -->
     <!-- Buy/Rest button -->
@@ -118,22 +97,12 @@
           rounded="pill"
           :disabled="!isValidForm"
           min-height="60px"
-          min-width="200px"
+          min-width="360px"
           color="#05C0A5"
           @click="submitForm"
         >
           <div class="text--white">Continue</div>
         </v-btn>
-      </div>
-      <!--
-      <div>
-        <v-btn class="my-3" @click="resetForms" variant="text" size="small">
-          Clear
-        </v-btn>
-      </div>
-      -->
-      <div class="text--secondary mt-6">
-        You will be redirected to the partner's site
       </div>
     </div>
 
@@ -151,33 +120,6 @@
         Processing purchase....
       </div>
     </div>
-
-    <!-- ============================================================================= -->
-    <!-- Buy limit warning -->
-    <!-- ============================================================================= -->
-    <!-- <v-snackbar v-model="loading.showAlert" multi-line timeout="5000">
-      <div class="text-center pa-3" style="max-width: 350px">
-        <img :src="mewWalletImg" alt="MEW doggy" style="max-width: 80px" />
-        <h3 class="text--white" v-if="loading.alertMessage === ''">
-          Uh oh... Maximum daily crypto buy limit is between
-          <span style="font-size: 1.2rem" class="text--white font-weight-bold">
-            USD $50 ~ $20,000
-          </span>
-        </h3>
-        <h3
-          style="font-size: 1.2rem"
-          class="text--white font-weight-bold"
-          v-else
-        >
-          {{ loading.alertMessage }}
-        </h3>
-
-        <v-btn class="mt-3" @click="loading.showAlert = false" size="small">
-          Close
-        </v-btn>
-      </div>
-    </v-snackbar> -->
-
     <!-- ============================================================================= -->
     <!-- END -->
     <!-- ============================================================================= -->
@@ -187,7 +129,6 @@
 <script setup lang="ts">
 import { computed, reactive, watch, onMounted } from "vue";
 import BigNumber from "bignumber.js";
-// import ReCaptcha from "@/components/recaptcha/ReCaptcha.vue";
 import {
   supportedCrypto,
   supportedFiat,
@@ -199,9 +140,8 @@ import { isObject, isNumber, isString } from "lodash";
 import WAValidator from "multicoin-address-validator";
 import mewWallet from "@/assets/images/icon-mew-wallet.png";
 import { isHexStrict, isAddress } from "web3-utils";
-// import { isAddress as isPolkadotAddress } from "@polkadot/util-crypto";
-// import SubmitForm from "./SubmitForm.vue";
 import { encodeAddress } from "@polkadot/keyring";
+import MewAddressSelect from "../MewAddressSelect/MewAddressSelect.vue";
 
 const mewWalletImg = mewWallet;
 const defaultFiatValue = "0";
@@ -506,9 +446,9 @@ const submitForm = (): void => {
   }
 
   .v-field--appended {
-    background-color: black;
+    background-color: white;
     .v-select__selection-text {
-      color: white;
+      color: black;
     }
 
     .v-field__append-inner {
