@@ -77,9 +77,8 @@
       <div class="mew-heading-3 textDark--text mb-5">
         Where should we send your crypto?
       </div>
-      <MewAddressSelect
+      <mew-address-select
         :model-value="form.address"
-        required
         :error-messages="form.addressErrorMsg"
         :autofocus="true"
         @keyup="verifyAddress"

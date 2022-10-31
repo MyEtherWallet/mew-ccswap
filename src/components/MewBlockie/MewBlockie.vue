@@ -23,10 +23,11 @@
   </div>
 </template>
 
-<script>
-import Blockies from "@/helpers/blockies.js";
+<script lang="ts">
+import Blockies from "@/helpers/blockies";
+import { defineComponent } from "vue";
 
-export default {
+export default defineComponent({
   name: "MewBlockie",
   props: {
     /**
@@ -69,7 +70,7 @@ export default {
     return {
       scale: 16,
       size: 8,
-      blockieImg: null,
+      blockieImg: "",
     };
   },
   watch: {
@@ -99,11 +100,12 @@ export default {
         size: this.size,
         scale: this.scale,
       }).toDataURL();
-      this.$refs.blockie.style.width = this.width;
-      this.$refs.blockie.style.height = this.height;
+      const blockieElem = this.$refs.blockie as HTMLImageElement;
+      blockieElem.style.width = this.width;
+      blockieElem.style.height = this.height;
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

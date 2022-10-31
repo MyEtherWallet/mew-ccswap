@@ -90,6 +90,7 @@
 <script lang="ts">
 import MewBlockie from "@/components/MewBlockie/MewBlockie.vue";
 import MewTransformHash from "../MewTransformHash/MewTransformHash.vue";
+import { defineComponent } from "vue";
 
 // data
 const USER_INPUT_TYPES = {
@@ -97,19 +98,7 @@ const USER_INPUT_TYPES = {
   selected: "SELECTED",
 };
 
-/**
- * The v-model value for the combobox.
- */
-let addressValue = "";
-/**
- * Controls the dropdown expansion.
- */
-let dropdown = false;
-/**
- * Indicates whether the user selected from dropdown or typed in the address
- */
-let isTyped = USER_INPUT_TYPES.typed;
-export default {
+export default defineComponent({
   name: "MewAddressSelect",
   components: {
     MewBlockie,
@@ -201,6 +190,22 @@ export default {
       default: false,
     },
   },
+  data() {
+    return {
+      /**
+       * The v-model value for the combobox.
+       */
+      addressValue: "",
+      /**
+       * Controls the dropdown expansion.
+       */
+      dropdown: false,
+      /**
+       * Indicates whether the user selected from dropdown or typed in the address
+       */
+      isTyped: USER_INPUT_TYPES.typed,
+    };
+  },
   computed: {
     /**
      * If the input item is a name (i.e, ens) and has a valid resolved address,
@@ -209,7 +214,9 @@ export default {
      */
     blockieHash(): string {
       // return this.addressValue.address || this.addressValue;
-      return this.resolvedAddr.length > 0 ? this.resolvedAddr : addressValue;
+      return this.resolvedAddr.length > 0
+        ? this.resolvedAddr
+        : this.addressValue;
     },
   },
   watch: {
@@ -222,7 +229,7 @@ export default {
      * Clears the v-model value.
      */
     clear() {
-      addressValue = "";
+      this.addressValue = "";
     },
     /**
      * Emits 'saveAddress' when triggered by save address button.
@@ -234,31 +241,31 @@ export default {
      * Toggles the dropdown.
      */
     toggle() {
-      dropdown = !dropdown;
+      this.dropdown = !this.dropdown;
     },
     /**
      * Sets the dropdown item to be the v-model value.
      */
     selectAddress(data: { address: string }) {
-      dropdown = false;
-      isTyped = USER_INPUT_TYPES.selected;
-      addressValue = data.address;
+      this.dropdown = false;
+      this.isTyped = USER_INPUT_TYPES.selected;
+      this.addressValue = data.address;
     },
     /**
      * Emits 'input' when there is a v-model value change.
      */
     onChange(value: string) {
-      this.$emit("input", value, isTyped);
+      this.$emit("input", value, this.isTyped);
     },
     /**
      * Sets the value for what the user types int
      */
     onInputChange(e: { srcElement: { value: string } }) {
-      isTyped = USER_INPUT_TYPES.typed;
-      addressValue = e.srcElement.value;
+      this.isTyped = USER_INPUT_TYPES.typed;
+      this.addressValue = e.srcElement.value;
     },
   },
-};
+});
 </script>
 
 <style lang="scss">

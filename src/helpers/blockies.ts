@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 const randseed = new Array(4); // Xorshift: [x, y, z, w] 32 bit values
 
-function seedrand(seed) {
+function seedrand(seed: string) {
   for (let i = 0; i < randseed.length; i++) {
     randseed[i] = 0;
   }
@@ -34,7 +35,7 @@ function createColor() {
   return color;
 }
 
-function createImageData(size) {
+function createImageData(size: number) {
   const width = size; // Only support square icons for now
   const height = size;
 
@@ -61,27 +62,35 @@ function createImageData(size) {
   return data;
 }
 
-function createCanvas(imageData, color, scale, bgcolor, spotcolor) {
+function createCanvas(
+  imageData: any,
+  color: string,
+  scale: number,
+  bgcolor: string,
+  spotcolor: string
+) {
   const width = Math.sqrt(imageData.length);
   const c = document.createElement("canvas");
   c.width = c.height = width * scale;
   const cc = c.getContext("2d");
-  cc.fillStyle = bgcolor;
-  cc.fillRect(0, 0, c.width, c.height);
-  cc.fillStyle = color;
+  if (cc !== null) {
+    cc.fillStyle = bgcolor;
+    cc.fillRect(0, 0, c.width, c.height);
+    cc.fillStyle = color;
 
-  for (let i = 0; i < imageData.length; i++) {
-    const row = Math.floor(i / width);
-    const col = i % width;
-    cc.fillStyle = imageData[i] === 1 ? color : spotcolor;
-    if (imageData[i]) {
-      cc.fillRect(col * scale, row * scale, scale, scale);
+    for (let i = 0; i < imageData.length; i++) {
+      const row = Math.floor(i / width);
+      const col = i % width;
+      cc.fillStyle = imageData[i] === 1 ? color : spotcolor;
+      if (imageData[i]) {
+        cc.fillRect(col * scale, row * scale, scale, scale);
+      }
     }
   }
   return c;
 }
 
-function createIcon(opts) {
+function createIcon(opts: any) {
   opts = opts || {};
   const size = opts.size || 8;
   const scale = opts.scale || 4;

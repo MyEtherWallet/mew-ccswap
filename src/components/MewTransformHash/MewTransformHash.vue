@@ -15,8 +15,9 @@
   </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent } from "vue";
+export default defineComponent({
   name: "MewTransformHash",
   props: {
     /**
@@ -45,7 +46,7 @@ export default {
       return this.hash.slice(n - 4, n);
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>
