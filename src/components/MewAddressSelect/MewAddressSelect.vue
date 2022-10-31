@@ -235,12 +235,6 @@ export default defineComponent({
       this.addressValue = "";
     },
     /**
-     * Emits 'saveAddress' when triggered by save address button.
-     */
-    saveAddress() {
-      this.$emit("saveAddress");
-    },
-    /**
      * Toggles the dropdown.
      */
     toggle() {
@@ -254,6 +248,9 @@ export default defineComponent({
       console.log("items", this.items);
       this.dropdown = false;
       this.isTyped = USER_INPUT_TYPES.selected;
+      const addressSelect = this.$refs.mewAddressSelect as any;
+      console.log("addressSelect", addressSelect);
+      // addressSelect.select(data); // Works but throws errors
       this.addressValue = data.value;
       console.log("addressValue", this.addressValue);
     },
