@@ -62,7 +62,7 @@
       <div
         :class="[
           'py-4 px-0 full-width d-flex align-center justify-space-between',
-          'column-reverse align-baseline',
+          // 'column-reverse align-baseline',
           // $vuetify.breakpoint.smAndDown ? 'column-reverse align-baseline' : '',
         ]"
         @click="selectAddress(item)"
@@ -248,6 +248,7 @@ export default defineComponent({
      * Sets the dropdown item to be the v-model value.
      */
     selectAddress(data: { address: string }) {
+      console.log("data", data);
       this.dropdown = false;
       this.isTyped = USER_INPUT_TYPES.selected;
       this.addressValue = data.address;

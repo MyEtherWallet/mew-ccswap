@@ -82,6 +82,7 @@
         :error-messages="form.addressErrorMsg"
         :autofocus="true"
         label=""
+        :items="addressBook"
         placeholder="Enter Crypto Address"
         @keyup="verifyAddress"
         @update:model-value="addressInput"
@@ -146,6 +147,15 @@ import MewAddressSelect from "../MewAddressSelect/MewAddressSelect.vue";
 
 const mewWalletImg = mewWallet;
 const defaultFiatValue = "0";
+
+const addressBook = [
+  {
+    address: "0xDECAF9CD2367cdbb726E904cD6397eDFcAe6068D",
+    currency: "ETH",
+    nickname: "MEW Donations",
+    resolvedAddr: "0xDECAF9CD2367cdbb726E904cD6397eDFcAe6068D",
+  },
+];
 
 onMounted(async () => {
   form.address = "";
