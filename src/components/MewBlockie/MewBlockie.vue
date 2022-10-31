@@ -24,39 +24,39 @@
 </template>
 
 <script lang="ts">
-import Blockies from "@/helpers/blockies";
-import { defineComponent } from "vue";
+import Blockies from '@/helpers/blockies';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
-  name: "MewBlockie",
+  name: 'MewBlockie',
   props: {
     /**
      * Currency image url
      */
     currency: {
       type: String,
-      default: "",
+      default: '',
     },
     /**
      * Valid address
      */
     address: {
       type: String,
-      default: "",
+      default: '',
     },
     /**
      * Blockie width
      */
     width: {
       type: String,
-      default: "64px",
+      default: '64px',
     },
     /**
      * Blockie height
      */
     height: {
       type: String,
-      default: "64px",
+      default: '64px',
     },
     /**
      * Remove inset shadow
@@ -70,7 +70,7 @@ export default defineComponent({
     return {
       scale: 16,
       size: 8,
-      blockieImg: "",
+      blockieImg: '',
     };
   },
   watch: {
@@ -96,7 +96,7 @@ export default defineComponent({
   methods: {
     createBlockie() {
       this.blockieImg = Blockies({
-        seed: this.address ? this.address.toLowerCase() : "",
+        seed: this.address ? this.address.toLowerCase() : '',
         size: this.size,
         scale: this.scale,
       }).toDataURL();

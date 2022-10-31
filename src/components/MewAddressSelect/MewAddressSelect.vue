@@ -22,8 +22,8 @@
     :menu-props="{ modelValue: dropdown, closeOnContentClick: true }"
     outlined
     @update:search-input="onChange"
-    @input.native="onInputChange"
     @blur="dropdown = false"
+    @update:model-value="onInputChange"
   >
     <!-- ===================================================================================== -->
     <!-- Blockie: displays placeholder if invalid address, otherwise displays -->
@@ -91,18 +91,18 @@
 </template>
 
 <script lang="ts">
-import MewBlockie from "@/components/MewBlockie/MewBlockie.vue";
-import MewTransformHash from "../MewTransformHash/MewTransformHash.vue";
-import { defineComponent } from "vue";
+import MewBlockie from '@/components/MewBlockie/MewBlockie.vue';
+import MewTransformHash from '../MewTransformHash/MewTransformHash.vue';
+import { defineComponent } from 'vue';
 
 // data
 const USER_INPUT_TYPES = {
-  typed: "TYPED",
-  selected: "SELECTED",
+  typed: 'TYPED',
+  selected: 'SELECTED',
 };
 
 export default defineComponent({
-  name: "MewAddressSelect",
+  name: 'MewAddressSelect',
   components: {
     MewBlockie,
     MewTransformHash,
@@ -113,7 +113,7 @@ export default defineComponent({
      */
     hint: {
       type: String,
-      default: "",
+      default: '',
     },
     /**
      * For validating your input - accepts an array of functions that take
@@ -131,14 +131,14 @@ export default defineComponent({
      */
     noDataText: {
       type: String,
-      default: "",
+      default: '',
     },
     /**
      * Resolved address for name.
      */
     resolvedAddr: {
       type: String,
-      default: "",
+      default: '',
     },
     /**
      * Disables the input.
@@ -159,7 +159,7 @@ export default defineComponent({
      */
     label: {
       type: String,
-      default: "To Address",
+      default: 'To Address',
     },
     /**
      * The items that are displayed in the dropdown.
@@ -176,14 +176,14 @@ export default defineComponent({
      */
     placeholder: {
       type: String,
-      default: "Please enter an address",
+      default: 'Please enter an address',
     },
     /**
      * Error messages to display when its an invalid value.
      */
     errorMessages: {
       type: [String, Array],
-      default: "",
+      default: '',
     },
     /**
      * Clear address
@@ -198,7 +198,7 @@ export default defineComponent({
       /**
        * The v-model value for the combobox.
        */
-      addressValue: "",
+      addressValue: '',
       /**
        * Controls the dropdown expansion.
        */
@@ -232,7 +232,7 @@ export default defineComponent({
      * Clears the v-model value.
      */
     clear() {
-      this.addressValue = "";
+      this.addressValue = '';
     },
     /**
      * Toggles the dropdown.
@@ -244,28 +244,30 @@ export default defineComponent({
      * Sets the dropdown item to be the v-model value.
      */
     selectAddress(data: { value: string }) {
-      console.log("data", data);
-      console.log("items", this.items);
+      console.log('data', data);
+      console.log('items', this.items);
       this.dropdown = false;
       this.isTyped = USER_INPUT_TYPES.selected;
       const addressSelect = this.$refs.mewAddressSelect as any;
-      console.log("addressSelect", addressSelect);
+      console.log('addressSelect', addressSelect);
       // addressSelect.select(data); // Works but throws errors
       this.addressValue = data.value;
-      console.log("addressValue", this.addressValue);
+      console.log('addressValue', this.addressValue);
+      addressSelect.modelValue = this.addressValue;
+      console.log('addressSelect.modelValue', addressSelect.modelValue);
     },
     /**
      * Emits 'input' when there is a v-model value change.
      */
     onChange(value: string) {
-      this.$emit("input", value, this.isTyped);
+      this.$emit('input', value, this.isTyped);
     },
     /**
      * Sets the value for what the user types int
      */
-    onInputChange(e: { srcElement: { value: string } }) {
+    onInputChange(value: string) {
       this.isTyped = USER_INPUT_TYPES.typed;
-      this.addressValue = e.srcElement.value;
+      this.addressValue = value;
     },
   },
 });
@@ -280,7 +282,7 @@ export default defineComponent({
     min-height: 62px;
     &.v-text-field {
       input {
-        font-family: "PT Mono";
+        font-family: 'PT Mono';
       }
     }
     /**
