@@ -81,6 +81,8 @@
         :model-value="form.address"
         :error-messages="form.addressErrorMsg"
         :autofocus="true"
+        label=""
+        placeholder="Enter Crypto Address"
         @keyup="verifyAddress"
         @update:model-value="addressInput"
         @focus.once="addressFocus"

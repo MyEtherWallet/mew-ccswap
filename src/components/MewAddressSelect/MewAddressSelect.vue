@@ -62,7 +62,8 @@
       <div
         :class="[
           'py-4 px-0 full-width d-flex align-center justify-space-between',
-          $vuetify.breakpoint.smAndDown ? 'column-reverse align-baseline' : '',
+          'column-reverse align-baseline',
+          // $vuetify.breakpoint.smAndDown ? 'column-reverse align-baseline' : '',
         ]"
         @click="selectAddress(item)"
       >
