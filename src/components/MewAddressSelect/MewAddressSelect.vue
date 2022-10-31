@@ -19,7 +19,7 @@
     :persistent-hint="resolvedAddr.length > 0 || hint.length > 0"
     :rules="rules"
     :no-data-text="noDataText"
-    :menu-props="{ value: dropdown, closeOnClick: true }"
+    :menu-props="{ modelValue: dropdown, closeOnContentClick: true }"
     outlined
     @update:search-input="onChange"
     @input.native="onInputChange"
