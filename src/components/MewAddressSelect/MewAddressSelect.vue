@@ -70,18 +70,20 @@
         <div class="d-flex align-center justify-space-between full-max-width">
           <mew-blockie
             class="mr-2"
-            :address="item.resolvedAddr ? item.resolvedAddr : item.address"
+            :address="
+              item.raw.resolvedAddr ? item.raw.resolvedAddr : item.raw.address
+            "
             width="25px"
             height="25px"
           />
           <mew-transform-hash
-            v-if="!item.resolvedAddr || item.resolvedAddr === ''"
-            :hash="item.address"
+            v-if="!item.raw.resolvedAddr || item.raw.resolvedAddr === ''"
+            :hash="item.raw.address"
           />
-          <span v-else class="mew-address">{{ item.address }}</span>
+          <span v-else class="mew-address">{{ item.raw.address }}</span>
         </div>
         <div class="overline primary--text font-weight-medium ml-3">
-          {{ item.nickname }}
+          {{ item.raw.nickname }}
         </div>
       </div>
     </template>
@@ -247,11 +249,13 @@ export default defineComponent({
     /**
      * Sets the dropdown item to be the v-model value.
      */
-    selectAddress(data: { address: string }) {
+    selectAddress(data: { value: string }) {
       console.log("data", data);
+      console.log("items", this.items);
       this.dropdown = false;
       this.isTyped = USER_INPUT_TYPES.selected;
-      this.addressValue = data.address;
+      this.addressValue = data.value;
+      console.log("addressValue", this.addressValue);
     },
     /**
      * Emits 'input' when there is a v-model value change.
