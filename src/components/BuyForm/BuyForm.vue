@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-deprecated-v-on-native-modifier -->
 <template>
   <div
     class="component--buy-form elevated-box pa-3 pa-sm-6 pa-md-8"
@@ -82,14 +83,13 @@
         ref="addressSelect"
         :model-value="form.address"
         :error-messages="form.addressErrorMsg"
-        :autofocus="true"
+        :autofocus="false"
         label=""
         :items="addressBook"
         :is-valid-address="form.validAddress"
         placeholder="Enter Crypto Address"
         @keyup="verifyAddress"
-        @input="addressInput"
-        @focus.once="addressFocus"
+        @changed="addressInput"
       />
     </div>
 
@@ -404,8 +404,8 @@ const isValidAddressPolkadotAddress = (
 // };
 
 const addressInput = (value: string): void => {
-  console.log('addressInput', value);
   form.address = value;
+  verifyAddress();
 };
 const addressFocus = (event: Event): void => {
   form.address = form.address ? form.address : '';

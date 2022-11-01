@@ -21,6 +21,7 @@
     :no-data-text="noDataText"
     :menu-props="{ modelValue: dropdown, closeOnContentClick: true }"
     variant="outlined"
+    @focusin="dropdown = true"
     @update:search-input="onChange"
     @blur="dropdown = false"
     @update:model-value="onInputChange"
@@ -205,8 +206,6 @@ export default defineComponent({
      * the blockie for the regular address value.
      */
     blockieHash(): string {
-      console.log('resolvedAddr', this.resolvedAddr);
-      console.log('addressValue', this.addressValue);
       return this.resolvedAddr.length > 0
         ? this.resolvedAddr
         : this.addressValue;
@@ -233,37 +232,27 @@ export default defineComponent({
     /**
      * Sets the dropdown item to be the v-model value.
      */
-    selectAddress(data: { value: string, raw: any }) {
-      // console.log('data', data);
-      // console.log('data.raw', data.raw);
-      // console.log('items', this.items);
+    selectAddress(data: { value: any, raw: any }) {
       this.dropdown = false;
       this.isTyped = USER_INPUT_TYPES.selected;
       const addressSelect = Object.assign<any, any>({}, this.$refs.mewAddressSelect);
-      this.addressValue = data.value;
-      // console.log('addressSelect', addressSelect);
-      console.log('addressValue', this.addressValue);
-      console.log('addressSelect.modelValue (before)', addressSelect.modelValue);
+      this.addressValue = data.value.address;
       addressSelect.modelValue = this.addressValue;
-      // addressSelect.select(data); // Works but throws errors
-      console.log('addressSelect.modelValue (after)', addressSelect.modelValue);
-      // this.onChange(this.addressValue);
+      this.onChange(this.addressValue);
     },
     /**
-     * Emits 'input' when there is a v-model value change.
+     * Emits 'changed' when there is a v-model value change.
      */
     onChange(value: string) {
-      this.$emit('input', value, this.isTyped);
+      this.$emit('changed', value, this.isTyped);
     },
     /**
      * Sets the value for what the user types int
      */
     onInputChange(data: {address: string}) {
-      console.log('input changed', data);
       this.isTyped = USER_INPUT_TYPES.typed;
       this.addressValue = data.address ? data.address : data.toString();
-      console.log('addressValue', this.addressValue);
-      // this.onChange(this.addressValue);
+      this.onChange(this.addressValue);
     },
   },
 });
