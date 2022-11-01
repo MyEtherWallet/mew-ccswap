@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/no-deprecated-v-on-native-modifier -->
 <template>
   <div
-    class="component--buy-form elevated-box pa-3 pa-sm-6 pa-md-8"
+    class="pa-3 pa-sm-6 pa-md-8"
     ref="formDiv"
   >
     <!-- ============================================================================= -->

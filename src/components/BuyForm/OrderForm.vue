@@ -1,5 +1,5 @@
 <template>
-    <div class="mew-component--moon-pay">
+    <div class="component--buy-form elevated-box pa-3 pa-sm-6 pa-md-8">
         <div v-if="step === 0">
           <MewTabs
             :items="tabItems"
@@ -28,6 +28,8 @@ import { isEmpty } from 'lodash';
   
 //   import handler from './handlers/handlerOrder';
 import MewTabs from '../MewTabs/MewTabs.vue';
+import BuyForm from './BuyForm.vue';
+import SellForm from './SellForm.vue';
 import { defineComponent } from 'vue';
 
 interface Crypto {
@@ -49,8 +51,8 @@ export default defineComponent({
     name: 'OrderForm',
     components: {
       MewTabs,
-      BuyForm: () => import('./BuyForm.vue'),
-      SellForm: () => import('./SellForm.vue')
+      BuyForm,
+      SellForm
     },
     props: {
         open: Boolean
@@ -113,12 +115,8 @@ export default defineComponent({
       },
       tabItems() {
         return [
-          {
-            name: `Buy`
-          },
-          {
-            name: `Sell`
-          }
+            'Buy',
+            'Sell'
         ];
       }
     },

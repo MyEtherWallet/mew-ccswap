@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/no-deprecated-v-on-native-modifier -->
 <template>
   <div
-    class="component--buy-form elevated-box pa-3 pa-sm-6 pa-md-8"
+    class="pa-3 pa-sm-6 pa-md-8"
     ref="formDiv"
   >
     <!-- ============================================================================= -->
@@ -10,7 +10,7 @@
     <div class="mb-10">
       <div class="d-flex align-center">
         <div class="mew-heading-3 textDark--text mb-5">
-          How much do you want to spend?
+          How much do you want to sell?
         </div>
         <div v-if="loading.data" class="ml-2">
           <span class="h3 font-weight-regular mr-1 text--mew">Loading</span>

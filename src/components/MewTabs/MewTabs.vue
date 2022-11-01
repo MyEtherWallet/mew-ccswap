@@ -23,7 +23,7 @@
             active-class="greenPrimary text--primary"
             outlined
           >
-            {{ mobileItem['name'] }}
+            {{ mobileItem }}
           </v-chip>
         </v-chip-group>
   
@@ -70,12 +70,13 @@
           ]"
           :ripple="!isVertical"
         >
-          {{ item.name }}
+          {{ item }}
         </v-tab>
-        <v-tabs-items v-model="onTab">
-          <v-tab-item
+        <v-window v-model="onTab">
+          <v-window-item
             v-for="(item, i) in items"
             :key="`${item}` + i"
+            :value="item"
             :reverse-transition="
               !isVertical ? 'slide-x-transition' : 'slide-y-transition'
             "
@@ -85,8 +86,8 @@
             <!-- content inside of the tab container) -->
             <!-- ===================================================================================== -->
             <slot :name="'tabItemContent' + (i + 1)" />
-          </v-tab-item>
-        </v-tabs-items>
+          </v-window-item>
+        </v-window>
       </v-tabs>
   
       <div
@@ -111,10 +112,8 @@
   </template>
   
   <script lang="ts">
-  import { defineComponent, PropType } from 'vue';
-  interface Tab {
-    name: string
-  }
+  import { defineComponent } from 'vue';
+
   export default defineComponent({
     name: 'MewTabs',
     props: {
@@ -173,7 +172,7 @@
        * Tab content
        */
       items: {
-        type: Array as PropType<Array<Tab>>,
+        type: Array,
         default: () => {
           return [];
         }
@@ -222,10 +221,10 @@
       }
     },
     watch: {
-      activeTab(newVal) {
+      activeTab(newVal: number) {
         this.onTab = newVal;
       },
-      onTab(newVal) {
+      onTab(newVal: number) {
         this.$emit('onTab', newVal);
       }
     },

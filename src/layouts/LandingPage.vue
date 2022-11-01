@@ -36,6 +36,7 @@ import bgBar from "@/assets/images/bg-bar-old.svg";
 
 <style lang="scss">
 @import "@/styles/globalOldDesign.scss";
+@import "@/styles/mewDesign.scss";
 </style>
 
 <style lang="scss" scoped>
