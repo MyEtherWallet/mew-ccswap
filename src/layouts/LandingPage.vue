@@ -10,7 +10,8 @@
           <HeaderComponent />
         </v-col>
         <v-col cols="12" md="7" lg="6">
-          <BuyForm />
+          <OrderForm />
+          <!-- <BuyForm /> -->
         </v-col>
       </v-row>
 
@@ -27,7 +28,8 @@
 <script setup lang="ts">
 import HeaderComponent from "@/components/Header/HeaderComponent.vue";
 import FooterComponent from "@/components/Footer/FooterComponent.vue";
-import BuyForm from "@/components/BuyForm/BuyForm.vue";
+// import BuyForm from "@/components/BuyForm/BuyForm.vue";
+import OrderForm from "@/components/BuyForm/OrderForm.vue";
 import PromoComponent from "@/components/Promo/PromoComponent.vue";
 import bgBar from "@/assets/images/bg-bar-old.svg";
 </script>
