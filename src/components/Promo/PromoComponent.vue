@@ -20,47 +20,49 @@
         </v-col>
       </v-row>
     </div>
-
     <div
+      class="promo--bottom"
       :style="
         $vuetify.display.mdAndUp ? 'margin-top: 200px' : 'margin-top: 100px'
       "
     >
-      <h1 class="mb-9">
-        That is the reason why millions of our users choose us
-      </h1>
-      <v-row>
-        <v-col
-          cols="12"
-          md="6"
-          v-for="(p2, key2) in promo2"
-          :key="key2"
-          :class="$vuetify.display.mdAndUp ? '' : 'd-flex justify-center'"
-        >
-          <div class="d-flex align-center pb-8">
-            <img class="mr-4" :src="p2.icon" alt="Promo" />
-            <div>
-              <div class="heading-3 mb-1">{{ p2.title }}</div>
-              <div
-                v-if="p2.description"
-                style="max-width: 350px"
-                class="text--secondary heading-5"
-              >
-                {{ p2.description }}
-              </div>
-              <div
-                class="text--secondary heading-5"
-                v-else
-                style="max-width: 350px"
-              >
-                Feel free to contact
-                <a href="mailto:support@simplex.com">support@mew.com</a>
-                should you have questions.
+      <v-container>
+        <h1 class="text--white mb-9">
+          That is the reason why millions of our users choose us
+        </h1>
+        <v-row>
+          <v-col
+            cols="12"
+            md="6"
+            v-for="(p2, key2) in promo2"
+            :key="key2"
+            :class="$vuetify.display.mdAndUp ? '' : 'd-flex justify-center'"
+          >
+            <div class="d-flex align-center pb-8">
+              <img class="mr-4" :src="p2.icon" alt="Promo" />
+              <div>
+                <div class="heading-3 mb-1 text--white">{{ p2.title }}</div>
+                <div
+                  v-if="p2.description"
+                  style="max-width: 350px; color: #9ba1ae"
+                  class="heading-5"
+                >
+                  {{ p2.description }}
+                </div>
+                <div
+                  class="text--secondary heading-5"
+                  v-else
+                  style="max-width: 350px"
+                >
+                  Feel free to contact
+                  <a href="mailto:support@simplex.com">support@mew.com</a>
+                  should you have questions.
+                </div>
               </div>
             </div>
-          </div>
-        </v-col>
-      </v-row>
+          </v-col>
+        </v-row>
+      </v-container>
     </div>
   </div>
 </template>
@@ -117,8 +119,8 @@ const promo2 = [
 </script>
 
 <style lang="scss" scoped>
-.component--promo {
-  padding-bottom: 200px;
+.promo--bottom {
+  background-color: black;
 }
 
 h1 {

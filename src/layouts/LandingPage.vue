@@ -2,7 +2,6 @@
   <div
     class="pt-15 component--landing-page-old-design"
     :class="[$vuetify.display.mdAndUp ? 'background-lg' : 'background-sm']"
-    :style="{ 'background-image': `url(${bgBar})` }"
   >
     <v-container>
       <v-row>
@@ -13,27 +12,24 @@
           <BuyForm />
         </v-col>
       </v-row>
-
-      <v-row>
-        <v-col>
-          <PromoComponent />
-        </v-col>
-      </v-row>
     </v-container>
+
+    <PromoComponent />
+    <BuyFormBanner />
     <FooterComponent />
   </div>
 </template>
 
 <script setup lang="ts">
-import HeaderComponent from "@/components/Header/HeaderComponent.vue";
-import FooterComponent from "@/components/Footer/FooterComponent.vue";
-import BuyForm from "@/components/BuyForm/BuyForm.vue";
-import PromoComponent from "@/components/Promo/PromoComponent.vue";
-import bgBar from "@/assets/images/bg-bar-old.svg";
+import HeaderComponent from '@/components/Header/HeaderComponent.vue';
+import FooterComponent from '@/components/Footer/FooterComponent.vue';
+import BuyForm from '@/components/BuyForm/BuyForm.vue';
+import BuyFormBanner from '@/components/BuyNowBanner/BuyBanner.vue';
+import PromoComponent from '@/components/Promo/PromoComponent.vue';
 </script>
 
 <style lang="scss">
-@import "@/styles/globalOldDesign.scss";
+@import '@/styles/globalOldDesign.scss';
 </style>
 
 <style lang="scss" scoped>
