@@ -78,14 +78,16 @@
         Where should we send your crypto?
       </div>
       <mew-address-select
+        ref="addressSelect"
         :model-value="form.address"
         :error-messages="form.addressErrorMsg"
         :autofocus="true"
         label=""
         :items="addressBook"
+        :is-valid-address="form.validAddress"
         placeholder="Enter Crypto Address"
         @keyup="verifyAddress"
-        @update:model-value="addressInput"
+        @input="addressInput"
         @focus.once="addressFocus"
       />
     </div>
@@ -401,6 +403,7 @@ const isValidAddressPolkadotAddress = (
 // };
 
 const addressInput = (value: string): void => {
+  console.log('addressInput', value);
   form.address = value;
 };
 const addressFocus = (event: Event): void => {

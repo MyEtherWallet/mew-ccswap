@@ -5,7 +5,7 @@
   <!-- ===================================================================================== -->
   <v-combobox
     ref="mewAddressSelect"
-    v-model="addressValue"
+    v-model:model-value="addressValue"
     class="address-select pa-0 rounded-lg"
     color="primary"
     :items="items"
@@ -21,7 +21,6 @@
     :no-data-text="noDataText"
     :menu-props="{ modelValue: dropdown, closeOnContentClick: true }"
     outlined
-    @update:search-input="onChange"
     @blur="dropdown = false"
     @update:model-value="onInputChange"
   >
@@ -216,7 +215,8 @@ export default defineComponent({
      * the blockie for the regular address value.
      */
     blockieHash(): string {
-      // return this.addressValue.address || this.addressValue;
+      console.log('resolvedAddr', this.resolvedAddr);
+      console.log('addressValue', this.addressValue);
       return this.resolvedAddr.length > 0
         ? this.resolvedAddr
         : this.addressValue;
@@ -243,18 +243,21 @@ export default defineComponent({
     /**
      * Sets the dropdown item to be the v-model value.
      */
-    selectAddress(data: { value: string }) {
-      console.log('data', data);
-      console.log('items', this.items);
+    selectAddress(data: { value: string, raw: any }) {
+      // console.log('data', data);
+      // console.log('data.raw', data.raw);
+      // console.log('items', this.items);
       this.dropdown = false;
       this.isTyped = USER_INPUT_TYPES.selected;
-      const addressSelect = this.$refs.mewAddressSelect as any;
-      console.log('addressSelect', addressSelect);
-      // addressSelect.select(data); // Works but throws errors
+      const addressSelect = Object.assign<any, any>({}, this.$refs.mewAddressSelect);
       this.addressValue = data.value;
+      // console.log('addressSelect', addressSelect);
       console.log('addressValue', this.addressValue);
-      addressSelect.modelValue = this.addressValue;
-      console.log('addressSelect.modelValue', addressSelect.modelValue);
+      console.log('addressSelect.modelValue (before)', addressSelect.modelValue);
+      // addressSelect.modelValue = this.addressValue;
+      // addressSelect.select(data); // Works but throws errors
+      console.log('addressSelect.modelValue (after)', addressSelect.modelValue);
+      this.onChange(this.addressValue);
     },
     /**
      * Emits 'input' when there is a v-model value change.
@@ -265,57 +268,55 @@ export default defineComponent({
     /**
      * Sets the value for what the user types int
      */
-    onInputChange(value: string) {
+    onInputChange(data: {address: string}) {
+      console.log('input changed', data);
       this.isTyped = USER_INPUT_TYPES.typed;
-      this.addressValue = value;
+      this.addressValue = data.address ? data.address : data.toString();
+      console.log('addressValue', this.addressValue);
+      this.onChange(this.addressValue);
     },
   },
 });
 </script>
 
 <style lang="scss">
-.v-application {
   /**
-      * Address select input.
-      */
-  .address-select {
-    min-height: 62px;
-    &.v-text-field {
-      input {
-        font-family: 'PT Mono';
-      }
-    }
-    /**
-      * Right icons
-      */
-    .v-input__append-inner {
+  * Address select input.
+  */
+.address-select {
+  min-height: 62px;
+  &.v-text-field {
+    input {
+      // font-family: 'PT Mono';
       height: 100%;
-      margin-top: 0;
     }
-    .icon-container {
-      .copy-icon {
-        font-size: 20px;
-      }
-      .save-icon {
-        font-size: 22px;
-        margin-top: 3px;
-      }
-      .v-icon {
-        &:hover {
-          color: var(--v-primary-base) !important;
-        }
-      }
-    }
-    &.v-select.v-input--is-focused {
-      .mdi-chevron-down {
-        color: var(--v-titlePrimary-base);
+  }
+  /**
+    * Right icons
+    */
+  .v-field__append-inner {
+    display: none;
+  }
+  .v-input__append-inner {
+    height: 100%;
+    margin-top: 0;
+  }
+  .icon-container {
+    .v-icon {
+      &:hover {
+        color: var(--v-primary-base) !important;
       }
     }
-    .dropdown-icon-container {
-      border-left: 1px solid var(--v-disabled-base);
-      margin-left: 15px;
-      margin-right: -15px;
+  }
+  &.v-select.v-input--is-focused {
+    .mdi-chevron-down {
+      color: var(--v-titlePrimary-base);
     }
+  }
+  .dropdown-icon-container {
+    border-left: 1px solid var(--v-disabled-base);
+    margin-left: 15px;
+    margin-right: -15px;
   }
 }
 </style>
