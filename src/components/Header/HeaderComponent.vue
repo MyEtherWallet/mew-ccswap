@@ -14,18 +14,14 @@
     </div>
 
     <div class="d-flex align-center" style="margin-top: 60px">
-      <div class="mr-2 text--secondary">Powered by</div>
-      <img :src="simplex" alt="Simplex" height="30" />
+      <div class="mr-3 secondaryText">Powered by</div>
+      <img class="mr-3" :src="simplex" alt="Simplex" height="24" />
+      <img :src="moonpay" alt="Moonpay" height="24" />
     </div>
 
     <div class="d-flex flex-wrap align-center mt-4">
-      <div class="mr-2 text--secondary">
+      <div class="mr-3 secondaryText">
         We accept
-        <u class="font-weight-medium text--secondary"> Visa </u>
-        ,
-        <u class="font-weight-medium text--secondary"> Apple Pay </u>
-        and
-        <u class="font-weight-medium text--secondary"> MasterCard </u>
       </div>
       <div class="d-flex align-center">
         <img class="mr-2" :src="visa" alt="Visa" height="22" />
@@ -41,6 +37,7 @@ import visa from "@/assets/images/icon-visa.svg";
 import master from "@/assets/images/icon-master.svg";
 import applePay from "@/assets/images/icon-apple-pay.svg";
 import simplex from "@/assets/images/icon-simplex.svg";
+import moonpay from "@/assets/images/icon-moonpay.svg";
 import mewDarkLogo from "@/assets/images/icon-mew-logo-dark.svg";
 </script>
 
@@ -49,5 +46,18 @@ import mewDarkLogo from "@/assets/images/icon-mew-logo-dark.svg";
   font-size: 1.6rem;
   line-height: 2.4rem;
   font-weight: 300;
+}
+.secondaryText {
+  width: 79px;
+  height: 24px;
+
+  // font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 24px;
+  text-shadow: 2px 2px 10px gray;
+
+  color: #1B1B1B;
 }
 </style>
