@@ -5,7 +5,7 @@
   <!-- ===================================================================================== -->
   <v-combobox
     ref="mewAddressSelect"
-    v-model:model-value="addressValue"
+    v-model="addressValue"
     class="address-select pa-0 rounded-lg"
     color="primary"
     :items="items"
@@ -20,7 +20,8 @@
     :rules="rules"
     :no-data-text="noDataText"
     :menu-props="{ modelValue: dropdown, closeOnContentClick: true }"
-    outlined
+    variant="outlined"
+    @update:search-input="onChange"
     @blur="dropdown = false"
     @update:model-value="onInputChange"
   >
@@ -41,17 +42,6 @@
         width="25px"
         height="25px"
       />
-    </template>
-    <template #append>
-      <!-- ===================================================================================== -->
-      <!-- Dropdown arrow. Toggles the dropdown. -->
-      <!-- ===================================================================================== -->
-      <div
-        class="dropdown-icon-container d-flex align-center justify-center cursor-pointer full-height"
-        @click="toggle"
-      >
-        <v-icon class="mew-heading-1 mx-5"> mdi-chevron-down </v-icon>
-      </div>
     </template>
 
     <!-- ===================================================================================== -->
@@ -254,10 +244,10 @@ export default defineComponent({
       // console.log('addressSelect', addressSelect);
       console.log('addressValue', this.addressValue);
       console.log('addressSelect.modelValue (before)', addressSelect.modelValue);
-      // addressSelect.modelValue = this.addressValue;
+      addressSelect.modelValue = this.addressValue;
       // addressSelect.select(data); // Works but throws errors
       console.log('addressSelect.modelValue (after)', addressSelect.modelValue);
-      this.onChange(this.addressValue);
+      // this.onChange(this.addressValue);
     },
     /**
      * Emits 'input' when there is a v-model value change.
@@ -273,50 +263,49 @@ export default defineComponent({
       this.isTyped = USER_INPUT_TYPES.typed;
       this.addressValue = data.address ? data.address : data.toString();
       console.log('addressValue', this.addressValue);
-      this.onChange(this.addressValue);
+      // this.onChange(this.addressValue);
     },
   },
 });
 </script>
 
 <style lang="scss">
+.v-application {
   /**
-  * Address select input.
-  */
-.address-select {
-  min-height: 62px;
-  &.v-text-field {
-    input {
-      // font-family: 'PT Mono';
+      * Address select input.
+      */
+  .address-select {
+    /**
+      * Right icons
+      */
+    .v-input__append-inner {
       height: 100%;
+      margin-top: 0;
     }
-  }
-  /**
-    * Right icons
-    */
-  .v-field__append-inner {
-    display: none;
-  }
-  .v-input__append-inner {
-    height: 100%;
-    margin-top: 0;
-  }
-  .icon-container {
-    .v-icon {
-      &:hover {
-        color: var(--v-primary-base) !important;
+    .icon-container {
+      .copy-icon {
+        font-size: 20px;
+      }
+      .save-icon {
+        font-size: 22px;
+        margin-top: 3px;
+      }
+      .v-icon {
+        &:hover {
+          color: var(--v-primary-base) !important;
+        }
       }
     }
-  }
-  &.v-select.v-input--is-focused {
-    .mdi-chevron-down {
-      color: var(--v-titlePrimary-base);
+    &.v-select.v-input--is-focused {
+      .mdi-chevron-down {
+        color: var(--v-titlePrimary-base);
+      }
     }
-  }
-  .dropdown-icon-container {
-    border-left: 1px solid var(--v-disabled-base);
-    margin-left: 15px;
-    margin-right: -15px;
+    .dropdown-icon-container {
+      border-left: 1px solid var(--v-disabled-base);
+      margin-left: 15px;
+      margin-right: -15px;
+    }
   }
 }
 </style>
