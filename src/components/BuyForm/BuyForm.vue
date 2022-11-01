@@ -27,7 +27,7 @@
           v-model.number="form.fiatAmount"
           required
           variant="outlined"
-          class="rounded-left"
+          class="mr-1"
           :disabled="loading.data"
           :rules="rules"
         ></v-text-field>
@@ -58,6 +58,7 @@
           :rules="rules"
           :error-messages="loading.alertMessage"
           :disabled="loading.data"
+          class="mr-1"
         ></v-text-field>
         <v-select
           style="max-width: 120px"
@@ -447,51 +448,3 @@ const submitForm = (): void => {
   );
 };
 </script>
-
-<style lang="scss">
-.component--buy-form {
-  // Fix v-select(currency select) height issue
-  .v-select .v-field .v-field__input > input {
-    height: 0;
-    width: 0;
-  }
-
-  .v-field--appended {
-    background-color: white;
-    .v-select__selection-text {
-      color: black;
-    }
-
-    .v-field__append-inner {
-      .v-icon {
-        opacity: 1;
-        &::before {
-          color: white;
-        }
-      }
-    }
-  }
-
-  .v-field__field {
-    padding: 0;
-  }
-
-  .v-field__input {
-    padding-top: 0;
-  }
-
-  .v-select__selection-text {
-    display: flex;
-    align-items: center;
-  }
-
-  // Adjust (text field) prefix font size
-  .v-messages__message {
-    font-weight: 300;
-    font-size: 0.9rem;
-  }
-  .v-text-field__prefix {
-    font-size: 0.8rem;
-  }
-}
-</style>

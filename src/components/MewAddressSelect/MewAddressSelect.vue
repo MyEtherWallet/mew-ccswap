@@ -20,7 +20,7 @@
     :rules="rules"
     :no-data-text="noDataText"
     :menu-props="{ modelValue: dropdown, closeOnContentClick: true }"
-    outlined
+    variant="outlined"
     @update:search-input="onChange"
     @blur="dropdown = false"
     @update:model-value="onInputChange"
@@ -42,17 +42,6 @@
         width="25px"
         height="25px"
       />
-    </template>
-    <template #append>
-      <!-- ===================================================================================== -->
-      <!-- Dropdown arrow. Toggles the dropdown. -->
-      <!-- ===================================================================================== -->
-      <div
-        class="dropdown-icon-container d-flex align-center justify-center cursor-pointer full-height"
-        @click="toggle"
-      >
-        <v-icon class="mew-heading-1 mx-5"> mdi-chevron-down </v-icon>
-      </div>
     </template>
 
     <!-- ===================================================================================== -->
@@ -279,12 +268,6 @@ export default defineComponent({
       * Address select input.
       */
   .address-select {
-    min-height: 62px;
-    &.v-text-field {
-      input {
-        font-family: 'PT Mono';
-      }
-    }
     /**
       * Right icons
       */
