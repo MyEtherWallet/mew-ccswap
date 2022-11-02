@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="dropShadow">
     <img :src="mewDarkLogo" alt="MEW" height="36" />
 
     <div
@@ -56,8 +56,11 @@ import mewDarkLogo from "@/assets/images/icon-mew-logo-dark.svg";
   font-weight: 400;
   font-size: 14px;
   line-height: 24px;
-  text-shadow: 2px 2px 10px gray;
 
   color: #1B1B1B;
+}
+
+.dropShadow {
+  filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
 }
 </style>

@@ -119,6 +119,7 @@ const promo2 = [
 <style lang="scss" scoped>
 .component--promo {
   padding-bottom: 200px;
+  filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
 }
 
 h1 {
