@@ -1,15 +1,15 @@
 <!-- eslint-disable vue/no-deprecated-v-on-native-modifier -->
 <template>
   <div
-    class="pa-3 pa-sm-6 pa-md-8"
+    class="pa-3 pa-sm-2 pa-md-2"
     ref="formDiv"
   >
     <!-- ============================================================================= -->
     <!-- Fiat amount -->
     <!-- ============================================================================= -->
-    <div class="mb-6">
+    <div class="mb-6 mt-6">
       <div class="d-flex align-center">
-        <div class="mew-heading-3 textDark--text mb-3">
+        <div class="mew-heading-4 textDark--text mb-3">
           How much do you want to spend?
         </div>
         <div v-if="loading.data" class="ml-2">
@@ -57,7 +57,7 @@
     <!-- Crypto amount -->
     <!-- ============================================================================= -->
     <div class="mb-6">
-      <div class="mew-heading-3 textDark--text mb-3">You will get</div>
+      <div class="mew-heading-4 textDark--text mb-3">You will get</div>
       <div class="d-flex mt-2">
         <v-text-field
           @input="cryptoToFiat"
@@ -78,7 +78,17 @@
           :disabled="loading.data"
           rounded="right"
           variant="outlined"
-        ></v-select>
+        >
+          <template #prepend-inner>
+            <img
+              class="currency-icon mr-1"
+              :src="cryptoIcon"
+              :alt="form.cryptoSelected"
+              width="25px"
+              height="25px"
+            />
+          </template>
+        </v-select>
       </div>
     </div>
 
@@ -86,7 +96,7 @@
     <!-- Wallet address -->
     <!-- ============================================================================= -->
     <div>
-      <div class="mew-heading-3 textDark--text mb-3">
+      <div class="mew-heading-4 textDark--text mb-3">
         Where should we send your crypto?
       </div>
       <mew-address-select
@@ -242,6 +252,9 @@ const loading = reactive({
 
 const fiatIcon = computed(() => {
   return require(`@/assets/images/fiat/${form.fiatSelected}.svg`);
+});
+const cryptoIcon = computed(() => {
+  return require(`@/assets/images/crypto/${form.cryptoSelected}.svg`);
 });
 
 // watchers
