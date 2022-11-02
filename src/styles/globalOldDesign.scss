@@ -11,6 +11,8 @@ $dark: rgb(77, 77, 77);
 $gray: #a7a7a7;
 $mew: #05c0a5;
 $blue: #0000ee;
+$purple: #7B61FF;
+
 
 html {
   font-size: 14px !important;
@@ -146,6 +148,10 @@ a {
   color: white;
 }
 
+.text--purple {
+  color: $purple;
+}
+
 .text--mew {
   color: $mew;
 }
@@ -165,5 +171,5 @@ a {
   box-shadow: 0 8px 10px rgb(0 0 0 / 15%);
   border-radius: 5px 5px 10px 10px;
   background-color: white;
-  border-top: 10px solid $mew;
+  border-top: 10px solid $purple;
 }

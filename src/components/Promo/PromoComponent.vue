@@ -6,19 +6,21 @@
     "
   >
     <div>
-      <h1 class="mb-9">
-        We have increased maximum buy limits for hassle free transactions
-      </h1>
-      <v-row>
-        <v-col cols="12" md="4" v-for="(p1, key1) in promo1" :key="key1">
-          <div class="elevated-box-small pa-10">
-            <div class="heading-2 text--mew mb-2">
-              {{ p1.amount }}
+      <v-container>
+        <h1 class="mb-9">
+          We have increased maximum buy limits for hassle free transactions
+        </h1>
+        <v-row>
+          <v-col cols="12" md="4" v-for="(p1, key1) in promo1" :key="key1">
+            <div class="elevated-box-small pa-10">
+              <div class="heading-2 text--purple mb-2">
+                {{ p1.amount }}
+              </div>
+              <h2 class="font-weight-medium text--secondary">{{ p1.title }}</h2>
             </div>
-            <h2 class="font-weight-medium text--secondary">{{ p1.title }}</h2>
-          </div>
-        </v-col>
-      </v-row>
+          </v-col>
+        </v-row>
+      </v-container>
     </div>
     <div
       class="promo--bottom"
