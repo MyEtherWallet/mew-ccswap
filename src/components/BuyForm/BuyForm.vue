@@ -7,9 +7,9 @@
     <!-- ============================================================================= -->
     <!-- Fiat amount -->
     <!-- ============================================================================= -->
-    <div class="mb-10">
+    <div class="mb-6">
       <div class="d-flex align-center">
-        <div class="mew-heading-3 textDark--text mb-5">
+        <div class="mew-heading-3 textDark--text mb-3">
           How much do you want to spend?
         </div>
         <div v-if="loading.data" class="ml-2">
@@ -39,15 +39,25 @@
           :items="fiatItems"
           :disabled="loading.data"
           variant="outlined"
-        ></v-select>
+        >
+          <template #prepend-inner>
+            <img
+              class="currency-icon mr-1"
+              :src="fiatIcon"
+              :alt="form.fiatSelected"
+              width="25px"
+              height="25px"
+            />
+          </template>
+        </v-select>
       </div>
     </div>
 
     <!-- ============================================================================= -->
     <!-- Crypto amount -->
     <!-- ============================================================================= -->
-    <div class="mb-10">
-      <div class="mb-2">You will get</div>
+    <div class="mb-6">
+      <div class="mew-heading-3 textDark--text mb-3">You will get</div>
       <div class="d-flex mt-2">
         <v-text-field
           @input="cryptoToFiat"
@@ -76,7 +86,7 @@
     <!-- Wallet address -->
     <!-- ============================================================================= -->
     <div>
-      <div class="mew-heading-3 textDark--text mb-5">
+      <div class="mew-heading-3 textDark--text mb-3">
         Where should we send your crypto?
       </div>
       <mew-address-select
@@ -102,7 +112,7 @@
           rounded="pill"
           :disabled="!isValidForm"
           min-height="60px"
-          min-width="360px"
+          width="360px"
           color="#05C0A5"
           @click="submitForm"
         >
@@ -228,6 +238,10 @@ const loading = reactive({
   showAlert: false,
   processingBuyForm: false,
   alertMessage: '',
+});
+
+const fiatIcon = computed(() => {
+  return require(`@/assets/images/fiat/${form.fiatSelected}.svg`);
 });
 
 // watchers
@@ -451,3 +465,11 @@ const submitForm = (): void => {
   );
 };
 </script>
+
+<style lang="scss">
+// Adjust (text field) prefix font size
+.v-messages__message {
+  font-weight: 300;
+  font-size: 0.9rem;
+}
+</style>

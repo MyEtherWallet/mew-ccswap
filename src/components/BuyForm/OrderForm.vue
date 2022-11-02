@@ -1,14 +1,13 @@
 <template>
     <div class="component--buy-form elevated-box pa-3 pa-sm-6 pa-md-8">
-        <div v-if="step === 0">
-          <MewTabs
-            :items="tabItems"
-            :active-tab="activeTab"
-            active-color="greenPrimary"
-            has-underline
-            class="pt-3"
-            @onTab="onTab"
-          >
+        <MewTabs
+          :items="tabItems"
+          :active-tab="activeTab"
+          active-color="greenPrimary"
+          has-underline
+          class="pt-3"
+          @onTab="onTab"
+        >
             <template #tabContent1>
               <buy-form />
             </template>
@@ -16,7 +15,6 @@
               <sell-form />
             </template>
         </MewTabs>
-        </div>
     </div>
   </template>
   
