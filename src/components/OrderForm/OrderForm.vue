@@ -9,16 +9,14 @@
           @onTab="onTab"
         >
             <template #tabContent1>
-              <buy-form />
+              <buy-form @success="buySuccess"/>
             </template>
             <template #tabContent2>
               <sell-form />
             </template>
         </MewTabs>
       </div>
-      <div v-else>
-        <BuyProviders />
-      </div>
+      <BuyProviders v-if="step === 1" />
     </div>
   </template>
   
@@ -34,22 +32,8 @@ import BuyForm from './BuyForm.vue';
 import BuyProviders from './BuyProviders.vue';
 import SellForm from './SellForm.vue';
 import { defineComponent } from 'vue';
+import { Fiat, Crypto, BuyObj, SubmitData } from './types';
 
-interface Crypto {
-    decimals: number,
-    img: string,
-    name: string,
-    subtext: string,
-    value: string,
-    symbol: string,
-    network: string,
-    contract: string
-}
-interface Fiat {
-    name: string
-    value: string,
-    img: any
-}
 export default defineComponent({
     name: 'OrderForm',
     components: {
@@ -69,7 +53,7 @@ export default defineComponent({
         selectedCurrency: {} as Crypto,
         selectedFiat: {} as Fiat,
         onlySimplex: false,
-        buyObj: {},
+        buyObj: {} as BuyObj,
         step: 0,
         simplexQuote: {},
         toAddress: ''
@@ -193,7 +177,7 @@ export default defineComponent({
       openProviders(val: number) {
         this.step = val;
       },
-      setBuyObj(val: any) {
+      setBuyObj(val: BuyObj) {
         this.buyObj = val;
       },
       setSimplexQuote(val: any) {
@@ -215,13 +199,13 @@ export default defineComponent({
       hideMoonpay(val: boolean) {
         this.onlySimplex = val;
       },
-      buySuccess(items: Array<any>) {
-        this.setSimplexQuote(items[0]);
-        this.setToAddress(items[1]);
-        this.setBuyObj(items[2]);
-        this.openProviders(items[3]);
-        this.setSelectedCurrency(items[4]);
-        this.setSelectedFiat(items[5]);
+      buySuccess(data: SubmitData) {
+        this.setSimplexQuote(data.simplex_quote);
+        this.setToAddress(data.address);
+        this.setBuyObj(data.buyObj);
+        this.openProviders(data.openProviders);
+        this.setSelectedCurrency(data.selected_currency);
+        this.setSelectedFiat(data.selected_fiat);
       }
     }
   });

@@ -172,7 +172,7 @@
 import { defineComponent } from 'vue';
 
 export default defineComponent({
-    name: 'ModuleBuyEthProvider',
+    name: 'BuyProviders',
     props: {
       orderHandler: {
         type: Object,

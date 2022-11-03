@@ -194,7 +194,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, watch, onMounted } from 'vue';
+import { computed, reactive, watch, onMounted, defineEmits } from 'vue';
 import BigNumber from 'bignumber.js';
 import {
   supportedCrypto,
@@ -209,6 +209,7 @@ import mewWallet from '@/assets/images/icon-mew-wallet.png';
 import { isHexStrict, isAddress } from 'web3-utils';
 import { encodeAddress } from '@polkadot/keyring';
 import MewAddressSelect from '../MewAddressSelect/MewAddressSelect.vue';
+import { Fiat, Crypto, BuyObj, SubmitData } from './types';
 
 const mewWalletImg = mewWallet;
 const defaultFiatValue = '0';
@@ -234,6 +235,22 @@ onMounted(async () => {
   cryptoToFiat();
   setInterval(getPrices, 1000 * 60 * 2);
 });
+
+// emits
+const emit = defineEmits([
+  'success',
+  'selectedCurrency',
+  'selectedFiat',
+  'toAddress',
+  'disableMoonpay'
+]);
+// const emit = defineEmits<{
+//   (e: 'success', data: SubmitData): void
+//   (e: 'selectedCurrency', selectedCurrency: string): void
+//   (e: 'selectedFiat', selectedFiat: string): void
+//   (e: 'toAddress', toAddress: string): void
+//   (e: 'disableMoonpay', disableMoonpay: boolean): void
+// }>()
 
 // data
 
@@ -531,14 +548,37 @@ const verifyAddress = (): void => {
 };
 
 const submitForm = (): void => {
-  loading.processingBuyForm = true;
-  executeSimplexPayment(
-    form.fiatSelected,
-    form.cryptoSelected,
-    form.fiatSelected,
-    form.fiatAmount,
-    form.address
-  );
+  // loading.processingBuyForm = true;
+  // executeSimplexPayment(
+  //   form.fiatSelected,
+  //   form.cryptoSelected,
+  //   form.fiatSelected,
+  //   form.fiatAmount,
+  //   form.address
+  // );
+  emit('success',
+    {
+      simplex_quote: {},
+      address: form.address,
+      buyObj: {},
+      openProviders: 1,
+      selected_currency: {
+            decimals: 18, // DOT 10, KSM 12
+            img: require(`@/assets/images/crypto/${form.cryptoSelected}.svg`),
+            name: form.cryptoSelected,
+            subtext: form.cryptoSelected, // Should be long name
+            value: form.cryptoSelected,
+            symbol: form.cryptoSelected,
+            network: form.cryptoSelected, // Fill in after testing
+            contract: '' // Fill in after testing
+          },
+      selected_fiat: {
+          name: form.fiatSelected,
+          value: form.fiatSelected,
+          // eslint-disable-next-line
+          img: require(`@/assets/images/fiat/${form.fiatSelected}.svg`)
+        }
+    });
 };
 </script>
 
