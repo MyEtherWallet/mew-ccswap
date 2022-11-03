@@ -38,7 +38,12 @@
           v-model="form.fiatSelected"
           :items="fiatItems"
           :disabled="loading.data"
+          :menu-props="{ closeOnContentClick: true }"
+          :menu="dropdown.fiat"
+          return-object
           variant="outlined"
+          @focusin="dropdown.fiat = true"
+          @blur="dropdown.fiat = false"
         >
           <template #prepend-inner>
             <img
@@ -48,6 +53,22 @@
               width="25px"
               height="25px"
             />
+          </template>
+          <template #item="data">
+            <div class="d-flex align-center justify-space-between full-width cursor-pointer" @click="selectCurrency(data.item.value)">
+              <div class="d-flex align-center">
+                <img
+                  class="currency-icon mr-1 ml-3"
+                  :src="getIcon(data.item.value)"
+                  :alt="data.item.value"
+                  width="25px"
+                  height="25px"
+                />
+                <span
+                  class="text-capitalize ml-2 my-2 d-flex flex-column"
+                >{{ data.item.value }}</span>
+              </div>
+            </div>
           </template>
         </v-select>
       </div>
@@ -76,8 +97,13 @@
           v-model="form.cryptoSelected"
           :items="cryptoItems"
           :disabled="loading.data"
+          :menu-props="{ closeOnContentClick: true }"
+          :menu="dropdown.crypto"
           rounded="right"
           variant="outlined"
+          return-object
+          @focusin="dropdown.crypto = true"
+          @blur="dropdown.crypto = false"
         >
           <template #prepend-inner>
             <img
@@ -87,6 +113,22 @@
               width="25px"
               height="25px"
             />
+          </template>
+          <template #item="data">
+            <div class="d-flex align-center justify-space-between full-width cursor-pointer" @click="selectCurrency(data.item.value, false)">
+              <div class="d-flex align-center">
+                <img
+                  class="currency-icon mr-1 ml-3"
+                  :src="getIcon(data.item.value, false)"
+                  :alt="data.item.value"
+                  width="25px"
+                  height="25px"
+                />
+                <span
+                  class="text-capitalize ml-2 my-2 d-flex flex-column"
+                >{{ data.item.value }}</span>
+              </div>
+            </div>
           </template>
         </v-select>
       </div>
@@ -249,12 +291,9 @@ const loading = reactive({
   processingBuyForm: false,
   alertMessage: '',
 });
-
-const fiatIcon = computed(() => {
-  return require(`@/assets/images/fiat/${form.fiatSelected}.svg`);
-});
-const cryptoIcon = computed(() => {
-  return require(`@/assets/images/crypto/${form.cryptoSelected}.svg`);
+const dropdown = reactive({
+  fiat: false,
+  crypto: false
 });
 
 // watchers
@@ -290,7 +329,31 @@ watch(
     }
   }
 );
+
+// Computed Icons for selected token
+const fiatIcon = computed(() => {
+  return require(`@/assets/images/fiat/${form.fiatSelected}.svg`);
+});
+const cryptoIcon = computed(() => {
+  return require(`@/assets/images/crypto/${form.cryptoSelected}.svg`);
+});
+
 // methods
+const getIcon = (currency: string, isFiat = true) => {
+  return require(`@/assets/images/${isFiat ? 'fiat' : 'crypto'}/${currency}.svg`)
+};
+
+const selectCurrency = (currency: string, isFiat = true) => {
+  if (isFiat) {
+    form.fiatSelected = currency;
+    dropdown.fiat = false;
+  }
+  else {
+    form.cryptoSelected = currency;
+    dropdown.crypto = false;
+  }
+};
+
 const isValidForm = computed(() => {
   return (
     minMax.value &&
