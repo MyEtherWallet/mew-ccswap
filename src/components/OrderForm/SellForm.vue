@@ -1,15 +1,15 @@
 <!-- eslint-disable vue/no-deprecated-v-on-native-modifier -->
 <template>
   <div
-    class="pa-3 pa-sm-6 pa-md-8"
+    class="pa-3 pa-sm-2 pa-md-2"
     ref="formDiv"
   >
     <!-- ============================================================================= -->
     <!-- Fiat amount -->
     <!-- ============================================================================= -->
-    <div class="mb-10">
+    <div class="mb-6 mt-6">
       <div class="d-flex align-center">
-        <div class="mew-heading-3 textDark--text mb-5">
+        <div class="mew-heading-4 textDark--text mb-3">
           How much do you want to sell?
         </div>
         <div v-if="loading.data" class="ml-2">
@@ -38,16 +38,47 @@
           v-model="form.fiatSelected"
           :items="fiatItems"
           :disabled="loading.data"
+          :menu-props="{ closeOnContentClick: true }"
+          :menu="dropdown.fiat"
+          return-object
           variant="outlined"
-        ></v-select>
+          @focusin="dropdown.fiat = true"
+          @blur="dropdown.fiat = false"
+        >
+          <template #prepend-inner>
+            <img
+              class="currency-icon mr-1"
+              :src="fiatIcon"
+              :alt="form.fiatSelected"
+              width="25px"
+              height="25px"
+            />
+          </template>
+          <template #item="data">
+            <div class="d-flex align-center justify-space-between full-width cursor-pointer" @click="selectCurrency(data.item.value)">
+              <div class="d-flex align-center">
+                <img
+                  class="currency-icon mr-1 ml-3"
+                  :src="getIcon(data.item.value)"
+                  :alt="data.item.value"
+                  width="25px"
+                  height="25px"
+                />
+                <span
+                  class="text-capitalize ml-2 my-2 d-flex flex-column"
+                >{{ data.item.value }}</span>
+              </div>
+            </div>
+          </template>
+        </v-select>
       </div>
     </div>
 
     <!-- ============================================================================= -->
     <!-- Crypto amount -->
     <!-- ============================================================================= -->
-    <div class="mb-10">
-      <div class="mb-2">You will get</div>
+    <div class="mb-6">
+      <div class="mew-heading-4 textDark--text mb-3">You will get</div>
       <div class="d-flex mt-2">
         <v-text-field
           @input="cryptoToFiat"
@@ -66,9 +97,40 @@
           v-model="form.cryptoSelected"
           :items="cryptoItems"
           :disabled="loading.data"
+          :menu-props="{ closeOnContentClick: true }"
+          :menu="dropdown.crypto"
           rounded="right"
           variant="outlined"
-        ></v-select>
+          return-object
+          @focusin="dropdown.crypto = true"
+          @blur="dropdown.crypto = false"
+        >
+          <template #prepend-inner>
+            <img
+              class="currency-icon mr-1"
+              :src="cryptoIcon"
+              :alt="form.cryptoSelected"
+              width="25px"
+              height="25px"
+            />
+          </template>
+          <template #item="data">
+            <div class="d-flex align-center justify-space-between full-width cursor-pointer" @click="selectCurrency(data.item.value, false)">
+              <div class="d-flex align-center">
+                <img
+                  class="currency-icon mr-1 ml-3"
+                  :src="getIcon(data.item.value, false)"
+                  :alt="data.item.value"
+                  width="25px"
+                  height="25px"
+                />
+                <span
+                  class="text-capitalize ml-2 my-2 d-flex flex-column"
+                >{{ data.item.value }}</span>
+              </div>
+            </div>
+          </template>
+        </v-select>
       </div>
     </div>
 
@@ -76,7 +138,7 @@
     <!-- Wallet address -->
     <!-- ============================================================================= -->
     <div>
-      <div class="mew-heading-3 textDark--text mb-5">
+      <div class="mew-heading-4 textDark--text mb-3">
         Where should we send your crypto?
       </div>
       <mew-address-select
@@ -102,7 +164,7 @@
           rounded="pill"
           :disabled="!isValidForm"
           min-height="60px"
-          min-width="360px"
+          width="360px"
           color="#05C0A5"
           @click="submitForm"
         >
@@ -229,6 +291,10 @@ const loading = reactive({
   processingBuyForm: false,
   alertMessage: '',
 });
+const dropdown = reactive({
+  fiat: false,
+  crypto: false
+});
 
 // watchers
 watch(
@@ -263,7 +329,31 @@ watch(
     }
   }
 );
+
+// Computed Icons for selected token
+const fiatIcon = computed(() => {
+  return require(`@/assets/images/fiat/${form.fiatSelected}.svg`);
+});
+const cryptoIcon = computed(() => {
+  return require(`@/assets/images/crypto/${form.cryptoSelected}.svg`);
+});
+
 // methods
+const getIcon = (currency: string, isFiat = true) => {
+  return require(`@/assets/images/${isFiat ? 'fiat' : 'crypto'}/${currency}.svg`)
+};
+
+const selectCurrency = (currency: string, isFiat = true) => {
+  if (isFiat) {
+    form.fiatSelected = currency;
+    dropdown.fiat = false;
+  }
+  else {
+    form.cryptoSelected = currency;
+    dropdown.crypto = false;
+  }
+};
+
 const isValidForm = computed(() => {
   return (
     minMax.value &&

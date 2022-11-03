@@ -5,7 +5,6 @@
           :active-tab="activeTab"
           active-color="greenPrimary"
           has-underline
-          class="pt-3"
           @onTab="onTab"
         >
             <template #tabContent1>
