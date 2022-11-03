@@ -27,7 +27,6 @@
 <script setup lang="ts">
 import HeaderComponent from "@/components/Header/HeaderComponent.vue";
 import FooterComponent from "@/components/Footer/FooterComponent.vue";
-// import BuyForm from "@/components/BuyForm/BuyForm.vue";
 import OrderForm from "@/components/OrderForm/OrderForm.vue";
 import PromoComponent from "@/components/Promo/PromoComponent.vue";
 import bgBar from "@/assets/images/bg-bar-old.svg";

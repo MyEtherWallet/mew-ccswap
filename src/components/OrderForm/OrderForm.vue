@@ -1,5 +1,6 @@
 <template>
     <div class="component--buy-form elevated-box pa-3 pa-sm-6 pa-md-8">
+      <div v-if="step === 0">
         <MewTabs
           :items="tabItems"
           :active-tab="activeTab"
@@ -14,11 +15,15 @@
               <sell-form />
             </template>
         </MewTabs>
+      </div>
+      <div v-else>
+        <BuyProviders />
+      </div>
     </div>
   </template>
   
 <script lang="ts">
-import { isEmpty } from 'lodash';
+// import { isEmpty } from 'lodash';
 
 //   import { MAIN_TOKEN_ADDRESS } from '@/core/helpers/common';
 //   import nodes from '@/utils/networks';
@@ -26,6 +31,7 @@ import { isEmpty } from 'lodash';
 //   import handler from './handlers/handlerOrder';
 import MewTabs from '../MewTabs/MewTabs.vue';
 import BuyForm from './BuyForm.vue';
+import BuyProviders from './BuyProviders.vue';
 import SellForm from './SellForm.vue';
 import { defineComponent } from 'vue';
 
@@ -49,9 +55,11 @@ export default defineComponent({
     components: {
       MewTabs,
       BuyForm,
-      SellForm
+      SellForm,
+      BuyProviders
     },
     props: {
+        // Removing breaks the page for some reason
         open: Boolean
     },
     data() {
