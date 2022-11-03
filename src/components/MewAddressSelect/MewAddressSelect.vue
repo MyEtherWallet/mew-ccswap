@@ -69,7 +69,7 @@
           />
           <span v-else class="mew-address">{{ item.raw.address }}</span>
         </div>
-        <div class="overline primary--text font-weight-medium ml-3">
+        <div class="overline primary--text font-weight-medium ml-3 mr-3">
           {{ item.raw.nickname }}
         </div>
       </div>
