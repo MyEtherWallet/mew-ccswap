@@ -588,4 +588,10 @@ const submitForm = (): void => {
   font-weight: 300;
   font-size: 0.9rem;
 }
+
+.v-combobox__selection-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 </style>

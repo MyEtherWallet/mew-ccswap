@@ -54,7 +54,7 @@
         class="py-4 px-0 full-width d-flex align-center justify-space-between cursor-pointer"
         @click="selectAddress(item)"
       >
-        <div class="d-flex align-center justify-space-between full-max-width">
+        <div class="d-flex align-center justify-space-between" >
           <mew-blockie
             class="mr-2 ml-2"
             :address="
@@ -67,7 +67,10 @@
             v-if="!item.raw.resolvedAddr || item.raw.resolvedAddr === ''"
             :hash="item.raw.address"
           />
-          <span v-else class="mew-address">{{ item.raw.address }}</span>
+          <div v-else class="d-flex align-center">
+            <span class="mew-address">{{ item.raw.address }}</span>
+            <span>{{ item.raw.address.slice(-4) }}</span>
+          </div>
         </div>
         <div class="overline primary--text font-weight-medium ml-3 mr-3">
           {{ item.raw.nickname }}
@@ -254,6 +257,16 @@ export default defineComponent({
   },
 });
 </script>
+
+<style lang="scss" scoped>
+.mew-address {
+  display: inline-block;
+  max-width: 170px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+</style>
 
 <style lang="scss">
 .v-application {
