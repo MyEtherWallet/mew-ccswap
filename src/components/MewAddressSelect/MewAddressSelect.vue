@@ -19,7 +19,8 @@
     :persistent-hint="resolvedAddr.length > 0 || hint.length > 0"
     :rules="rules"
     :no-data-text="noDataText"
-    :menu-props="{ modelValue: dropdown, closeOnContentClick: true }"
+    :menu-props="{ closeOnContentClick: true }"
+    :menu="dropdown"
     variant="outlined"
     @focusin="dropdown = true"
     @update:search-input="onChange"
@@ -50,16 +51,12 @@
     <!-- ===================================================================================== -->
     <template #item="{ item }">
       <div
-        :class="[
-          'py-4 px-0 full-width d-flex align-center justify-space-between',
-          // 'column-reverse align-baseline',
-          // $vuetify.breakpoint.smAndDown ? 'column-reverse align-baseline' : '',
-        ]"
+        class="py-4 px-0 full-width d-flex align-center justify-space-between cursor-pointer"
         @click="selectAddress(item)"
       >
         <div class="d-flex align-center justify-space-between full-max-width">
           <mew-blockie
-            class="mr-2"
+            class="mr-2 ml-2"
             :address="
               item.raw.resolvedAddr ? item.raw.resolvedAddr : item.raw.address
             "
@@ -267,18 +264,14 @@ export default defineComponent({
     /**
       * Right icons
       */
+    .v-field__append-inner {
+      cursor: pointer;
+    }
     .v-input__append-inner {
       height: 100%;
       margin-top: 0;
     }
     .icon-container {
-      .copy-icon {
-        font-size: 20px;
-      }
-      .save-icon {
-        font-size: 22px;
-        margin-top: 3px;
-      }
       .v-icon {
         &:hover {
           color: var(--v-primary-base) !important;
