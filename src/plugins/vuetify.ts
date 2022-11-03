@@ -1,9 +1,36 @@
-// Styles
-import "@mdi/font/css/materialdesignicons.css";
-import "vuetify/styles";
+import { createVuetify } from 'vuetify';
+import * as components from 'vuetify/components';
+import * as directives from 'vuetify/directives';
+import '@mdi/font/css/materialdesignicons.css';
+import 'vuetify/styles';
 
-// Vuetify
-import { createVuetify } from "vuetify";
+const COLORS = {
+  // Enkrypt
+  white: '#FFFFFF',
+  purple: '#7B61FF',
+  mew: '#05c0a5',
+  gray: '#8799ab',
+  black: '#202030',
+};
 
-export default createVuetify();
-// https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
+const enkryptTheme = {
+  dark: false,
+  colors: {
+    purple: COLORS.purple,
+    mew: COLORS.mew,
+    gray: COLORS.gray,
+    black: COLORS.black,
+  },
+  variables: {},
+};
+
+export default createVuetify({
+  components,
+  directives,
+  theme: {
+    defaultTheme: 'enkryptTheme',
+    themes: {
+      enkryptTheme,
+    },
+  },
+});

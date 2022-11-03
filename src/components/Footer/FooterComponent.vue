@@ -10,9 +10,10 @@
         <div class="font-weight-regular" style="color: white">
           Need Ethereum wallet? Get one from
           <a
+            class="text-mew"
             href="https://www.myetherwallet.com/wallet/create"
             target="_blank"
-            style="color: white; text-decoration: none"
+            style="text-decoration: none"
           >
             myetherwallet.com
           </a>

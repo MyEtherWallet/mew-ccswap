@@ -13,10 +13,10 @@
         <v-row>
           <v-col cols="12" md="4" v-for="(p1, key1) in promo1" :key="key1">
             <div class="elevated-box-small pa-10">
-              <div class="heading-2 text--purple mb-2">
+              <div class="heading-2 text-purple mb-2">
                 {{ p1.amount }}
               </div>
-              <h2 class="font-weight-medium text--secondary">{{ p1.title }}</h2>
+              <h2 class="font-weight-medium text-gray">{{ p1.title }}</h2>
             </div>
           </v-col>
         </v-row>
@@ -29,8 +29,8 @@
       "
     >
       <v-container>
-        <h1 class="text--white mb-9">
-          That is the reason why millions of our users choose us
+        <h1 class="mb-9 text-purple">
+          That is the reason why millions of our users choose
         </h1>
         <v-row>
           <v-col
@@ -43,7 +43,7 @@
             <div class="d-flex align-center pb-8">
               <img class="mr-4" :src="p2.icon" alt="Promo" />
               <div>
-                <div class="heading-3 mb-1 text--white">{{ p2.title }}</div>
+                <div class="heading-3 mb-1 text-white">{{ p2.title }}</div>
                 <div
                   v-if="p2.description"
                   style="max-width: 350px; color: #9ba1ae"
@@ -52,7 +52,7 @@
                   {{ p2.description }}
                 </div>
                 <div
-                  class="text--secondary heading-5"
+                  class="text-gray heading-5"
                   v-else
                   style="max-width: 350px"
                 >
@@ -121,11 +121,19 @@ const promo2 = [
 </script>
 
 <style lang="scss" scoped>
+$purple: #7b61ff;
 .promo--bottom {
   background-color: black;
 }
 
 h1 {
   max-width: 600px;
+}
+
+.elevated-box-small {
+  box-shadow: 0 8px 10px rgb(0 0 0 / 15%);
+  border-radius: 5px 5px 10px 10px;
+  background-color: white;
+  // border-top: 10px solid $purple;
 }
 </style>

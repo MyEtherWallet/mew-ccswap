@@ -6,6 +6,7 @@
     <h3 class="mt-3">Hide this block when eveything is done</h3>
     <h3 class="mt-3">Simplex API document about form submission</h3>
     <a
+      class="text-mew"
       href="https://integrations.simplex.com/wallet-api-integration#payment-form"
       target="_blank"
     >
@@ -76,10 +77,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent } from 'vue';
 
 export default defineComponent({
-  name: "SubmitForm",
+  name: 'SubmitForm',
   props: {
     formData: Object,
     returnUrl: String,

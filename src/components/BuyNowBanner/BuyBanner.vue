@@ -4,9 +4,9 @@
       class="d-flex justify-space-around align-center"
       style="max-width: 1000px"
     >
-      <h1 class="text--white">Buy Crypto <br />at Lower Rates</h1>
+      <h1 class="text-white">Buy Crypto <br />at Lower Rates</h1>
       <v-btn
-        class="buy--btn rounded-pill white--text text-none"
+        class="buy--btn rounded-pill text-white text-none"
         color="white"
         style="color: #7b61ff"
       >
