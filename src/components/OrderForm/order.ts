@@ -104,42 +104,4 @@ async function executeMoonpaySell(tokenSymbol: string, amount: string, address: 
     });
 }
 
-  /**
-   *
-   * @param {String} symbol - Crypto Symbol ex. ETH
-   * @returns
-   */
-async function getSupportedFiatToBuy(symbol: string) {
-    return axios
-      .get(`${API}/v3/purchase/providers/web?iso=us&cryptoCurrency=${symbol}`, {
-        headers: {
-          'Accept-Language': 'en-US'
-        }
-      })
-      .then(res => res.data);
-}
-
-async function getFiatRatesForBuy() {
-    return axios
-      .get(`${API}/v3/purchase/moonpay/quotes`, {
-        headers: {
-          'Accept-Language': 'en-US'
-        }
-      })
-      .then(res => res.data);
-}
-/*
- * Get supported fiat to sell from Moonpay
- */
-async function getSupportedFiatToSell(symbol: string) {
-    return axios
-      .get(`${API}/v3/sell/providers/web?iso=us&cryptoCurrency=${symbol}`, {
-        headers: {
-          'Accept-Language': 'en-US'
-        }
-      })
-      .then(res => res.data);
-}
-
-export { executeSimplexPayment, getSupportedFiatToBuy, getSupportedFiatToSell,
-   getFiatRatesForBuy, executeMoonpaySell, executeMoonpayBuy };
+export { executeSimplexPayment, executeMoonpaySell, executeMoonpayBuy };

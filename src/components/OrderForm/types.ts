@@ -27,8 +27,8 @@ interface BuyObj {
 interface SubmitData {
   simplex_quote: any,
   address: string,
-  buyObj: BuyObj,
-  openProviders: number,
+  buy_obj: BuyObj,
+  open_providers: number,
   selected_currency: Crypto,
   selected_fiat: Fiat
 }

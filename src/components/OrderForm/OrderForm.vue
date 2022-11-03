@@ -21,9 +21,8 @@
   </template>
   
 <script lang="ts">
-// import { isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 
-//   import { MAIN_TOKEN_ADDRESS } from '@/core/helpers/common';
 //   import nodes from '@/utils/networks';
   
 //   import handler from './handlers/handlerOrder';
@@ -33,6 +32,8 @@ import BuyProviders from './BuyProviders.vue';
 import SellForm from './SellForm.vue';
 import { defineComponent } from 'vue';
 import { Fiat, Crypto, BuyObj, SubmitData } from './types';
+
+const MAIN_TOKEN_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
 
 export default defineComponent({
     name: 'OrderForm',
@@ -60,29 +61,30 @@ export default defineComponent({
       };
     },
     computed: {
-    //   defaultCurrency() {
-    //     if (isEmpty(this.selectedCurrency) && this.supportedBuy) {
-    //       const token = this.contractToToken(MAIN_TOKEN_ADDRESS);
-    //       token.value = token.symbol;
-    //       return token;
-    //     } else if (
-    //       isEmpty(this.selectedCurrency) ||
-    //       !this.supportedBuy ||
-    //       (this.activeTab === 1 && !this.supportedSell)
-    //     ) {
-    //       return {
-    //         decimals: 18,
-    //         img: 'https://img.mewapi.io/?image=https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/ETH-0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.svg',
-    //         name: 'ETH',
-    //         subtext: 'Ethereum',
-    //         value: 'ETH',
-    //         symbol: 'ETH',
-    //         network: 'ETH',
-    //         contract: MAIN_TOKEN_ADDRESS
-    //       };
-    //     }
-    //     return this.selectedCurrency;
-    //   },
+      defaultCurrency() {
+        // if (isEmpty(this.selectedCurrency) && this.supportedBuy) {
+        //   const token = this.contractToToken(MAIN_TOKEN_ADDRESS);
+        //   token.value = token.symbol;
+        //   return token;
+        // } else 
+        if (
+          isEmpty(this.selectedCurrency) ||
+          // !this.supportedBuy ||
+          (this.activeTab === 1 && !this.supportedSell)
+        ) {
+          return {
+            decimals: 18,
+            img: 'https://img.mewapi.io/?image=https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/ETH-0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.svg',
+            name: 'ETH',
+            subtext: 'Ethereum',
+            value: 'ETH',
+            symbol: 'ETH',
+            network: 'ETH',
+            contract: MAIN_TOKEN_ADDRESS
+          };
+        }
+        return this.selectedCurrency;
+      },
     //   supportedBuy() {
     //     return (
     //       this.network.type.name === 'ETH' ||
@@ -90,13 +92,13 @@ export default defineComponent({
     //       this.network.type.name === 'MATIC'
     //     );
     //   },
-    //   supportedSell() {
-    //     return (
-    //       this.selectedCurrency.symbol === 'ETH' ||
-    //       this.selectedCurrency.symbol === 'USDT' ||
-    //       this.selectedCurrency.symbol === 'USDC'
-    //     );
-    //   },
+      supportedSell() {
+        return (
+          this.selectedCurrency.symbol === 'ETH' ||
+          this.selectedCurrency.symbol === 'USDT' ||
+          this.selectedCurrency.symbol === 'USDC'
+        );
+      },
       leftBtn() {
         return {
           method: this.close
@@ -121,8 +123,8 @@ export default defineComponent({
     },
     methods: {
       onTab(val: number) {
-        // this.selectedCurrency = {};
-        // this.selectedCurrency = this.defaultCurrency;
+        this.selectedCurrency = {} as Crypto;
+        this.selectedCurrency = this.defaultCurrency;
         // if (val === 1 || (val === 0 && (!this.supportedBuy || !this.inWallet))) {
         //   if (this.network.type.chainID !== 1) {
         //     const defaultNetwork = this.nodes['ETH'].find(item => {
@@ -187,7 +189,7 @@ export default defineComponent({
         this.toAddress = val;
       },
       reset() {
-        // this.selectedCurrency = this.defaultCurrency;
+        this.selectedCurrency = this.defaultCurrency;
         this.selectedFiat = {
           name: 'USD',
           value: 'USD',
@@ -202,8 +204,8 @@ export default defineComponent({
       buySuccess(data: SubmitData) {
         this.setSimplexQuote(data.simplex_quote);
         this.setToAddress(data.address);
-        this.setBuyObj(data.buyObj);
-        this.openProviders(data.openProviders);
+        this.setBuyObj(data.buy_obj);
+        this.openProviders(data.open_providers);
         this.setSelectedCurrency(data.selected_currency);
         this.setSelectedFiat(data.selected_fiat);
       }

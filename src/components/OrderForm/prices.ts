@@ -1,6 +1,7 @@
 import axios from "axios";
 import { toNumber } from "lodash";
 import { sha3 } from "web3-utils";
+const API = "https://mainnet.mewwallet.dev";
 
 const supportedCrypto = ["ETH", "BNB", "MATIC", "DOT", "KSM"];
 
@@ -42,7 +43,7 @@ async function getSimplexQuote(
   requestedAmount: string,
   address = "0xDECAF9CD2367cdbb726E904cD6397eDFcAe6068D"
 ) {
-  const apiQuote = "https://mainnet.mewwallet.dev/purchase/simplex/quote";
+  const apiQuote = `${API}/purchase/simplex/quote`;
 
   return await axios
     .get(apiQuote, {
@@ -63,13 +64,13 @@ async function getSimplexQuote(
 }
 const filterData = (res: any) => {
   const { data } = res;
-  if (Array.isArray(data)) return data.find((i) => i.name === "SIMPLEX");
+  if (Array.isArray(data)) return data.filter((i) => (i.name === "SIMPLEX" || i.name === "MOONPAY"));
 };
 
 async function getSimplexPrices(
   cryptoCurrency?: "ETH" | "MATIC" | "BNB" | "DOT" | "KSM"
 ) {
-  const apiQuote = "https://mainnet.mewwallet.dev/v3/purchase/providers/ios";
+  const apiQuote = `${API}/v3/purchase/providers/ios`;
   if (cryptoCurrency)
     return await axios
       .get(apiQuote, {
@@ -102,10 +103,52 @@ async function getSimplexPrices(
   });
 }
 
+/**
+ * Moonpay
+ */
+async function getFiatRatesForBuy() {
+    return axios
+      .get(`${API}/v3/purchase/moonpay/quotes`, {
+        headers: {
+          'Accept-Language': 'en-US'
+        }
+      })
+      .then(res => res.data);
+}
+/**
+ *
+ * @param {String} symbol - Crypto Symbol ex. ETH
+ * @returns
+ */
+async function getSupportedFiatToBuy(symbol: string) {
+    return axios
+      .get(`${API}/v3/purchase/providers/web?iso=us&cryptoCurrency=${symbol}`, {
+        headers: {
+          'Accept-Language': 'en-US'
+        }
+      })
+      .then(res => res.data);
+}
+/*
+ * Get supported fiat to sell from Moonpay
+ */
+async function getSupportedFiatToSell(symbol: string) {
+    return axios
+      .get(`${API}/v3/sell/providers/web?iso=us&cryptoCurrency=${symbol}`, {
+        headers: {
+          'Accept-Language': 'en-US'
+        }
+      })
+      .then(res => res.data);
+}
+
 export {
   supportedCrypto,
   supportedFiat,
   currencySymbols,
   getSimplexQuote,
   getSimplexPrices,
+  getFiatRatesForBuy,
+  getSupportedFiatToBuy,
+  getSupportedFiatToSell
 };
