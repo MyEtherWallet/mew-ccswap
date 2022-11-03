@@ -11,6 +11,9 @@ const COLORS = {
   mew: '#05c0a5',
   gray: '#8799ab',
   black: '#202030',
+  // EthVM
+  blue: '#0065FF',
+  navy: '#1A2C5C',
 };
 
 const enkryptTheme = {
@@ -20,8 +23,20 @@ const enkryptTheme = {
     mew: COLORS.mew,
     gray: COLORS.gray,
     black: COLORS.black,
+    white: COLORS.white,
   },
   variables: {},
+};
+
+const ethvmTheme = {
+  dark: false,
+  colors: {
+    blue: COLORS.blue,
+    navy: COLORS.navy,
+    mew: COLORS.mew,
+    black: COLORS.black,
+    white: COLORS.white,
+  },
 };
 
 export default createVuetify({
@@ -31,6 +46,7 @@ export default createVuetify({
     defaultTheme: 'enkryptTheme',
     themes: {
       enkryptTheme,
+      ethvmTheme,
     },
   },
 });
