@@ -73,4 +73,73 @@ async function executeSimplexPayment(
   return responseOrder.form;
 }
 
-export { executeSimplexPayment };
+/*
+  ** MoonPay
+  */
+async function executeMoonpayBuy(tokenSymbol: string, fiatCurrency: string, amount: string, address: string) {
+    const hash = sha3(address);
+    const id = `WEB|${hash?.substring(0, 42)}`;
+    return new Promise<void>(resolve => {
+      let link = `${API}/v3/purchase/moonpay/order?address=${address}&id=${id}&cryptoCurrency=${tokenSymbol}&fiatCurrency=${fiatCurrency}`;
+      if (amount) {
+        link += `&requestedAmount=${amount}`;
+      }
+      const parsedUrl = encodeURI(link);
+      // eslint-disable-next-line
+      window.location.href = parsedUrl;
+      resolve();
+    });
+}
+
+async function executeMoonpaySell(tokenSymbol: string, amount: string, address: string) {
+    const hash = sha3(address);
+    const id = `WEB|${hash?.substring(0, 42)}`;
+    return new Promise<void>(resolve => {
+      const parsedUrl = encodeURI(
+        `${API}/v3/sell/moonpay/order?address=${address}&id=${id}&cryptoCurrency=${tokenSymbol}&requestedAmount=${amount}`
+      );
+      // eslint-disable-next-line
+      window.location.href = parsedUrl;
+      resolve();
+    });
+}
+
+  /**
+   *
+   * @param {String} symbol - Crypto Symbol ex. ETH
+   * @returns
+   */
+async function getSupportedFiatToBuy(symbol: string) {
+    return axios
+      .get(`${API}/v3/purchase/providers/web?iso=us&cryptoCurrency=${symbol}`, {
+        headers: {
+          'Accept-Language': 'en-US'
+        }
+      })
+      .then(res => res.data);
+}
+
+async function getFiatRatesForBuy() {
+    return axios
+      .get(`${API}/v3/purchase/moonpay/quotes`, {
+        headers: {
+          'Accept-Language': 'en-US'
+        }
+      })
+      .then(res => res.data);
+}
+/*
+ * Get supported fiat to sell from Moonpay
+ */
+async function getSupportedFiatToSell(symbol: string) {
+    return axios
+      .get(`${API}/v3/sell/providers/web?iso=us&cryptoCurrency=${symbol}`, {
+        headers: {
+          'Accept-Language': 'en-US'
+        }
+      })
+      .then(res => res.data);
+}
+
+export { executeSimplexPayment, getSupportedFiatToBuy, getSupportedFiatToSell,
+   getFiatRatesForBuy, executeMoonpaySell, executeMoonpayBuy };
