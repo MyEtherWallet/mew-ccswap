@@ -10,7 +10,7 @@
         <div class="font-weight-regular" style="color: white">
           Need Ethereum wallet? Get one from
           <a
-            class="text-mew"
+            class="text-white"
             href="https://www.myetherwallet.com/wallet/create"
             target="_blank"
             style="text-decoration: none"
@@ -22,7 +22,7 @@
 
       <v-btn
         size="x-large"
-        class="rounded-pill white--text mt-3 text-none"
+        class="rounded-pill text-white mt-3 text-none"
         color="#7b61ff"
         href="https://www.myetherwallet.com/wallet/create"
         target="_blank"
