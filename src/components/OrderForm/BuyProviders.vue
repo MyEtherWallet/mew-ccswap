@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/no-deprecated-v-on-native-modifier -->
 <template>
-    <div class="py-8 px-8 pt-3">
+    <div>
       <div
         class="d-flex align-center textDark--text mb-10 cursor--pointer"
         @click="$emit('close')"
@@ -15,7 +15,8 @@
       <div v-if="!hideMoonpay" class="section-block pa-5 mb-6">
         <img
           class="provider-logo"
-          src="@/modules/moon-pay/assets/moonpay-logo.svg"
+          :src="moonpayLogo"
+          alt="Moonpay"
           height="18"
         />
         <div class="mb-3">
@@ -27,7 +28,7 @@
           </div>
           <div class="d-flex align-center">
             <div class="mr-1 textDark--text">≈ {{ buyObj.plusFeeF }}</div>
-            <mew-tooltip style="height: 21px">
+            <v-tooltip style="height: 21px">
               <template #contentSlot>
                 <div>
                   {{ buyObj.includesFeeText }}
@@ -41,32 +42,32 @@
                   {{ buyObj.monthlyLimit }}
                 </div>
               </template>
-            </mew-tooltip>
+            </v-tooltip>
           </div>
         </div>
   
         <div class="d-flex align-center mb-1">
           <img
-            src="@/assets/images/icons/moonpay/icon-visa.svg"
+            :src="visaIcon"
             alt="Visa"
             height="24"
             class="mr-2"
           />
           <img
-            src="@/assets/images/icons/moonpay/icon-master.svg"
+            :src="masterIcon"
             alt="Master"
             height="24"
             class="mr-2"
           />
           <img
-            src="@/assets/images/icons/moonpay/icon-apple-pay.svg"
-            alt="Master"
+            :src="applePayIcon"
+            alt="ApplePay"
             height="24"
             class="mr-2"
           />
           <img
             v-if="isEUR"
-            src="@/assets/images/icons/moonpay/icon-bank.svg"
+            :src="bankIcon"
             alt="Bank"
             height="24"
           />
@@ -75,15 +76,14 @@
           {{ paymentOptionString }}
         </div>
         <div>
-          <mew-button
+          <v-btn
             btn-size="large"
             btn-style="light"
             color-theme="basic"
             has-full-width
             :is-valid-address-func="isValidToAddress"
-            :title="moonpayBtnTitle"
             @click.native="buy"
-          />
+          >{{moonpayBtnTitle}}</v-btn>
         </div>
       </div>
   
@@ -94,47 +94,48 @@
         <div v-if="!loading" class="mb-3">
           <div class="d-flex mb-1 align-center justify-space-between">
             <div class="d-flex mew-heading-3 textDark--text">
-              {{ simplexQuote.crypto_amount }}
+              {{ simplexQuote.cryptoToFiat }}
               <span class="mew-heading-3 pl-1">{{ selectedCryptoName }}</span>
             </div>
           </div>
           <div class="d-flex align-center">
             <div class="mr-1 textDark--text">
-              ≈ {{ currencyFormatter(simplexQuote.fiat_base_amount) }}
+              ≈ {{ currencyFormatter(simplexQuote.fiatAmount) }}
             </div>
-            <mew-tooltip style="height: 21px">
+            <v-tooltip style="height: 21px">
               <template #contentSlot>
                 <div>
-                  {{ buyObj.includesFeeText }}
+                  {{ simplexQuote.includesFeeText }}
                   <br />
                   <br />
-                  {{ buyObj.networkFeeText }}
+                  {{ simplexQuote.networkFeeText }}
                   <br />
                   <br />
-                  {{ buyObj.dailyLimit }}
+                  {{ simplexQuote.dailyLimit }}
                   <br />
-                  {{ buyObj.monthlyLimit }}
+                  {{ simplexQuote.monthlyLimit }}
                 </div>
               </template>
-            </mew-tooltip>
+            </v-tooltip>
           </div>
         </div>
   
         <div v-else class="mb-3">
-          <v-skeleton-loader type="heading" class="mb-1" />
-          <v-skeleton-loader max-width="200px" type="heading" />
+          <!-- v-skeleton-loader is not supported in Vuetify 3 -->
+          <!-- <v-skeleton-loader type="heading" class="mb-1" />
+          <v-skeleton-loader max-width="200px" type="heading" /> -->
         </div>
   
         <div class="d-flex align-center justify-space-between">
           <div class="d-flex align-start mb-1">
             <img
-              src="@/assets/images/icons/moonpay/icon-visa.svg"
+              :src="visaIcon"
               alt="Visa"
               height="24"
               class="mr-2"
             />
             <img
-              src="@/assets/images/icons/moonpay/icon-master.svg"
+              :src="masterIcon"
               alt="Master"
               height="24"
               class="mr-2"
@@ -142,21 +143,20 @@
           </div>
           <img
             class="provider-logo"
-            src="@/assets/images/icons/icon-simplex.svg"
-            alt="simplex"
+            :src="simplexLogo"
+            alt="Simplex"
             height="28"
           />
         </div>
         <div class="mew-label mb-5">Visa, Mastercard</div>
         <div>
-          <mew-button
+          <v-btn
             btn-size="large"
             btn-style="light"
             color-theme="basic"
             has-full-width
-            :title="simplexBtnTitle"
             @click.native="openSimplex"
-          />
+          >{{simplexBtnTitle}}</v-btn>
         </div>
       </div>
     </div>
@@ -241,6 +241,24 @@ export default defineComponent({
       },
       paymentOptionString() {
         return `Visa, Mastercard, Apple Pay${this.isEUR ? ', Bank account' : ''}`;
+      },
+      visaIcon() {
+        return require('@/assets/images/icon-visa.svg');
+      },
+      masterIcon() {
+        return require('@/assets/images/icon-master.svg');
+      },
+      bankIcon() {
+        return require('@/assets/images/icon-bank.svg');
+      },
+      applePayIcon() {
+        return require('@/assets/images/icon-apple-pay.svg');
+      },
+      simplexLogo() {
+        return require('@/assets/images/icon-simplex.svg');
+      },
+      moonpayLogo() {
+        return require('@/assets/images/icon-moonpay.svg');
       }
     },
     methods: {

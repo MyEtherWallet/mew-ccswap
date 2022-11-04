@@ -16,7 +16,15 @@
             </template>
         </MewTabs>
       </div>
-      <BuyProviders v-if="step === 1" />
+      <BuyProviders v-if="step === 1" 
+        :selected-fiat="selectedFiat" 
+        :selected-currency="selectedCurrency"
+        :only-simplex="false"
+        :buy-obj="buyObj"
+        :simplex-quote="simplexQuote"
+        :to-address="toAddress"
+        @close="close"
+      />
     </div>
   </template>
   
@@ -31,7 +39,7 @@ import BuyForm from './BuyForm.vue';
 import BuyProviders from './BuyProviders.vue';
 import SellForm from './SellForm.vue';
 import { defineComponent } from 'vue';
-import { Fiat, Crypto, BuyObj, SubmitData } from './types';
+import { Fiat, Crypto, QuoteData, SubmitData } from './types';
 
 const MAIN_TOKEN_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
 
@@ -54,9 +62,9 @@ export default defineComponent({
         selectedCurrency: {} as Crypto,
         selectedFiat: {} as Fiat,
         onlySimplex: false,
-        buyObj: {} as BuyObj,
+        buyObj: {} as QuoteData,
         step: 0,
-        simplexQuote: {},
+        simplexQuote: {} as QuoteData,
         toAddress: ''
       };
     },
@@ -179,10 +187,10 @@ export default defineComponent({
       openProviders(val: number) {
         this.step = val;
       },
-      setBuyObj(val: BuyObj) {
+      setBuyObj(val: QuoteData) {
         this.buyObj = val;
       },
-      setSimplexQuote(val: any) {
+      setSimplexQuote(val: QuoteData) {
         this.simplexQuote = val;
       },
       setToAddress(val: string) {

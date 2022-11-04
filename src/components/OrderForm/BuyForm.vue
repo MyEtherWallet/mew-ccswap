@@ -427,28 +427,22 @@ const min = computed(() => {
   const { cryptoSelected, fiatSelected } = form;
   if (!hasData()) return 0;
   const simplexMin = simplexData[cryptoSelected].limits[fiatSelected].min;
-  console.log('simplexMin', simplexMin);
   if (!moonpayData[cryptoSelected].limits[fiatSelected]) return simplexMin;
   const moonpayMin = moonpayData[cryptoSelected].limits[fiatSelected].min;
-  console.log('moonpayMin', moonpayMin);
   return moonpayMin < simplexMin ? moonpayMin : simplexMin;
 });
 const max = computed(() => {
   const { cryptoSelected, fiatSelected } = form;
   if (!hasData()) return 0;
   const simplexMax = simplexData[cryptoSelected].limits[fiatSelected].max;
-  console.log('simplexMax', simplexMax);
   if (!moonpayData[cryptoSelected].limits[fiatSelected]) return simplexMax;
   const moonpayMax = moonpayData[cryptoSelected].limits[fiatSelected].max;
-  console.log('moonpayMax', moonpayMax);
   return moonpayMax > simplexMax ? moonpayMax : simplexMax;
 });
 const minMax = computed(() => {
   const { fiatAmount } = form;
-  console.log('hasData', hasData());
   if (!hasData()) return false;
   const limit = {min: min.value, max: max.value};
-  console.log('limit', limit);
   const amount = new BigNumber(fiatAmount || 0);
   const valid =
     amount.gte(new BigNumber(limit.min)) &&
@@ -627,11 +621,41 @@ const submitForm = (): void => {
   //   form.fiatAmount,
   //   form.address
   // );
+  const { fiatSelected, cryptoSelected, fiatAmount, cryptoAmount } = form;
+  const simplexPrice = new BigNumber(simplexData[cryptoSelected].prices[fiatSelected]);
+  const moonpayPrice = new BigNumber(moonpayData[cryptoSelected].prices[fiatSelected]);
+  const amount = new BigNumber(fiatAmount || '0');
+  const cryptoAmt = new BigNumber(cryptoAmount || '0');
+
+  const moonpayCryptoToFiat = cryptoAmt.times(moonpayPrice).toFixed(2);
+  const simplexCryptoToFiat = cryptoAmt.times(simplexPrice).toFixed(2);
+  const moonpayFiatToCrypto = amount.dividedBy(moonpayPrice).toString();
+  const simplexFiatToCrypto = amount.dividedBy(simplexPrice).toString();
+  const simplexMax = simplexData[cryptoSelected].limits[fiatSelected].max;
+  const moonpayMax = moonpayData[cryptoSelected].limits[fiatSelected].max;
   emit('success',
     {
-      simplex_quote: {},
+      simplex_quote: {
+        cryptoToFiat: simplexFiatToCrypto,
+        selectedCryptoName: cryptoSelected,
+        plusFeeF: '',
+        includesFeeText: '',
+        networkFeeText: '',
+        dailyLimit: simplexMax,
+        monthlyLimit: '',
+        fiatAmount: simplexCryptoToFiat
+      },
       address: form.address,
-      buy_obj: {},
+      buy_obj: {
+        cryptoToFiat: moonpayFiatToCrypto,
+        selectedCryptoName: cryptoSelected,
+        plusFeeF: moonpayCryptoToFiat,
+        includesFeeText: '',
+        networkFeeText: '',
+        dailyLimit: moonpayMax,
+        monthlyLimit: '',
+        fiatAmount: moonpayCryptoToFiat
+      },
       open_providers: 1,
       selected_currency: {
             decimals: 18, // DOT 10, KSM 12

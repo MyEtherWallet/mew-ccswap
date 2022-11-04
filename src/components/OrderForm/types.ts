@@ -13,8 +13,8 @@ interface Fiat {
     value: string,
     img: any
 }
-// Moonpay Buy Object
-interface BuyObj {
+// Provider Quote Object
+interface QuoteData {
     cryptoToFiat: string,
     selectedCryptoName: string,
     plusFeeF: string,
@@ -25,12 +25,12 @@ interface BuyObj {
     fiatAmount: string
 }
 interface SubmitData {
-  simplex_quote: any,
+  simplex_quote: QuoteData,
   address: string,
-  buy_obj: BuyObj,
+  buy_obj: QuoteData, // Rename when done
   open_providers: number,
   selected_currency: Crypto,
   selected_fiat: Fiat
 }
 
-export {Crypto, Fiat, BuyObj, SubmitData}
+export {Crypto, Fiat, QuoteData, SubmitData}
