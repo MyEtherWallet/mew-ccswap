@@ -202,7 +202,6 @@ import {
   getSimplexPrices,
   currencySymbols,
 } from './prices';
-// import { executeSimplexPayment } from './order';
 import { isObject, isNumber, isString, isEmpty } from 'lodash';
 import WAValidator from 'multicoin-address-validator';
 import mewWallet from '@/assets/images/icon-mew-wallet.png';
