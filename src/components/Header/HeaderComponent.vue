@@ -4,6 +4,7 @@
 
     <div
       :class="$vuetify.display.smAndUp ? 'heading-1' : 'heading-1'"
+      style="color: white"
       :style="
         $vuetify.display.smAndUp
           ? 'margin-top: 100px; max-width: 340px'
@@ -14,13 +15,13 @@
     </div>
 
     <div class="d-flex align-center" style="margin-top: 60px">
-      <div class="mr-2 text--black">Powered by</div>
+      <div class="mr-2" style="color: white">Powered by</div>
       <img :src="simplex" alt="Simplex" height="30" />
       <img :src="moonpay" alt="Moonpay" height="30" />
     </div>
 
     <div class="d-flex flex-wrap align-center mt-4">
-      <div class="mr-2 text--black">We accept</div>
+      <div class="mr-2" style="color: white">We accept</div>
       <div class="d-flex align-center">
         <img class="mr-2" :src="visa" alt="Visa" height="22" />
         <img class="mr-2" :src="applePay" alt="Visa" height="22" />
@@ -31,12 +32,12 @@
 </template>
 
 <script setup lang="ts">
-import visa from '@/assets/images/icon-visa.svg';
-import master from '@/assets/images/icon-master.svg';
-import applePay from '@/assets/images/icon-apple-pay.svg';
-import simplex from '@/assets/images/icon-simplex.svg';
-import moonpay from '@/assets/images/icon-moonpay.svg';
-import enkryptDarkLogo from '@/assets/images/icon-enkrypt-logo-dark.svg';
+import visa from "@/assets/images/icon-visa.svg";
+import master from "@/assets/images/icon-master.svg";
+import applePay from "@/assets/images/icon-apple-pay.svg";
+import simplex from "@/assets/images/icon-simplex-white.svg";
+import moonpay from "@/assets/images/icon-moonpay-white.svg";
+import enkryptDarkLogo from "@/assets/images/icon-enkrypt-logo-dark.svg";
 </script>
 
 <style lang="scss" scoped>

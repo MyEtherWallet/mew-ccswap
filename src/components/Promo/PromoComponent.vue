@@ -1,13 +1,11 @@
 <template>
   <div
     class="component--promo"
-    :style="
-      $vuetify.display.lgAndUp ? 'padding-top: 150px' : 'padding-top: 100px'
-    "
+    :style="$vuetify.display.lgAndUp ? 'padding: 150px 0' : 'padding: 100px 0'"
   >
     <div>
       <v-container>
-        <h1 class="mb-9">
+        <h1 class="mb-9" style="color: white">
           We have increased maximum buy limits for hassle free transactions
         </h1>
         <v-row>
@@ -22,100 +20,29 @@
         </v-row>
       </v-container>
     </div>
-    <div
-      class="promo--bottom"
-      :style="
-        $vuetify.display.mdAndUp ? 'margin-top: 200px' : 'margin-top: 100px'
-      "
-    >
-      <v-container>
-        <h1 class="mb-9 text-purple">
-          That is the reason why millions of our users choose
-        </h1>
-        <v-row>
-          <v-col
-            cols="12"
-            md="6"
-            v-for="(p2, key2) in promo2"
-            :key="key2"
-            :class="$vuetify.display.mdAndUp ? '' : 'd-flex justify-center'"
-          >
-            <div class="d-flex align-center pb-8">
-              <img class="mr-4" :src="p2.icon" alt="Promo" />
-              <div>
-                <div class="heading-3 mb-1 text-white">{{ p2.title }}</div>
-                <div
-                  v-if="p2.description"
-                  style="max-width: 350px; color: #9ba1ae"
-                  class="heading-5"
-                >
-                  {{ p2.description }}
-                </div>
-                <div
-                  class="text-gray heading-5"
-                  v-else
-                  style="max-width: 350px"
-                >
-                  Feel free to contact
-                  <a href="mailto:support@simplex.com">support@mew.com</a>
-                  should you have questions.
-                </div>
-              </div>
-            </div>
-          </v-col>
-        </v-row>
-      </v-container>
-    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import iconFee from '@/assets/images/promo/icon-fee.png';
-import iconQuick from '@/assets/images/promo/icon-quick.png';
-import iconVerification from '@/assets/images/promo/icon-verification.png';
-import iconSupport from '@/assets/images/promo/icon-support.png';
 const promo1 = [
   {
-    title: 'For your first transaction',
+    title: "For your first transaction",
     description:
-      'If you are buying coins very first time, you can buy up to $20,000 worth of coins.',
-    amount: '$50 to $20,000',
-    rate: 'for first buy',
+      "If you are buying coins very first time, you can buy up to $20,000 worth of coins.",
+    amount: "$50 to $20,000",
+    rate: "for first buy",
   },
   {
-    title: 'Daily limit',
-    description: 'You can buy up to $20,000 worth of coins daily.',
-    amount: 'Up to $20,000',
-    rate: '/day',
+    title: "Daily limit",
+    description: "You can buy up to $20,000 worth of coins daily.",
+    amount: "Up to $20,000",
+    rate: "/day",
   },
   {
-    title: 'Monthly limit',
-    description: 'You can buy up to $50,000 worth of coins monthly.',
-    amount: 'Up to $50,000',
-    rate: '/month',
-  },
-];
-const promo2 = [
-  {
-    icon: iconFee,
-    title: 'Reasonable fee',
-    description:
-      'Extra charges apply in addition to the rate provided, including a 1.75% MyEtherWallet fee.',
-  },
-  {
-    icon: iconQuick,
-    title: 'Quick transactions',
-    description:
-      'We offer lightning-fast transactions typically taking just minutes.',
-  },
-  {
-    icon: iconVerification,
-    title: 'Easy verification',
-    description: 'Payment process is pretty simple and takes just a few steps.',
-  },
-  {
-    icon: iconSupport,
-    title: 'Instant support',
+    title: "Monthly limit",
+    description: "You can buy up to $50,000 worth of coins monthly.",
+    amount: "Up to $50,000",
+    rate: "/month",
   },
 ];
 </script>
