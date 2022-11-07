@@ -3,7 +3,7 @@ import { toNumber } from "lodash";
 import { sha3 } from "web3-utils";
 const API = "https://mainnet.mewwallet.dev";
 
-const supportedCrypto = ["ETH", "BNB", "MATIC", "DOT", "KSM"];
+const supportedCrypto = ["ETH", "BNB", "MATIC", "USDT", "USDC", "DAI", "DOT", "KSM"];
 
 const supportedFiat = ["USD", "EUR", "JPY", "AUD", "CAD", "GBP"];
 // const supportedFiat = [
@@ -64,7 +64,7 @@ async function getSimplexQuote(
 }
 const filterData = (res: any) => {
   const { data } = res;
-  if (Array.isArray(data)) return data.filter((i) => (i.name === "SIMPLEX" || i.name === "MOONPAY"));
+  if (Array.isArray(data)) return data.find((i) => i.name === "SIMPLEX");
 };
 
 async function getSimplexPrices(
