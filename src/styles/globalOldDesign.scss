@@ -11,6 +11,7 @@ $dark: rgb(77, 77, 77);
 $gray: #a7a7a7;
 $mew: #05c0a5;
 $blue: #0000ee;
+$red: #ff445b;
 
 html {
   font-size: 14px !important;
@@ -148,6 +149,10 @@ a {
 
 .text--mew {
   color: $mew;
+}
+
+.text--red {
+  color: $red;
 }
 
 .text-transform--none {
