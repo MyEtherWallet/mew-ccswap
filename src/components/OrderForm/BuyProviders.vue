@@ -21,15 +21,18 @@
             alt="Moonpay"
             height="18"
           />
-          <div class="mb-3">
+          <div v-if="!loading" class="mb-3">
             <div class="d-flex mb-1 align-center justify-space-between">
-              <div class="d-flex mew-heading-3 textDark--text">
+              <div class="d-flex mew-heading-3" :class="hideMoonpay ? 'text--red' : ''">
                 {{ buyObj.cryptoToFiat }}
-                <span class="mew-heading-3 pl-1">{{ selectedCryptoName }}</span>
+                <span class="mew-heading-3 pl-1" :class="hideMoonpay ? 'text--red' : ''">{{ selectedCryptoName }}</span>
               </div>
             </div>
             <div class="d-flex align-center">
-              <div class="mr-1 textDark--text">≈ {{ currencyFormatter(buyObj.plusFeeF) }}</div>
+              <div v-if="!hideMoonpay" class="mr-1 textDark--text">≈ {{ buyObj.plusFeeF }}</div>
+              <div v-else class="mr-1 text--red">
+                {{ buyObj.plusFeeF }}
+              </div>
               <v-tooltip style="height: 21px">
                 <template #contentSlot>
                   <div>
@@ -79,11 +82,11 @@
           </div>
           <div>
             <v-btn
-              btn-size="large"
-              btn-style="light"
-              color-theme="basic"
-              has-full-width
-              :is-valid-address-func="isValidToAddress"
+              size="large"
+              class="grey-light greyPrimary--text"
+              width="100%"
+              variant="flat"
+              :disabled="hideMoonpay || loading"
               @click.native="buy"
             >{{moonpayBtnTitle}}</v-btn>
           </div>
@@ -95,14 +98,17 @@
         <div class="section-block pa-5">
           <div v-if="!loading" class="mb-3">
             <div class="d-flex mb-1 align-center justify-space-between">
-              <div class="d-flex mew-heading-3 textDark--text">
+              <div class="d-flex mew-heading-3" :class="hideSimplex ? 'text--red' : ''">
                 {{ simplexQuote.cryptoToFiat }}
-                <span class="mew-heading-3 pl-1">{{ selectedCryptoName }}</span>
+                <span class="mew-heading-3 pl-1" :class="hideSimplex ? 'text--red' : ''">{{ selectedCryptoName }}</span>
               </div>
             </div>
             <div class="d-flex align-center">
-              <div class="mr-1 textDark--text">
-                ≈ {{ currencyFormatter(simplexQuote.fiatAmount) }}
+              <div v-if="!hideSimplex" class="mr-1" :class="hideSimplex ? 'text--red' : ''">
+                ≈ {{ simplexQuote.plusFeeF }}
+              </div>
+              <div v-else class="mr-1 text--red">
+                {{ simplexQuote.plusFeeF }}
               </div>
               <v-tooltip style="height: 21px">
                 <template #contentSlot>
@@ -153,10 +159,11 @@
           <div class="mew-label mb-5">Visa, Mastercard</div>
           <div>
             <v-btn
-              btn-size="large"
-              btn-style="light"
-              color-theme="basic"
-              has-full-width
+              :disabled="hideSimplex || loading"
+              size="large"
+              class="grey-light greyPrimary--text"
+              width="100%"
+              variant="flat"
               @click.native="openSimplex"
             >{{simplexBtnTitle}}</v-btn>
           </div>
@@ -249,7 +256,9 @@ export default defineComponent({
       },
       hideSimplex() {
         return (
-          this.selectedCryptoName === 'USDC' || this.selectedCryptoName === 'USDT'
+          this.selectedCryptoName === 'USDC' ||
+          this.selectedCryptoName === 'USDT' ||
+          this.selectedCryptoName === 'DAI'
         );
       },
       simplexBtnTitle() {
@@ -295,7 +304,7 @@ export default defineComponent({
             this.actualAddress
           )
           .then(() => {
-            this.reset();
+            this.reset(true);
             this.close();
             this.$emit('reset');
           })
@@ -313,9 +322,9 @@ export default defineComponent({
           currency: this.selectedFiatName
         }).format(value);
       },
-      reset() {
+      reset(isPurchasing = false) {
         this.loading = true;
-        this.processingBuy = false;
+        this.processingBuy = isPurchasing;
         // this.fetchData = {};
       },
       // Moonpay buy
@@ -328,7 +337,7 @@ export default defineComponent({
             this.actualAddress
           )
           .then(() => {
-            this.reset();
+            this.reset(true);
             this.close();
             this.$emit('reset');
           })
@@ -344,12 +353,16 @@ export default defineComponent({
 </script>
   
   <style lang="scss" scoped>
+  // Variables
+  $greyLight-base: #f2f3f6;
+  $greyPrimary-base: #5a678a;
+
   .section-block {
     border-radius: 12px;
     left: 0px;
     top: 0px;
     box-sizing: border-box;
-    border: 1px solid var(--v-greyMedium-base);
+    border: 1px solid #d7dae3;
     flex: none;
     order: 0;
     align-self: stretch;
@@ -361,5 +374,13 @@ export default defineComponent({
     position: absolute;
     top: 18px;
     right: 20px;
+  }
+  .grey-light {
+    background-color: $greyLight-base !important;
+    border-color: $greyLight-base !important;
+  }
+  .greyPrimary--text {
+    color: $greyPrimary-base !important;
+    caret-color: $greyPrimary-base !important;
   }
   </style>

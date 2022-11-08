@@ -19,7 +19,7 @@
       <BuyProviders v-if="step === 1" 
         :selected-fiat="selectedFiat" 
         :selected-currency="selectedCurrency"
-        :only-simplex="false"
+        :only-simplex="onlySimplex"
         :buy-obj="buyObj"
         :simplex-quote="simplexQuote"
         :to-address="toAddress"
@@ -206,7 +206,7 @@ export default defineComponent({
         };
         this.onlySimplex = false;
       },
-      hideMoonpay(val: boolean) {
+      disableMoonpay(val: boolean) {
         this.onlySimplex = val;
       },
       buySuccess(data: SubmitData) {
@@ -216,6 +216,7 @@ export default defineComponent({
         this.openProviders(data.open_providers);
         this.setSelectedCurrency(data.selected_currency);
         this.setSelectedFiat(data.selected_fiat);
+        this.disableMoonpay(data.disable_moonpay);
       }
     }
   });

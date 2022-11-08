@@ -30,7 +30,8 @@ interface SubmitData {
   buy_obj: QuoteData, // Rename when done
   open_providers: number,
   selected_currency: Crypto,
-  selected_fiat: Fiat
+  selected_fiat: Fiat,
+  disable_moonpay: boolean
 }
 
 export {Crypto, Fiat, QuoteData, SubmitData}

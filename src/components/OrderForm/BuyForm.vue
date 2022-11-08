@@ -199,19 +199,21 @@ import BigNumber from 'bignumber.js';
 import {
   supportedCrypto,
   supportedFiat,
-  getSimplexPrices,
+  getCryptoPrices,
   currencySymbols,
 } from './prices';
 import { isObject, isNumber, isString, isEmpty } from 'lodash';
 import WAValidator from 'multicoin-address-validator';
 import mewWallet from '@/assets/images/icon-mew-wallet.png';
-import { isHexStrict, isAddress } from 'web3-utils';
+import { isHexStrict, isAddress, fromWei } from 'web3-utils';
 import { encodeAddress } from '@polkadot/keyring';
 import MewAddressSelect from '../MewAddressSelect/MewAddressSelect.vue';
-// import { Fiat, Crypto, BuyObj, SubmitData } from './types';
+import { formatFiatValue, formatFloatingPointValue } from '@/helpers/numberFormatHelper';
 
 const mewWalletImg = mewWallet;
 const defaultFiatValue = '0';
+let gasPrice = '0';
+let web3Connections = {};
 
 const addressBook = [
   {
@@ -240,16 +242,8 @@ const emit = defineEmits([
   'success',
   'selectedCurrency',
   'selectedFiat',
-  'toAddress',
-  'disableMoonpay'
+  'toAddress'
 ]);
-// const emit = defineEmits<{
-//   (e: 'success', data: SubmitData): void
-//   (e: 'selectedCurrency', selectedCurrency: string): void
-//   (e: 'selectedFiat', selectedFiat: string): void
-//   (e: 'toAddress', toAddress: string): void
-//   (e: 'disableMoonpay', disableMoonpay: boolean): void
-// }>()
 
 // data
 
@@ -373,7 +367,105 @@ watch(
   }
 );
 
-// Computed Icons for selected token
+// computed
+
+// Moonpay fees
+const includesFeeText = computed(() => {
+  return `Includes ${percentFee.value} fee (${
+    formatFiatValue(minFee.value, currencyConfig.value).value
+  } min)`;
+});
+const networkFeeText = computed(() => {
+  return `${
+    form.cryptoSelected
+  } network fee (for transfers to your wallet) ~${
+    formatFiatValue(networkFeeToFiat.value, currencyConfig.value).value
+  }`;
+});
+const dailyLimit = (isMoonpay = false) => {
+  const simplexMax = isValidData(simplexData) ? simplexData[form.cryptoSelected].limits[form.fiatSelected].max : 0;
+  const moonpayMax = isValidData(moonpayData) ? moonpayData[form.cryptoSelected].limits[form.fiatSelected].max : 0;
+  const value = isMoonpay ? moonpayMax : simplexMax;
+  return `Daily limit: ${
+    formatFiatValue(value.toString(), currencyConfig.value).value
+  }`;
+};
+const monthlyLimit = (isMoonpay = false)  => {
+  const value = BigNumber(fiatMultiplier.value).times(50000);
+  return `Monthly limit: ${
+    formatFiatValue(value.toString(), currencyConfig.value).value
+  }`;
+};
+const currencyConfig = computed(() => {
+  const fiat = form.fiatSelected;
+  const rate = moonpayData[form.cryptoSelected].conversion_rates[fiat];;
+  const currency = fiat;
+  return { locale: 'en-US', rate, currency };
+});
+const fiatMultiplier = computed(() => {
+  if (hasData()) {
+    const selectedCurrencyPrice = moonpayData[form.cryptoSelected].conversion_rates[form.fiatSelected];
+    return selectedCurrencyPrice
+      ? BigNumber(selectedCurrencyPrice)
+      : BigNumber(1);
+  }
+  return BigNumber(1);
+});
+const networkFee = computed(() => {
+  return fromWei(BigNumber(gasPrice).times(21000).toString());
+});
+const priceOb = computed(() => {
+  return isValidData(moonpayData)
+    ? moonpayData[form.cryptoSelected].prices[form.fiatSelected]
+    : '3379.08322';
+});
+const networkFeeToFiat = computed(() => {
+  return BigNumber(networkFee.value).times(priceOb.value).toString();
+});
+const minFee = computed(() => {
+  return BigNumber(4.43).times(fiatMultiplier.value).toString();
+});
+const plusFee = computed(() => {
+  const fee = isEUR.value
+    ? BigNumber(BigNumber(0.7).div(100)).times(form.fiatAmount)
+    : BigNumber(BigNumber(3.25).div(100)).times(form.fiatAmount);
+  const withFee = fee.gt(minFee.value)
+    ? BigNumber(form.fiatAmount).minus(fee)
+    : BigNumber(form.fiatAmount).minus(fee).minus(minFee.value);
+  return withFee.minus(networkFeeToFiat.value).toString();
+});
+const plusFeeF = computed(() => {
+  const moonpayLimit = moonpayData[form.cryptoSelected].limits[form.fiatSelected];
+      return moonpayLimit.max > Number.parseFloat(form.fiatAmount) ? 
+        formatFiatValue(plusFee.value, currencyConfig.value).value :
+        `Value exceeds max: ${formatFiatValue(moonpayLimit.max.toString(), currencyConfig.value).value}`;
+});
+const percentFee = computed(() => {
+  return isEUR.value ? '0.7%' : '3.25%';
+});
+const isEUR = computed(() => {
+  return form.fiatSelected === 'EUR' || form.fiatSelected === 'GBP';
+});
+
+const moonpayCryptoAmount = computed(() => {
+  const moonpayAvailable = isValidData(moonpayData);
+      return moonpayAvailable ? 
+      formatFloatingPointValue(
+        BigNumber(plusFee.value).div(priceOb.value).toString()
+      ).value : 0;
+});
+
+// Simplex Fees
+const simplexCryptoAmount = computed(() => {
+  const simplexAvailable = isValidData(simplexData);
+  const simplexPrice = new BigNumber(simplexAvailable ? simplexData[form.cryptoSelected].prices[form.fiatSelected] : 0);
+  const amount = new BigNumber(form.fiatAmount || '0');
+  return simplexAvailable ?
+    formatFloatingPointValue(amount.dividedBy(simplexPrice).toString()).value :
+    0;
+});
+
+// Icons for selected token
 const fiatIcon = computed(() => {
   return require(`@/assets/images/fiat/${form.fiatSelected}.svg`);
 });
@@ -417,26 +509,30 @@ const rules = [
     return true;
   },
 ];
-const hasData = () => {
+const isValidData = (data: { [key: string]: Data } ) => {
   const { cryptoSelected, fiatSelected } = form;
-  return !isEmpty(simplexData[cryptoSelected].limits[fiatSelected]) ||
-    !isEmpty(moonpayData[cryptoSelected].limits[fiatSelected]);
+  return !isEmpty(data[cryptoSelected]?.limits[fiatSelected])
+};
+const hasData = () => {
+  return isValidData(simplexData) || isValidData(moonpayData);
 };
 const min = computed(() => {
   const { cryptoSelected, fiatSelected } = form;
   if (!hasData()) return 0;
-  const simplexMin = simplexData[cryptoSelected].limits[fiatSelected].min;
-  if (!moonpayData[cryptoSelected].limits[fiatSelected]) return simplexMin;
-  const moonpayMin = moonpayData[cryptoSelected].limits[fiatSelected].min;
-  return moonpayMin < simplexMin ? moonpayMin : simplexMin;
+  const simplexLimit = simplexData[cryptoSelected]?.limits[fiatSelected];
+  const moonpayLimit = moonpayData[cryptoSelected].limits[fiatSelected];
+  if (!isValidData(moonpayData)) return simplexLimit.min;
+  if (!isValidData(simplexData)) return moonpayLimit.min;
+  return moonpayLimit.min < simplexLimit.min ? moonpayLimit.min : simplexLimit.min;
 });
 const max = computed(() => {
   const { cryptoSelected, fiatSelected } = form;
   if (!hasData()) return 0;
-  const simplexMax = simplexData[cryptoSelected].limits[fiatSelected].max;
-  if (!moonpayData[cryptoSelected].limits[fiatSelected]) return simplexMax;
-  const moonpayMax = moonpayData[cryptoSelected].limits[fiatSelected].max;
-  return moonpayMax > simplexMax ? moonpayMax : simplexMax;
+  const simplexLimit = simplexData[cryptoSelected]?.limits[fiatSelected];
+  const moonpayLimit = moonpayData[cryptoSelected].limits[fiatSelected];
+  if (!isValidData(moonpayData)) return simplexLimit.max;
+  if (!isValidData(simplexData)) return moonpayLimit.max;
+  return moonpayLimit.max > simplexLimit.max ? moonpayLimit.max : simplexLimit.max;
 });
 const minMax = computed(() => {
   const { fiatAmount } = form;
@@ -464,7 +560,7 @@ const minMaxError = () => {
 const getPrices = async () => {
   try {
     loading.data = true;
-    const data: any[] = await getSimplexPrices() || [];
+    const data: any[] = await getCryptoPrices() || [];
     data.forEach((arr: any) => {
       arr.forEach((d: any) => {
         const tmp: Data = { conversion_rates: {}, limits: {}, prices: {} };
@@ -476,14 +572,11 @@ const getPrices = async () => {
           if (l.type === 'WEB') tmp.limits[l.fiat_currency] = l.limit;
         });
         d.prices.forEach((p: any) => (tmp.prices[p.fiat_currency] = p.price));
-        switch (d.name) {
-          case "SIMPLEX":
+
+        if (d.name === "SIMPLEX") 
             simplexData[d.crypto_currencies[0]] = tmp;
-            break;
-          case "MOONPAY":
+        else if(d.name === "MOONPAY")
             moonpayData[d.crypto_currencies[0]] = tmp;
-            break;
-        }
       })
     });
     loading.data = false;
@@ -497,9 +590,10 @@ const getPrices = async () => {
 // Best price for display
 const bestPrice = computed(() => {
   const { fiatSelected, cryptoSelected } = form;
-  const simplexPrice = new BigNumber(simplexData[cryptoSelected].prices[fiatSelected]);
-  if (!moonpayData[cryptoSelected].prices[fiatSelected]) return simplexPrice;
-  const moonpayPrice = new BigNumber(moonpayData[cryptoSelected].prices[fiatSelected]);
+  const simplexPrice = new BigNumber(simplexData[cryptoSelected]?.prices[fiatSelected]);
+  const moonpayPrice = new BigNumber(moonpayData[cryptoSelected]?.prices[fiatSelected]);
+  if (moonpayPrice.isNaN()) return simplexPrice;
+  if (simplexPrice.isNaN()) return moonpayPrice;
   return simplexPrice.lte(moonpayPrice) ? simplexPrice : moonpayPrice;
 });
 
@@ -620,40 +714,43 @@ const submitForm = (): void => {
   //   form.fiatAmount,
   //   form.address
   // );
-  const { fiatSelected, cryptoSelected, fiatAmount, cryptoAmount } = form;
-  const simplexPrice = new BigNumber(simplexData[cryptoSelected].prices[fiatSelected]);
-  const moonpayPrice = new BigNumber(moonpayData[cryptoSelected].prices[fiatSelected]);
-  const amount = new BigNumber(fiatAmount || '0');
+  const { fiatSelected, cryptoSelected, cryptoAmount } = form;
+  const simplexAvailable = isValidData(simplexData);
+  const moonpayAvailable = isValidData(moonpayData);
+  const moonpayOverMax = moonpayAvailable ? 
+    moonpayData[cryptoSelected].limits[fiatSelected].max < Number.parseFloat(form.fiatAmount) :
+    true;
+  const simplexPrice = new BigNumber(simplexAvailable ? simplexData[cryptoSelected].prices[fiatSelected] : 0);
+  const moonpayPrice = new BigNumber(moonpayAvailable ? moonpayData[cryptoSelected].prices[fiatSelected] : 0);
   const cryptoAmt = new BigNumber(cryptoAmount || '0');
 
-  const moonpayCryptoToFiat = cryptoAmt.times(moonpayPrice).toFixed(2);
-  const simplexCryptoToFiat = cryptoAmt.times(simplexPrice).toFixed(2);
-  const moonpayFiatToCrypto = amount.dividedBy(moonpayPrice).toString();
-  const simplexFiatToCrypto = amount.dividedBy(simplexPrice).toString();
-  const simplexMax = simplexData[cryptoSelected].limits[fiatSelected].max;
-  const moonpayMax = moonpayData[cryptoSelected].limits[fiatSelected].max;
+  const moonpayFiatAmount = moonpayAvailable ? cryptoAmt.times(moonpayPrice).toFixed(2) : '0.00';
+  const simplexFiatAmount = simplexAvailable ? cryptoAmt.times(simplexPrice).toFixed(2) : '0.00';
+  const simplexFiatAmountF = simplexAvailable ? 
+    formatFiatValue(simplexFiatAmount).value : 
+    `${form.cryptoSelected} is not available for this provider`;
   emit('success',
     {
       simplex_quote: {
-        cryptoToFiat: simplexFiatToCrypto,
+        cryptoToFiat: simplexCryptoAmount,
         selectedCryptoName: cryptoSelected,
-        plusFeeF: '',
+        plusFeeF: simplexFiatAmountF,
         includesFeeText: '',
         networkFeeText: '',
-        dailyLimit: simplexMax,
-        monthlyLimit: '',
-        fiatAmount: simplexCryptoToFiat
+        dailyLimit: dailyLimit(),
+        monthlyLimit: monthlyLimit(),
+        fiatAmount: simplexFiatAmount
       },
       address: form.address,
       buy_obj: {
-        cryptoToFiat: moonpayFiatToCrypto,
+        cryptoToFiat: moonpayCryptoAmount,
         selectedCryptoName: cryptoSelected,
-        plusFeeF: moonpayCryptoToFiat,
-        includesFeeText: '',
-        networkFeeText: '',
-        dailyLimit: moonpayMax,
-        monthlyLimit: '',
-        fiatAmount: moonpayCryptoToFiat
+        plusFeeF: plusFeeF,
+        includesFeeText: includesFeeText,
+        networkFeeText: networkFeeText,
+        dailyLimit: dailyLimit(true),
+        monthlyLimit: monthlyLimit(true),
+        fiatAmount: moonpayFiatAmount
       },
       open_providers: 1,
       selected_currency: {
@@ -671,7 +768,8 @@ const submitForm = (): void => {
           value: form.fiatSelected,
           // eslint-disable-next-line
           img: require(`@/assets/images/fiat/${form.fiatSelected}.svg`)
-        }
+        },
+      disable_moonpay: !moonpayAvailable || moonpayOverMax
     });
 };
 </script>

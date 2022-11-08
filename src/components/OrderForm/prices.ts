@@ -3,7 +3,7 @@ import { toNumber } from "lodash";
 import { sha3 } from "web3-utils";
 const API = "https://mainnet.mewwallet.dev";
 
-const supportedCrypto = ["ETH", "BNB", "MATIC", "DOT", "KSM"];
+const supportedCrypto = ["ETH", "BNB", "MATIC", "USDT", "USDC", "DAI", "DOT", "KSM"];
 
 const supportedFiat = ["USD", "EUR", "JPY", "AUD", "CAD", "GBP"];
 // const supportedFiat = [
@@ -67,8 +67,8 @@ const filterData = (res: any) => {
   if (Array.isArray(data)) return data.filter((i) => (i.name === "SIMPLEX" || i.name === "MOONPAY"));
 };
 
-async function getSimplexPrices(
-  cryptoCurrency?: "ETH" | "MATIC" | "BNB" | "DOT" | "KSM"
+async function getCryptoPrices(
+  cryptoCurrency?: "ETH" | "MATIC" | "BNB" | "DOT" | "KSM" | "USDT" | "USDC" | "DAI"
 ) {
   const apiQuote = `${API}/v3/purchase/providers/ios`;
   if (cryptoCurrency)
@@ -83,7 +83,7 @@ async function getSimplexPrices(
       .catch((e) => {
         throw e;
       });
-  const cryptos = ["ETH", "MATIC", "BNB", "DOT", "KSM"];
+  const cryptos = ["ETH", "BNB", "MATIC", "USDT", "USDC", "DAI", "DOT", "KSM"];
   return Promise.all(
     cryptos.map((c) =>
       axios
@@ -147,7 +147,7 @@ export {
   supportedFiat,
   currencySymbols,
   getSimplexQuote,
-  getSimplexPrices,
+  getCryptoPrices,
   getFiatRatesForBuy,
   getSupportedFiatToBuy,
   getSupportedFiatToSell
