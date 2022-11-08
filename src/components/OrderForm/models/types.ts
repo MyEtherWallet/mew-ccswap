@@ -7,7 +7,7 @@ export interface FiatCurrencyConversionRate {
 }
 
 export class PurchaseComponentsFeeDescription {
-    public percentFee = 0;
+    percentFee = 0;
     minimumFee = 0;
     networkFee = 0;
 
