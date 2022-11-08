@@ -64,11 +64,11 @@ async function getSimplexQuote(
 }
 const filterData = (res: any) => {
   const { data } = res;
-  if (Array.isArray(data)) return data.find((i) => i.name === "SIMPLEX");
+  if (Array.isArray(data)) return data.filter((i) => (i.name === "SIMPLEX" || i.name === "MOONPAY"));
 };
 
-async function getSimplexPrices(
-  cryptoCurrency?: "ETH" | "MATIC" | "BNB" | "DOT" | "KSM"
+async function getCryptoPrices(
+  cryptoCurrency?: "ETH" | "MATIC" | "BNB" | "DOT" | "KSM" | "USDT" | "USDC" | "DAI"
 ) {
   const apiQuote = `${API}/v3/purchase/providers/ios`;
   if (cryptoCurrency)
@@ -83,7 +83,7 @@ async function getSimplexPrices(
       .catch((e) => {
         throw e;
       });
-  const cryptos = ["ETH", "MATIC", "BNB", "DOT", "KSM"];
+  const cryptos = ["ETH", "BNB", "MATIC", "USDT", "USDC", "DAI", "DOT", "KSM"];
   return Promise.all(
     cryptos.map((c) =>
       axios
@@ -147,7 +147,7 @@ export {
   supportedFiat,
   currencySymbols,
   getSimplexQuote,
-  getSimplexPrices,
+  getCryptoPrices,
   getFiatRatesForBuy,
   getSupportedFiatToBuy,
   getSupportedFiatToSell

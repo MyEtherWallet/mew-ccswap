@@ -199,7 +199,7 @@ import BigNumber from 'bignumber.js';
 import {
   supportedCrypto,
   supportedFiat,
-  getSimplexPrices,
+  getCryptoPrices as getSimplexPrices,
   currencySymbols,
 } from './prices';
 import { executeSimplexPayment } from './order';
@@ -400,18 +400,22 @@ const minMaxError = () => {
 const getPrices = async () => {
   try {
     loading.data = true;
-    const data: [] = await getSimplexPrices();
-    data.forEach((d: any) => {
-      const tmp: Data = { conversion_rates: {}, limits: {}, prices: {} };
+    const data: any[] = await getSimplexPrices() || [];
+    data.forEach((arr: any) => {
+      arr.forEach((d: any) => {
+        const tmp: Data = { conversion_rates: {}, limits: {}, prices: {} };
 
-      d.conversion_rates.forEach(
-        (r: any) => (tmp.conversion_rates[r.fiat_currency] = r.exchange_rate)
-      );
-      d.limits.forEach((l: any) => {
-        if (l.type === 'WEB') tmp.limits[l.fiat_currency] = l.limit;
-      });
-      d.prices.forEach((p: any) => (tmp.prices[p.fiat_currency] = p.price));
-      simplexData[d.crypto_currencies[0]] = tmp;
+        d.conversion_rates.forEach(
+          (r: any) => (tmp.conversion_rates[r.fiat_currency] = r.exchange_rate)
+        );
+        d.limits.forEach((l: any) => {
+          if (l.type === 'WEB') tmp.limits[l.fiat_currency] = l.limit;
+        });
+        d.prices.forEach((p: any) => (tmp.prices[p.fiat_currency] = p.price));
+
+        if (d.name === "SIMPLEX") 
+            simplexData[d.crypto_currencies[0]] = tmp;
+      })
     });
     loading.data = false;
   } catch (e: any) {
