@@ -1,9 +1,6 @@
 <!-- eslint-disable vue/no-deprecated-v-on-native-modifier -->
 <template>
-  <div
-    class="pa-3 pa-sm-2 pa-md-2"
-    ref="formDiv"
-  >
+  <div class="pa-3 pa-sm-2 pa-md-2" ref="formDiv">
     <!-- ============================================================================= -->
     <!-- Fiat amount -->
     <!-- ============================================================================= -->
@@ -12,14 +9,14 @@
         <div class="mew-heading-4 textDark--text mb-3">
           How much do you want to sell?
         </div>
-        <div v-if="loading.data" class="ml-2">
+        <!-- <div v-if="loading.data" class="ml-2">
           <span class="h3 font-weight-regular mr-1 text--mew">Loading</span>
           <v-progress-circular
             :size="11"
             :width="2"
             indeterminate
           ></v-progress-circular>
-        </div>
+        </div> -->
       </div>
       <div class="d-flex mt-2">
         <v-text-field
@@ -34,39 +31,42 @@
         ></v-text-field>
         <v-select
           style="max-width: 120px"
-          class="rounded-right"
-          v-model="form.fiatSelected"
-          :items="fiatItems"
+          v-model="form.cryptoSelected"
+          :items="cryptoItems"
           :disabled="loading.data"
           :menu-props="{ closeOnContentClick: true }"
-          :menu="dropdown.fiat"
-          return-object
+          :menu="dropdown.crypto"
+          rounded="right"
           variant="outlined"
-          @focusin="dropdown.fiat = true"
-          @blur="dropdown.fiat = false"
+          return-object
+          @focusin="dropdown.crypto = true"
+          @blur="dropdown.crypto = false"
         >
           <template #prepend-inner>
             <img
               class="currency-icon mr-1"
-              :src="fiatIcon"
-              :alt="form.fiatSelected"
+              :src="cryptoIcon"
+              :alt="form.cryptoSelected"
               width="25px"
               height="25px"
             />
           </template>
           <template #item="data">
-            <div class="d-flex align-center justify-space-between full-width cursor-pointer" @click="selectCurrency(data.item.value)">
+            <div
+              class="d-flex align-center justify-space-between full-width cursor-pointer"
+              @click="selectCurrency(data.item.value, false)"
+            >
               <div class="d-flex align-center">
                 <img
                   class="currency-icon mr-1 ml-3"
-                  :src="getIcon(data.item.value)"
+                  :src="getIcon(data.item.value, false)"
                   :alt="data.item.value"
                   width="25px"
                   height="25px"
                 />
-                <span
-                  class="text-capitalize ml-2 my-2 d-flex flex-column"
-                >{{ data.item.value }}</span>
+                <span class="text-capitalize ml-2 my-2 d-flex flex-column">{{
+                  data.item.value
+                }}</span>
               </div>
             </div>
           </template>
@@ -94,39 +94,42 @@
         ></v-text-field>
         <v-select
           style="max-width: 120px"
-          v-model="form.cryptoSelected"
-          :items="cryptoItems"
+          class="rounded-right"
+          v-model="form.fiatSelected"
+          :items="fiatItems"
           :disabled="loading.data"
           :menu-props="{ closeOnContentClick: true }"
-          :menu="dropdown.crypto"
-          rounded="right"
-          variant="outlined"
+          :menu="dropdown.fiat"
           return-object
-          @focusin="dropdown.crypto = true"
-          @blur="dropdown.crypto = false"
+          variant="outlined"
+          @focusin="dropdown.fiat = true"
+          @blur="dropdown.fiat = false"
         >
           <template #prepend-inner>
             <img
               class="currency-icon mr-1"
-              :src="cryptoIcon"
-              :alt="form.cryptoSelected"
+              :src="fiatIcon"
+              :alt="form.fiatSelected"
               width="25px"
               height="25px"
             />
           </template>
           <template #item="data">
-            <div class="d-flex align-center justify-space-between full-width cursor-pointer" @click="selectCurrency(data.item.value, false)">
+            <div
+              class="d-flex align-center justify-space-between full-width cursor-pointer"
+              @click="selectCurrency(data.item.value)"
+            >
               <div class="d-flex align-center">
                 <img
                   class="currency-icon mr-1 ml-3"
-                  :src="getIcon(data.item.value, false)"
+                  :src="getIcon(data.item.value)"
                   :alt="data.item.value"
                   width="25px"
                   height="25px"
                 />
-                <span
-                  class="text-capitalize ml-2 my-2 d-flex flex-column"
-                >{{ data.item.value }}</span>
+                <span class="text-capitalize ml-2 my-2 d-flex flex-column">{{
+                  data.item.value
+                }}</span>
               </div>
             </div>
           </template>
@@ -202,7 +205,7 @@ import {
   getSimplexPrices,
   currencySymbols,
 } from './prices';
-import { executeSimplexPayment } from './order';
+import { executeMoonpaySell } from './order';
 import { isObject, isNumber, isString } from 'lodash';
 import WAValidator from 'multicoin-address-validator';
 import mewWallet from '@/assets/images/icon-mew-wallet.png';
@@ -293,7 +296,7 @@ const loading = reactive({
 });
 const dropdown = reactive({
   fiat: false,
-  crypto: false
+  crypto: false,
 });
 
 // watchers
@@ -340,15 +343,16 @@ const cryptoIcon = computed(() => {
 
 // methods
 const getIcon = (currency: string, isFiat = true) => {
-  return require(`@/assets/images/${isFiat ? 'fiat' : 'crypto'}/${currency}.svg`)
+  return require(`@/assets/images/${
+    isFiat ? 'fiat' : 'crypto'
+  }/${currency}.svg`);
 };
 
 const selectCurrency = (currency: string, isFiat = true) => {
   if (isFiat) {
     form.fiatSelected = currency;
     dropdown.fiat = false;
-  }
-  else {
+  } else {
     form.cryptoSelected = currency;
     dropdown.crypto = false;
   }
@@ -459,7 +463,7 @@ const errorHandler = (e: any): void => {
     const isErrorObj = isObject(e.response.data.error);
     if (isErrorObj) {
       // eslint-disable-next-line
-      const hasErr = e.response.data.error.hasOwnProperty("errors");
+      const hasErr = e.response.data.error.hasOwnProperty('errors');
       if (hasErr) {
         loading.alertMessage = e.response.data.error.errors[0].message;
       }
@@ -532,12 +536,6 @@ const verifyAddress = (): void => {
 
 const submitForm = (): void => {
   loading.processingBuyForm = true;
-  executeSimplexPayment(
-    form.fiatSelected,
-    form.cryptoSelected,
-    form.fiatSelected,
-    form.fiatAmount,
-    form.address
-  );
+  executeMoonpaySell(form.cryptoSelected, form.cryptoAmount, form.address);
 };
 </script>
