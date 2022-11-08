@@ -7,11 +7,11 @@ export interface FiatCurrencyConversionRate {
 }
 
 export class PurchaseComponentsFeeDescription {
-    percentFee = 0;
+    public percentFee = 0;
     minimumFee = 0;
     networkFee = 0;
 
-    PurchaseComponentsFeeDescription(percentFee: number, minimumFee: number, networkFee: number) {
+    constructor(percentFee: number, minimumFee: number, networkFee: number) {
         this.percentFee = percentFee;
         this.minimumFee = minimumFee;
         this.networkFee = networkFee;
