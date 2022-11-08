@@ -722,7 +722,7 @@ const submitForm = (): void => {
     true;
   const simplexPrice = new BigNumber(simplexAvailable ? simplexData[cryptoSelected].prices[fiatSelected] : 0);
   const moonpayPrice = new BigNumber(moonpayAvailable ? moonpayData[cryptoSelected].prices[fiatSelected] : 0);
-  const cryptoAmt = new BigNumber(cryptoAmount || '0');
+  const cryptoAmt = new BigNumber(cryptoAmount);
 
   const moonpayFiatAmount = moonpayAvailable ? cryptoAmt.times(moonpayPrice).toFixed(2) : '0.00';
   const simplexFiatAmount = simplexAvailable ? cryptoAmt.times(simplexPrice).toFixed(2) : '0.00';

@@ -1,4 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
+/**
+ * DELETE THIS FILE AFTER IMPORTING FUNCTIONS
+ */
 import { sha3 } from 'web3-utils';
 import axios from 'axios';
 const API = 'https://mainnet.mewwallet.dev';

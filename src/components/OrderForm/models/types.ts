@@ -1,0 +1,19 @@
+export interface FiatCurrencyConversionRate {
+    rate: number,
+    baseRate: number,
+    fiatCurrency: {
+        decimals: number
+    }
+}
+
+export class PurchaseComponentsFeeDescription {
+    percentFee = 0;
+    minimumFee = 0;
+    networkFee = 0;
+
+    PurchaseComponentsFeeDescription(percentFee: number, minimumFee: number, networkFee: number) {
+        this.percentFee = percentFee;
+        this.minimumFee = minimumFee;
+        this.networkFee = networkFee;
+    }
+}
