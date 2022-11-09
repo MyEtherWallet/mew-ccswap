@@ -28,3 +28,14 @@ export interface PurchasePrice {
     decimals: number;
   };
 }
+
+export interface PurchaseCryptoCurrency {
+  decimals: number;
+}
+
+export interface PurchasePrice {
+  price: number;
+  fiatCurrency: {
+    decimals: number;
+  };
+}
