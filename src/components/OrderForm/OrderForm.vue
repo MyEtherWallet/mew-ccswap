@@ -48,8 +48,6 @@ import { defineComponent } from 'vue';
 import { Fiat, Crypto, QuoteData, SubmitData, Network } from './types';
 import { Networks } from './networks';
 
-const MAIN_TOKEN_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
-
 export default defineComponent({
     name: 'OrderForm',
     components: {
@@ -96,19 +94,18 @@ export default defineComponent({
             subtext: 'Ethereum',
             value: 'ETH',
             symbol: 'ETH',
-            network: 'ETH',
-            contract: MAIN_TOKEN_ADDRESS
+            network: 'ETH'
           };
         }
         return this.selectedCurrency;
       },
-    //   supportedBuy() {
-    //     return (
-    //       this.network.type.name === 'ETH' ||
-    //       this.network.type.name === 'BSC' ||
-    //       this.network.type.name === 'MATIC'
-    //     );
-    //   },
+      // supportedBuy() {
+      //   return (
+      //     this.selectedNetwork.name === 'ETH' ||
+      //     this.selectedNetwork.name === 'BSC' ||
+      //     this.selectedNetwork.name === 'MATIC'
+      //   );
+      // },
       supportedSell() {
         return (
           this.selectedCurrency.symbol === 'ETH' ||
@@ -166,25 +163,11 @@ export default defineComponent({
           this.activeTab = val;
         // }
       },
-    //   setTokens() {
-    //     if (!this.inWallet) {
-    //       const tokenMap = new Map();
-    //       const tokens = this.network.type.tokens;
-    //       if (tokens instanceof Promise) {
-    //         tokens.then(tokens => {
-    //           tokens.forEach(token => {
-    //             tokenMap.set(token.address.toLowerCase(), token);
-    //           });
-    //           this.setNetworkTokens(tokenMap);
-    //         });
-    //       } else {
-    //         this.network.type.tokens.forEach(token => {
-    //           tokenMap.set(token.address.toLowerCase(), token);
-    //         });
-    //         this.setNetworkTokens(tokenMap);
-    //       }
-    //     }
-    //   },
+      // setTokens() {
+      //   const tokenMap = new Map();
+      //   const tokens = this.selectedNetwork.tokens;
+        
+      // },
       close() {
         this.activeTab = 0;
         this.step = 0;
@@ -200,7 +183,6 @@ export default defineComponent({
         this.step = val;
       },
       openTokenSelect() {
-        console.log('token select emit caught!');
         this.step = 1;
       },
       setBuyObj(val: QuoteData) {

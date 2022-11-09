@@ -208,11 +208,14 @@ import { isHexStrict, isAddress, fromWei } from 'web3-utils';
 import { encodeAddress } from '@polkadot/keyring';
 import MewAddressSelect from '../MewAddressSelect/MewAddressSelect.vue';
 import { formatFiatValue, formatFloatingPointValue } from '@/helpers/numberFormatHelper';
+import { Networks } from './networks';
+import { Crypto } from './types';
 
 const mewWalletImg = mewWallet;
 const defaultFiatValue = '0';
 let gasPrice = '0';
 let web3Connections = {};
+const polkdadot_chains = ['DOT', 'KSM'];
 
 const addressBook = [
   {
@@ -422,12 +425,12 @@ const networkFeeToFiat = computed(() => {
   return BigNumber(networkFee.value).times(priceOb.value).toString();
 });
 const minFee = computed(() => {
-  return BigNumber(4.43).times(fiatMultiplier.value).toString();
+  return BigNumber(3.99).toString(); // Minimum 3.99 in respective currency
 });
 const plusFee = computed(() => {
   const fee = isEUR.value
-    ? BigNumber(BigNumber(0.7).div(100)).times(form.fiatAmount)
-    : BigNumber(BigNumber(3.25).div(100)).times(form.fiatAmount);
+    ? BigNumber(BigNumber(1).div(100)).times(form.fiatAmount) // 1% SEPA fee
+    : BigNumber(BigNumber(4.5).div(100)).times(form.fiatAmount); // Standard 4.5% fee
   const withFee = fee.gt(minFee.value)
     ? BigNumber(form.fiatAmount).minus(fee)
     : BigNumber(form.fiatAmount).minus(fee).minus(minFee.value);
@@ -440,7 +443,7 @@ const plusFeeF = computed(() => {
         `Value exceeds max: ${formatFiatValue(moonpayLimit.max.toString(), currencyConfig.value).value}`;
 });
 const percentFee = computed(() => {
-  return isEUR.value ? '0.7%' : '3.25%';
+  return isEUR.value ? '1%' : '4.5%';
 });
 const isEUR = computed(() => {
   return form.fiatSelected === 'EUR' || form.fiatSelected === 'GBP';
@@ -571,7 +574,27 @@ const getPrices = async () => {
           if (l.type === 'WEB') tmp.limits[l.fiat_currency] = l.limit;
         });
         d.prices.forEach((p: any) => (tmp.prices[p.fiat_currency] = p.price));
-
+        const tokenName = d.crypto_currencies[0];
+        const mainCoin = Networks.find(item => item.currencyName === tokenName);
+        // Hard code names/decimals for now
+        const tokensInfo: { [ key: string ]: any } = {
+          USDT: { name: 'Tether', decimals: 6 },
+          USDC: { name: 'USD Coin', decimals: 6 },
+          DAI: { name: 'Dai Stablecoin', decimals: 18 }
+        }
+        if (!mainCoin) {
+          const foundToken = Networks[0].tokens.find(item => item.name === tokenName);
+          if (!foundToken) {
+            const tokenInfo = tokensInfo[tokenName];
+            Networks[0].tokens.push(new Crypto(
+              tokenName,
+              tokenInfo.name,
+              'ETH',
+              tokenInfo.decimals,
+              getIcon(tokenName, false))
+            );
+          }
+        }
         if (d.name === "SIMPLEX") 
             simplexData[d.crypto_currencies[0]] = tmp;
         else if(d.name === "MOONPAY")
@@ -681,7 +704,6 @@ const addressFocus = (event: Event): void => {
 };
 
 const verifyAddress = (): void => {
-  const polkdadot_chains = ['DOT', 'KSM'];
   const valid = !polkdadot_chains.includes(form.cryptoSelected)
     ? WAValidator.validate(form.address, form.cryptoSelected) &&
       validAddress(form.address)
@@ -705,14 +727,6 @@ const verifyAddress = (): void => {
 };
 
 const submitForm = (): void => {
-  // loading.processingBuyForm = true;
-  // executeSimplexPayment(
-  //   form.fiatSelected,
-  //   form.cryptoSelected,
-  //   form.fiatSelected,
-  //   form.fiatAmount,
-  //   form.address
-  // );
   const { fiatSelected, cryptoSelected, cryptoAmount } = form;
   const simplexAvailable = isValidData(simplexData);
   const moonpayAvailable = isValidData(moonpayData);

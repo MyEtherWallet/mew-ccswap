@@ -1,4 +1,5 @@
-export const Networks = [
+import { Network } from './types';
+export const Networks = <Array<Network>>[
     {
         name: 'ETH',
         name_long: 'Ethereum',
@@ -49,7 +50,7 @@ export const Networks = [
     },
     {
         name: 'DOT',
-        name_long: 'Polkadot (DOT)',
+        name_long: 'Polkadot',
         chainID: 1,
         tokens: [],
         icon: getIcon('DOT'),
@@ -65,7 +66,7 @@ export const Networks = [
     },
     {
         name: 'KSM',
-        name_long: 'Kusama (KSM)',
+        name_long: 'Kusama',
         chainID: 1,
         tokens: [],
         icon: getIcon('KSM'),
