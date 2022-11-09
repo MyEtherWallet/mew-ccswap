@@ -6,7 +6,7 @@
 //  Copyright © 2021 MyEtherWallet Inc. All rights reserved.
 //
 
-import {FiatCurrencyConversionRate, PurchaseComponentsFeeDescription} from './types';
+import {FiatCurrencyConversionRate, PurchaseComponentsFeeDescription, PurchaseCryptoCurrency, PurchasePrice} from './types';
 
 let _providerMinFee           = 10.0
 let _providerPlainFee         = 0.0
@@ -35,74 +35,78 @@ function feeDescription(fiatConversionRate: FiatCurrencyConversionRate): Purchas
   const decimals = Math.pow(10,fiatConversionRate.fiatCurrency.decimals);
   let minFee = Math.round(providerMinFee(fiatConversionRate) * decimals) / decimals;
   let networkFeeRounded = Math.round(networkFee * fiatConversionRate.rate * decimals) / decimals;
-  return new PurchaseComponentsFeeDescription(providerPercentFee, minFee, networkFeeRounded)
+  return new PurchaseComponentsFeeDescription(providerPercentFee, minFee, networkFeeRounded);
 }
 
-func calculateCrypto(_ amount: Decimal, cryptoCurrency: PurchaseCryptoCurrency, price: PurchasePrice, fiatConversionRate: FiatCurrencyConversionRate) -> Decimal {
-  guard price.price > Decimal.zero else {
-    return .zero
+function calculateCrypto(amount: number, cryptoCurrency: PurchaseCryptoCurrency, price: PurchasePrice, fiatConversionRate: FiatCurrencyConversionRate) {
+  if (price.price <= 0) {
+    return 0;
   }
-  let amount = amount.rounded(price.fiatCurrency.decimals, .down)
-  let fee = self.fiatFee(amount, fiatConversionRate: fiatConversionRate).rounded(price.fiatCurrency.decimals, .bankers)
-  let base = self.fiatBase(amount, fee: fee).rounded(price.fiatCurrency.decimals, .down)
-  guard base > .zero else {
-    return .zero
+  let amount = amount.rounded(price.fiatCurrency.decimals, .down);
+  let fee = fiatFee(amount, fiatConversionRate).rounded(price.fiatCurrency.decimals, .bankers);
+  let base = fiatBase(amount, fee).rounded(price.fiatCurrency.decimals, .down);
+
+  if (base <= 0) {
+    return 0;
   }
-  let crypto = max(base / price.price, .zero)
-  return crypto.rounded(cryptoCurrency.decimals, .down)
+
+  let crypto = max(base / price.price, .zero);
+  return crypto.rounded(cryptoCurrency.decimals, .down);
 }
 
-func calculateFiat(_ amount: Decimal, cryptoCurrency: PurchaseCryptoCurrency, price: PurchasePrice, fiatConversionRate: FiatCurrencyConversionRate) -> Decimal {
-  let amount = amount.rounded(cryptoCurrency.decimals, .down)
-  let base = self.cryptoBase(amount, price: price.price).rounded(price.fiatCurrency.decimals, .down)
+function calculateFiat(amount: number, cryptoCurrency: PurchaseCryptoCurrency, price: PurchasePrice, fiatConversionRate: FiatCurrencyConversionRate) {
+  let amount = amount.rounded(cryptoCurrency.decimals, .down);
+  let base = cryptoBase(amount, price.price).rounded(price.fiatCurrency.decimals, .down);
   
-  let totalMin = self.cryptoTotal(min: true, amount: base, fiatConversionRate: fiatConversionRate)
-  let totalMax = self.cryptoTotal(min: false, amount: base, fiatConversionRate: fiatConversionRate)
+  let totalMin = cryptoTotal(true, base, fiatConversionRate);
+  let totalMax = cryptoTotal(false, base, fiatConversionRate);
   
-  return max(totalMin, totalMax).rounded(price.fiatCurrency.decimals, .up)
+  return max(totalMin, totalMax).rounded(price.fiatCurrency.decimals, .up);
 }
 
-func calculateFiatFee(_ amount: Decimal, price: PurchasePrice, fiatConversionRate: FiatCurrencyConversionRate) -> Decimal {
-  guard price.price > Decimal.zero else {
-    return .zero
+function calculateFiatFee(amount: number, price: PurchasePrice, fiatConversionRate: FiatCurrencyConversionRate) {
+  if (price.price <= 0) {
+    return 0;
   }
-  let amount = amount.rounded(price.fiatCurrency.decimals, .down)
-  let fee = self.fiatFee(amount, fiatConversionRate: fiatConversionRate).rounded(price.fiatCurrency.decimals, .bankers)
-  let base = self.fiatBase(amount, fee: fee).rounded(price.fiatCurrency.decimals, .down)
-  guard base > .zero else {
-    return .zero
+
+  let amount = amount.rounded(price.fiatCurrency.decimals, .down);
+  let fee = fiatFee(amount, fiatConversionRate).rounded(price.fiatCurrency.decimals, .bankers);
+  let base = fiatBase(amount, fee).rounded(price.fiatCurrency.decimals, .down);
+  if (base <= 0) {
+    return 0;
   }
-  return amount - base
+
+  return amount - base;
 }
 
 // MARK: - Calculation
 
 // MARK: Fiat -> Crypto
 
-private func fiatFee(_ amount: Decimal, fiatConversionRate: FiatCurrencyConversionRate) -> Decimal {
-  let convertedMinFee = self.providerMinFee(fiatConversionRate: fiatConversionRate)
-  let minFee = (amount - convertedMinFee) * self.providerReducedPercentFee + convertedMinFee
-  let calculatedFee = amount * self.providerPercentFee
-  return max(minFee, calculatedFee)
+function fiatFee(amount: number, fiatConversionRate: FiatCurrencyConversionRate) {
+  let convertedMinFee = providerMinFee(fiatConversionRate);
+  let minFee = (amount - convertedMinFee) * providerReducedPercentFee + convertedMinFee;
+  let calculatedFee = amount * providerPercentFee;
+  return Math.max(minFee, calculatedFee);
 }
 
-private func fiatBase(_ amount: Decimal, fee: Decimal) -> Decimal {
-  return max(amount - fee, .zero)
+function fiatBase(amount: number, fee: number) {
+  return Math.max(amount - fee, 0);
 }
 
 // MARK: Crypto -> Fiat
 
-private func cryptoTotal(min: Bool, amount: Decimal, fiatConversionRate: FiatCurrencyConversionRate) -> Decimal {
-  let total: Decimal
-  if min {
-    let convertedMinFee = self.providerMinFee(fiatConversionRate: fiatConversionRate)
-    total = (amount + (Decimal(1) - self.providerReducedPercentFee) * convertedMinFee) / (Decimal(1) - self.providerReducedPercentFee)
+function cryptoTotal(min: boolean, amount: number, fiatConversionRate: FiatCurrencyConversionRate) {
+  let total: number;
+  if (min) {
+    let convertedMinFee = providerMinFee(fiatConversionRate);
+    total = (amount + (Number(1) - providerReducedPercentFee) * convertedMinFee) / (Number(1) - providerReducedPercentFee);
   } else {
-    total = amount / (Decimal(1) - self.providerPercentFee)
+    total = amount / (Number(1) - providerPercentFee);
   }
-  return total
+  return total;
 }
 
 function cryptoBase(amount: number, price: number): number {
-  return amount * price
+  return amount * price;
 }
