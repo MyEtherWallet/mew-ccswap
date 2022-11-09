@@ -33,5 +33,20 @@ interface SubmitData {
   selected_fiat: Fiat,
   disable_moonpay: boolean
 }
-
-export {Crypto, Fiat, QuoteData, SubmitData}
+interface Network {
+    name: string,
+    name_long: string,
+    chainID: number,
+    tokens: any,
+    icon: any,
+    currencyName: string,
+    gasPriceMultiplier: number,
+    coingeckoID: string,
+    service: string,
+    url: string,
+    port: number,
+    auth: boolean,
+    username: string,
+    password: string
+}
+export {Crypto, Fiat, QuoteData, SubmitData, Network}

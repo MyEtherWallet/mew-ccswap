@@ -102,8 +102,7 @@
           rounded="right"
           variant="outlined"
           return-object
-          @focusin="dropdown.crypto = true"
-          @blur="dropdown.crypto = false"
+          @click:control="$emit('selectedCurrency', 1)"
         >
           <template #prepend-inner>
             <img
@@ -114,7 +113,7 @@
               height="25px"
             />
           </template>
-          <template #item="data">
+          <!-- <template #item="data">
             <div class="d-flex align-center justify-space-between full-width cursor-pointer" @click="selectCurrency(data.item.value, false)">
               <div class="d-flex align-center">
                 <img
@@ -129,7 +128,7 @@
                 >{{ data.item.value }}</span>
               </div>
             </div>
-          </template>
+          </template> -->
         </v-select>
       </div>
     </div>
@@ -752,7 +751,7 @@ const submitForm = (): void => {
         monthlyLimit: monthlyLimit(true),
         fiatAmount: moonpayFiatAmount
       },
-      open_providers: 1,
+      open_providers: 2,
       selected_currency: {
             decimals: 18, // DOT 10, KSM 12
             img: require(`@/assets/images/crypto/${form.cryptoSelected}.svg`),

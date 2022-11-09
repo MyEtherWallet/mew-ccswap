@@ -25,8 +25,8 @@ function providerPlainFee(fiatConversionRate: FiatCurrencyConversionRate): numbe
 
 // MARK: - LifeCycle
 
-function init(networkFee: number?) {
-  networkFee = networkFee ?? 2.65
+function init(NetworkFee: number | null) {
+  networkFee = NetworkFee ?? 2.65
 }
 
 // MARK: - PurchaseProviderFee

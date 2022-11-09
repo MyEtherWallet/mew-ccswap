@@ -9,14 +9,18 @@
           @onTab="onTab"
         >
             <template #tabContent1>
-              <buy-form @success="buySuccess"/>
+              <buy-form @selectedCurrency="openTokenSelect" @success="buySuccess"/>
             </template>
             <template #tabContent2>
               <sell-form />
             </template>
         </MewTabs>
       </div>
-      <BuyProviders v-if="step === 1" 
+      <TokenSelect v-if="step === 1" 
+        :selected-currency="selectedCurrency"
+        @close="close"
+      />
+      <BuyProviders v-if="step === 2" 
         :selected-fiat="selectedFiat" 
         :selected-currency="selectedCurrency"
         :only-simplex="onlySimplex"
@@ -37,6 +41,7 @@ import { isEmpty } from 'lodash';
 import MewTabs from '../MewTabs/MewTabs.vue';
 import BuyForm from './BuyForm.vue';
 import BuyProviders from './BuyProviders.vue';
+import TokenSelect from './components/TokenSelect.vue';
 import SellForm from './SellForm.vue';
 import { defineComponent } from 'vue';
 import { Fiat, Crypto, QuoteData, SubmitData } from './types';
@@ -49,7 +54,8 @@ export default defineComponent({
       MewTabs,
       BuyForm,
       SellForm,
-      BuyProviders
+      BuyProviders,
+      TokenSelect
     },
     props: {
         // Removing breaks the page for some reason
@@ -186,6 +192,10 @@ export default defineComponent({
       },
       openProviders(val: number) {
         this.step = val;
+      },
+      openTokenSelect() {
+        console.log('token select emit caught!');
+        this.step = 1;
       },
       setBuyObj(val: QuoteData) {
         this.buyObj = val;
