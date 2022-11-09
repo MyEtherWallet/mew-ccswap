@@ -11,6 +11,12 @@
   border-radius: 50%;
 }
 
+.network-icon {
+  height: 28px;
+  width: 28px;
+  border-radius: 50%;
+}
+
 .mew-title {
   /* size - 48px,  line-height - 64px */
   font-size: 3.428rem;
@@ -95,4 +101,8 @@
 
 .full-width {
   width: 100%;
+}
+
+.text--bold {
+  font-weight: 600;
 }

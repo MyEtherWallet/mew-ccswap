@@ -17,6 +17,7 @@
         </MewTabs>
       </div>
       <TokenSelect v-if="step === 1" 
+        :selected-network="selectedNetwork"
         :selected-currency="selectedCurrency"
         @close="close"
       />
@@ -44,7 +45,8 @@ import BuyProviders from './BuyProviders.vue';
 import TokenSelect from './components/TokenSelect.vue';
 import SellForm from './SellForm.vue';
 import { defineComponent } from 'vue';
-import { Fiat, Crypto, QuoteData, SubmitData } from './types';
+import { Fiat, Crypto, QuoteData, SubmitData, Network } from './types';
+import { Networks } from './networks';
 
 const MAIN_TOKEN_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
 
@@ -65,6 +67,7 @@ export default defineComponent({
       return {
         activeTab: 0,
         orderHandler: {},
+        selectedNetwork: Networks[0],
         selectedCurrency: {} as Crypto,
         selectedFiat: {} as Fiat,
         onlySimplex: false,
@@ -75,7 +78,7 @@ export default defineComponent({
       };
     },
     computed: {
-      defaultCurrency() {
+      defaultCurrency(): Crypto {
         // if (isEmpty(this.selectedCurrency) && this.supportedBuy) {
         //   const token = this.contractToToken(MAIN_TOKEN_ADDRESS);
         //   token.value = token.symbol;
@@ -88,7 +91,7 @@ export default defineComponent({
         ) {
           return {
             decimals: 18,
-            img: 'https://img.mewapi.io/?image=https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/src/icons/ETH-0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.svg',
+            img: require('@/assets/images/crypto/ETH.svg'),
             name: 'ETH',
             subtext: 'Ethereum',
             value: 'ETH',
@@ -124,6 +127,9 @@ export default defineComponent({
             'Sell'
         ];
       }
+    },
+    mounted() {
+      this.selectedCurrency = this.defaultCurrency;
     },
     watch: {
       address() {

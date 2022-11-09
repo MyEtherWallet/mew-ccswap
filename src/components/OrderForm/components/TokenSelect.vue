@@ -18,6 +18,7 @@
         <v-select
           class="full-width"
           v-model="networkSelected"
+          label="Network"
           :items="networks"
           :disabled="loading"
           :menu-props="{ closeOnContentClick: true }"
@@ -27,28 +28,29 @@
           @focusin="networkDropdown = true"
           @blur="networkDropdown = false"
         >
-          <template #prepend-inner>
+          <template #selection>
             <img
-              class="currency-icon mr-1"
+              class="network-icon mr-5"
               :src="networkSelected.icon"
               :alt="networkSelected.name"
-              width="25px"
-              height="25px"
+              width="28px"
+              height="28px"
             />
+            <span class="network-selected"> {{ networkSelected.name_long }} </span>
           </template>
           <template #item="data">
             <div class="d-flex align-center justify-space-between full-width cursor-pointer" @click="selectNetwork(data.item.value)">
               <div class="d-flex align-center">
                 <img
                   class="currency-icon mr-1 ml-3"
-                  :src="getIcon(data.item.value)"
-                  :alt="data.item.value"
+                  :src="data.item.value.icon"
+                  :alt="data.item.value.name"
                   width="25px"
                   height="25px"
                 />
                 <span
-                  class="text-capitalize ml-2 my-2 d-flex flex-column"
-                >{{ data.item.value }}</span>
+                  class="ml-2 my-2 d-flex flex-column"
+                >{{ data.item.value.name_long }}</span>
               </div>
             </div>
           </template>
@@ -141,13 +143,12 @@ export default defineComponent({
   },
   mounted() {
     this.networks = Networks;
+    console.log('selectedNetwork', this.selectedNetwork);
+    console.log('selectedCurrency', this.selectedCurrency);
     this.networkSelected = this.selectedNetwork;
     this.cryptoSelected = this.selectedCurrency;
   },
   methods: {
-    getIcon(currency: string) {
-        return require(`@/assets/images/crypto/${currency}.svg`)
-    },
     reset() {
       this.loading = true;
       this.fetchData = {};
@@ -168,4 +169,18 @@ export default defineComponent({
 // Variables
 $greyLight-base: #f2f3f6;
 $greyPrimary-base: #5a678a;
+
+.network-selected {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 20px;
+
+    color: #1F242F;
+
+    flex: none;
+    order: 1;
+    flex-grow: 0;
+}
 </style>
