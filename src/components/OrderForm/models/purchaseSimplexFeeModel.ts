@@ -52,18 +52,14 @@ export function feeDescription(
   const minFee = roundAmount(
     providerMinFee(fiatConversionRate),
     decimals,
-    true
+    BigNumber.ROUND_CEIL
   );
   const networkFeeRounded = roundAmount(
     networkFee * fiatConversionRate.rate,
     decimals,
-    true
+    BigNumber.ROUND_CEIL
   );
-  return new PurchaseComponentsFeeDescription(
-    providerPercentFee,
-    minFee,
-    networkFeeRounded
-  );
+  return new PurchaseComponentsFeeDescription(providerPercentFee, minFee, networkFeeRounded);
 }
 
 export function calculateCrypto(
@@ -76,21 +72,28 @@ export function calculateCrypto(
     return 0;
   }
   const decimals = price.fiatCurrency.decimals;
-  const amount = roundAmount(Amount, decimals, false);
+  const amount = roundAmount(Amount, decimals, BigNumber.ROUND_FLOOR);
   const fee = roundAmount(
     fiatFee(amount, fiatConversionRate),
     decimals,
-    false,
-    true
+    BigNumber.ROUND_HALF_EVEN
   );
-  const base = roundAmount(fiatBase(amount, fee), decimals, false);
+  const base = roundAmount(
+    fiatBase(amount, fee),
+    decimals,
+    BigNumber.ROUND_FLOOR
+  );
 
   if (base <= 0) {
     return 0;
   }
 
   const crypto = Math.max(base / price.price, 0);
-  return roundAmount(crypto, cryptoCurrency.decimals, false);
+  return roundAmount(
+    crypto,
+    cryptoCurrency.decimals,
+    BigNumber.ROUND_FLOOR
+  );
 }
 
 export function calculateFiat(
@@ -99,20 +102,24 @@ export function calculateFiat(
   price: PurchasePrice,
   fiatConversionRate: FiatCurrencyConversionRate
 ) {
-  const amount = roundAmount(Amount, cryptoCurrency.decimals, false);
+  const amount = roundAmount(
+    Amount,
+    cryptoCurrency.decimals,
+    BigNumber.ROUND_FLOOR
+  );
   const base = roundAmount(
     cryptoBase(amount, price.price),
     price.fiatCurrency.decimals,
-    false
+    BigNumber.ROUND_FLOOR
   );
-
+  
   const totalMin = cryptoTotal(true, base, fiatConversionRate);
   const totalMax = cryptoTotal(false, base, fiatConversionRate);
-
+  
   return roundAmount(
-    Math.max(totalMin, totalMax),
-    price.fiatCurrency.decimals,
-    true
+    Math.max(totalMin, totalMax), 
+    price.fiatCurrency.decimals, 
+    BigNumber.ROUND_CEIL
   );
 }
 
@@ -125,14 +132,17 @@ export function calculateFiatFee(
     return 0;
   }
   const decimals = price.fiatCurrency.decimals;
-  const amount = roundAmount(Amount, decimals, false);
+  const amount = roundAmount(Amount, decimals, BigNumber.ROUND_FLOOR);
   const fee = roundAmount(
-    fiatFee(amount, fiatConversionRate),
-    decimals,
-    false,
-    true
+    fiatFee(amount, fiatConversionRate), 
+    decimals, 
+    BigNumber.ROUND_HALF_EVEN
   );
-  const base = roundAmount(fiatBase(amount, fee), decimals, false);
+  const base = roundAmount(
+    fiatBase(amount, fee), 
+    decimals, 
+    BigNumber.ROUND_FLOOR
+  );
   if (base <= 0) {
     return 0;
   }
@@ -181,18 +191,19 @@ export function cryptoTotal(
 function cryptoBase(amount: number, price: number): number {
   return amount * price;
 }
-
+/**
+ * 
+ * @param amount Number to be formatted
+ * @param decimalPlaces Decimal places to format to
+ * @param roundingMode BigNumber RoundingMode to round number
+ * @returns Rounded number
+ */
 function roundAmount(
   amount: number,
-  decimalPlaces: number,
-  roundUp: boolean,
-  roundBankers = false
+  decimalPlaces: number, 
+  roundingMode: BigNumber.RoundingMode
 ): number {
-  let roundMode: BigNumber.RoundingMode = roundUp
-    ? BigNumber.ROUND_CEIL
-    : BigNumber.ROUND_FLOOR;
-  if (roundBankers) roundMode = BigNumber.ROUND_HALF_EVEN;
   return new BigNumber(amount)
-    .decimalPlaces(decimalPlaces, roundMode)
-    .toNumber();
+  .decimalPlaces(decimalPlaces, roundingMode)
+  .toNumber();
 }
