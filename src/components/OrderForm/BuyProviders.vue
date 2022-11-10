@@ -310,7 +310,7 @@ export default defineComponent({
           })
           .catch((err: Error) => {
             this.reset();
-            // Toast(err, {}, ERROR);
+            console.error(err); // console error for now
             this.close();
             this.$emit('reset');
           });
@@ -325,7 +325,6 @@ export default defineComponent({
       reset(isPurchasing = false) {
         this.loading = true;
         this.processingBuy = isPurchasing;
-        // this.fetchData = {};
       },
       // Moonpay buy
       buy() {
@@ -343,7 +342,7 @@ export default defineComponent({
           })
           .catch((err: Error) => {
             this.reset();
-            // Toast(err, {}, ERROR);
+            console.error(err); // console error for now
             this.close();
             this.$emit('reset');
           });
