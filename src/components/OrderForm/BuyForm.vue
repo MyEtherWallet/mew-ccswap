@@ -113,22 +113,6 @@
               height="25px"
             />
           </template>
-          <!-- <template #item="data">
-            <div class="d-flex align-center justify-space-between full-width cursor-pointer" @click="selectCurrency(data.item.value, false)">
-              <div class="d-flex align-center">
-                <img
-                  class="currency-icon mr-1 ml-3"
-                  :src="getIcon(data.item.value, false)"
-                  :alt="data.item.value"
-                  width="25px"
-                  height="25px"
-                />
-                <span
-                  class="text-capitalize ml-2 my-2 d-flex flex-column"
-                >{{ data.item.value }}</span>
-              </div>
-            </div>
-          </template> -->
         </v-select>
       </div>
     </div>
@@ -201,6 +185,7 @@ import {
   defineEmits,
   defineProps,
   PropType,
+  onUnmounted,
 } from 'vue';
 import BigNumber from 'bignumber.js';
 import {
@@ -226,8 +211,9 @@ import Web3 from 'web3';
 const mewWalletImg = mewWallet;
 const defaultFiatValue = '0';
 let gasPrice = '0';
-let web3Connections = {};
 const polkdadot_chains = ['DOT', 'KSM'];
+// eslint-disable-next-line no-undef
+let priceTimer: NodeJS.Timer;
 
 const addressBook = [
   {
@@ -255,7 +241,11 @@ onMounted(async () => {
     fiatToCrypto();
   } else cryptoToFiat();
   await fetchGasPrice();
-  setInterval(getPrices, 1000 * 60 * 2);
+  priceTimer = setInterval(getPrices, 1000 * 60 * 2);
+});
+
+onUnmounted(async () => {
+  clearInterval(priceTimer);
 });
 
 // emits
@@ -415,7 +405,6 @@ const web3 = computed(() => {
   const node = Networks.find((network) => {
     return network.name === nodeType;
   });
-  console.log('node', node);
   return new Web3(node ? node.url : '');
 });
 
@@ -442,7 +431,7 @@ const dailyLimit = (isMoonpay = false) => {
     formatFiatValue(value.toString(), currencyConfig.value).value
   }`;
 };
-const monthlyLimit = (isMoonpay = false) => {
+const monthlyLimit = () => {
   const value = BigNumber(fiatMultiplier.value).times(50000);
   return `Monthly limit: ${
     formatFiatValue(value.toString(), currencyConfig.value).value
@@ -482,8 +471,8 @@ const minFee = computed(() => {
 });
 const plusFee = computed(() => {
   const fee = isEUR.value
-    ? BigNumber(BigNumber(1).div(100)).times(form.fiatAmount) // 1% SEPA fee
-    : BigNumber(BigNumber(4.5).div(100)).times(form.fiatAmount); // Standard 4.5% fee
+    ? BigNumber(BigNumber(0.7).div(100)).times(form.fiatAmount) // 0.7% SEPA fee
+    : BigNumber(BigNumber(3.25).div(100)).times(form.fiatAmount); // Standard 3.25% fee
   const withFee = fee.gt(minFee.value)
     ? BigNumber(form.fiatAmount).minus(fee)
     : BigNumber(form.fiatAmount).minus(fee).minus(minFee.value);
@@ -499,7 +488,7 @@ const plusFeeF = computed(() => {
       }`;
 });
 const percentFee = computed(() => {
-  return isEUR.value ? '1%' : '4.5%';
+  return isEUR.value ? '0.7%' : '3.25%';
 });
 const isEUR = computed(() => {
   return form.fiatSelected === 'EUR' || form.fiatSelected === 'GBP';
@@ -543,15 +532,10 @@ const getIcon = (currency: string, isFiat = true) => {
   }/${currency}.svg`);
 };
 
-const selectCurrency = (currency: string, isFiat = true) => {
-  if (isFiat) {
-    form.fiatSelected = currency;
-    dropdown.fiat = false;
-    emit('selectedFiat', form.fiatSelected);
-  } else {
-    form.cryptoSelected = currency;
-    dropdown.crypto = false;
-  }
+const selectCurrency = (currency: string) => {
+  form.fiatSelected = currency;
+  dropdown.fiat = false;
+  emit('selectedFiat', form.fiatSelected);
 };
 
 const isValidForm = computed(() => {
@@ -627,7 +611,6 @@ const minMaxError = () => {
   loading.alertMessage = '';
 };
 const getPrices = async () => {
-  console.count('fetching prices');
   try {
     loading.data = true;
     const data: any[] = (await getCryptoPrices()) || [];
@@ -652,6 +635,8 @@ const getPrices = async () => {
           USDC: { name: 'USD Coin', decimals: 6 },
           DAI: { name: 'Dai Stablecoin', decimals: 18 },
         };
+        // If token name isnt a native network coin
+        // assume the token is ERC-20(ETH)
         if (!mainCoin) {
           const foundToken = Networks[0].tokens.find(
             (item) => item.name === tokenName
@@ -669,9 +654,8 @@ const getPrices = async () => {
             );
           }
         }
-        if (d.name === 'SIMPLEX') simplexData[d.crypto_currencies[0]] = tmp;
-        else if (d.name === 'MOONPAY')
-          moonpayData[d.crypto_currencies[0]] = tmp;
+        if (d.name === 'SIMPLEX') simplexData[tokenName] = tmp;
+        else if (d.name === 'MOONPAY') moonpayData[tokenName] = tmp;
       });
     });
     loading.data = false;
@@ -785,14 +769,14 @@ const addressInput = (value: string): void => {
   form.address = value;
   verifyAddress();
 };
-const addressFocus = (event: Event): void => {
-  form.address = form.address ? form.address : '';
-  if (event.type === 'focus') {
-    setTimeout(() => {
-      event.target?.dispatchEvent(new Event('blur'));
-    }, 100);
-  }
-};
+// const addressFocus = (event: Event): void => {
+//   form.address = form.address ? form.address : '';
+//   if (event.type === 'focus') {
+//     setTimeout(() => {
+//       event.target?.dispatchEvent(new Event('blur'));
+//     }, 100);
+//   }
+// };
 
 const verifyAddress = (): void => {
   const valid = !polkdadot_chains.includes(form.cryptoSelected)
@@ -842,6 +826,7 @@ const submitForm = (): void => {
   const simplexFiatAmountF = simplexAvailable
     ? formatFiatValue(simplexFiatAmount, currencyConfig.value).value
     : `${form.cryptoSelected} is not available for this provider`;
+  
   emit('success', {
     simplex_quote: {
       cryptoToFiat: simplexCryptoAmount,
@@ -861,20 +846,11 @@ const submitForm = (): void => {
       includesFeeText: includesFeeText,
       networkFeeText: networkFeeText,
       dailyLimit: dailyLimit(true),
-      monthlyLimit: monthlyLimit(true),
+      monthlyLimit: monthlyLimit(),
       fiatAmount: moonpayFiatAmount,
     },
     open_providers: 2,
-    selected_currency: {
-      decimals: 18, // DOT 10, KSM 12
-      img: require(`@/assets/images/crypto/${form.cryptoSelected}.svg`),
-      name: form.cryptoSelected,
-      subtext: form.cryptoSelected, // Should be long name
-      value: form.cryptoSelected,
-      symbol: form.cryptoSelected,
-      network: form.cryptoSelected, // Fill in after testing
-      contract: '', // Fill in after testing
-    },
+    selected_currency: props.cryptoSelected,
     selected_fiat: {
       name: form.fiatSelected,
       value: form.fiatSelected,
@@ -891,7 +867,6 @@ const fetchGasPrice = async (): Promise<void> => {
     return;
   }
   gasPrice = await web3.value.eth.getGasPrice();
-  console.log('gas price', gasPrice);
 };
 </script>
 

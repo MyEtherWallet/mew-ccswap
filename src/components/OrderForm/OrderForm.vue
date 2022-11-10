@@ -33,6 +33,7 @@
       :simplex-data="simplexData"
       @close="close"
       @selectCurrency="setSelectedCurrency"
+      @selectedNetwork="setNetwork"
     />
     <BuyProviders
       v-if="step === 2"
@@ -86,7 +87,7 @@ export default defineComponent({
     return {
       activeTab: 0,
       orderHandler: {},
-      selectedNetwork: Networks[0],
+      selectedNetwork: {} as Network,
       selectedCurrency: {} as Crypto,
       selectedFiat: {} as Fiat,
       fiatAmount: '0',
@@ -123,6 +124,15 @@ export default defineComponent({
       }
       return this.selectedCurrency;
     },
+    defaultNetwork(): Network {
+      if (
+        isEmpty(this.selectedNetwork) ||
+        (this.activeTab === 1 && !this.supportedSell)
+      ) {
+        return Networks[0];
+      }
+      return this.selectedNetwork;
+    },
     // supportedBuy() {
     //   return (
     //     this.selectedNetwork.name === 'ETH' ||
@@ -147,6 +157,7 @@ export default defineComponent({
     },
   },
   beforeMount() {
+    this.selectedNetwork = this.defaultNetwork;
     this.selectedCurrency = this.defaultCurrency;
   },
   watch: {
@@ -192,6 +203,9 @@ export default defineComponent({
       this.activeTab = 0;
       this.step = 0;
       this.onlySimplex = false;
+    },
+    setNetwork(network: Network) {
+      this.selectedNetwork = network;
     },
     setSelectedCurrency(e: Crypto) {
       this.selectedCurrency = e;
