@@ -416,7 +416,7 @@ const web3 = computed(() => {
     return network.name === nodeType;
   });
   console.log('node', node);
-  return new Web3(node.url);
+  return new Web3(node ? node.url : '');
 });
 
 // Moonpay fees
@@ -627,6 +627,7 @@ const minMaxError = () => {
   loading.alertMessage = '';
 };
 const getPrices = async () => {
+  console.count('fetching prices');
   try {
     loading.data = true;
     const data: any[] = (await getCryptoPrices()) || [];
@@ -885,6 +886,10 @@ const submitForm = (): void => {
 };
 
 const fetchGasPrice = async (): Promise<void> => {
+  if (polkdadot_chains.includes(form.cryptoSelected)) {
+    gasPrice = '0';
+    return;
+  }
   gasPrice = await web3.value.eth.getGasPrice();
   console.log('gas price', gasPrice);
 };
