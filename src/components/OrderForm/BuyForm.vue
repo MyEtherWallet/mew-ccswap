@@ -102,7 +102,7 @@
           rounded="right"
           variant="outlined"
           return-object
-          @click:control="$emit('selectedCurrency', 1)"
+          @click:control="openTokenSelect"
         >
           <template #prepend-inner>
             <img
@@ -193,7 +193,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, watch, onMounted, defineEmits } from 'vue';
+import {
+  computed,
+  reactive,
+  watch,
+  onMounted,
+  defineEmits,
+  defineProps,
+  PropType,
+} from 'vue';
 import BigNumber from 'bignumber.js';
 import {
   supportedCrypto,
@@ -212,7 +220,7 @@ import {
   formatFloatingPointValue,
 } from '@/helpers/numberFormatHelper';
 import { Networks } from './network/networks';
-import { Crypto } from './network/types';
+import { Crypto, Data, Network, Fiat } from './network/types';
 import Web3 from 'web3';
 
 const mewWalletImg = mewWallet;
@@ -232,14 +240,20 @@ const addressBook = [
 
 onMounted(async () => {
   form.address = '';
-
-  // Load URL parameter value and verify crypto address
-  loadUrlParameters();
-  verifyAddress();
+  if (isEmpty(props.fiatSelected)) {
+    // Load URL parameter value and verify crypto address
+    loadUrlParameters();
+    verifyAddress();
+  }
 
   // Get crypto Data
   await getPrices();
-  cryptoToFiat();
+  if (!isEmpty(props.fiatSelected)) {
+    form.cryptoSelected = props.cryptoSelected.name;
+    form.fiatSelected = props.fiatSelected.name;
+    form.fiatAmount = props.fiatAmount;
+    fiatToCrypto();
+  } else cryptoToFiat();
   await fetchGasPrice();
   setInterval(getPrices, 1000 * 60 * 2);
 });
@@ -250,18 +264,34 @@ const emit = defineEmits([
   'selectedCurrency',
   'selectedFiat',
   'toAddress',
+  'setQuotes',
 ]);
+
+// props
+const props = defineProps({
+  cryptoSelected: {
+    type: Object,
+    default: () => ({}),
+  },
+  networkSelected: {
+    type: Object as PropType<Network>,
+    default: () => ({}),
+  },
+  fiatSelected: {
+    type: Object as PropType<Fiat>,
+    default: () => ({}),
+  },
+  fiatAmount: {
+    type: String,
+    default: '0',
+  },
+});
 
 // data
 
 // non-reactive
 const fiatItems: string[] = supportedFiat;
 const cryptoItems: string[] = supportedCrypto;
-interface Data {
-  conversion_rates: { [currency: string]: number };
-  limits: { [currency: string]: { min: number; max: number } };
-  prices: { [currency: string]: string };
-}
 
 let simplexData: { [key: string]: Data } = {
   ETH: {
@@ -410,7 +440,9 @@ const monthlyLimit = (isMoonpay = false) => {
 };
 const currencyConfig = computed(() => {
   const fiat = form.fiatSelected;
-  const rate = moonpayData[form.cryptoSelected].conversion_rates[fiat];
+  const rate =
+    moonpayData[form.cryptoSelected].conversion_rates[fiat] ||
+    simplexData[form.cryptoSelected].conversion_rates[fiat];
   const currency = fiat;
   return { locale: 'en-US', rate, currency };
 });
@@ -505,6 +537,7 @@ const selectCurrency = (currency: string, isFiat = true) => {
   if (isFiat) {
     form.fiatSelected = currency;
     dropdown.fiat = false;
+    emit('selectedFiat', form.fiatSelected);
   } else {
     form.cryptoSelected = currency;
     dropdown.crypto = false;
@@ -631,11 +664,25 @@ const getPrices = async () => {
       });
     });
     loading.data = false;
+    emit('setQuotes', simplexData, moonpayData);
     console.log('simplexData', simplexData);
     console.log('moonpayData', moonpayData);
   } catch (e: any) {
     errorHandler(e);
   }
+};
+
+const openTokenSelect = () => {
+  emit(
+    'selectedCurrency',
+    {
+      name: form.fiatSelected,
+      value: form.fiatSelected,
+      // eslint-disable-next-line
+      img: require(`@/assets/images/fiat/${form.fiatSelected}.svg`),
+    },
+    form.fiatAmount
+  );
 };
 
 // Best price for display
@@ -782,7 +829,7 @@ const submitForm = (): void => {
     ? cryptoAmt.times(simplexPrice).toFixed(2)
     : '0.00';
   const simplexFiatAmountF = simplexAvailable
-    ? formatFiatValue(simplexFiatAmount).value
+    ? formatFiatValue(simplexFiatAmount, currencyConfig.value).value
     : `${form.cryptoSelected} is not available for this provider`;
   emit('success', {
     simplex_quote: {

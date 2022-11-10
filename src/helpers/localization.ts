@@ -48,7 +48,7 @@ export const localizeCurrency = ({
     : verySmall
     ? new BigNumber(number).times(rate).toFixed(7)
     : new BigNumber(number).times(rate);
-  return convertNumber({ currency, options, convertedPrice: Number.parseInt(convertedPrice.toString()) });
+  return convertNumber({ currency, options, convertedPrice: Number.parseFloat(convertedPrice.toString()) });
 };
 
 /**
