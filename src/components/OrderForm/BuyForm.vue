@@ -405,9 +405,19 @@ watch(
 );
 
 // computed
-// const web3 = computed(() => {
-//   return new Web3('wss://nodes.mewapi.io/ws/eth');
-// });
+const web3 = computed(() => {
+  const supportedNodes: { [key: string]: any } = {
+    ETH: 'ETH',
+    BNB: 'BSC',
+    MATIC: 'MATIC',
+  };
+  const nodeType = supportedNodes[form.cryptoSelected];
+  const node = Networks.find((network) => {
+    return network.name === nodeType;
+  });
+  console.log('node', node);
+  return new Web3(node.url);
+});
 
 // Moonpay fees
 const includesFeeText = computed(() => {
@@ -875,19 +885,8 @@ const submitForm = (): void => {
 };
 
 const fetchGasPrice = async (): Promise<void> => {
-  const supportedNodes: { [key: string]: any } = {
-    ETH: 'ETH',
-    BNB: 'BSC',
-    MATIC: 'MATIC',
-  };
-  const nodeType = supportedNodes[form.cryptoSelected];
-
-  const node = Networks.find((network) => {
-    return network.name === nodeType;
-  });
-
-  const web3 = await new Web3(node.url);
-  gasPrice = await web3.eth.getGasPrice();
+  gasPrice = await web3.value.eth.getGasPrice();
+  console.log('gas price', gasPrice);
 };
 </script>
 
