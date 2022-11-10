@@ -241,8 +241,8 @@ export default defineComponent({
       this.setSimplexQuote(data.simplex_quote);
       this.setToAddress(data.address);
       this.setBuyObj(data.buy_obj);
-      this.openProviders(data.open_providers);
       this.setSelectedCurrency(data.selected_currency);
+      this.openProviders(data.open_providers);
       this.setSelectedFiat(data.selected_fiat);
       this.disableMoonpay(data.disable_moonpay);
     },

@@ -408,10 +408,10 @@ watch(
 const web3 = computed(() => {
   const supportedNodes: { [key: string]: any } = {
     ETH: 'ETH',
-    BNB: 'BSC',
+    BSC: 'BSC',
     MATIC: 'MATIC',
   };
-  const nodeType = supportedNodes[form.cryptoSelected];
+  const nodeType = supportedNodes[props.cryptoSelected.network];
   const node = Networks.find((network) => {
     return network.name === nodeType;
   });
