@@ -32,12 +32,12 @@
 </template>
 
 <script setup lang="ts">
-import visa from "@/assets/images/icon-visa.svg";
-import master from "@/assets/images/icon-master.svg";
-import applePay from "@/assets/images/icon-apple-pay.svg";
-import simplex from "@/assets/images/icon-simplex-white.svg";
-import moonpay from "@/assets/images/icon-moonpay-white.svg";
-import enkryptDarkLogo from "@/assets/images/icon-enkrypt-logo-dark.svg";
+import visa from '@/assets/images/icon-visa.svg';
+import master from '@/assets/images/icon-master.svg';
+import applePay from '@/assets/images/icon-apple-pay.svg';
+import simplex from '@/assets/images/icon-simplex-white.svg';
+import moonpay from '@/assets/images/icon-moonpay-white.svg';
+import enkryptDarkLogo from '@/assets/images/icon-enkrypt-logo-dark.svg';
 </script>
 
 <style lang="scss" scoped>
@@ -45,5 +45,21 @@ import enkryptDarkLogo from "@/assets/images/icon-enkrypt-logo-dark.svg";
   font-size: 1.6rem;
   line-height: 2.4rem;
   font-weight: 300;
+}
+.secondaryText {
+  width: 79px;
+  height: 24px;
+
+  // font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 24px;
+
+  color: #1b1b1b;
+}
+
+.dropShadow {
+  filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
 }
 </style>

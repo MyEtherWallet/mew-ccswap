@@ -1,12 +1,10 @@
+<!-- eslint-disable vue/no-deprecated-v-on-native-modifier -->
 <template>
-  <div
-    class="component--buy-form elevated-box pa-3 pa-sm-6 pa-md-8"
-    ref="formDiv"
-  >
+  <div class="pa-3 pa-sm-2 pa-md-2" ref="formDiv">
     <!-- ============================================================================= -->
     <!-- Fiat amount -->
     <!-- ============================================================================= -->
-    <div class="mb-10">
+    <div class="mb-6 mt-6">
       <div class="d-flex align-center">
         <div class="heading-4 text-uppercase">Price</div>
         <div v-if="loading.data" class="ml-2">
@@ -17,62 +15,124 @@
             indeterminate
           ></v-progress-circular>
         </div>
+        -->
       </div>
-      <!--
-      <h4>
-        ** Daily buy limit:
-        <span class="font-weight-medium">USD $50 ~ $20,000</span>
-      </h4>
-      -->
       <div class="d-flex mt-2">
         <v-text-field
           @input="fiatToCrypto"
           type="number"
           v-model.number="form.fiatAmount"
           required
-          dense
+          variant="outlined"
+          class="mr-1"
           :disabled="loading.data"
           :rules="rules"
-        ></v-text-field>
-        <v-select
-          style="max-width: 120px"
-          v-model="form.fiatSelected"
-          :items="fiatItems"
-          :disabled="loading.data"
-        ></v-select>
-      </div>
-    </div>
-
-    <!-- ============================================================================= -->
-    <!-- Crypto amount -->
-    <!-- ============================================================================= -->
-    <div class="mb-10">
-      <div class="d-flex align-center">
-        <div class="heading-4 text-uppercase">Amount</div>
-      </div>
-      <!--
-      <h4>
-        ** Daily buy limit:
-        <span class="font-weight-medium">USD $50 ~ $20,000</span>
-      </h4>
-      -->
-      <div class="d-flex mt-2">
-        <v-text-field
-          @input="cryptoToFiat"
-          type="number"
-          v-model.number="form.cryptoAmount"
-          required
-          dense
-          :rules="rules"
-          :error-messages="loading.alertMessage"
-          :disabled="loading.data"
         ></v-text-field>
         <v-select
           style="max-width: 120px"
           v-model="form.cryptoSelected"
           :items="cryptoItems"
           :disabled="loading.data"
-        ></v-select>
+          :menu-props="{ closeOnContentClick: true }"
+          :menu="dropdown.crypto"
+          rounded="right"
+          variant="outlined"
+          return-object
+          @focusin="dropdown.crypto = true"
+          @blur="dropdown.crypto = false"
+        >
+          <template #prepend-inner>
+            <img
+              class="currency-icon mr-1"
+              :src="cryptoIcon"
+              :alt="form.cryptoSelected"
+              width="25px"
+              height="25px"
+            />
+          </template>
+          <template #item="data">
+            <div
+              class="d-flex align-center justify-space-between full-width cursor-pointer"
+              @click="selectCurrency(data.item.value, false)"
+            >
+              <div class="d-flex align-center">
+                <img
+                  class="currency-icon mr-1 ml-3"
+                  :src="getIcon(data.item.value, false)"
+                  :alt="data.item.value"
+                  width="25px"
+                  height="25px"
+                />
+                <span class="text-capitalize ml-2 my-2 d-flex flex-column">{{
+                  data.item.value
+                }}</span>
+              </div>
+            </div>
+          </template>
+        </v-select>
+      </div>
+    </div>
+
+    <!-- ============================================================================= -->
+    <!-- Crypto amount -->
+    <!-- ============================================================================= -->
+    <div class="mb-6">
+      <div class="mew-heading-4 textDark--text mb-3">You will get</div>
+      <div class="d-flex mt-2">
+        <v-text-field
+          @input="cryptoToFiat"
+          type="number"
+          v-model.number="form.cryptoAmount"
+          required
+          variant="outlined"
+          rounded="left"
+          :rules="rules"
+          :error-messages="loading.alertMessage"
+          :disabled="loading.data"
+          class="mr-1"
+        ></v-text-field>
+        <v-select
+          style="max-width: 120px"
+          class="rounded-right"
+          v-model="form.fiatSelected"
+          :items="fiatItems"
+          :disabled="loading.data"
+          :menu-props="{ closeOnContentClick: true }"
+          :menu="dropdown.fiat"
+          return-object
+          variant="outlined"
+          @focusin="dropdown.fiat = true"
+          @blur="dropdown.fiat = false"
+        >
+          <template #prepend-inner>
+            <img
+              class="currency-icon mr-1"
+              :src="fiatIcon"
+              :alt="form.fiatSelected"
+              width="25px"
+              height="25px"
+            />
+          </template>
+          <template #item="data">
+            <div
+              class="d-flex align-center justify-space-between full-width cursor-pointer"
+              @click="selectCurrency(data.item.value)"
+            >
+              <div class="d-flex align-center">
+                <img
+                  class="currency-icon mr-1 ml-3"
+                  :src="getIcon(data.item.value)"
+                  :alt="data.item.value"
+                  width="25px"
+                  height="25px"
+                />
+                <span class="text-capitalize ml-2 my-2 d-flex flex-column">{{
+                  data.item.value
+                }}</span>
+              </div>
+            </div>
+          </template>
+        </v-select>
       </div>
     </div>
 
@@ -90,24 +150,19 @@
           Don't have one?
         </a>
       </div>
-      <v-text-field
+      <mew-address-select
+        ref="addressSelect"
         :model-value="form.address"
-        required
-        dense
         :error-messages="form.addressErrorMsg"
-        :autofocus="true"
+        :autofocus="false"
+        label=""
+        :items="addressBook"
+        :is-valid-address="form.validAddress"
+        placeholder="Enter Crypto Address"
         @keyup="verifyAddress"
-        @update:model-value="addressInput"
-        @focus.once="addressFocus"
-      ></v-text-field>
+        @changed="addressInput"
+      />
     </div>
-
-    <!-- ============================================================================= -->
-    <!-- Google ReCaptcha v3 -->
-    <!-- ============================================================================= -->
-    <!-- <div class="d-flex align-center justify-center mt-3 mb-5">
-      <ReCaptcha @token="onReCaptchaToken" />
-    </div> -->
 
     <!-- ============================================================================= -->
     <!-- Buy/Rest button -->
@@ -118,7 +173,7 @@
           rounded="pill"
           :disabled="!isValidForm"
           min-height="60px"
-          min-width="200px"
+          width="360px"
           color="#05C0A5"
           @click="submitForm"
         >
@@ -185,29 +240,36 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, watch, onMounted } from "vue";
-import BigNumber from "bignumber.js";
-// import ReCaptcha from "@/components/recaptcha/ReCaptcha.vue";
+import { computed, reactive, watch, onMounted } from 'vue';
+import BigNumber from 'bignumber.js';
 import {
   supportedCrypto,
   supportedFiat,
-  getSimplexPrices,
+  getCryptoPrices as getSimplexPrices,
   currencySymbols,
-} from "./prices";
-import { executeSimplexPayment } from "./order";
-import { isObject, isNumber, isString } from "lodash";
-import WAValidator from "multicoin-address-validator";
-//import mewWallet from "@/assets/images/icon-mew-wallet.png";
-import { isHexStrict, isAddress } from "web3-utils";
-// import { isAddress as isPolkadotAddress } from "@polkadot/util-crypto";
-// import SubmitForm from "./SubmitForm.vue";
-import { encodeAddress } from "@polkadot/keyring";
+} from './prices';
+import { executeMoonpaySell } from './order';
+import { isObject, isNumber, isString } from 'lodash';
+import WAValidator from 'multicoin-address-validator';
+import mewWallet from '@/assets/images/icon-mew-wallet.png';
+import { isHexStrict, isAddress } from 'web3-utils';
+import { encodeAddress } from '@polkadot/keyring';
+import MewAddressSelect from '../MewAddressSelect/MewAddressSelect.vue';
 
-//const mewWalletImg = mewWallet;
-const defaultFiatValue = "0";
+const mewWalletImg = mewWallet;
+const defaultFiatValue = '0';
+
+const addressBook = [
+  {
+    address: '0xDECAF9CD2367cdbb726E904cD6397eDFcAe6068D',
+    currency: 'ETH',
+    nickname: 'MEW Donations',
+    resolvedAddr: '0xDECAF9CD2367cdbb726E904cD6397eDFcAe6068D',
+  },
+];
 
 onMounted(async () => {
-  form.address = "";
+  form.address = '';
 
   // Load URL parameter value and verify crypto address
   loadUrlParameters();
@@ -260,20 +322,24 @@ let simplexData: { [key: string]: Data } = {
 // reactive
 const form = reactive({
   fiatAmount: defaultFiatValue,
-  fiatSelected: "USD",
-  cryptoAmount: "1",
-  cryptoSelected: "ETH",
-  address: "",
+  fiatSelected: 'USD',
+  cryptoAmount: '1',
+  cryptoSelected: 'ETH',
+  address: '',
   validAddress: false,
-  addressErrorMsg: "",
-  reCaptchaToken: "",
+  addressErrorMsg: '',
+  reCaptchaToken: '',
   addressError: false,
 });
 const loading = reactive({
   data: false,
   showAlert: false,
   processingBuyForm: false,
-  alertMessage: "",
+  alertMessage: '',
+});
+const dropdown = reactive({
+  fiat: false,
+  crypto: false,
 });
 
 // watchers
@@ -309,7 +375,32 @@ watch(
     }
   }
 );
+
+// Computed Icons for selected token
+const fiatIcon = computed(() => {
+  return require(`@/assets/images/fiat/${form.fiatSelected}.svg`);
+});
+const cryptoIcon = computed(() => {
+  return require(`@/assets/images/crypto/${form.cryptoSelected}.svg`);
+});
+
 // methods
+const getIcon = (currency: string, isFiat = true) => {
+  return require(`@/assets/images/${
+    isFiat ? 'fiat' : 'crypto'
+  }/${currency}.svg`);
+};
+
+const selectCurrency = (currency: string, isFiat = true) => {
+  if (isFiat) {
+    form.fiatSelected = currency;
+    dropdown.fiat = false;
+  } else {
+    form.cryptoSelected = currency;
+    dropdown.crypto = false;
+  }
+};
+
 const isValidForm = computed(() => {
   return (
     minMax.value &&
@@ -317,8 +408,8 @@ const isValidForm = computed(() => {
     form.cryptoSelected &&
     form.address &&
     !form.addressError &&
-    form.addressErrorMsg === "" &&
-    loading.alertMessage === "" &&
+    form.addressErrorMsg === '' &&
+    loading.alertMessage === '' &&
     form.validAddress
   );
 });
@@ -326,7 +417,7 @@ const isValidForm = computed(() => {
 const rules = [
   (e: any) => {
     if (isString(e) && e?.length >= 1) return true;
-    if (!isNumber(e)) return "Must be a valid number";
+    if (!isNumber(e)) return 'Must be a valid number';
     return true;
   },
 ];
@@ -351,23 +442,26 @@ const minMaxError = () => {
     return;
   }
   loading.showAlert = false;
-  loading.alertMessage = "";
+  loading.alertMessage = '';
 };
 const getPrices = async () => {
   try {
     loading.data = true;
-    const data: [] = await getSimplexPrices();
-    data.forEach((d: any) => {
-      const tmp: Data = { conversion_rates: {}, limits: {}, prices: {} };
+    const data: any[] = (await getSimplexPrices()) || [];
+    data.forEach((arr: any) => {
+      arr.forEach((d: any) => {
+        const tmp: Data = { conversion_rates: {}, limits: {}, prices: {} };
 
-      d.conversion_rates.forEach(
-        (r: any) => (tmp.conversion_rates[r.fiat_currency] = r.exchange_rate)
-      );
-      d.limits.forEach((l: any) => {
-        if (l.type === "WEB") tmp.limits[l.fiat_currency] = l.limit;
+        d.conversion_rates.forEach(
+          (r: any) => (tmp.conversion_rates[r.fiat_currency] = r.exchange_rate)
+        );
+        d.limits.forEach((l: any) => {
+          if (l.type === 'WEB') tmp.limits[l.fiat_currency] = l.limit;
+        });
+        d.prices.forEach((p: any) => (tmp.prices[p.fiat_currency] = p.price));
+
+        if (d.name === 'SIMPLEX') simplexData[d.crypto_currencies[0]] = tmp;
       });
-      d.prices.forEach((p: any) => (tmp.prices[p.fiat_currency] = p.price));
-      simplexData[d.crypto_currencies[0]] = tmp;
     });
     loading.data = false;
   } catch (e: any) {
@@ -378,7 +472,7 @@ const getPrices = async () => {
 const fiatToCrypto = () => {
   const { fiatSelected, fiatAmount, cryptoSelected } = form;
   const price = new BigNumber(simplexData[cryptoSelected].prices[fiatSelected]);
-  const amount = new BigNumber(fiatAmount || "0");
+  const amount = new BigNumber(fiatAmount || '0');
   form.cryptoAmount = amount.dividedBy(price).toString();
 };
 
@@ -386,7 +480,7 @@ const cryptoToFiat = () => {
   const price = new BigNumber(
     simplexData[form.cryptoSelected].prices[form.fiatSelected]
   );
-  const amount = new BigNumber(form.cryptoAmount || "0");
+  const amount = new BigNumber(form.cryptoAmount || '0');
   form.fiatAmount = amount.times(price).toFixed(2).toString();
 };
 
@@ -394,15 +488,15 @@ const loadUrlParameters = () => {
   const queryString = window.location.search;
   if (queryString) {
     const urlParams = new URLSearchParams(queryString);
-    const queryCryptoAmount = urlParams.get("crypto_amount");
-    const queryFiat = urlParams.get("fiat");
-    const queryCrypto = urlParams.get("crypto");
-    const queryTo = urlParams.get("to");
-    form.fiatSelected = queryFiat ? queryFiat : "USD";
-    form.fiatAmount = queryCryptoAmount ? queryCryptoAmount : "100";
-    form.cryptoSelected = queryCrypto ? queryCrypto : "ETH";
-    form.cryptoAmount = queryCryptoAmount ? queryCryptoAmount : "1";
-    form.address = queryTo ? queryTo : "";
+    const queryCryptoAmount = urlParams.get('crypto_amount');
+    const queryFiat = urlParams.get('fiat');
+    const queryCrypto = urlParams.get('crypto');
+    const queryTo = urlParams.get('to');
+    form.fiatSelected = queryFiat ? queryFiat : 'USD';
+    form.fiatAmount = queryCryptoAmount ? queryCryptoAmount : '100';
+    form.cryptoSelected = queryCrypto ? queryCrypto : 'ETH';
+    form.cryptoAmount = queryCryptoAmount ? queryCryptoAmount : '1';
+    form.address = queryTo ? queryTo : '';
   }
 };
 // const onReCaptchaToken = (token: string): void => {
@@ -415,7 +509,7 @@ const errorHandler = (e: any): void => {
     const isErrorObj = isObject(e.response.data.error);
     if (isErrorObj) {
       // eslint-disable-next-line
-      const hasErr = e.response.data.error.hasOwnProperty("errors");
+      const hasErr = e.response.data.error.hasOwnProperty('errors');
       if (hasErr) {
         loading.alertMessage = e.response.data.error.errors[0].message;
       }
@@ -451,32 +545,33 @@ const isValidAddressPolkadotAddress = (
 
 const addressInput = (value: string): void => {
   form.address = value;
+  verifyAddress();
 };
 const addressFocus = (event: Event): void => {
-  form.address = form.address ? form.address : "";
-  if (event.type === "focus") {
+  form.address = form.address ? form.address : '';
+  if (event.type === 'focus') {
     setTimeout(() => {
-      event.target?.dispatchEvent(new Event("blur"));
+      event.target?.dispatchEvent(new Event('blur'));
     }, 100);
   }
 };
 
 const verifyAddress = (): void => {
-  const polkdadot_chains = ["DOT", "KSM"];
+  const polkdadot_chains = ['DOT', 'KSM'];
   const valid = !polkdadot_chains.includes(form.cryptoSelected)
     ? WAValidator.validate(form.address, form.cryptoSelected) &&
       validAddress(form.address)
     : isValidAddressPolkadotAddress(
         form.address,
-        form.cryptoSelected === "DOT" ? 0 : 2
+        form.cryptoSelected === 'DOT' ? 0 : 2
       );
   if (valid) {
-    form.addressErrorMsg = "";
+    form.addressErrorMsg = '';
     form.addressError = false;
     form.validAddress = true;
   } else {
     if (!form.address) {
-      form.addressErrorMsg = "";
+      form.addressErrorMsg = '';
       form.validAddress = false;
     } else {
       form.addressErrorMsg = `Please provide a valid ${form.cryptoSelected} address`;
@@ -487,60 +582,6 @@ const verifyAddress = (): void => {
 
 const submitForm = (): void => {
   loading.processingBuyForm = true;
-  executeSimplexPayment(
-    form.fiatSelected,
-    form.cryptoSelected,
-    form.fiatSelected,
-    form.fiatAmount,
-    form.address
-  );
+  executeMoonpaySell(form.cryptoSelected, form.cryptoAmount, form.address);
 };
 </script>
-
-<style lang="scss">
-.component--buy-form {
-  // Fix v-select(currency select) height issue
-  .v-select .v-field .v-field__input > input {
-    height: 0;
-    width: 0;
-  }
-
-  .v-field--appended {
-    background-color: black;
-    .v-select__selection-text {
-      color: white;
-    }
-
-    .v-field__append-inner {
-      .v-icon {
-        opacity: 1;
-        &::before {
-          color: white;
-        }
-      }
-    }
-  }
-
-  .v-field__field {
-    padding: 0;
-  }
-
-  .v-field__input {
-    padding-top: 0;
-  }
-
-  .v-select__selection-text {
-    display: flex;
-    align-items: center;
-  }
-
-  // Adjust (text field) prefix font size
-  .v-messages__message {
-    font-weight: 300;
-    font-size: 0.9rem;
-  }
-  .v-text-field__prefix {
-    font-size: 0.8rem;
-  }
-}
-</style>

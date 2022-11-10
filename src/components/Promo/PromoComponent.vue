@@ -26,23 +26,23 @@
 <script setup lang="ts">
 const promo1 = [
   {
-    title: "For your first transaction",
+    title: 'For your first transaction',
     description:
-      "If you are buying coins very first time, you can buy up to $20,000 worth of coins.",
-    amount: "$50 to $20,000",
-    rate: "for first buy",
+      'If you are buying coins very first time, you can buy up to $20,000 worth of coins.',
+    amount: '$50 to $20,000',
+    rate: 'for first buy',
   },
   {
-    title: "Daily limit",
-    description: "You can buy up to $20,000 worth of coins daily.",
-    amount: "Up to $20,000",
-    rate: "/day",
+    title: 'Daily limit',
+    description: 'You can buy up to $20,000 worth of coins daily.',
+    amount: 'Up to $20,000',
+    rate: '/day',
   },
   {
-    title: "Monthly limit",
-    description: "You can buy up to $50,000 worth of coins monthly.",
-    amount: "Up to $50,000",
-    rate: "/month",
+    title: 'Monthly limit',
+    description: 'You can buy up to $50,000 worth of coins monthly.',
+    amount: 'Up to $50,000',
+    rate: '/month',
   },
 ];
 </script>

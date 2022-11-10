@@ -10,7 +10,7 @@
             <HeaderComponent />
           </v-col>
           <v-col cols="12" md="7" lg="6">
-            <BuyForm />
+            <OrderForm />
           </v-col>
         </v-row>
       </v-container>
@@ -24,16 +24,17 @@
 </template>
 
 <script setup lang="ts">
-import HeaderComponent from "@/components/Header/HeaderComponent.vue";
-import FooterComponent from "@/components/Footer/FooterComponent.vue";
-import BuyForm from "@/components/BuyForm/BuyForm.vue";
-import BuyFormBanner from "@/components/BuyNowBanner/BuyBanner.vue";
-import PromoComponent from "@/components/Promo/PromoComponent.vue";
-import PromoComponentThisIsWhy from "@/components/Promo/PromoComponentThisIsWhy.vue";
+import HeaderComponent from '@/components/Header/HeaderComponent.vue';
+import FooterComponent from '@/components/Footer/FooterComponent.vue';
+import OrderForm from '@/components/OrderForm/OrderForm.vue';
+import BuyFormBanner from '@/components/BuyNowBanner/BuyBanner.vue';
+import PromoComponent from '@/components/Promo/PromoComponent.vue';
+import PromoComponentThisIsWhy from '@/components/Promo/PromoComponentThisIsWhy.vue';
 </script>
 
 <style lang="scss">
-@import "@/styles/globalOldDesign.scss";
+@import '@/styles/globalOldDesign.scss';
+@import '@/styles/mewDesign.scss';
 </style>
 
 <style lang="scss" scoped>
