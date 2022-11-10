@@ -58,4 +58,9 @@ interface Network {
     username: string,
     password: string
 }
-export {Crypto, Fiat, QuoteData, SubmitData, Network}
+interface Data {
+    conversion_rates: { [currency: string]: number };
+    limits: { [currency: string]: { min: number; max: number } };
+    prices: { [currency: string]: string };
+}
+export {Crypto, Fiat, QuoteData, SubmitData, Network, Data}

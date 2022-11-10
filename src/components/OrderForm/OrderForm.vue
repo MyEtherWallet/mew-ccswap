@@ -9,7 +9,15 @@
           @onTab="onTab"
         >
             <template #tabContent1>
-              <buy-form @selectedCurrency="openTokenSelect" @success="buySuccess"/>
+              <buy-form 
+                :crypto-selected="selectedCurrency"
+                :fiat-selected="selectedFiat"
+                :network-selected="selectedNetwork"
+                :fiat-amount="fiatAmount"
+                @setQuotes="setQuotes"
+                @selectedCurrency="openTokenSelect" 
+                @success="buySuccess"
+              />
             </template>
             <template #tabContent2>
               <sell-form />
@@ -19,7 +27,11 @@
       <TokenSelect v-if="step === 1" 
         :selected-network="selectedNetwork"
         :selected-currency="selectedCurrency"
+        :fiat-selected="selectedFiat"
+        :moonpay-data="moonpayData"
+        :simplex-data="simplexData"
         @close="close"
+        @selectCurrency="setSelectedCurrency"
       />
       <BuyProviders v-if="step === 2" 
         :selected-fiat="selectedFiat" 
@@ -45,7 +57,7 @@ import BuyProviders from './BuyProviders.vue';
 import TokenSelect from './components/TokenSelect.vue';
 import SellForm from './SellForm.vue';
 import { defineComponent } from 'vue';
-import { Fiat, Crypto, QuoteData, SubmitData, Network } from './types';
+import { Fiat, Crypto, QuoteData, SubmitData, Network, Data } from './types';
 import { Networks } from './networks';
 
 export default defineComponent({
@@ -68,11 +80,14 @@ export default defineComponent({
         selectedNetwork: Networks[0],
         selectedCurrency: {} as Crypto,
         selectedFiat: {} as Fiat,
+        fiatAmount: '0',
         onlySimplex: false,
         buyObj: {} as QuoteData,
         step: 0,
         simplexQuote: {} as QuoteData,
-        toAddress: ''
+        toAddress: '',
+        moonpayData: {} as { [key: string]: Data },
+        simplexData: {} as { [key: string]: Data }
       };
     },
     computed: {
@@ -125,7 +140,7 @@ export default defineComponent({
         ];
       }
     },
-    mounted() {
+    beforeMount() {
       this.selectedCurrency = this.defaultCurrency;
     },
     watch: {
@@ -166,7 +181,6 @@ export default defineComponent({
       // setTokens() {
       //   const tokenMap = new Map();
       //   const tokens = this.selectedNetwork.tokens;
-        
       // },
       close() {
         this.activeTab = 0;
@@ -175,6 +189,7 @@ export default defineComponent({
       },
       setSelectedCurrency(e: Crypto) {
         this.selectedCurrency = e;
+        this.step = 0;
       },
       setSelectedFiat(e: Fiat) {
         this.selectedFiat = e;
@@ -182,8 +197,10 @@ export default defineComponent({
       openProviders(val: number) {
         this.step = val;
       },
-      openTokenSelect() {
+      openTokenSelect(selectedFiat: Fiat, fiatAmount: string) {
         this.step = 1;
+        this.selectedFiat = selectedFiat;
+        this.fiatAmount = fiatAmount;
       },
       setBuyObj(val: QuoteData) {
         this.buyObj = val;
@@ -193,6 +210,10 @@ export default defineComponent({
       },
       setToAddress(val: string) {
         this.toAddress = val;
+      },
+      setQuotes(simplexQuote: { [key: string]: Data }, moonpayQuote: { [key: string]: Data }) {
+        this.simplexData = simplexQuote;
+        this.moonpayData = moonpayQuote;
       },
       reset() {
         this.selectedCurrency = this.defaultCurrency;

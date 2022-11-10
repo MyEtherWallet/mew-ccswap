@@ -20,7 +20,6 @@
             v-model="networkSelected"
             label="Network"
             :items="networks"
-            :disabled="loading"
             :menu-props="{ closeOnContentClick: true }"
             :menu="networkDropdown"
             return-object
@@ -56,98 +55,46 @@
             </template>
           </v-select>
         </div>
-    
+
         <!-- ============================================================== -->
-        <!-- Token Selection -->
-        <!-- ============================================================== -->
-        <!-- <div class="d-flex mt-2">
-          <v-select
-            class="full-width"
-            v-model="cryptoSelected"
-            :items="tokensList"
-            :disabled="loading"
-            :menu-props="{ closeOnContentClick: true }"
-            :menu="cryptoDropdown"
-            return-object
-            variant="outlined"
-            @focusin="cryptoDropdown = true"
-            @blur="cryptoDropdown = false"
-          >
-          <template #selection>
-            <img
-              class="network-icon mr-5"
-              :src="cryptoSelected.img"
-              :alt="cryptoSelected.name"
-              width="28px"
-              height="28px"
-            />
-            <span class="text--bold">{{ cryptoSelected.name }} -&nbsp;</span>
-            <span>{{ cryptoSelected.subtext }}</span>
-          </template>
-            <template #item="data">
-              <div class="d-flex align-center justify-space-between full-width cursor-pointer" @click="selectCurrency(data.item.value)">
-                <div class="d-flex align-center">
-                  <img
-                    class="currency-icon mr-1 ml-3"
-                    :src="data.item.value.img"
-                    :alt="data.item.value.name"
-                    width="25px"
-                    height="25px"
-                  />
-                  <span
-                    class="text-capitalize ml-2 my-2 d-flex flex-column"
-                  >{{ data.item.value.name }} -&nbsp;</span>
-                  <span>{{ data.item.value.subtext }}</span>
-                </div>
-              </div>
-            </template>
-          </v-select>
-        </div> -->
-        <!-- ============================================================== -->
-        <!-- Token Selection Table -->
+        <!-- Token Selection List -->
         <!-- ============================================================== -->
         <div class="d-flex mt-2">
-          <v-select
+          <v-list
+            lines="one"
             class="full-width"
-            v-model="cryptoSelected"
-            :items="tokensList"
-            :disabled="loading"
-            :menu-props="{ closeOnContentClick: true }"
-            :menu="cryptoDropdown"
-            return-object
-            variant="outlined"
-            @focusin="cryptoDropdown = true"
-            @blur="cryptoDropdown = false"
           >
-          <template #selection>
-            <img
-              class="network-icon mr-5"
-              :src="cryptoSelected.img"
-              :alt="cryptoSelected.name"
-              width="28px"
-              height="28px"
-            />
-            <span class="text--bold">{{ cryptoSelected.name }} -&nbsp;</span>
-            <span>{{ cryptoSelected.subtext }}</span>
-          </template>
-            <template #item="data">
-              <div class="d-flex align-center justify-space-between full-width cursor-pointer" @click="selectCurrency(data.item.value)">
-                <div class="d-flex align-center">
-                  <img
-                    class="currency-icon mr-1 ml-3"
-                    :src="data.item.value.img"
-                    :alt="data.item.value.name"
-                    width="25px"
-                    height="25px"
-                  />
-                  <span
-                    class="text-capitalize ml-2 my-2 d-flex flex-column"
-                  >{{ data.item.value.name }} -&nbsp;</span>
-                  <span>{{ data.item.value.subtext }}</span>
+            <v-list-item
+              v-for="(item, i) in tokensList"
+              :key="i"
+              :value="item"
+              active-color="primary"
+              @click="selectCurrency(item, true)"
+            >
+              <template #prepend>
+                <img
+                  class="currency-icon mr-3"
+                  :src="item.img"
+                  :alt="item.name"
+                  width="25px"
+                  height="25px"
+                />
+              </template>
+              <v-list-item-title>
+                <div>
+                  <span class="text-capitalize text--bold">
+                    {{ item.name }}
+                  </span>
+                  <span>
+                    {{ ` - ${item.subtext}` }}
+                  </span>
                 </div>
-              </div>
-            </template>
-          </v-select>
+              </v-list-item-title>
+              <template #append>
+                <span>{{ tokenPrice(item.name) }}</span>
+              </template>
+            </v-list-item>
+          </v-list>
         </div>
       </div>
     </div>
@@ -155,8 +102,10 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
-import { Crypto, Network } from '../types';
+import { Crypto, Network, Data, Fiat } from '../types';
 import { Networks } from '../networks';
+import BigNumber from 'bignumber.js';
+import { formatFiatValue } from '@/helpers/numberFormatHelper';
 
 export default defineComponent({
   name: 'TokenSelect',
@@ -172,13 +121,23 @@ export default defineComponent({
     selectedCurrency: {
         type: Object as PropType<Crypto>,
         default: () => ({})
+    },
+    moonpayData: {
+      type: Object as PropType<{ [key: string]: Data } >,
+      default: () => ({})
+    },
+    simplexData: {
+      type: Object as PropType<{ [key: string]: Data } >,
+      default: () => ({})
+    },
+    fiatSelected: {
+      type: Object as PropType<Fiat>,
+      default: () => ({})
     }
   },
   data() {
     return {
-      loading: false,
-      fetchData: {},
-      networks: Networks as Array<Network>,
+      networks: Networks,
       networkSelected: {} as Network,
       cryptoSelected: {} as Crypto,
       networkDropdown: false,
@@ -201,6 +160,9 @@ export default defineComponent({
       if (this.networkSelected.tokens)
         tokensList = tokensList.concat(this.networkSelected.tokens);
       return tokensList;
+    },
+    fiatName() {
+      return this.fiatSelected.name;
     }
   },
   mounted() {
@@ -214,18 +176,25 @@ export default defineComponent({
     }
   },
   methods: {
-    reset() {
-      this.loading = true;
-      this.fetchData = {};
-    },
-    selectCurrency(currency: Crypto) {
+    selectCurrency(currency: Crypto, emit = false) {
       this.cryptoSelected = currency;
       this.cryptoDropdown = false;
-      this.$emit('selectCurrency', this.cryptoSelected);
+      if (emit) this.$emit('selectCurrency', this.cryptoSelected);
     },
     selectNetwork(network: Network) {
       this.networkSelected = network;
       this.networkDropdown = false;
+    },
+    tokenPrice(token: string) {
+      const simplexPrice = new BigNumber(this.simplexData[token]?.prices[this.fiatName]);
+      const moonpayPrice = new BigNumber(this.moonpayData[token]?.prices[this.fiatName]);
+      const rate = this.moonpayData[token]?.conversion_rates[this.fiatName] ||
+        this.simplexData[token]?.conversion_rates[this.fiatName];
+      const currencyConfig = { locale: 'en-US', rate, currency: this.fiatName };
+      if (moonpayPrice.isNaN()) return formatFiatValue(simplexPrice.toFixed(2), currencyConfig).value;
+      if (simplexPrice.isNaN()) return formatFiatValue(moonpayPrice.toFixed(2), currencyConfig).value;
+      const price = simplexPrice.lte(moonpayPrice) ? simplexPrice : moonpayPrice;
+      return formatFiatValue(price.toFixed(2), currencyConfig).value;
     }
   }
 });
