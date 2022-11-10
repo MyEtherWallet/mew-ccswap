@@ -60,12 +60,24 @@
       </div>
 
       <!-- ============================================================== -->
+      <!-- Token Selection Search -->
+      <!-- ============================================================== -->
+      <div class="d-flex mt-2">
+        <v-text-field
+          v-model="searchInput"
+          variant="outlined"
+          class="mr-1"
+          prepend-inner-icon="mdi-magnify"
+        ></v-text-field>
+      </div>
+
+      <!-- ============================================================== -->
       <!-- Token Selection List -->
       <!-- ============================================================== -->
       <div class="d-flex mt-2">
         <v-list lines="one" class="full-width">
           <v-list-item
-            v-for="(item, i) in tokensList"
+            v-for="(item, i) in filteredTokenList"
             :key="i"
             :value="item"
             active-color="primary"
@@ -142,6 +154,7 @@ export default defineComponent({
       cryptoSelected: {} as Crypto,
       networkDropdown: false,
       cryptoDropdown: false,
+      searchInput: '',
     };
   },
   computed: {
@@ -149,11 +162,14 @@ export default defineComponent({
       return require(`@/assets/images/crypto/${this.cryptoSelected.name}.svg`);
     },
     tokensList() {
+      let decimals = 18;
+      if (this.networkSelected.name === 'DOT') decimals = 10;
+      else if (this.networkSelected.name === 'KSM') decimals = 12;
       const mainCoin = new Crypto(
         this.networkSelected.currencyName,
         this.networkSelected.name_long,
         this.networkSelected.name,
-        18,
+        decimals,
         this.networkSelected.icon
       );
       let tokensList = [mainCoin];
@@ -161,11 +177,24 @@ export default defineComponent({
         tokensList = tokensList.concat(this.networkSelected.tokens);
       return tokensList;
     },
+    filteredTokenList() {
+      const filterText = this.searchInput.toLowerCase();
+      return this.tokensList.filter(
+        token => {
+          const tokenSymbol = token.name.toLowerCase();
+          const tokenName = token.subtext.toLowerCase();
+          if (
+            tokenSymbol.includes(filterText) ||
+            tokenName.includes(filterText)
+          ) return token;
+        }
+      );
+    },
     fiatName() {
       return this.fiatSelected.name;
     },
   },
-  mounted() {
+  beforeMount() {
     this.networks = Networks;
     this.networkSelected = this.selectedNetwork;
     this.cryptoSelected = this.selectedCurrency;
@@ -173,6 +202,7 @@ export default defineComponent({
   watch: {
     networkSelected() {
       this.selectCurrency(this.tokensList[0]);
+      this.$emit('selectedNetwork', this.networkSelected);
     },
   },
   methods: {
