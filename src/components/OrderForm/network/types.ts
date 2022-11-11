@@ -46,6 +46,7 @@ interface SubmitData {
   open_providers: number;
   selected_currency: Crypto;
   selected_fiat: Fiat;
+  fiat_amount: string;
   disable_moonpay: boolean;
 }
 interface Network {

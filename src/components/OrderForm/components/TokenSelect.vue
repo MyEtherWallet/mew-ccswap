@@ -62,7 +62,7 @@
       <!-- ============================================================== -->
       <!-- Token Selection Search -->
       <!-- ============================================================== -->
-      <div class="d-flex mt-2">
+      <div class="d-flex">
         <v-text-field
           v-model="searchInput"
           variant="outlined"
@@ -74,7 +74,7 @@
       <!-- ============================================================== -->
       <!-- Token Selection List -->
       <!-- ============================================================== -->
-      <div class="d-flex mt-2">
+      <div class="d-flex">
         <v-list lines="one" class="full-width">
           <v-list-item
             v-for="(item, i) in filteredTokenList"
