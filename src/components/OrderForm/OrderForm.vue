@@ -258,6 +258,7 @@ export default defineComponent({
       this.setSelectedCurrency(data.selected_currency);
       this.openProviders(data.open_providers);
       this.setSelectedFiat(data.selected_fiat);
+      this.fiatAmount = data.fiat_amount;
       this.disableMoonpay(data.disable_moonpay);
     },
   },
