@@ -482,6 +482,8 @@ const plusFee = computed(() => {
   return withFee.minus(networkFeeToFiat.value).toString();
 });
 const plusFeeF = computed(() => {
+  const isAvailable = isValidData(moonpayData);
+  if (!isAvailable) return `${form.cryptoSelected} is not available for this provider`;
   const moonpayLimit =
     moonpayData[form.cryptoSelected].limits[form.fiatSelected];
   return moonpayLimit.max > Number.parseFloat(form.fiatAmount)
