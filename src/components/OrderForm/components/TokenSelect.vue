@@ -37,6 +37,9 @@
               {{ networkSelected.name_long }}
             </span>
           </template>
+          <!-- <template #prepend-item>
+            <v-text-field :autofocus="true"></v-text-field>
+          </template> -->
           <template #item="data">
             <div
               class="d-flex align-center justify-space-between full-width cursor-pointer"
@@ -68,6 +71,7 @@
           variant="outlined"
           class="mr-1"
           prepend-inner-icon="mdi-magnify"
+          :autofocus="true"
         ></v-text-field>
       </div>
 

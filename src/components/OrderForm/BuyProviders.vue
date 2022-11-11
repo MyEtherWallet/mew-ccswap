@@ -33,9 +33,18 @@
               <div v-else class="mr-1 text--red">
                 {{ buyObj.plusFeeF }}
               </div>
-              <v-tooltip style="height: 21px">
-                <template #contentSlot>
-                  <div>
+              <v-tooltip v-if="!hideMoonpay" location="bottom">
+                <template #activator="{ props }">
+                  <v-icon
+                    v-bind="props"
+                    color="grey-lighten-1"
+                    size="x-small"
+                    class="cursor-pointer"
+                  >
+                    mdi-information
+                  </v-icon>
+                </template>
+                  <div class="elevated-box pa-3">
                     {{ buyObj.includesFeeText }}
                     <br />
                     <br />
@@ -46,7 +55,6 @@
                     <br />
                     {{ buyObj.monthlyLimit }}
                   </div>
-                </template>
               </v-tooltip>
             </div>
           </div>
@@ -110,20 +118,28 @@
               <div v-else class="mr-1 text--red">
                 {{ simplexQuote.plusFeeF }}
               </div>
-              <v-tooltip style="height: 21px">
-                <template #contentSlot>
-                  <div>
-                    {{ simplexQuote.includesFeeText }}
-                    <br />
-                    <br />
-                    {{ simplexQuote.networkFeeText }}
-                    <br />
-                    <br />
-                    {{ simplexQuote.dailyLimit }}
-                    <br />
-                    {{ simplexQuote.monthlyLimit }}
-                  </div>
+              <v-tooltip v-if="!hideSimplex" location="bottom">
+                <template #activator="{ props }">
+                  <v-icon
+                    v-bind="props"
+                    color="grey-lighten-1"
+                    size="x-small"
+                    class="cursor-pointer"
+                  >
+                    mdi-information
+                  </v-icon>
                 </template>
+                <div class="elevated-box pa-3">
+                  {{ simplexQuote.includesFeeText }}
+                  <br />
+                  <br />
+                  {{ simplexQuote.networkFeeText }}
+                  <br />
+                  <br />
+                  {{ simplexQuote.dailyLimit }}
+                  <br />
+                  {{ simplexQuote.monthlyLimit }}
+                </div>
               </v-tooltip>
             </div>
           </div>
@@ -351,7 +367,7 @@ export default defineComponent({
   });
 </script>
   
-  <style lang="scss" scoped>
+<style lang="scss" scoped>
   // Variables
   $greyLight-base: #f2f3f6;
   $greyPrimary-base: #5a678a;

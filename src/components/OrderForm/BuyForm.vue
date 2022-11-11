@@ -547,6 +547,11 @@ const simplexPlusFeeF = computed(() => simplexAvailable.value
   ? formatFiatValue(simplexPlusFee.value, currencyConfig.value).value
   : `${form.cryptoSelected} is not available for this provider`
 );
+const simplexIncludesFeeText = computed(() => {
+  return `Includes 5.25% fee (${
+    formatFiatValue(BigNumber(10.0).toString(), currencyConfig.value).value
+  } min)`;
+});
 const simplexCryptoAmount = computed(() => {
   const amount = BigNumber(simplexPlusFee.value || '0');
   return simplexAvailable.value
@@ -855,8 +860,8 @@ const submitForm = (): void => {
       cryptoToFiat: simplexCryptoAmount.value,
       selectedCryptoName: cryptoSelected,
       plusFeeF: simplexPlusFeeF.value,
-      includesFeeText: '',
-      networkFeeText: '',
+      includesFeeText: simplexIncludesFeeText,
+      networkFeeText: networkFeeText,
       dailyLimit: dailyLimit(),
       monthlyLimit: monthlyLimit(),
       fiatAmount: simplexFiatAmount.value,
