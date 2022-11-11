@@ -466,8 +466,13 @@ const priceOb = computed(() => {
     ? moonpayData[form.cryptoSelected].prices[form.fiatSelected]
     : simplexData[form.cryptoSelected].prices[form.fiatSelected];
 });
+const networkPrice = computed(() => {
+  return isValidData(moonpayData)
+    ? moonpayData[props.networkSelected.currencyName].prices[form.fiatSelected]
+    : simplexData[props.networkSelected.currencyName].prices[form.fiatSelected];
+});
 const networkFeeToFiat = computed(() => {
-  return BigNumber(networkFee.value).times(priceOb.value).toString();
+  return BigNumber(networkFee.value).times(networkPrice.value).toString();
 });
 const minFee = computed(() => {
   return BigNumber(3.99).toString(); // Minimum 3.99 in respective currency
