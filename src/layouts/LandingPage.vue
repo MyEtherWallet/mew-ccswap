@@ -71,16 +71,17 @@ import PromoComponentThisIsWhy from '@/components/Promo/PromoComponentThisIsWhy.
 }
 
 .background-image {
-  background-color: #161a34;
+  // background-color: #161a34;
+  background-color: #ffffff;
   background-image: radial-gradient(
-      at top 0px right 300px,
-      rgb(86, 69, 244),
+      at top 0px right 200px,
+      rgb(112, 75, 255),
       transparent 900px
     ),
     radial-gradient(
       at bottom 200px left 200px,
-      rgba(109, 99, 196, 0.5),
-      transparent 600px
+      rgba(112, 75, 255),
+      transparent 500px
     ),
     radial-gradient(at bottom right, rgba(60, 47, 104, 0.5), transparent 400px);
 }

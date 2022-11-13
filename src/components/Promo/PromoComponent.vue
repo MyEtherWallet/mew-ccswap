@@ -5,8 +5,8 @@
   >
     <div>
       <v-container>
-        <h1 class="mb-9" style="color: white">
-          We have increased maximum buy limits for hassle free transactions
+        <h1 class="mb-9 text-black">
+          Increased by limits so you can do more with crypto
         </h1>
         <v-row>
           <v-col cols="12" md="4" v-for="(p1, key1) in promo1" :key="key1">

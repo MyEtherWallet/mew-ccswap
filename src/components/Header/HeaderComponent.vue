@@ -3,8 +3,8 @@
     <img :src="enkryptDarkLogo" alt="MEW" height="36" />
 
     <div
+      class="text-black"
       :class="$vuetify.display.smAndUp ? 'heading-1' : 'heading-1'"
-      style="color: white"
       :style="
         $vuetify.display.smAndUp
           ? 'margin-top: 100px; max-width: 340px'
@@ -15,13 +15,13 @@
     </div>
 
     <div class="d-flex align-center" style="margin-top: 60px">
-      <div class="mr-2" style="color: white">Powered by</div>
+      <div class="text-black mr-2">Powered by</div>
       <img :src="simplex" alt="Simplex" height="30" />
       <img :src="moonpay" alt="Moonpay" height="30" />
     </div>
 
     <div class="d-flex flex-wrap align-center mt-4">
-      <div class="mr-2" style="color: white">We accept</div>
+      <div class="text-black mr-2">We accept</div>
       <div class="d-flex align-center">
         <img class="mr-2" :src="visa" alt="Visa" height="22" />
         <img class="mr-2" :src="applePay" alt="Visa" height="22" />
