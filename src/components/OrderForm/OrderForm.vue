@@ -20,7 +20,15 @@
           />
         </template>
         <template #tabContent2>
-          <sell-form />
+          <sell-form
+            :crypto-selected="selectedCurrency"
+            :fiat-selected="selectedFiat"
+            :network-selected="selectedNetwork"
+            :fiat-amount="fiatAmount"
+            @setQuotes="setQuotes"
+            @selectedCurrency="openTokenSelect"
+            @success="sellSuccess"
+          />
         </template>
       </MewTabs>
     </div>
@@ -65,6 +73,7 @@ import {
   Crypto,
   QuoteData,
   SubmitData,
+  SubmitSellData,
   Network,
   Data,
 } from './network/types';
@@ -260,6 +269,12 @@ export default defineComponent({
       this.setSelectedFiat(data.selected_fiat);
       this.fiatAmount = data.fiat_amount;
       this.disableMoonpay(data.disable_moonpay);
+    },
+    sellSuccess(data: SubmitSellData) {
+      this.setToAddress(data.address);
+      this.setSelectedCurrency(data.selected_currency);
+      this.setSelectedFiat(data.selected_fiat);
+      this.fiatAmount = data.fiat_amount;
     },
   },
 });

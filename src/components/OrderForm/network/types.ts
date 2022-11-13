@@ -49,6 +49,13 @@ interface SubmitData {
   fiat_amount: string;
   disable_moonpay: boolean;
 }
+
+interface SubmitSellData {
+  address: string;
+  selected_currency: Crypto;
+  selected_fiat: Fiat;
+  fiat_amount: string;
+}
 interface Network {
   name: string;
   name_long: string;
@@ -70,4 +77,4 @@ interface Data {
   limits: { [currency: string]: { min: number; max: number } };
   prices: { [currency: string]: string };
 }
-export { Crypto, Fiat, QuoteData, SubmitData, Network, Data };
+export { Crypto, Fiat, QuoteData, SubmitData, SubmitSellData, Network, Data };
