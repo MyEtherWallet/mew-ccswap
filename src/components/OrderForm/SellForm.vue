@@ -5,10 +5,12 @@
     <!-- Crypto amount -->
     <!-- ============================================================================= -->
     <div class="mb-6 mt-6">
-      <div class="mew-heading-4 textDark--text mb-3">
-        How much do you want to sell?
+      <div class="d-flex justify-space-between mb-3">
+        <div class="mew-heading-4 textDark--text">
+          How much do you want to sell?
+        </div>
+        <div class="text-mew">Balance: {{ form.balance }}</div>
       </div>
-      <div>{{ form.balance }}</div>
       <div class="d-flex mt-2">
         <v-text-field
           @input="cryptoToFiat"
@@ -214,6 +216,7 @@ import MewAddressSelect from '../MewAddressSelect/MewAddressSelect.vue';
 import { Networks } from './network/networks';
 import { Crypto, Data, Network, Fiat } from './network/types';
 import Web3 from 'web3';
+import { utils } from 'ethers';
 const polkdadot_chains = ['DOT', 'KSM'];
 
 const mewWalletImg = mewWallet;
@@ -397,6 +400,12 @@ const cryptoIcon = computed(() => {
 
 const networkFee = computed(() => {
   return fromWei(BigNumber(gasPrice).times(21000).toString());
+});
+
+const networkPrice = computed(() => {
+  return moonpayData[props.networkSelected.currencyName].prices[
+    form.fiatSelected
+  ];
 });
 
 // methods
