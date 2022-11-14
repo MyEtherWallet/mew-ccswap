@@ -466,8 +466,13 @@ const priceOb = computed(() => {
     ? moonpayData[form.cryptoSelected].prices[form.fiatSelected]
     : simplexData[form.cryptoSelected].prices[form.fiatSelected];
 });
+const networkPrice = computed(() => {
+  return isValidData(moonpayData)
+    ? moonpayData[props.networkSelected.currencyName].prices[form.fiatSelected]
+    : simplexData[props.networkSelected.currencyName].prices[form.fiatSelected];
+});
 const networkFeeToFiat = computed(() => {
-  return BigNumber(networkFee.value).times(priceOb.value).toString();
+  return BigNumber(networkFee.value).times(networkPrice.value).toString();
 });
 const minFee = computed(() => {
   return BigNumber(3.99).toString(); // Minimum 3.99 in respective currency
@@ -547,6 +552,11 @@ const simplexPlusFeeF = computed(() => simplexAvailable.value
   ? formatFiatValue(simplexPlusFee.value, currencyConfig.value).value
   : `${form.cryptoSelected} is not available for this provider`
 );
+const simplexIncludesFeeText = computed(() => {
+  return `Includes 5.25% fee (${
+    formatFiatValue(BigNumber(10.0).toString(), currencyConfig.value).value
+  } min)`;
+});
 const simplexCryptoAmount = computed(() => {
   const amount = BigNumber(simplexPlusFee.value || '0');
   return simplexAvailable.value
@@ -855,8 +865,8 @@ const submitForm = (): void => {
       cryptoToFiat: simplexCryptoAmount.value,
       selectedCryptoName: cryptoSelected,
       plusFeeF: simplexPlusFeeF.value,
-      includesFeeText: '',
-      networkFeeText: '',
+      includesFeeText: simplexIncludesFeeText,
+      networkFeeText: networkFeeText,
       dailyLimit: dailyLimit(),
       monthlyLimit: monthlyLimit(),
       fiatAmount: simplexFiatAmount.value,
