@@ -1,8 +1,9 @@
 <template>
-  <div class="dropShadow">
-    <img :src="mewDarkLogo" alt="MEW" height="36" />
+  <div>
+    <img :src="enkryptDarkLogo" alt="MEW" height="36" />
 
     <div
+      class="text-black"
       :class="$vuetify.display.smAndUp ? 'heading-1' : 'heading-1'"
       :style="
         $vuetify.display.smAndUp
@@ -14,15 +15,13 @@
     </div>
 
     <div class="d-flex align-center" style="margin-top: 60px">
-      <div class="mr-3 secondaryText">Powered by</div>
-      <img class="mr-3" :src="simplex" alt="Simplex" height="24" />
-      <img :src="moonpay" alt="Moonpay" height="24" />
+      <div class="text-black mr-2">Powered by</div>
+      <img :src="simplex" alt="Simplex" height="30" />
+      <img :src="moonpay" alt="Moonpay" height="30" />
     </div>
 
     <div class="d-flex flex-wrap align-center mt-4">
-      <div class="mr-3 secondaryText">
-        We accept
-      </div>
+      <div class="text-black mr-2">We accept</div>
       <div class="d-flex align-center">
         <img class="mr-2" :src="visa" alt="Visa" height="22" />
         <img class="mr-2" :src="applePay" alt="Visa" height="22" />
@@ -33,12 +32,12 @@
 </template>
 
 <script setup lang="ts">
-import visa from "@/assets/images/icon-visa.svg";
-import master from "@/assets/images/icon-master.svg";
-import applePay from "@/assets/images/icon-apple-pay.svg";
-import simplex from "@/assets/images/icon-simplex.svg";
-import moonpay from "@/assets/images/icon-moonpay.svg";
-import mewDarkLogo from "@/assets/images/icon-mew-logo-dark.svg";
+import visa from '@/assets/images/icon-visa.svg';
+import master from '@/assets/images/icon-master.svg';
+import applePay from '@/assets/images/icon-apple-pay.svg';
+import simplex from '@/assets/images/icon-simplex-white.svg';
+import moonpay from '@/assets/images/icon-moonpay-white.svg';
+import enkryptDarkLogo from '@/assets/images/icon-enkrypt-logo-dark.svg';
 </script>
 
 <style lang="scss" scoped>
@@ -57,7 +56,7 @@ import mewDarkLogo from "@/assets/images/icon-mew-logo-dark.svg";
   font-size: 14px;
   line-height: 24px;
 
-  color: #1B1B1B;
+  color: #1b1b1b;
 }
 
 .dropShadow {

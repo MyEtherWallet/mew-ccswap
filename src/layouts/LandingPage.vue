@@ -1,40 +1,40 @@
 <template>
   <div
-    class="pt-15 component--landing-page-old-design"
+    class="component--landing-page-old-design"
     :class="[$vuetify.display.mdAndUp ? 'background-lg' : 'background-sm']"
-    :style="{ 'background-image': `url(${bgBar})` }"
   >
-    <v-container>
-      <v-row>
-        <v-col cols="12" md="5" lg="7">
-          <HeaderComponent />
-        </v-col>
-        <v-col cols="12" md="7" lg="5">
-          <OrderForm />
-        </v-col>
-      </v-row>
+    <div class="background-image pt-15">
+      <v-container>
+        <v-row>
+          <v-col cols="12" md="5" lg="6">
+            <HeaderComponent />
+          </v-col>
+          <v-col cols="12" md="7" lg="6">
+            <OrderForm />
+          </v-col>
+        </v-row>
+      </v-container>
+      <PromoComponent />
+    </div>
 
-      <v-row>
-        <v-col>
-          <PromoComponent />
-        </v-col>
-      </v-row>
-    </v-container>
+    <PromoComponentThisIsWhy />
+    <BuyFormBanner />
     <FooterComponent />
   </div>
 </template>
 
 <script setup lang="ts">
-import HeaderComponent from "@/components/Header/HeaderComponent.vue";
-import FooterComponent from "@/components/Footer/FooterComponent.vue";
-import OrderForm from "@/components/OrderForm/OrderForm.vue";
-import PromoComponent from "@/components/Promo/PromoComponent.vue";
-import bgBar from "@/assets/images/bg-bar-old.svg";
+import HeaderComponent from '@/components/Header/HeaderComponent.vue';
+import FooterComponent from '@/components/Footer/FooterComponent.vue';
+import OrderForm from '@/components/OrderForm/OrderForm.vue';
+import BuyFormBanner from '@/components/BuyNowBanner/BuyBanner.vue';
+import PromoComponent from '@/components/Promo/PromoComponent.vue';
+import PromoComponentThisIsWhy from '@/components/Promo/PromoComponentThisIsWhy.vue';
 </script>
 
 <style lang="scss">
-@import "@/styles/globalOldDesign.scss";
-@import "@/styles/mewDesign.scss";
+@import '@/styles/globalOldDesign.scss';
+@import '@/styles/mewDesign.scss';
 </style>
 
 <style lang="scss" scoped>
@@ -69,4 +69,28 @@ import bgBar from "@/assets/images/bg-bar-old.svg";
   background-size: 603px;
   background-position: calc(50% + 854px) 54px;
 }
+
+.background-image {
+  // background-color: #161a34;
+  background-color: #ffffff;
+  background-image: radial-gradient(
+      at top 0px right 200px,
+      rgb(112, 75, 255),
+      transparent 900px
+    ),
+    radial-gradient(
+      at bottom 200px left 200px,
+      rgba(112, 75, 255),
+      transparent 500px
+    ),
+    radial-gradient(at bottom right, rgba(60, 47, 104, 0.5), transparent 400px);
+}
+
+/*
+background-image: radial-gradient(
+    30% 30% at left 200px bottom 250px,
+    #14377a,
+    #1d2343
+  );
+  */
 </style>
