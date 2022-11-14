@@ -398,4 +398,9 @@ export default defineComponent({
     color: $greyPrimary-base !important;
     caret-color: $greyPrimary-base !important;
   }
-  </style>
+</style>
+<style lang="scss">
+  .v-tooltip .v-overlay__content{
+    background: transparent !important;
+  }
+</style>
