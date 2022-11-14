@@ -8,6 +8,7 @@
       <div class="mew-heading-4 textDark--text mb-3">
         How much do you want to sell?
       </div>
+      <div>{{ form.balance }}</div>
       <div class="d-flex mt-2">
         <v-text-field
           @input="cryptoToFiat"
@@ -271,6 +272,7 @@ onMounted(async () => {
     fiatToCrypto();
   } else cryptoToFiat();
   await fetchGasPrice();
+  getBalance();
   setInterval(getPrices, 1000 * 60 * 2);
 });
 
@@ -316,6 +318,7 @@ const form = reactive({
   addressErrorMsg: '',
   reCaptchaToken: '',
   addressError: false,
+  balance: '',
 });
 const loading = reactive({
   data: false,
@@ -371,6 +374,15 @@ watch(
   () => {
     if (!loading.data) {
       minMaxError();
+    }
+  }
+);
+
+watch(
+  () => form.address,
+  () => {
+    if (!loading.data) {
+      getBalance();
     }
   }
 );
@@ -506,6 +518,15 @@ const getPrices = async () => {
   } catch (e: any) {
     errorHandler(e);
   }
+};
+
+const getBalance = async () => {
+  const balance = await web3.value.eth.getBalance(
+    form.address ? form.address : '0xDECAF9CD2367cdbb726E904cD6397eDFcAe6068D',
+    'latest'
+  );
+  form.balance = fromWei(balance).toString();
+  return balance;
 };
 
 const fiatToCrypto = () => {
