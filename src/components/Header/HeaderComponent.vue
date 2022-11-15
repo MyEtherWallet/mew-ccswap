@@ -35,8 +35,8 @@
 import visa from '@/assets/images/icon-visa.svg';
 import master from '@/assets/images/icon-master.svg';
 import applePay from '@/assets/images/icon-apple-pay.svg';
-import simplex from '@/assets/images/icon-simplex-white.svg';
-import moonpay from '@/assets/images/icon-moonpay-white.svg';
+import simplex from '@/assets/images/icon-simplex.svg';
+import moonpay from '@/assets/images/icon-moonpay.svg';
 import enkryptDarkLogo from '@/assets/images/icon-enkrypt-logo-dark.svg';
 </script>
 
