@@ -1,6 +1,6 @@
 <template>
   <div
-    class="component--promo"
+    class="component--promo dropShadow"
     :style="$vuetify.display.lgAndUp ? 'padding: 150px 0' : 'padding: 100px 0'"
   >
     <div>
