@@ -9,7 +9,9 @@
         <div class="mew-heading-4 textDark--text">
           How much do you want to sell?
         </div>
-        <div class="text-mew">Balance: {{ form.balance }}</div>
+        <div v-if="!loading.data" class="text-mew">
+          Balance: {{ form.balance }}
+        </div>
       </div>
       <div class="d-flex mt-2">
         <v-text-field
@@ -20,8 +22,7 @@
           variant="outlined"
           rounded="left"
           :rules="rules"
-          :error-messages="loading.alertMessage"
-          :disabled="loading.data"
+          :disabled="loading.data || !hasEnoughCrypto"
           class="mr-1"
         ></v-text-field>
         <v-select
@@ -146,14 +147,15 @@
     <div v-if="!loading.processingBuyForm" class="pt-2 text-center">
       <div>
         <v-btn
+          flat
           rounded="pill"
           :disabled="!isValidForm"
           min-height="60px"
           width="360px"
-          color="#05C0A5"
+          color="#c549ff"
           @click="submitForm"
         >
-          <div class="text-white">Continue</div>
+          <div class="text-white">Sell Now</div>
         </v-btn>
       </div>
       <!--
@@ -216,11 +218,11 @@ import MewAddressSelect from '../MewAddressSelect/MewAddressSelect.vue';
 import { Networks } from './network/networks';
 import { Crypto, Data, Network, Fiat } from './network/types';
 import Web3 from 'web3';
-import { utils } from 'ethers';
-const polkdadot_chains = ['DOT', 'KSM'];
+import { formatFloatingPointValue } from '@/helpers/numberFormatHelper';
 
 const mewWalletImg = mewWallet;
 const defaultFiatValue = '0';
+const polkdadot_chains = ['DOT', 'KSM'];
 let gasPrice = '0';
 
 const addressBook = [
@@ -402,12 +404,6 @@ const networkFee = computed(() => {
   return fromWei(BigNumber(gasPrice).times(21000).toString());
 });
 
-const networkPrice = computed(() => {
-  return moonpayData[props.networkSelected.currencyName].prices[
-    form.fiatSelected
-  ];
-});
-
 // methods
 const getIcon = (currency: string, isFiat = true) => {
   return require(`@/assets/images/${
@@ -530,13 +526,19 @@ const getPrices = async () => {
 };
 
 const getBalance = async () => {
-  const balance = await web3.value.eth.getBalance(
-    form.address ? form.address : '0xDECAF9CD2367cdbb726E904cD6397eDFcAe6068D',
-    'latest'
-  );
-  form.balance = fromWei(balance).toString();
+  const balance = form.address
+    ? await web3.value.eth.getBalance(form.address, 'latest')
+    : '0';
+  form.balance = formatFloatingPointValue(fromWei(balance)).value;
   return balance;
 };
+
+const hasEnoughCrypto = computed(() => {
+  if (!form.balance) return false;
+  return BigNumber(form.cryptoAmount)
+    .plus(BigNumber(21000).times(gasPrice))
+    .lte(form.balance);
+});
 
 const fiatToCrypto = () => {
   const { fiatSelected, fiatAmount, cryptoSelected } = form;
