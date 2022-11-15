@@ -354,7 +354,9 @@ export default defineComponent({
   },
 });
 </script>
-
+<style lang="scss" scoped>
+$greyLight-base: #f2f3f6;
+$greyPrimary-base: #5a678a;
   .section-block {
     border-radius: 12px;
     left: 0px;
