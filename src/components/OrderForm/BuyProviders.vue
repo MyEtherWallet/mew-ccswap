@@ -17,7 +17,7 @@
           class="provider-logo"
           :src="moonpayLogo"
           alt="Moonpay"
-          height="18"
+          height="28"
         />
         <div v-if="!loading" class="mb-3">
           <div class="d-flex mb-1 align-center justify-space-between">
@@ -354,35 +354,38 @@ export default defineComponent({
   },
 });
 </script>
-
 <style lang="scss" scoped>
-// Variables
 $greyLight-base: #f2f3f6;
 $greyPrimary-base: #5a678a;
-.section-block {
-  border-radius: 12px;
-  left: 0px;
-  top: 0px;
-  box-sizing: border-box;
-  border: 1px solid #d7dae3;
-  flex: none;
-  order: 0;
-  align-self: stretch;
-  flex-grow: 0;
-  margin: 8px 0px;
-  position: relative;
-}
-.provider-logo {
-  position: absolute;
-  top: 18px;
-  right: 20px;
-}
-.grey-light {
-  background-color: $greyLight-base !important;
-  border-color: $greyLight-base !important;
-}
-.greyPrimary--text {
-  color: $greyPrimary-base !important;
-  caret-color: $greyPrimary-base !important;
-}
+  .section-block {
+    border-radius: 12px;
+    left: 0px;
+    top: 0px;
+    box-sizing: border-box;
+    border: 1px solid #d7dae3;
+    flex: none;
+    order: 0;
+    align-self: stretch;
+    flex-grow: 0;
+    margin: 8px 0px;
+    position: relative;
+  }
+  .provider-logo {
+    position: absolute;
+    top: 18px;
+    right: 20px;
+  }
+  .grey-light {
+    background-color: $greyLight-base !important;
+    border-color: $greyLight-base !important;
+  }
+  .greyPrimary--text {
+    color: $greyPrimary-base !important;
+    caret-color: $greyPrimary-base !important;
+  }
+</style>
+<style lang="scss">
+  .v-tooltip .v-overlay__content{
+    background: transparent !important;
+  }
 </style>
