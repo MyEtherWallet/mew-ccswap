@@ -196,7 +196,6 @@ import {
 } from './prices';
 import { isObject, isNumber, isString, isEmpty } from 'lodash';
 import WAValidator from 'multicoin-address-validator';
-import mewWallet from '@/assets/images/icon-mew-wallet.png';
 import { isHexStrict, isAddress, fromWei } from 'web3-utils';
 import { encodeAddress } from '@polkadot/keyring';
 import MewAddressSelect from '../MewAddressSelect/MewAddressSelect.vue';
@@ -209,7 +208,6 @@ import { Crypto, Data, Network, Fiat } from './network/types';
 import Web3 from 'web3';
 import { init, calculateFiatFee } from './models/purchaseSimplexFeeModel';
 
-const mewWalletImg = mewWallet;
 const defaultFiatValue = '0';
 let gasPrice = '0';
 const polkdadot_chains = ['DOT', 'KSM'];
@@ -459,6 +457,8 @@ const fiatMultiplier = computed(() => {
   return BigNumber(1);
 });
 const networkFee = computed(() => {
+  console.log('before', fromWei(BigNumber(gasPrice).times(21000).toString()));
+  // console.log('after', fromWei(gasPrice).times(21000).toString()));
   return fromWei(BigNumber(gasPrice).times(21000).toString());
 });
 const priceOb = computed(() => {
@@ -488,7 +488,8 @@ const plusFee = computed(() => {
 });
 const plusFeeF = computed(() => {
   const isAvailable = isValidData(moonpayData);
-  if (!isAvailable) return `${form.cryptoSelected} is not available for this provider`;
+  if (!isAvailable)
+    return `${form.cryptoSelected} is not available for this provider`;
   const moonpayLimit =
     moonpayData[form.cryptoSelected].limits[form.fiatSelected];
   return moonpayLimit.max > Number.parseFloat(form.fiatAmount)
@@ -520,37 +521,42 @@ const simplexAvailable = computed(() => isValidData(simplexData));
 const fiatCurrency = computed(() => {
   return { decimals: form.fiatSelected === 'JPY' ? 0 : 2 };
 });
-const simplexPrice = computed(() => BigNumber(
-  simplexAvailable.value
-    ? simplexData[form.cryptoSelected].prices[form.fiatSelected]
-    : 0
-));
-const simplexFiatAmount = computed(() => simplexAvailable.value
-  ? form.fiatAmount
-  : '0.00'
+const simplexPrice = computed(() =>
+  BigNumber(
+    simplexAvailable.value
+      ? simplexData[form.cryptoSelected].prices[form.fiatSelected]
+      : 0
+  )
+);
+const simplexFiatAmount = computed(() =>
+  simplexAvailable.value ? form.fiatAmount : '0.00'
 );
 const simplexFiatFee = computed(() => {
   const { fiatSelected, cryptoSelected } = form;
   return simplexAvailable.value
-  ? calculateFiatFee(
-    Number.parseFloat(simplexFiatAmount.value), { 
-      price: simplexPrice.value.toNumber(),
-      fiatCurrency: fiatCurrency.value
-    }, {
-      rate: simplexData[cryptoSelected].conversion_rates[fiatSelected],
-      baseRate: simplexData[cryptoSelected].conversion_rates['USD'],
-      fiatCurrency: fiatCurrency.value
-    })
-  : 0
+    ? calculateFiatFee(
+        Number.parseFloat(simplexFiatAmount.value),
+        {
+          price: simplexPrice.value.toNumber(),
+          fiatCurrency: fiatCurrency.value,
+        },
+        {
+          rate: simplexData[cryptoSelected].conversion_rates[fiatSelected],
+          baseRate: simplexData[cryptoSelected].conversion_rates['USD'],
+          fiatCurrency: fiatCurrency.value,
+        }
+      )
+    : 0;
 });
-const simplexPlusFee = computed(() => 
+const simplexPlusFee = computed(() =>
   BigNumber(simplexFiatAmount.value)
     .minus(simplexFiatFee.value)
     .toFixed(fiatCurrency.value.decimals)
 );
-const simplexPlusFeeF = computed(() => simplexAvailable.value
-  ? formatFiatValue(simplexPlusFee.value, currencyConfig.value).value
-  : `${form.cryptoSelected} is not available for this provider`
+const simplexPlusFeeF = computed(() =>
+  simplexAvailable.value
+    ? formatFiatValue(simplexPlusFee.value, currencyConfig.value).value
+    : `${form.cryptoSelected} is not available for this provider`
 );
 const simplexIncludesFeeText = computed(() => {
   return `Includes 5.25% fee (${
@@ -560,7 +566,8 @@ const simplexIncludesFeeText = computed(() => {
 const simplexCryptoAmount = computed(() => {
   const amount = BigNumber(simplexPlusFee.value || '0');
   return simplexAvailable.value
-    ? formatFloatingPointValue(amount.dividedBy(simplexPrice.value).toString()).value
+    ? formatFloatingPointValue(amount.dividedBy(simplexPrice.value).toString())
+        .value
     : 0;
 });
 
@@ -856,10 +863,8 @@ const submitForm = (): void => {
       Number.parseFloat(form.fiatAmount)
     : true;
 
-  const moonpayFiatAmount = moonpayAvailable
-    ? form.fiatAmount
-    : '0.00';
-  
+  const moonpayFiatAmount = moonpayAvailable ? form.fiatAmount : '0.00';
+
   emit('success', {
     simplex_quote: {
       cryptoToFiat: simplexCryptoAmount.value,
@@ -902,8 +907,8 @@ const fetchGasPrice = async (): Promise<void> => {
   }
   gasPrice = await web3.value.eth.getGasPrice();
   const price = isValidData(simplexData)
-      ? simplexData[form.cryptoSelected].prices[form.fiatSelected]
-      : moonpayData[form.cryptoSelected].prices[form.fiatSelected];
+    ? simplexData[form.cryptoSelected].prices[form.fiatSelected]
+    : moonpayData[form.cryptoSelected].prices[form.fiatSelected];
   init(BigNumber(networkFee.value).times(price).toNumber());
 };
 </script>

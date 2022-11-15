@@ -211,7 +211,6 @@ import {
 import { executeMoonpaySell } from './order';
 import { isObject, isNumber, isString, isEmpty } from 'lodash';
 import WAValidator from 'multicoin-address-validator';
-import mewWallet from '@/assets/images/icon-mew-wallet.png';
 import { isHexStrict, isAddress, fromWei } from 'web3-utils';
 import { encodeAddress } from '@polkadot/keyring';
 import MewAddressSelect from '../MewAddressSelect/MewAddressSelect.vue';
@@ -220,7 +219,6 @@ import { Crypto, Data, Network, Fiat } from './network/types';
 import Web3 from 'web3';
 import { formatFloatingPointValue } from '@/helpers/numberFormatHelper';
 
-const mewWalletImg = mewWallet;
 const defaultFiatValue = '0';
 const polkdadot_chains = ['DOT', 'KSM'];
 let gasPrice = '0';
@@ -400,9 +398,9 @@ const cryptoIcon = computed(() => {
   return require(`@/assets/images/crypto/${form.cryptoSelected}.svg`);
 });
 
-const networkFee = computed(() => {
-  return fromWei(BigNumber(gasPrice).times(21000).toString());
-});
+// const networkFee = computed(() => {
+//   return fromWei(BigNumber(gasPrice).times(21000).toString());
+// });
 
 // methods
 const getIcon = (currency: string, isFiat = true) => {
