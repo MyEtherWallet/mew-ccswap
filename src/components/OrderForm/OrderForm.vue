@@ -39,6 +39,7 @@
       :fiat-selected="selectedFiat"
       :moonpay-data="moonpayData"
       :simplex-data="simplexData"
+      :is-sell="isSell"
       @close="close"
       @selectCurrency="setSelectedCurrency"
       @selectedNetwork="setNetwork"
@@ -147,6 +148,9 @@ export default defineComponent({
     tabItems() {
       return ['Buy', 'Sell'];
     },
+    isSell() {
+      return this.activeTab === 1;
+    }
   },
   beforeMount() {
     this.selectedNetwork = this.defaultNetwork;

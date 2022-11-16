@@ -286,7 +286,6 @@ onMounted(async () => {
   getBalance();
   priceTimer = setInterval(getPrices, 1000 * 60 * 2);
   gasTimer = setInterval(fetchGasPrice, 1000 * 60 * 2);
-  // await getCryptoSellPrices();
 });
 
 onUnmounted(async () => {
@@ -371,6 +370,7 @@ watch(
     verifyAddress();
     fiatToCrypto();
     fetchGasPrice();
+    checkBalance();
   }
 );
 
@@ -388,6 +388,7 @@ watch(
     fetchGasPrice();
     if (!loading.data) {
       minMaxError();
+      checkBalance();
     }
   }
 );
@@ -397,6 +398,7 @@ watch(
     fetchGasPrice();
     if (!loading.data) {
       minMaxError();
+      checkBalance();
     }
   }
 );
@@ -407,6 +409,7 @@ watch(
     fetchGasPrice();
     if (!loading.data) {
       getBalance();
+      checkBalance();
     }
   }
 );
@@ -443,6 +446,11 @@ const selectCurrency = (currency: string, isFiat = true) => {
   }
 };
 
+const hasData = () => {
+  const { cryptoSelected, fiatSelected } = form;
+  return !isEmpty(moonpayData[cryptoSelected]?.limits[fiatSelected]);
+};
+
 const isValidForm = computed(() => {
   return (
     minMax.value &&
@@ -467,7 +475,7 @@ const rules = [
 
 const minMax = computed(() => {
   const { cryptoSelected, fiatAmount, fiatSelected } = form;
-  if (!moonpayData[cryptoSelected].limits[fiatSelected]) return false;
+  if (!hasData()) return false;
   const limit = moonpayData[cryptoSelected].limits[fiatSelected];
   const amount = new BigNumber(fiatAmount || 0);
   const valid =
@@ -477,6 +485,7 @@ const minMax = computed(() => {
 });
 
 const minMaxError = () => {
+  if (!hasData()) return;
   console.log('cryptoSelected', form.cryptoSelected);
   console.log('fiatSelected', form.fiatSelected);
   const limit = moonpayData[form.cryptoSelected].limits[form.fiatSelected];
@@ -561,7 +570,7 @@ const displayBalance = () => {
   return formatFloatingPointValue(form.balance).value;
 };
 const userBalance = () => {
-  if (!form.balance) return 0n;
+  if (!form.balance) return toBN(0);
 
   return toBN(form.balance);
 };
@@ -575,7 +584,7 @@ const totalWithFee = computed(() => {
   return subtotalSell.value.add(networkFee.value);
 });
 const subtotalSell = computed(() => {
-  if (!form.balance || form.balance === '0') return 0n;
+  if (!form.balance || form.balance === '0') return toBN(0);
   return toBN(form.cryptoAmount);
 });
 
@@ -584,12 +593,13 @@ const checkBalance = () => {
     form.balanceErrorMsg = '';
     return;
   }
-  if (subtotalSell.value > userBalance()) {
-    form.balanceErrorMsg = 'You do not have enough ETH to sell';
-  } else if (!hasEnoughCrypto.value) {
+  if (subtotalSell.value.gt(userBalance())) {
     form.balanceErrorMsg = 'You do not have enough ETH to sell';
   }
-  form.balanceErrorMsg = '';
+  else if (!hasEnoughCrypto.value) {
+    form.balanceErrorMsg = 'You do not have enough ETH to pay for network fees';
+  }
+  else form.balanceErrorMsg = '';
 };
 
 const fiatToCrypto = () => {
