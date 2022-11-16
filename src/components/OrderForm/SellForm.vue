@@ -206,6 +206,7 @@ import {
   PropType,
   onUnmounted,
   ref,
+  Ref,
 } from 'vue';
 import BigNumber from 'bignumber.js';
 import {
@@ -217,13 +218,14 @@ import {
 import { executeMoonpaySell } from './order';
 import { isObject, isNumber, isString, isEmpty } from 'lodash';
 import WAValidator from 'multicoin-address-validator';
-import { isHexStrict, isAddress, fromWei, toBN } from 'web3-utils';
+import { isHexStrict, isAddress, fromWei, toBN, AbiItem } from 'web3-utils';
 import { encodeAddress } from '@polkadot/keyring';
 import MewAddressSelect from '../MewAddressSelect/MewAddressSelect.vue';
 import { Networks } from './network/networks';
 import { Crypto, Data, Network, Fiat } from './network/types';
 import Web3 from 'web3';
 import { formatFloatingPointValue } from '@/helpers/numberFormatHelper';
+// import { abi } from './handler/abiERC20';
 
 const defaultFiatValue = '0';
 const polkdadot_chains = ['DOT', 'KSM'];
@@ -250,7 +252,7 @@ const emit = defineEmits([
 
 const props = defineProps({
   cryptoSelected: {
-    type: Object,
+    type: Object as PropType<Crypto>,
     default: () => ({}),
   },
   networkSelected: {
@@ -286,6 +288,7 @@ onMounted(async () => {
   getBalance();
   priceTimer = setInterval(getPrices, 1000 * 60 * 2);
   gasTimer = setInterval(fetchGasPrice, 1000 * 60 * 2);
+  fiatItems.value = Object.getOwnPropertyNames(moonpayData['ETH'].prices);
 });
 
 onUnmounted(async () => {
@@ -294,8 +297,9 @@ onUnmounted(async () => {
 });
 
 // non-reactive
-const fiatItems: string[] = supportedFiat;
 const cryptoItems: string[] = supportedCrypto;
+// reactive
+let fiatItems: Ref<string[]> = ref(supportedFiat);
 
 let moonpayData: { [key: string]: Data } = {
   ETH: {
@@ -336,6 +340,7 @@ const form = reactive({
   reCaptchaToken: '',
   addressError: false,
   balance: '',
+  balanceWei: '',
   balanceError: false,
   balanceErrorMsg: '',
 });
@@ -409,7 +414,6 @@ watch(
     fetchGasPrice();
     if (!loading.data) {
       getBalance();
-      checkBalance();
     }
   }
 );
@@ -503,7 +507,6 @@ const getPrices = async () => {
   try {
     loading.data = true;
     const data: any[] = (await getCryptoSellPrices()) || [];
-    console.log('data', data);
     data.forEach((arr: any) => {
       arr.forEach((d: any) => {
         const tmp: Data = { conversion_rates: {}, limits: {}, prices: {} };
@@ -560,7 +563,10 @@ const getBalance = async () => {
   const balance = form.address
     ? await web3.value.eth.getBalance(form.address, 'latest')
     : '0';
+  form.balanceWei = balance;
   form.balance = fromWei(balance);
+
+  checkBalance();
   return balance;
 };
 
@@ -572,12 +578,12 @@ const displayBalance = () => {
 const userBalance = () => {
   if (!form.balance) return toBN(0);
 
-  return toBN(form.balance);
+  return toBN(form.balanceWei);
 };
 
 const hasEnoughCrypto = computed(() => {
   if (!form.balance || form.balance === '0') return false;
-  return totalWithFee.value.lte(toBN(form.balance));
+  return totalWithFee.value.lte(toBN(form.balanceWei));
 });
 const totalWithFee = computed(() => {
   if (subtotalSell.value === toBN(0)) return networkFee.value;
@@ -585,15 +591,20 @@ const totalWithFee = computed(() => {
 });
 const subtotalSell = computed(() => {
   if (!form.balance || form.balance === '0') return toBN(0);
-  return toBN(form.cryptoAmount);
+  const base = toBN(10).pow(toBN(props.cryptoSelected.decimals));
+  const amount = base.muln(parseFloat(form.cryptoAmount));
+  console.log('amount', amount.toString());
+  return amount;
 });
 
 const checkBalance = () => {
+  const balance = userBalance();
   if (!form.validAddress) {
     form.balanceErrorMsg = '';
     return;
   }
-  if (subtotalSell.value.gt(userBalance())) {
+  console.log('userBalance: ', balance.toString());
+  if (subtotalSell.value.gt(balance)) {
     form.balanceErrorMsg = 'You do not have enough ETH to sell';
   }
   else if (!hasEnoughCrypto.value) {
@@ -719,6 +730,27 @@ const fetchGasPrice = async (): Promise<void> => {
   }
   gasPrice.value = await web3.value.eth.getGasPrice();
 };
+
+// const getTokenBalance = (contract: string) => {
+//       // if (!isValidAddress(contract)) return;
+//       const newContract = new web3.value.eth.Contract(
+//         abi,
+//         contract
+//       );
+//       newContract.methods
+//         .balanceOf(rootState.wallet.address)
+//         .call()
+//         .then(res => {
+//           newToken.balancef = _getTokenBalance(res, item.decimals).value;
+//           newToken.balance = res;
+//           dispatch('setCustomToken', newToken);
+//         })
+//         .catch(e => Toast(e.message, {}, ERROR));
+
+
+//   // usdt: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
+//   // usdc: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'
+// };
 </script>
 
 <style lang="scss" scoped>
