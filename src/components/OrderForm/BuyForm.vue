@@ -480,7 +480,10 @@ const fiatMultiplier = computed(() => {
   return toBN(1).toString();
 });
 const networkFee = computed(() => {
-  return fromWei(toBN(gasPrice).muln(21000).toString());
+  return fromWei(networkFeeWei.value);
+});
+const networkFeeWei = computed(() => {
+  return toBN(gasPrice).muln(21000).toString();
 });
 const priceOb = computed(() => {
   return isValidData(moonpayData)
@@ -493,7 +496,7 @@ const networkPrice = computed(() => {
     : simplexData[props.networkSelected.currencyName].prices[form.fiatSelected];
 });
 const networkFeeToFiat = computed(() => {
-  return BigNumber(networkFee.value).times(networkPrice.value).toString();
+  return fromWei(toBN(networkFeeWei.value).muln(parseFloat(networkPrice.value)));
 });
 const minFee = computed(() => {
   return BigNumber(3.99).toString(); // Minimum 3.99 in respective currency

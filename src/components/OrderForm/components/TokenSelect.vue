@@ -35,6 +35,7 @@
             </span>
           </template>
           <template #prepend-item>
+            <div class="mew-heading-4 pa-3">Select Network</div>
             <v-text-field 
               v-model="networkSearchInput"
               variant="outlined"
@@ -125,7 +126,6 @@
 import { defineComponent, PropType } from 'vue';
 import { Crypto, Network, Data, Fiat } from '../types';
 import { Networks } from '../network/networks';
-import BigNumber from 'bignumber.js';
 import { formatFiatValue } from '@/helpers/numberFormatHelper';
 
 export default defineComponent({
@@ -244,21 +244,17 @@ export default defineComponent({
       this.networkDropdown = false;
     },
     tokenPrice(token: string) {
-      const simplexPrice = new BigNumber(
-        this.simplexData[token]?.prices[this.fiatName]
-      );
-      const moonpayPrice = new BigNumber(
-        this.moonpayData[token]?.prices[this.fiatName]
-      );
+      const simplexPrice = parseFloat(this.simplexData[token]?.prices[this.fiatName]);
+      const moonpayPrice = parseFloat(this.moonpayData[token]?.prices[this.fiatName]);
       const rate =
         this.moonpayData[token]?.conversion_rates[this.fiatName] ||
         this.simplexData[token]?.conversion_rates[this.fiatName];
       const currencyConfig = { locale: 'en-US', rate, currency: this.fiatName };
-      if (moonpayPrice.isNaN())
+      if (isNaN(moonpayPrice))
         return formatFiatValue(simplexPrice.toFixed(2), currencyConfig).value;
-      if (simplexPrice.isNaN())
+      if (isNaN(simplexPrice))
         return formatFiatValue(moonpayPrice.toFixed(2), currencyConfig).value;
-      const price = simplexPrice.lte(moonpayPrice)
+      const price = simplexPrice <= moonpayPrice
         ? simplexPrice
         : moonpayPrice;
       return formatFiatValue(price.toFixed(2), currencyConfig).value;
