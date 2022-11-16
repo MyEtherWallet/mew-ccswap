@@ -59,9 +59,6 @@
 <script lang="ts">
 import { isEmpty } from 'lodash';
 
-//   import nodes from '@/utils/networks';
-
-//   import handler from './handlers/handlerOrder';
 import MewTabs from '../MewTabs/MewTabs.vue';
 import BuyForm from './BuyForm.vue';
 import BuyProviders from './BuyProviders.vue';
@@ -111,14 +108,8 @@ export default defineComponent({
   },
   computed: {
     defaultCurrency(): Crypto {
-      // if (isEmpty(this.selectedCurrency) && this.supportedBuy) {
-      //   const token = this.contractToToken(MAIN_TOKEN_ADDRESS);
-      //   token.value = token.symbol;
-      //   return token;
-      // } else
       if (
         isEmpty(this.selectedCurrency) ||
-        // !this.supportedBuy ||
         (this.activeTab === 1 && !this.supportedSell)
       ) {
         return {
@@ -142,18 +133,10 @@ export default defineComponent({
       }
       return this.selectedNetwork;
     },
-    // supportedBuy() {
-    //   return (
-    //     this.selectedNetwork.name === 'ETH' ||
-    //     this.selectedNetwork.name === 'BSC' ||
-    //     this.selectedNetwork.name === 'MATIC'
-    //   );
-    // },
     supportedSell() {
       return (
-        this.selectedCurrency.symbol === 'ETH' ||
-        this.selectedCurrency.symbol === 'USDT' ||
-        this.selectedCurrency.symbol === 'USDC'
+        this.selectedCurrency.symbol !== 'DOT' &&
+        this.selectedCurrency.symbol !== 'KSM'
       );
     },
     leftBtn() {
@@ -169,47 +152,15 @@ export default defineComponent({
     this.selectedNetwork = this.defaultNetwork;
     this.selectedCurrency = this.defaultCurrency;
   },
-  watch: {
-    address() {
-      // this.selectedCurrency = this.defaultCurrency;
-    },
-    network() {
-      // this.selectedCurrency = {};
-      // this.selectedCurrency = this.defaultCurrency;
-      // this.setTokens();
-    },
-  },
   methods: {
     onTab(val: number) {
       this.selectedCurrency = {} as Crypto;
       this.selectedCurrency = this.defaultCurrency;
-      // if (val === 1 || (val === 0 && (!this.supportedBuy || !this.inWallet))) {
-      //   if (this.network.type.chainID !== 1) {
-      //     const defaultNetwork = this.nodes['ETH'].find(item => {
-      //       return item.service === 'myetherwallet.com-ws';
-      //     });
-      //     if (
-      //       !this.instance ||
-      //       (this.instance &&
-      //         this.instance.identifier !== WALLET_TYPES.WEB3_WALLET)
-      //     ) {
-      //       this.setNetwork({ network: defaultNetwork }).then(() => {
-      //         this.setWeb3Instance();
-      //         this.activeTab = val;
-      //         Toast(`Switched network to: ETH`, {}, SUCCESS);
-      //       });
-      //     }
-      //   }
-      // } else {
+      this.selectedNetwork = {} as Network;
+      this.selectedNetwork = this.defaultNetwork;
       this.activeTab = val;
-      // }
     },
-    // setTokens() {
-    //   const tokenMap = new Map();
-    //   const tokens = this.selectedNetwork.tokens;
-    // },
     close() {
-      this.activeTab = 0;
       this.step = 0;
       this.onlySimplex = false;
     },

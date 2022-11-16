@@ -142,6 +142,27 @@ async function getSupportedFiatToSell(symbol: string) {
       .then(res => res.data);
 }
 
+async function getCryptoSellPrices(
+  cryptoCurrency?: "ETH" | "MATIC" | "BNB" | "USDT" | "USDC"
+) {
+  if (cryptoCurrency)
+    return await getSupportedFiatToSell(cryptoCurrency)
+      .then((response) => filterData(response))
+      .catch((e) => {
+        throw e;
+      });
+  const cryptos = ["ETH", "BNB", "MATIC", "USDT", "USDC", "DAI"];
+  return Promise.all(
+    cryptos.map((c) =>
+      getSupportedFiatToSell(c)
+      .catch((e) => {
+        throw e;
+      }))
+    ).catch((e) => {
+    throw e;
+  });
+}
+
 export {
   supportedCrypto,
   supportedFiat,
@@ -150,5 +171,6 @@ export {
   getCryptoPrices,
   getFiatRatesForBuy,
   getSupportedFiatToBuy,
-  getSupportedFiatToSell
+  getSupportedFiatToSell,
+  getCryptoSellPrices
 };
