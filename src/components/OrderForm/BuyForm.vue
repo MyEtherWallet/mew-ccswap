@@ -413,12 +413,13 @@ const web3 = computed(() => {
  */
 const includesFeeText = computed(() => {
   return `Includes ${percentFee.value} fee (${
-    formatFiatValue(minFee.value, currencyConfig.value).value
+    formatFiatValue(minFee.value.toString(), currencyConfig.value).value
   } min)`;
 });
 const networkFeeText = computed(() => {
   return `${form.cryptoSelected} network fee (for transfers to your wallet) ~${
-    formatFiatValue(networkFeeToFiat.value, currencyConfig.value).value
+    formatFiatValue(networkFeeToFiat.value.toString(), currencyConfig.value)
+      .value
   }`;
 });
 const dailyLimit = (isMoonpay = false) => {
@@ -434,7 +435,7 @@ const dailyLimit = (isMoonpay = false) => {
   }`;
 };
 const monthlyLimit = () => {
-  const value = BigNumber(fiatMultiplier.value).times(50000);
+  const value = toBN(fiatMultiplier.value).muln(50000);
   return `Monthly limit: ${
     formatFiatValue(value.toString(), currencyConfig.value).value
   }`;
@@ -452,13 +453,13 @@ const fiatMultiplier = computed(() => {
     const selectedCurrencyPrice =
       moonpayData[form.cryptoSelected].conversion_rates[form.fiatSelected];
     return selectedCurrencyPrice
-      ? BigNumber(selectedCurrencyPrice)
-      : BigNumber(1);
+      ? toBN(selectedCurrencyPrice).toString()
+      : toBN(1).toString();
   }
-  return BigNumber(1);
+  return toBN(1).toString();
 });
 const networkFee = computed(() => {
-  return fromWei(toBN(gasPrice).mul(toBN(21000)).toString());
+  return fromWei(toBN(gasPrice).muln(21000).toString());
 });
 const priceOb = computed(() => {
   return isValidData(moonpayData)
@@ -471,19 +472,19 @@ const networkPrice = computed(() => {
     : simplexData[props.networkSelected.currencyName].prices[form.fiatSelected];
 });
 const networkFeeToFiat = computed(() => {
-  return toBN(networkFee.value).mul(toBN(networkPrice.value)).toString();
+  return toBN(networkFee.value).mul(toBN(networkPrice.value));
 });
 const minFee = computed(() => {
-  return toBN(3.99).toString(); // Minimum 3.99 in respective currency
+  return toBN(3.99); // Minimum 3.99 in respective currency
 });
 const plusFee = computed(() => {
   const fee = isEUR.value
-    ? BigNumber(BigNumber(0.7).div(100)).times(form.fiatAmount) // 0.7% SEPA fee
-    : BigNumber(BigNumber(3.25).div(100)).times(form.fiatAmount); // Standard 3.25% fee
+    ? toBN(toBN(0.7).divn(100).toString()).mul(toBN(form.fiatAmount)) // 0.7% SEPA fee
+    : toBN(toBN(3.25).divn(100).toString()).mul(toBN(form.fiatAmount)); // Standard 3.25% fee
   const withFee = fee.gt(minFee.value)
-    ? BigNumber(form.fiatAmount).minus(fee)
-    : BigNumber(form.fiatAmount).minus(fee).minus(minFee.value);
-  return withFee.minus(networkFeeToFiat.value).toString();
+    ? toBN(form.fiatAmount).sub(fee)
+    : toBN(form.fiatAmount).sub(fee).sub(minFee.value);
+  return withFee.sub(networkFeeToFiat.value).toString();
 });
 const plusFeeF = computed(() => {
   const isAvailable = isValidData(moonpayData);
@@ -777,7 +778,7 @@ const loadUrlParameters = () => {
 // };
 
 const errorHandler = (e: any): void => {
-  const value = new BigNumber(form.fiatAmount).gt(0);
+  const value = toBN(form.fiatAmount).gt(toBN(0));
   if (value) {
     const isErrorObj = isObject(e.response.data.error);
     if (isErrorObj) {
