@@ -75,7 +75,7 @@
           style="max-width: 120px"
           class="rounded-right no-left-border"
           v-model="form.fiatSelected"
-          :items="fiatItems"
+          :items="filteredFiatItems"
           :disabled="loading.data"
           :menu-props="{ closeOnContentClick: true }"
           return-object
@@ -96,7 +96,10 @@
               variant="outlined"
               class="mr-1"
               prepend-inner-icon="mdi-magnify"
+              density="compact"
+              placeholder="Search"
               :autofocus="true"
+              @update:model-value="updateFiatFilter"
             ></v-text-field>
           </template>
           <template #item="data">
@@ -235,6 +238,34 @@ let gasPrice = ref('0');
 let priceTimer: NodeJS.Timer, gasTimer: NodeJS.Timer;
 let fiatFilter = '';
 
+let moonpayData: { [key: string]: Data } = {
+  ETH: {
+    conversion_rates: {},
+    limits: {},
+    prices: {},
+  },
+  MATIC: {
+    conversion_rates: {},
+    limits: {},
+    prices: {},
+  },
+  BNB: {
+    conversion_rates: {},
+    limits: {},
+    prices: {},
+  },
+  DOT: {
+    conversion_rates: {},
+    limits: {},
+    prices: {},
+  },
+  KSM: {
+    conversion_rates: {},
+    limits: {},
+    prices: {},
+  },
+};
+
 const addressBook = [
   {
     address: '0xDECAF9CD2367cdbb726E904cD6397eDFcAe6068D',
@@ -290,7 +321,7 @@ onMounted(async () => {
   getBalance();
   priceTimer = setInterval(getPrices, 1000 * 60 * 2);
   gasTimer = setInterval(fetchGasPrice, 1000 * 60 * 2);
-  fiatItems.value = Object.getOwnPropertyNames(moonpayData['ETH'].prices);
+  filteredFiatItems.value = Object.getOwnPropertyNames(moonpayData['ETH']?.prices);
 });
 
 onUnmounted(async () => {
@@ -301,35 +332,16 @@ onUnmounted(async () => {
 // non-reactive
 const cryptoItems: string[] = supportedCrypto;
 // reactive
-let fiatItems: Ref<string[]> = ref(supportedFiat);
-
-let moonpayData: { [key: string]: Data } = {
-  ETH: {
-    conversion_rates: {},
-    limits: {},
-    prices: {},
-  },
-  MATIC: {
-    conversion_rates: {},
-    limits: {},
-    prices: {},
-  },
-  BNB: {
-    conversion_rates: {},
-    limits: {},
-    prices: {},
-  },
-  DOT: {
-    conversion_rates: {},
-    limits: {},
-    prices: {},
-  },
-  KSM: {
-    conversion_rates: {},
-    limits: {},
-    prices: {},
-  },
+const fiatItems: string[] = supportedFiat;
+const filteredFiatItems: Ref<string[]> = ref(fiatItems);
+const updateFiatFilter = (value: string) => {
+  fiatFilter = value;
+  const items = Object.getOwnPropertyNames(moonpayData['ETH']?.prices);
+  filteredFiatItems.value = items.filter(item =>
+    item.toLowerCase().includes(fiatFilter.toLowerCase())
+  );
 };
+
 // reactive
 const form = reactive({
   fiatAmount: defaultFiatValue,

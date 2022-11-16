@@ -33,7 +33,7 @@
           style="max-width: 120px"
           class="rounded-right no-left-border"
           v-model="form.fiatSelected"
-          :items="fiatItems"
+          :items="filteredFiatItems"
           :disabled="loading.data"
           :menu-props="{ closeOnContentClick: true }"
           return-object
@@ -56,6 +56,9 @@
               class="mr-1"
               prepend-inner-icon="mdi-magnify"
               :autofocus="true"
+              density="compact"
+              placeholder="Search"
+              @update:model-value="updateFiatFilter"
             ></v-text-field>
           </template>
           <template #item="data">
@@ -195,6 +198,8 @@ import {
   defineProps,
   PropType,
   onUnmounted,
+  ref,
+  Ref,
 } from 'vue';
 import BigNumber from 'bignumber.js';
 import {
@@ -290,6 +295,13 @@ const props = defineProps({
 
 // non-reactive
 const fiatItems: string[] = supportedFiat;
+const filteredFiatItems: Ref<string[]> = ref(fiatItems);
+const updateFiatFilter = (value: string) => {
+  fiatFilter = value;
+  filteredFiatItems.value = fiatItems.filter(item =>
+  item.toLowerCase().includes(fiatFilter.toLowerCase())
+  );
+};
 const cryptoItems: string[] = supportedCrypto;
 
 let simplexData: { [key: string]: Data } = {

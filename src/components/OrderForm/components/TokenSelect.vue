@@ -40,6 +40,7 @@
               variant="outlined"
               class="mr-1"
               prepend-inner-icon="mdi-magnify"
+              placeholder="Search"
               :autofocus="true"
             ></v-text-field>
           </template>
@@ -74,6 +75,7 @@
           variant="outlined"
           class="mr-1"
           prepend-inner-icon="mdi-magnify"
+          placeholder="Search"
           :autofocus="true"
         ></v-text-field>
       </div>
