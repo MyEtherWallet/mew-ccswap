@@ -246,10 +246,7 @@ export default defineComponent({
     tokenPrice(token: string) {
       const simplexPrice = parseFloat(this.simplexData[token]?.prices[this.fiatName]);
       const moonpayPrice = parseFloat(this.moonpayData[token]?.prices[this.fiatName]);
-      const rate =
-        this.moonpayData[token]?.conversion_rates[this.fiatName] ||
-        this.simplexData[token]?.conversion_rates[this.fiatName];
-      const currencyConfig = { locale: 'en-US', rate, currency: this.fiatName };
+      const currencyConfig = { locale: 'en-US', rate: 1, currency: this.fiatName };
       if (isNaN(moonpayPrice))
         return formatFiatValue(simplexPrice.toFixed(2), currencyConfig).value;
       if (isNaN(simplexPrice))

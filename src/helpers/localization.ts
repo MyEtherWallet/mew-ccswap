@@ -1,6 +1,6 @@
-import BigNumber from 'bignumber.js';
 import { isNull } from 'lodash';
-import { isBigNumber } from 'web3-utils';
+import { isBN, toBN } from 'web3-utils';
+import { fromBase, toBase } from './units';
 
 /**
  * Localizes numbers to its specified currency
@@ -36,20 +36,24 @@ export const localizeCurrency = ({
       ? currencyToNumber(number)
       : number.tooltipText
       ? currencyToNumber(number.tooltipText)
-      : isBigNumber(number)
+      : isBN(number)
       ? currencyToNumber(number.toString())
       : number;
-  //const locale = locales[currency] ? locales[currency] : 'en-US';
   if (isNaN(number)) {
     return convertNumber({ currency, options: {}, convertedPrice: 0.0 });
   }
+  const decimals = number.toString().split('.')[1]?.length || 0;
   const convertedPrice = small
-    ? new BigNumber(number).times(rate).toFixed(6)
+    ? priceConversion(number, decimals, rate).toFixed(6)
     : verySmall
-    ? new BigNumber(number).times(rate).toFixed(7)
-    : new BigNumber(number).times(rate);
+    ? priceConversion(number, decimals, rate).toFixed(7)
+    : priceConversion(number, decimals, rate);
   return convertNumber({ currency, options, convertedPrice: Number.parseFloat(convertedPrice.toString()) });
 };
+
+const priceConversion = (num: number, decimals: number, rate: number): number => {
+  return parseFloat(fromBase(toBN(toBase(num, decimals)).muln(rate).toString(), decimals))
+}
 
 /**
  * Converts string representing fiat to a float
