@@ -933,7 +933,7 @@ const fetchGasPrice = async (): Promise<void> => {
   const price = isValidData(simplexData)
     ? simplexData[form.cryptoSelected].prices[form.fiatSelected]
     : moonpayData[form.cryptoSelected].prices[form.fiatSelected];
-  init(BigNumber(networkFee.value).times(price).toNumber());
+  init(parseFloat(networkFee.value) * parseFloat(price));
 };
 </script>
 
