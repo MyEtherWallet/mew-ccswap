@@ -78,11 +78,8 @@
           :items="fiatItems"
           :disabled="loading.data"
           :menu-props="{ closeOnContentClick: true }"
-          :menu="dropdown.fiat"
           return-object
           variant="outlined"
-          @focusin="dropdown.fiat = true"
-          @blur="dropdown.fiat = false"
         >
           <template #prepend-inner>
             <img
@@ -92,6 +89,15 @@
               width="25px"
               height="25px"
             />
+          </template>
+          <template #prepend-item>
+            <v-text-field 
+              v-model="fiatFilter"
+              variant="outlined"
+              class="mr-1"
+              prepend-inner-icon="mdi-magnify"
+              :autofocus="true"
+            ></v-text-field>
           </template>
           <template #item="data">
             <div
@@ -164,7 +170,7 @@
           @click="submitForm"
           class="sell-button"
         >
-          <div class="text-white font-weight-bold">Sell Now</div>
+          <div class="text-white font-weight-bold">Sell With Moonpay</div>
         </v-btn>
       </div>
     </div>
@@ -227,6 +233,7 @@ const polkdadot_chains = ['DOT', 'KSM'];
 let gasPrice = ref('0');
 // eslint-disable-next-line no-undef
 let priceTimer: NodeJS.Timer, gasTimer: NodeJS.Timer;
+let fiatFilter = '';
 
 const addressBook = [
   {

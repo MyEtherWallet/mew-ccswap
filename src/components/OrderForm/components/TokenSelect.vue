@@ -19,11 +19,8 @@
           label="Network"
           :items="filteredNetworkList"
           :menu-props="{ closeOnContentClick: true }"
-          :menu="networkDropdown"
           return-object
           variant="outlined"
-          @focusin="networkDropdown = true"
-          @blur="networkDropdown = false"
         >
           <template #selection>
             <img
@@ -37,9 +34,15 @@
               {{ networkSelected.name_long }}
             </span>
           </template>
-          <!-- <template #prepend-item>
-            <v-text-field :autofocus="true"></v-text-field>
-          </template> -->
+          <template #prepend-item>
+            <v-text-field 
+              v-model="networkSearchInput"
+              variant="outlined"
+              class="mr-1"
+              prepend-inner-icon="mdi-magnify"
+              :autofocus="true"
+            ></v-text-field>
+          </template>
           <template #item="data">
             <div
               class="d-flex align-center justify-space-between full-width cursor-pointer"
@@ -163,6 +166,7 @@ export default defineComponent({
       networkDropdown: false,
       cryptoDropdown: false,
       searchInput: '',
+      networkSearchInput: '',
     };
   },
   computed: {
@@ -202,12 +206,20 @@ export default defineComponent({
     fiatName() {
       return this.fiatSelected.name;
     },
-    filteredNetworkList() {
+    networkList() {
       return this.isSell 
       ? this.networks.filter(
           network => network.name !== 'DOT' && network.name !== 'KSM'
         )
       : this.networks;
+    },
+    filteredNetworkList() {
+      const filter = this.networkSearchInput.toLowerCase();
+      return this.networkList.filter(network => (
+        network.name.toLowerCase().includes(filter) ||
+        network.name_long.toLowerCase().includes(filter) ||
+        network.currencyName.toLowerCase().includes(filter))
+      );
     },
   },
   beforeMount() {

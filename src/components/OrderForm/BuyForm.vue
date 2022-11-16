@@ -36,11 +36,8 @@
           :items="fiatItems"
           :disabled="loading.data"
           :menu-props="{ closeOnContentClick: true }"
-          :menu="dropdown.fiat"
           return-object
           variant="outlined"
-          @focusin="dropdown.fiat = true"
-          @blur="dropdown.fiat = false"
           append-inner-icon="mdi-chevron-down"
         >
           <template #prepend-inner>
@@ -51,6 +48,15 @@
               width="25px"
               height="25px"
             />
+          </template>
+          <template #prepend-item>
+            <v-text-field 
+              v-model="fiatFilter"
+              variant="outlined"
+              class="mr-1"
+              prepend-inner-icon="mdi-magnify"
+              :autofocus="true"
+            ></v-text-field>
           </template>
           <template #item="data">
             <div
@@ -101,7 +107,6 @@
           :items="cryptoItems"
           :disabled="loading.data"
           :menu-props="{ closeOnContentClick: true }"
-          :menu="dropdown.crypto"
           rounded="right"
           variant="outlined"
           return-object
@@ -217,6 +222,7 @@ let gasPrice = '0';
 const polkdadot_chains = ['DOT', 'KSM'];
 // eslint-disable-next-line no-undef
 let priceTimer: NodeJS.Timer;
+let fiatFilter = '';
 
 const addressBook = [
   {
@@ -399,7 +405,7 @@ watch(
 
 // computed
 const web3 = computed(() => {
-  const supportedNodes: { [key: string]: any } = {
+  const supportedNodes: { [key: string]: string } = {
     ETH: 'ETH',
     BSC: 'BSC',
     MATIC: 'MATIC',
