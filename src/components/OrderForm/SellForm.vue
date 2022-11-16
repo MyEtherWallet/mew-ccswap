@@ -25,7 +25,7 @@
           :disabled="loading.data"
           :error-messages="form.balanceErrorMsg"
           :error="form.balanceError"
-          class="mr-1"
+          class="no-right-border"
         ></v-text-field>
         <v-select
           style="max-width: 120px"
@@ -37,6 +37,7 @@
           rounded="right"
           variant="outlined"
           return-object
+          class="no-left-border"
           @click:control="openTokenSelect"
         >
           <template #prepend-inner>
@@ -68,11 +69,11 @@
           :rules="rules"
           :error-messages="loading.alertMessage"
           :disabled="loading.data"
-          class="mr-1"
+          class="no-right-border"
         ></v-text-field>
         <v-select
           style="max-width: 120px"
-          class="rounded-right"
+          class="rounded-right no-left-border"
           v-model="form.fiatSelected"
           :items="fiatItems"
           :disabled="loading.data"
