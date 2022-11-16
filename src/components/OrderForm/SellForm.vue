@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/no-deprecated-v-on-native-modifier -->
 <template>
-  <div class="pa-3 pa-sm-2 pa-md-2" ref="formDiv">
+  <div class="pa-3 pa-sm-2 pa-md-2 components--sell-form" ref="formDiv">
     <!-- ============================================================================= -->
     <!-- Crypto amount -->
     <!-- ============================================================================= -->
@@ -166,10 +166,10 @@
           :disabled="!isValidForm"
           min-height="60px"
           width="360px"
-          color="#c549ff"
           @click="submitForm"
+          class="sell-button"
         >
-          <div class="text-white">Sell Now</div>
+          <div class="text-white font-weight-bold">Sell Now</div>
         </v-btn>
       </div>
     </div>
@@ -606,11 +606,9 @@ const checkBalance = () => {
   console.log('userBalance: ', balance.toString());
   if (subtotalSell.value.gt(balance)) {
     form.balanceErrorMsg = 'You do not have enough ETH to sell';
-  }
-  else if (!hasEnoughCrypto.value) {
+  } else if (!hasEnoughCrypto.value) {
     form.balanceErrorMsg = 'You do not have enough ETH to pay for network fees';
-  }
-  else form.balanceErrorMsg = '';
+  } else form.balanceErrorMsg = '';
 };
 
 const fiatToCrypto = () => {
@@ -747,14 +745,36 @@ const fetchGasPrice = async (): Promise<void> => {
 //         })
 //         .catch(e => Toast(e.message, {}, ERROR));
 
-
 //   // usdt: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
 //   // usdc: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'
 // };
 </script>
 
 <style lang="scss" scoped>
-.text-bolder {
-  font-weight: 500;
+.sell-button {
+  background: linear-gradient(
+    90deg,
+    rgba(197, 73, 255, 1) 0%,
+    rgba(112, 75, 255, 1) 100%
+  );
+}
+</style>
+
+<style lang="scss">
+.components--sell-form {
+  .v-field__outline__end,
+  .v-field__outline__start {
+    border-color: #c2c2c2;
+  }
+  .no-right-border {
+    .v-field__outline__end {
+      border-radius: 0 !important;
+    }
+  }
+  .no-left-border {
+    .v-field__outline__start {
+      border-radius: 0 !important;
+    }
+  }
 }
 </style>

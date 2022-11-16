@@ -7,17 +7,17 @@
       :class="$vuetify.display.smAndUp ? 'heading-1' : 'heading-1'"
       :style="
         $vuetify.display.smAndUp
-          ? 'margin-top: 100px; max-width: 340px'
-          : 'margin-top: 50px;  max-width: 340px'
+          ? 'margin-top: 100px; max-width: 520px'
+          : 'margin-top: 50px;  max-width: 520px'
       "
     >
-      Buy Ethereum at Lower Rates
+      Buy and Sell Crypto Fast and Secure
     </div>
 
     <div class="d-flex align-center" style="margin-top: 60px">
-      <div class="text-black mr-2">Powered by</div>
-      <img :src="simplex" alt="Simplex" height="30" />
-      <img :src="moonpay" alt="Moonpay" height="30" />
+      <div class="text-black mr-4">Powered by</div>
+      <img class="mr-2" :src="simplex" alt="Simplex" height="25" />
+      <img :src="moonpay" alt="Moonpay" height="25" />
     </div>
 
     <div class="d-flex flex-wrap align-center mt-4">

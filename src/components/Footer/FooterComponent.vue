@@ -26,16 +26,15 @@
         color="#7b61ff"
         href="https://www.myetherwallet.com/wallet/create"
         target="_blank"
-        style="color: white"
       >
-        Get a wallet
+        <div class="text-white font-weight-bold">Get a wallet</div>
       </v-btn>
     </v-container>
   </div>
 </template>
 
 <script setup lang="ts">
-import mewIconLight from '@/assets/images/icon-mew-logo-light.svg';
+import mewIconLight from "@/assets/images/icon-mew-logo-light.svg";
 
 const presentDate = new Date().getFullYear();
 </script>

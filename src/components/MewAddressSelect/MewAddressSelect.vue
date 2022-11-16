@@ -4,6 +4,7 @@
   <!-- Mew Address Select -->
   <!-- ===================================================================================== -->
   <v-combobox
+    append-inner-icon="mdi-chevron-down"
     ref="mewAddressSelect"
     v-model="addressValue"
     class="address-select pa-0 rounded-lg"
@@ -54,7 +55,7 @@
         class="py-4 px-0 full-width d-flex align-center justify-space-between cursor-pointer"
         @click="selectAddress(item)"
       >
-        <div class="d-flex align-center justify-space-between" >
+        <div class="d-flex align-center justify-space-between">
           <mew-blockie
             class="mr-2 ml-2"
             :address="
@@ -81,18 +82,18 @@
 </template>
 
 <script lang="ts">
-import MewBlockie from '@/components/MewBlockie/MewBlockie.vue';
-import MewTransformHash from '../MewTransformHash/MewTransformHash.vue';
-import { defineComponent } from 'vue';
+import MewBlockie from "@/components/MewBlockie/MewBlockie.vue";
+import MewTransformHash from "../MewTransformHash/MewTransformHash.vue";
+import { defineComponent } from "vue";
 
 // data
 const USER_INPUT_TYPES = {
-  typed: 'TYPED',
-  selected: 'SELECTED',
+  typed: "TYPED",
+  selected: "SELECTED",
 };
 
 export default defineComponent({
-  name: 'MewAddressSelect',
+  name: "MewAddressSelect",
   components: {
     MewBlockie,
     MewTransformHash,
@@ -103,7 +104,7 @@ export default defineComponent({
      */
     hint: {
       type: String,
-      default: '',
+      default: "",
     },
     /**
      * For validating your input - accepts an array of functions that take
@@ -121,14 +122,14 @@ export default defineComponent({
      */
     noDataText: {
       type: String,
-      default: '',
+      default: "",
     },
     /**
      * Resolved address for name.
      */
     resolvedAddr: {
       type: String,
-      default: '',
+      default: "",
     },
     /**
      * Disables the input.
@@ -149,7 +150,7 @@ export default defineComponent({
      */
     label: {
       type: String,
-      default: 'To Address',
+      default: "To Address",
     },
     /**
      * The items that are displayed in the dropdown.
@@ -166,14 +167,14 @@ export default defineComponent({
      */
     placeholder: {
       type: String,
-      default: 'Please enter an address',
+      default: "Please enter an address",
     },
     /**
      * Error messages to display when its an invalid value.
      */
     errorMessages: {
       type: [String, Array],
-      default: '',
+      default: "",
     },
     /**
      * Clear address
@@ -188,7 +189,7 @@ export default defineComponent({
       /**
        * The v-model value for the combobox.
        */
-      addressValue: '',
+      addressValue: "",
       /**
        * Controls the dropdown expansion.
        */
@@ -221,7 +222,7 @@ export default defineComponent({
      * Clears the v-model value.
      */
     clear() {
-      this.addressValue = '';
+      this.addressValue = "";
     },
     /**
      * Toggles the dropdown.
@@ -232,10 +233,13 @@ export default defineComponent({
     /**
      * Sets the dropdown item to be the v-model value.
      */
-    selectAddress(data: { value: any, raw: any }) {
+    selectAddress(data: { value: any; raw: any }) {
       this.dropdown = false;
       this.isTyped = USER_INPUT_TYPES.selected;
-      const addressSelect = Object.assign<any, any>({}, this.$refs.mewAddressSelect);
+      const addressSelect = Object.assign<any, any>(
+        {},
+        this.$refs.mewAddressSelect
+      );
       this.addressValue = data.value.address;
       addressSelect.modelValue = this.addressValue;
       this.onChange(this.addressValue);
@@ -244,12 +248,12 @@ export default defineComponent({
      * Emits 'changed' when there is a v-model value change.
      */
     onChange(value: string) {
-      this.$emit('changed', value, this.isTyped);
+      this.$emit("changed", value, this.isTyped);
     },
     /**
      * Sets the value for what the user types int
      */
-    onInputChange(data: {address: string}) {
+    onInputChange(data: { address: string }) {
       this.isTyped = USER_INPUT_TYPES.typed;
       this.addressValue = data.address ? data.address : data.toString();
       this.onChange(this.addressValue);

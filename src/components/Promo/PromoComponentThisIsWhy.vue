@@ -1,9 +1,7 @@
 <template>
   <div class="promo--bottom py-15">
     <v-container>
-      <h1 class="mb-9 text-purple">
-        That is the reason why millions of our users choose
-      </h1>
+      <h1 class="mb-9 text-white">Why millions of users choose us</h1>
       <v-row>
         <v-col
           cols="12"
@@ -44,24 +42,24 @@ import iconSupport from "@/assets/images/promo/icon-support.png";
 const promo2 = [
   {
     icon: iconFee,
-    title: "Reasonable fee",
+    title: "Low fee",
     description:
-      "Extra charges apply in addition to the rate provided, including a 1.75% MyEtherWallet fee.",
+      "Get the most crypto for your fiat with limited fees from the provider and MEW",
   },
   {
     icon: iconQuick,
     title: "Quick transactions",
-    description:
-      "We offer lightning-fast transactions typically taking just minutes.",
+    description: "Get crypto in your wallet in minutes",
   },
   {
     icon: iconVerification,
     title: "Easy verification",
-    description: "Payment process is pretty simple and takes just a few steps.",
+    description: "Payment is processed in a few short steps",
   },
   {
     icon: iconSupport,
-    title: "Instant support",
+    title: "Human support",
+    description: "Reach out to support@ethvm.com with any questions",
   },
 ];
 </script>

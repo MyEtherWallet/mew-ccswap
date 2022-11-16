@@ -1,15 +1,15 @@
 <!-- eslint-disable vue/no-deprecated-v-on-native-modifier -->
 <template>
-  <div class="pa-3 pa-sm-2 pa-md-2" ref="formDiv">
+  <div class="pa-3 pa-sm-2 pa-md-2 components--buy-form" ref="formDiv">
     <!-- ============================================================================= -->
     <!-- Fiat amount -->
     <!-- ============================================================================= -->
     <div class="mb-6 mt-6">
-      <div class="d-flex align-center">
-        <div class="mew-heading-4 textDark--text mb-3">
+      <div class="d-flex align-center justify-space-between mb-3">
+        <div class="mew-heading-4 textDark--text">
           How much do you want to spend?
         </div>
-        <div v-if="loading.data" class="ml-2">
+        <div v-if="loading.data" class="ml-2 d-flex align-center">
           <span class="h3 font-weight-regular mr-1 text--mew">Loading</span>
           <v-progress-circular
             :size="11"
@@ -20,18 +20,18 @@
       </div>
       <div class="d-flex mt-2">
         <v-text-field
+          class="no-right-border"
           @input="fiatToCrypto"
           type="number"
           v-model.number="form.fiatAmount"
           required
           variant="outlined"
-          class="mr-1"
           :disabled="loading.data"
           :rules="rules"
         ></v-text-field>
         <v-select
           style="max-width: 120px"
-          class="rounded-right"
+          class="rounded-right no-left-border"
           v-model="form.fiatSelected"
           :items="fiatItems"
           :disabled="loading.data"
@@ -41,6 +41,7 @@
           variant="outlined"
           @focusin="dropdown.fiat = true"
           @blur="dropdown.fiat = false"
+          append-inner-icon="mdi-chevron-down"
         >
           <template #prepend-inner>
             <img
@@ -81,6 +82,7 @@
       <div class="mew-heading-4 textDark--text mb-3">You will get</div>
       <div class="d-flex mt-2">
         <v-text-field
+          class="no-right-border"
           @input="cryptoToFiat"
           type="number"
           v-model.number="form.cryptoAmount"
@@ -90,9 +92,10 @@
           :rules="rules"
           :error-messages="loading.alertMessage"
           :disabled="loading.data"
-          class="mr-1"
         ></v-text-field>
         <v-select
+          append-inner-icon="mdi-chevron-down"
+          class="no-left-border"
           style="max-width: 120px"
           v-model="form.cryptoSelected"
           :items="cryptoItems"
@@ -149,10 +152,10 @@
           :disabled="!isValidForm"
           min-height="60px"
           width="360px"
-          color="#c549ff"
           @click="submitForm"
+          class="buy-button"
         >
-          <div class="text-white">Continue</div>
+          <div style="color: white" class="font-weight-bold">BUY NOW</div>
         </v-btn>
       </div>
     </div>
@@ -911,7 +914,24 @@ const fetchGasPrice = async (): Promise<void> => {
 };
 </script>
 
+<style lang="scss" scoped>
+.buy-button {
+  background: linear-gradient(
+    90deg,
+    rgba(197, 73, 255, 1) 0%,
+    rgba(112, 75, 255, 1) 100%
+  );
+}
+</style>
+
 <style lang="scss">
+// Hide input arrows
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 // Adjust (text field) prefix font size
 .v-messages__message {
   font-weight: 300;
@@ -922,5 +942,22 @@ const fetchGasPrice = async (): Promise<void> => {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.components--buy-form {
+  .v-field__outline__end,
+  .v-field__outline__start {
+    border-color: #c2c2c2;
+  }
+  .no-right-border {
+    .v-field__outline__end {
+      border-radius: 0 !important;
+    }
+  }
+  .no-left-border {
+    .v-field__outline__start {
+      border-radius: 0 !important;
+    }
+  }
 }
 </style>
