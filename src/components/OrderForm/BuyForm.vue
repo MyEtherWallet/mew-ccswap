@@ -196,7 +196,7 @@ import {
 } from './prices';
 import { isObject, isNumber, isString, isEmpty } from 'lodash';
 import WAValidator from 'multicoin-address-validator';
-import { isHexStrict, isAddress, fromWei } from 'web3-utils';
+import { isHexStrict, isAddress, fromWei, toBN } from 'web3-utils';
 import { encodeAddress } from '@polkadot/keyring';
 import MewAddressSelect from '../MewAddressSelect/MewAddressSelect.vue';
 import {
@@ -457,9 +457,7 @@ const fiatMultiplier = computed(() => {
   return BigNumber(1);
 });
 const networkFee = computed(() => {
-  console.log('before', fromWei(BigNumber(gasPrice).times(21000).toString()));
-  // console.log('after', fromWei(gasPrice).times(21000).toString()));
-  return fromWei(BigNumber(gasPrice).times(21000).toString());
+  return fromWei(toBN(gasPrice).mul(toBN(21000)).toString());
 });
 const priceOb = computed(() => {
   return isValidData(moonpayData)
@@ -472,10 +470,10 @@ const networkPrice = computed(() => {
     : simplexData[props.networkSelected.currencyName].prices[form.fiatSelected];
 });
 const networkFeeToFiat = computed(() => {
-  return BigNumber(networkFee.value).times(networkPrice.value).toString();
+  return toBN(networkFee.value).mul(toBN(networkPrice.value)).toString();
 });
 const minFee = computed(() => {
-  return BigNumber(3.99).toString(); // Minimum 3.99 in respective currency
+  return toBN(3.99).toString(); // Minimum 3.99 in respective currency
 });
 const plusFee = computed(() => {
   const fee = isEUR.value
@@ -521,16 +519,16 @@ const simplexAvailable = computed(() => isValidData(simplexData));
 const fiatCurrency = computed(() => {
   return { decimals: form.fiatSelected === 'JPY' ? 0 : 2 };
 });
-const simplexPrice = computed(() =>
-  BigNumber(
+const simplexPrice = computed(() => {
+  return toBN(
     simplexAvailable.value
       ? simplexData[form.cryptoSelected].prices[form.fiatSelected]
       : 0
-  )
-);
-const simplexFiatAmount = computed(() =>
-  simplexAvailable.value ? form.fiatAmount : '0.00'
-);
+  );
+});
+const simplexFiatAmount = computed(() => {
+  return simplexAvailable.value ? form.fiatAmount : '0.00';
+});
 const simplexFiatFee = computed(() => {
   const { fiatSelected, cryptoSelected } = form;
   return simplexAvailable.value
@@ -548,11 +546,11 @@ const simplexFiatFee = computed(() => {
       )
     : 0;
 });
-const simplexPlusFee = computed(() =>
-  BigNumber(simplexFiatAmount.value)
+const simplexPlusFee = computed(() => {
+  return BigNumber(simplexFiatAmount.value)
     .minus(simplexFiatFee.value)
-    .toFixed(fiatCurrency.value.decimals)
-);
+    .toFixed(fiatCurrency.value.decimals);
+});
 const simplexPlusFeeF = computed(() =>
   simplexAvailable.value
     ? formatFiatValue(simplexPlusFee.value, currencyConfig.value).value
