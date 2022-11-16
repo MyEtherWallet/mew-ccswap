@@ -18,7 +18,6 @@ const _providerMinFee = 10.0;
 const _providerPlainFee = 0.0;
 const providerReducedPercentFee = 0.0175;
 const providerPercentFee = 0.0525;
-const mewPercentFee = 0;
 let networkFee: number;
 
 export function providerMinFee(
@@ -59,7 +58,11 @@ export function feeDescription(
     decimals,
     BigNumber.ROUND_CEIL
   );
-  return new PurchaseComponentsFeeDescription(providerPercentFee, minFee, networkFeeRounded);
+  return new PurchaseComponentsFeeDescription(
+    providerPercentFee,
+    minFee,
+    networkFeeRounded
+  );
 }
 
 export function calculateCrypto(
@@ -89,11 +92,7 @@ export function calculateCrypto(
   }
 
   const crypto = Math.max(base / price.price, 0);
-  return roundAmount(
-    crypto,
-    cryptoCurrency.decimals,
-    BigNumber.ROUND_FLOOR
-  );
+  return roundAmount(crypto, cryptoCurrency.decimals, BigNumber.ROUND_FLOOR);
 }
 
 export function calculateFiat(
@@ -112,13 +111,13 @@ export function calculateFiat(
     price.fiatCurrency.decimals,
     BigNumber.ROUND_FLOOR
   );
-  
+
   const totalMin = cryptoTotal(true, base, fiatConversionRate);
   const totalMax = cryptoTotal(false, base, fiatConversionRate);
-  
+
   return roundAmount(
-    Math.max(totalMin, totalMax), 
-    price.fiatCurrency.decimals, 
+    Math.max(totalMin, totalMax),
+    price.fiatCurrency.decimals,
     BigNumber.ROUND_CEIL
   );
 }
@@ -134,13 +133,13 @@ export function calculateFiatFee(
   const decimals = price.fiatCurrency.decimals;
   const amount = roundAmount(Amount, decimals, BigNumber.ROUND_FLOOR);
   const fee = roundAmount(
-    fiatFee(amount, fiatConversionRate), 
-    decimals, 
+    fiatFee(amount, fiatConversionRate),
+    decimals,
     BigNumber.ROUND_HALF_EVEN
   );
   const base = roundAmount(
-    fiatBase(amount, fee), 
-    decimals, 
+    fiatBase(amount, fee),
+    decimals,
     BigNumber.ROUND_FLOOR
   );
   if (base <= 0) {
@@ -192,7 +191,7 @@ function cryptoBase(amount: number, price: number): number {
   return amount * price;
 }
 /**
- * 
+ *
  * @param amount Number to be formatted
  * @param decimalPlaces Decimal places to format to
  * @param roundingMode BigNumber RoundingMode to round number
@@ -200,10 +199,10 @@ function cryptoBase(amount: number, price: number): number {
  */
 function roundAmount(
   amount: number,
-  decimalPlaces: number, 
+  decimalPlaces: number,
   roundingMode: BigNumber.RoundingMode
 ): number {
   return new BigNumber(amount)
-  .decimalPlaces(decimalPlaces, roundingMode)
-  .toNumber();
+    .decimalPlaces(decimalPlaces, roundingMode)
+    .toNumber();
 }

@@ -17,7 +17,7 @@
           class="full-width"
           v-model="networkSelected"
           label="Network"
-          :items="networks"
+          :items="filteredNetworkList"
           :menu-props="{ closeOnContentClick: true }"
           :menu="networkDropdown"
           return-object
@@ -122,6 +122,7 @@ import { Crypto, Network, Data, Fiat } from '../types';
 import { Networks } from '../network/networks';
 import BigNumber from 'bignumber.js';
 import { formatFiatValue } from '@/helpers/numberFormatHelper';
+import { isEmpty } from 'lodash';
 
 export default defineComponent({
   name: 'TokenSelect',
@@ -150,6 +151,10 @@ export default defineComponent({
       type: Object as PropType<Fiat>,
       default: () => ({}),
     },
+    isSell: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
@@ -188,14 +193,22 @@ export default defineComponent({
           const tokenSymbol = token.name.toLowerCase();
           const tokenName = token.subtext.toLowerCase();
           if (
-            tokenSymbol.includes(filterText) ||
-            tokenName.includes(filterText)
+            this.hasValidPrices(token.name) &&
+            (tokenSymbol.includes(filterText) ||
+            tokenName.includes(filterText))
           ) return token;
         }
       );
     },
     fiatName() {
       return this.fiatSelected.name;
+    },
+    filteredNetworkList() {
+      return this.isSell 
+      ? this.networks.filter(
+          network => network.name !== 'DOT' && network.name !== 'KSM'
+        )
+      : this.networks;
     },
   },
   beforeMount() {
@@ -238,6 +251,11 @@ export default defineComponent({
         ? simplexPrice
         : moonpayPrice;
       return formatFiatValue(price.toFixed(2), currencyConfig).value;
+    },
+    hasValidPrices(token: string) {
+      let price = this.tokenPrice(token);
+      price = price?.substring(1, price.length);
+      return price !== '0.00';
     },
   },
 });

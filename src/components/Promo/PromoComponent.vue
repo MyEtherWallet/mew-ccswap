@@ -1,6 +1,6 @@
 <template>
   <div
-    class="component--promo"
+    class="component--promo dropShadow"
     :style="$vuetify.display.lgAndUp ? 'padding: 150px 0' : 'padding: 100px 0'"
   >
     <div>
@@ -61,6 +61,6 @@ h1 {
   box-shadow: 0 8px 10px rgb(0 0 0 / 15%);
   border-radius: 5px 5px 10px 10px;
   background-color: white;
-  // border-top: 10px solid $purple;
+  border-top: 10px solid $purple;
 }
 </style>

@@ -17,7 +17,7 @@
           class="provider-logo"
           :src="moonpayLogo"
           alt="Moonpay"
-          height="18"
+          height="28"
         />
         <div v-if="!loading" class="mb-3">
           <div class="d-flex mb-1 align-center justify-space-between">

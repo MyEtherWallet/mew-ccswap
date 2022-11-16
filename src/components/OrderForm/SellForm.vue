@@ -10,7 +10,7 @@
           How much do you want to sell?
         </div>
         <div v-if="!loading.data" class="text-mew">
-          Balance: {{ form.balance }}
+          Balance: {{ displayBalance() }}
         </div>
       </div>
       <div class="d-flex mt-2">
@@ -22,7 +22,8 @@
           variant="outlined"
           rounded="left"
           :rules="rules"
-          :disabled="loading.data || !hasEnoughCrypto"
+          :disabled="loading.data"
+          :error-messages="form.balanceErrorMsg"
           class="mr-1"
         ></v-text-field>
         <v-select
@@ -141,6 +142,19 @@
       />
     </div>
 
+    <div class="text-gray mt-3 mb-6">
+      After submitting your sell order, you will have to send your crypto to
+      Moonpay. Make sure to have enough currency in your wallet to cover network
+      transaction fees.
+      <br />
+      <br />
+      <div class="text-bolder">
+        <span class="text-gray">Network Fee:</span>
+        <span class="text-gray" style="float: right"
+          >~{{ networkFeeF }} {{ props.networkSelected.currencyName }}</span
+        >
+      </div>
+    </div>
     <!-- ============================================================================= -->
     <!-- Buy/Rest button -->
     <!-- ============================================================================= -->
@@ -157,16 +171,6 @@
         >
           <div class="text-white font-weight-bold">Sell Now</div>
         </v-btn>
-      </div>
-      <!--
-      <div>
-        <v-btn class="my-3" @click="resetForms" variant="text" size="small">
-          Clear
-        </v-btn>
-      </div>
-      -->
-      <div class="text-gray mt-6">
-        You will be redirected to the partner's site
       </div>
     </div>
 
@@ -200,51 +204,55 @@ import {
   defineEmits,
   defineProps,
   PropType,
-} from "vue";
-import BigNumber from "bignumber.js";
+  onUnmounted,
+  ref,
+  Ref,
+} from 'vue';
+import BigNumber from 'bignumber.js';
 import {
   supportedCrypto,
   supportedFiat,
-  getCryptoPrices,
   currencySymbols,
-} from "./prices";
-import { executeMoonpaySell } from "./order";
-import { isObject, isNumber, isString, isEmpty } from "lodash";
-import WAValidator from "multicoin-address-validator";
-import mewWallet from "@/assets/images/icon-mew-wallet.png";
-import { isHexStrict, isAddress, fromWei } from "web3-utils";
-import { encodeAddress } from "@polkadot/keyring";
-import MewAddressSelect from "../MewAddressSelect/MewAddressSelect.vue";
-import { Networks } from "./network/networks";
-import { Crypto, Data, Network, Fiat } from "./network/types";
-import Web3 from "web3";
-import { formatFloatingPointValue } from "@/helpers/numberFormatHelper";
+  getCryptoSellPrices,
+} from './prices';
+import { executeMoonpaySell } from './order';
+import { isObject, isNumber, isString, isEmpty } from 'lodash';
+import WAValidator from 'multicoin-address-validator';
+import { isHexStrict, isAddress, fromWei, toBN, AbiItem } from 'web3-utils';
+import { encodeAddress } from '@polkadot/keyring';
+import MewAddressSelect from '../MewAddressSelect/MewAddressSelect.vue';
+import { Networks } from './network/networks';
+import { Crypto, Data, Network, Fiat } from './network/types';
+import Web3 from 'web3';
+import { formatFloatingPointValue } from '@/helpers/numberFormatHelper';
+// import { abi } from './handler/abiERC20';
 
-const mewWalletImg = mewWallet;
-const defaultFiatValue = "0";
-const polkdadot_chains = ["DOT", "KSM"];
-let gasPrice = "0";
+const defaultFiatValue = '0';
+const polkdadot_chains = ['DOT', 'KSM'];
+let gasPrice = ref('0');
+// eslint-disable-next-line no-undef
+let priceTimer: NodeJS.Timer, gasTimer: NodeJS.Timer;
 
 const addressBook = [
   {
-    address: "0xDECAF9CD2367cdbb726E904cD6397eDFcAe6068D",
-    currency: "ETH",
-    nickname: "MEW Donations",
-    resolvedAddr: "0xDECAF9CD2367cdbb726E904cD6397eDFcAe6068D",
+    address: '0xDECAF9CD2367cdbb726E904cD6397eDFcAe6068D',
+    currency: 'ETH',
+    nickname: 'MEW Donations',
+    resolvedAddr: '0xDECAF9CD2367cdbb726E904cD6397eDFcAe6068D',
   },
 ];
 
 const emit = defineEmits([
-  "success",
-  "selectedCurrency",
-  "selectedFiat",
-  "toAddress",
-  "setQuotes",
+  'success',
+  'selectedCurrency',
+  'selectedFiat',
+  'toAddress',
+  'setQuotes',
 ]);
 
 const props = defineProps({
   cryptoSelected: {
-    type: Object,
+    type: Object as PropType<Crypto>,
     default: () => ({}),
   },
   networkSelected: {
@@ -257,12 +265,12 @@ const props = defineProps({
   },
   fiatAmount: {
     type: String,
-    default: "0",
+    default: '0',
   },
 });
 
 onMounted(async () => {
-  form.address = "";
+  form.address = '';
 
   // Load URL parameter value and verify crypto address
   loadUrlParameters();
@@ -270,20 +278,28 @@ onMounted(async () => {
 
   // Get crypto Data
   await getPrices();
+  await fetchGasPrice();
   if (!isEmpty(props.fiatSelected)) {
     form.cryptoSelected = props.cryptoSelected.name;
     form.fiatSelected = props.fiatSelected.name;
     form.fiatAmount = props.fiatAmount;
     fiatToCrypto();
   } else cryptoToFiat();
-  await fetchGasPrice();
   getBalance();
-  setInterval(getPrices, 1000 * 60 * 2);
+  priceTimer = setInterval(getPrices, 1000 * 60 * 2);
+  gasTimer = setInterval(fetchGasPrice, 1000 * 60 * 2);
+  fiatItems.value = Object.getOwnPropertyNames(moonpayData['ETH'].prices);
+});
+
+onUnmounted(async () => {
+  clearInterval(priceTimer);
+  clearInterval(gasTimer);
 });
 
 // non-reactive
-const fiatItems: string[] = supportedFiat;
 const cryptoItems: string[] = supportedCrypto;
+// reactive
+let fiatItems: Ref<string[]> = ref(supportedFiat);
 
 let moonpayData: { [key: string]: Data } = {
   ETH: {
@@ -315,21 +331,24 @@ let moonpayData: { [key: string]: Data } = {
 // reactive
 const form = reactive({
   fiatAmount: defaultFiatValue,
-  fiatSelected: "USD",
-  cryptoAmount: "1",
-  cryptoSelected: "ETH",
-  address: "",
+  fiatSelected: 'USD',
+  cryptoAmount: '1',
+  cryptoSelected: 'ETH',
+  address: '',
   validAddress: false,
-  addressErrorMsg: "",
-  reCaptchaToken: "",
+  addressErrorMsg: '',
+  reCaptchaToken: '',
   addressError: false,
-  balance: "",
+  balance: '',
+  balanceWei: '',
+  balanceError: false,
+  balanceErrorMsg: '',
 });
 const loading = reactive({
   data: false,
   showAlert: false,
   processingBuyForm: false,
-  alertMessage: "",
+  alertMessage: '',
 });
 const dropdown = reactive({
   fiat: false,
@@ -338,15 +357,15 @@ const dropdown = reactive({
 
 const web3 = computed(() => {
   const supportedNodes: { [key: string]: any } = {
-    ETH: "ETH",
-    BSC: "BSC",
-    MATIC: "MATIC",
+    ETH: 'ETH',
+    BSC: 'BSC',
+    MATIC: 'MATIC',
   };
   const nodeType = supportedNodes[props.cryptoSelected.network];
   const node = Networks.find((network) => {
     return network.name === nodeType;
   });
-  return new Web3(node ? node.url : "");
+  return new Web3(node ? node.url : '');
 });
 
 // watchers
@@ -355,6 +374,8 @@ watch(
   () => {
     verifyAddress();
     fiatToCrypto();
+    fetchGasPrice();
+    checkBalance();
   }
 );
 
@@ -369,16 +390,20 @@ watch(
 watch(
   () => form.fiatAmount,
   () => {
+    fetchGasPrice();
     if (!loading.data) {
       minMaxError();
+      checkBalance();
     }
   }
 );
 watch(
   () => form.cryptoAmount,
   () => {
+    fetchGasPrice();
     if (!loading.data) {
       minMaxError();
+      checkBalance();
     }
   }
 );
@@ -386,6 +411,7 @@ watch(
 watch(
   () => form.address,
   () => {
+    fetchGasPrice();
     if (!loading.data) {
       getBalance();
     }
@@ -401,13 +427,16 @@ const cryptoIcon = computed(() => {
 });
 
 const networkFee = computed(() => {
-  return fromWei(BigNumber(gasPrice).times(21000).toString());
+  return toBN(gasPrice.value).muln(21000);
+});
+const networkFeeF = computed(() => {
+  return formatFloatingPointValue(fromWei(networkFee.value.toString())).value;
 });
 
 // methods
 const getIcon = (currency: string, isFiat = true) => {
   return require(`@/assets/images/${
-    isFiat ? "fiat" : "crypto"
+    isFiat ? 'fiat' : 'crypto'
   }/${currency}.svg`);
 };
 
@@ -421,6 +450,11 @@ const selectCurrency = (currency: string, isFiat = true) => {
   }
 };
 
+const hasData = () => {
+  const { cryptoSelected, fiatSelected } = form;
+  return !isEmpty(moonpayData[cryptoSelected]?.limits[fiatSelected]);
+};
+
 const isValidForm = computed(() => {
   return (
     minMax.value &&
@@ -428,28 +462,24 @@ const isValidForm = computed(() => {
     form.cryptoSelected &&
     form.address &&
     !form.addressError &&
-    form.addressErrorMsg === "" &&
-    loading.alertMessage === "" &&
-    form.validAddress
+    form.addressErrorMsg === '' &&
+    loading.alertMessage === '' &&
+    form.validAddress &&
+    form.balanceErrorMsg === ''
   );
 });
 
 const rules = [
   (e: any) => {
     if (isString(e) && e?.length >= 1) return true;
-    if (!isNumber(e)) return "Must be a valid number";
+    if (!isNumber(e)) return 'Must be a valid number';
     return true;
   },
 ];
 
-// const isValidData = (data: { [key: string]: Data }) => {
-//   const { cryptoSelected, fiatSelected } = form;
-//   return !isEmpty(data[cryptoSelected]?.limits[fiatSelected]);
-// };
-
 const minMax = computed(() => {
   const { cryptoSelected, fiatAmount, fiatSelected } = form;
-  if (!moonpayData[cryptoSelected].limits[fiatSelected]) return false;
+  if (!hasData()) return false;
   const limit = moonpayData[cryptoSelected].limits[fiatSelected];
   const amount = new BigNumber(fiatAmount || 0);
   const valid =
@@ -459,6 +489,9 @@ const minMax = computed(() => {
 });
 
 const minMaxError = () => {
+  if (!hasData()) return;
+  console.log('cryptoSelected', form.cryptoSelected);
+  console.log('fiatSelected', form.fiatSelected);
   const limit = moonpayData[form.cryptoSelected].limits[form.fiatSelected];
   if (!minMax.value) {
     loading.showAlert = true;
@@ -468,12 +501,12 @@ const minMaxError = () => {
     return;
   }
   loading.showAlert = false;
-  loading.alertMessage = "";
+  loading.alertMessage = '';
 };
 const getPrices = async () => {
   try {
     loading.data = true;
-    const data: any[] = (await getCryptoPrices()) || [];
+    const data: any[] = (await getCryptoSellPrices()) || [];
     data.forEach((arr: any) => {
       arr.forEach((d: any) => {
         const tmp: Data = { conversion_rates: {}, limits: {}, prices: {} };
@@ -482,7 +515,7 @@ const getPrices = async () => {
           (r: any) => (tmp.conversion_rates[r.fiat_currency] = r.exchange_rate)
         );
         d.limits.forEach((l: any) => {
-          if (l.type === "WEB") tmp.limits[l.fiat_currency] = l.limit;
+          if (l.type === 'WEB') tmp.limits[l.fiat_currency] = l.limit;
         });
         d.prices.forEach((p: any) => (tmp.prices[p.fiat_currency] = p.price));
         const tokenName = d.crypto_currencies[0];
@@ -491,9 +524,9 @@ const getPrices = async () => {
         );
         // Hard code names/decimals for now
         const tokensInfo: { [key: string]: any } = {
-          USDT: { name: "Tether", decimals: 6 },
-          USDC: { name: "USD Coin", decimals: 6 },
-          DAI: { name: "Dai Stablecoin", decimals: 18 },
+          USDT: { name: 'Tether', decimals: 6 },
+          USDC: { name: 'USD Coin', decimals: 6 },
+          DAI: { name: 'Dai Stablecoin', decimals: 18 },
         };
         // If token name isnt a native network coin
         // assume the token is ERC-20(ETH)
@@ -507,43 +540,81 @@ const getPrices = async () => {
               new Crypto(
                 tokenName,
                 tokenInfo.name,
-                "ETH",
+                'ETH',
                 tokenInfo.decimals,
                 getIcon(tokenName, false)
               )
             );
           }
         }
-        if (d.name === "MOONPAY") moonpayData[tokenName] = tmp;
+        moonpayData[tokenName] = tmp;
       });
     });
     loading.data = false;
-    emit("setQuotes", moonpayData);
-    console.log("moonpayData", moonpayData);
+    emit('setQuotes', moonpayData);
+    console.log('moonpayData', moonpayData);
   } catch (e: any) {
     errorHandler(e);
   }
 };
 
 const getBalance = async () => {
+  if (!form.validAddress) return '0';
   const balance = form.address
-    ? await web3.value.eth.getBalance(form.address, "latest")
-    : "0";
-  form.balance = formatFloatingPointValue(fromWei(balance)).value;
+    ? await web3.value.eth.getBalance(form.address, 'latest')
+    : '0';
+  form.balanceWei = balance;
+  form.balance = fromWei(balance);
+
+  checkBalance();
   return balance;
 };
 
+const displayBalance = () => {
+  if (!form.balance) return '0';
+
+  return formatFloatingPointValue(form.balance).value;
+};
+const userBalance = () => {
+  if (!form.balance) return toBN(0);
+
+  return toBN(form.balanceWei);
+};
+
 const hasEnoughCrypto = computed(() => {
-  if (!form.balance) return false;
-  return BigNumber(form.cryptoAmount)
-    .plus(BigNumber(21000).times(gasPrice))
-    .lte(form.balance);
+  if (!form.balance || form.balance === '0') return false;
+  return totalWithFee.value.lte(toBN(form.balanceWei));
 });
+const totalWithFee = computed(() => {
+  if (subtotalSell.value === toBN(0)) return networkFee.value;
+  return subtotalSell.value.add(networkFee.value);
+});
+const subtotalSell = computed(() => {
+  if (!form.balance || form.balance === '0') return toBN(0);
+  const base = toBN(10).pow(toBN(props.cryptoSelected.decimals));
+  const amount = base.muln(parseFloat(form.cryptoAmount));
+  console.log('amount', amount.toString());
+  return amount;
+});
+
+const checkBalance = () => {
+  const balance = userBalance();
+  if (!form.validAddress) {
+    form.balanceErrorMsg = '';
+    return;
+  }
+  console.log('userBalance: ', balance.toString());
+  if (subtotalSell.value.gt(balance)) {
+    form.balanceErrorMsg = 'You do not have enough ETH to sell';
+  } else if (!hasEnoughCrypto.value) {
+    form.balanceErrorMsg = 'You do not have enough ETH to pay for network fees';
+  } else form.balanceErrorMsg = '';
+};
 
 const fiatToCrypto = () => {
   const { fiatSelected, fiatAmount, cryptoSelected } = form;
   const price = new BigNumber(moonpayData[cryptoSelected].prices[fiatSelected]);
-  const amount = new BigNumber(fiatAmount || "0");
+  const amount = new BigNumber(fiatAmount || '0');
   form.cryptoAmount = amount.dividedBy(price).toString();
 };
 
@@ -551,7 +622,7 @@ const cryptoToFiat = () => {
   const price = new BigNumber(
     moonpayData[form.cryptoSelected].prices[form.fiatSelected]
   );
-  const amount = new BigNumber(form.cryptoAmount || "0");
+  const amount = new BigNumber(form.cryptoAmount || '0');
   form.fiatAmount = amount.times(price).toFixed(2).toString();
 };
 
@@ -559,21 +630,17 @@ const loadUrlParameters = () => {
   const queryString = window.location.search;
   if (queryString) {
     const urlParams = new URLSearchParams(queryString);
-    const queryCryptoAmount = urlParams.get("crypto_amount");
-    const queryFiat = urlParams.get("fiat");
-    const queryCrypto = urlParams.get("crypto");
-    const queryTo = urlParams.get("to");
-    form.fiatSelected = queryFiat ? queryFiat : "USD";
-    form.fiatAmount = queryCryptoAmount ? queryCryptoAmount : "100";
-    form.cryptoSelected = queryCrypto ? queryCrypto : "ETH";
-    form.cryptoAmount = queryCryptoAmount ? queryCryptoAmount : "1";
-    form.address = queryTo ? queryTo : "";
+    const queryCryptoAmount = urlParams.get('crypto_amount');
+    const queryFiat = urlParams.get('fiat');
+    const queryCrypto = urlParams.get('crypto');
+    const queryTo = urlParams.get('to');
+    form.fiatSelected = queryFiat ? queryFiat : 'USD';
+    form.fiatAmount = queryCryptoAmount ? queryCryptoAmount : '100';
+    form.cryptoSelected = queryCrypto ? queryCrypto : 'ETH';
+    form.cryptoAmount = queryCryptoAmount ? queryCryptoAmount : '1';
+    form.address = queryTo ? queryTo : '';
   }
 };
-
-// const onReCaptchaToken = (token: string): void => {
-//   form.reCaptchaToken = token;
-// };
 
 const errorHandler = (e: any): void => {
   const value = new BigNumber(form.fiatAmount).gt(0);
@@ -581,7 +648,7 @@ const errorHandler = (e: any): void => {
     const isErrorObj = isObject(e.response.data.error);
     if (isErrorObj) {
       // eslint-disable-next-line
-      const hasErr = e.response.data.error.hasOwnProperty("errors");
+      const hasErr = e.response.data.error.hasOwnProperty('errors');
       if (hasErr) {
         loading.alertMessage = e.response.data.error.errors[0].message;
       }
@@ -607,45 +674,27 @@ const isValidAddressPolkadotAddress = (
   }
 };
 
-// const resetForm = (): void => {
-//   form.fiatAmount = defaultFiatValue;
-//   form.fiatSelected = "USD";
-//   form.cryptoAmount = "1";
-//   form.cryptoSelected = "ETH";
-//   form.address = "";
-//   getPrices();
-// };
-
 const addressInput = (value: string): void => {
   form.address = value;
   verifyAddress();
 };
 
-// const addressFocus = (event: Event): void => {
-//   form.address = form.address ? form.address : '';
-//   if (event.type === 'focus') {
-//     setTimeout(() => {
-//       event.target?.dispatchEvent(new Event('blur'));
-//     }, 100);
-//   }
-// };
-
 const verifyAddress = (): void => {
-  const polkdadot_chains = ["DOT", "KSM"];
+  const polkdadot_chains = ['DOT', 'KSM'];
   const valid = !polkdadot_chains.includes(form.cryptoSelected)
     ? WAValidator.validate(form.address, form.cryptoSelected) &&
       validAddress(form.address)
     : isValidAddressPolkadotAddress(
         form.address,
-        form.cryptoSelected === "DOT" ? 0 : 2
+        form.cryptoSelected === 'DOT' ? 0 : 2
       );
   if (valid) {
-    form.addressErrorMsg = "";
+    form.addressErrorMsg = '';
     form.addressError = false;
     form.validAddress = true;
   } else {
     if (!form.address) {
-      form.addressErrorMsg = "";
+      form.addressErrorMsg = '';
       form.validAddress = false;
     } else {
       form.addressErrorMsg = `Please provide a valid ${form.cryptoSelected} address`;
@@ -661,7 +710,7 @@ const submitForm = (): void => {
 
 const openTokenSelect = () => {
   emit(
-    "selectedCurrency",
+    'selectedCurrency',
     {
       name: form.fiatSelected,
       value: form.fiatSelected,
@@ -674,11 +723,31 @@ const openTokenSelect = () => {
 
 const fetchGasPrice = async (): Promise<void> => {
   if (polkdadot_chains.includes(form.cryptoSelected)) {
-    gasPrice = "0";
+    gasPrice.value = '0';
     return;
   }
-  gasPrice = await web3.value.eth.getGasPrice();
+  gasPrice.value = await web3.value.eth.getGasPrice();
 };
+
+// const getTokenBalance = (contract: string) => {
+//       // if (!isValidAddress(contract)) return;
+//       const newContract = new web3.value.eth.Contract(
+//         abi,
+//         contract
+//       );
+//       newContract.methods
+//         .balanceOf(rootState.wallet.address)
+//         .call()
+//         .then(res => {
+//           newToken.balancef = _getTokenBalance(res, item.decimals).value;
+//           newToken.balance = res;
+//           dispatch('setCustomToken', newToken);
+//         })
+//         .catch(e => Toast(e.message, {}, ERROR));
+
+//   // usdt: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
+//   // usdc: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'
+// };
 </script>
 
 <style lang="scss" scoped>
