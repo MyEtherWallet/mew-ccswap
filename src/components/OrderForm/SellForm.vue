@@ -78,6 +78,7 @@
           :items="filteredFiatItems"
           :disabled="loading.data"
           :menu-props="{ closeOnContentClick: true }"
+          active-color="primary"
           return-object
           variant="outlined"
         >
@@ -94,7 +95,7 @@
             <v-text-field 
               v-model="fiatFilter"
               variant="outlined"
-              class="mr-1"
+              class="px-2"
               prepend-inner-icon="mdi-magnify"
               density="compact"
               placeholder="Search"
