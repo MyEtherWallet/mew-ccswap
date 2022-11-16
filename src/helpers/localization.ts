@@ -65,7 +65,7 @@ interface NumberObj {
     currency: string,
     options: any,
     convertedPrice: number,
-};
+}
 
 /**
  * Converts number to a local currency

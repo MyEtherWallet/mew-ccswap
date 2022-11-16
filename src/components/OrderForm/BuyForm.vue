@@ -144,14 +144,15 @@
     <div v-if="!loading.processingBuyForm" class="pt-2 text-center">
       <div>
         <v-btn
+          flat
           rounded="pill"
           :disabled="!isValidForm"
           min-height="60px"
           width="360px"
-          color="#05C0A5"
+          color="#c549ff"
           @click="submitForm"
         >
-          <div class="text--white">Continue</div>
+          <div class="text-white">Continue</div>
         </v-btn>
       </div>
     </div>
@@ -712,8 +713,6 @@ const getPrices = async () => {
     });
     loading.data = false;
     emit('setQuotes', simplexData, moonpayData);
-    console.log('simplexData', simplexData);
-    console.log('moonpayData', moonpayData);
   } catch (e: any) {
     errorHandler(e);
   }
