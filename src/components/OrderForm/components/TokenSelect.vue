@@ -117,14 +117,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
-import { Crypto, Network, Data, Fiat } from '../types';
-import { Networks } from '../network/networks';
-import BigNumber from 'bignumber.js';
-import { formatFiatValue } from '@/helpers/numberFormatHelper';
+import { defineComponent, PropType } from "vue";
+import { Crypto, Network, Data, Fiat } from "../types";
+import { Networks } from "../network/networks";
+import BigNumber from "bignumber.js";
+import { formatFiatValue } from "@/helpers/numberFormatHelper";
 
 export default defineComponent({
-  name: 'TokenSelect',
+  name: "TokenSelect",
   props: {
     close: {
       type: Function,
@@ -152,8 +152,8 @@ export default defineComponent({
     },
     isSell: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   data() {
     return {
@@ -162,7 +162,7 @@ export default defineComponent({
       cryptoSelected: {} as Crypto,
       networkDropdown: false,
       cryptoDropdown: false,
-      searchInput: '',
+      searchInput: "",
     };
   },
   computed: {
@@ -171,8 +171,8 @@ export default defineComponent({
     },
     tokensList() {
       let decimals = 18;
-      if (this.networkSelected.name === 'DOT') decimals = 10;
-      else if (this.networkSelected.name === 'KSM') decimals = 12;
+      if (this.networkSelected.name === "DOT") decimals = 10;
+      else if (this.networkSelected.name === "KSM") decimals = 12;
       const mainCoin = new Crypto(
         this.networkSelected.currencyName,
         this.networkSelected.name_long,
@@ -187,27 +187,25 @@ export default defineComponent({
     },
     filteredTokenList() {
       const filterText = this.searchInput.toLowerCase();
-      return this.tokensList.filter(
-        token => {
-          const tokenSymbol = token.name.toLowerCase();
-          const tokenName = token.subtext.toLowerCase();
-          if (
-            this.hasValidPrices(token.name) &&
-            (tokenSymbol.includes(filterText) ||
-            tokenName.includes(filterText))
-          ) return token;
-        }
-      );
+      return this.tokensList.filter((token) => {
+        const tokenSymbol = token.name.toLowerCase();
+        const tokenName = token.subtext.toLowerCase();
+        if (
+          this.hasValidPrices(token.name) &&
+          (tokenSymbol.includes(filterText) || tokenName.includes(filterText))
+        )
+          return token;
+      });
     },
     fiatName() {
       return this.fiatSelected.name;
     },
     filteredNetworkList() {
-      return this.isSell 
-      ? this.networks.filter(
-          network => network.name !== 'DOT' && network.name !== 'KSM'
-        )
-      : this.networks;
+      return this.isSell
+        ? this.networks.filter(
+            (network) => network.name !== "DOT" && network.name !== "KSM"
+          )
+        : this.networks;
     },
   },
   beforeMount() {
@@ -218,14 +216,14 @@ export default defineComponent({
   watch: {
     networkSelected() {
       this.selectCurrency(this.tokensList[0]);
-      this.$emit('selectedNetwork', this.networkSelected);
+      this.$emit("selectedNetwork", this.networkSelected);
     },
   },
   methods: {
     selectCurrency(currency: Crypto, emit = false) {
       this.cryptoSelected = currency;
       this.cryptoDropdown = false;
-      if (emit) this.$emit('selectCurrency', this.cryptoSelected);
+      if (emit) this.$emit("selectCurrency", this.cryptoSelected);
     },
     selectNetwork(network: Network) {
       this.networkSelected = network;
@@ -241,7 +239,7 @@ export default defineComponent({
       const rate =
         this.moonpayData[token]?.conversion_rates[this.fiatName] ||
         this.simplexData[token]?.conversion_rates[this.fiatName];
-      const currencyConfig = { locale: 'en-US', rate, currency: this.fiatName };
+      const currencyConfig = { locale: "en-US", rate, currency: this.fiatName };
       if (moonpayPrice.isNaN())
         return formatFiatValue(simplexPrice.toFixed(2), currencyConfig).value;
       if (simplexPrice.isNaN())
@@ -254,7 +252,7 @@ export default defineComponent({
     hasValidPrices(token: string) {
       let price = this.tokenPrice(token);
       price = price?.substring(1, price.length);
-      return price !== '0.00';
+      return price !== "0.00";
     },
   },
 });
@@ -266,7 +264,7 @@ $greyLight-base: #f2f3f6;
 $greyPrimary-base: #5a678a;
 
 .network-selected {
-  font-family: 'Roboto';
+  font-family: "Roboto";
   font-style: normal;
   font-weight: 500;
   font-size: 16px;
@@ -279,7 +277,7 @@ $greyPrimary-base: #5a678a;
   flex-grow: 0;
 }
 .text--bold {
-  font-family: 'Roboto';
+  font-family: "Roboto";
   font-style: normal;
   font-weight: 700;
   font-size: 16px;
