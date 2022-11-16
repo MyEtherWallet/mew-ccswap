@@ -1,38 +1,38 @@
 <template>
-  <div class="component--buy-form elevated-box pa-3 pa-sm-6 pa-md-8">
-    <div class="top-container">
-      <div v-if="step === 0">
-        <MewTabs
-          :items="tabItems"
-          :active-tab="activeTab"
-          active-color="greenPrimary"
-          has-underline
-          @onTab="onTab"
-        >
-          <template #tabContent1>
-            <buy-form
-              :crypto-selected="selectedCurrency"
-              :fiat-selected="selectedFiat"
-              :network-selected="selectedNetwork"
-              :fiat-amount="fiatAmount"
-              @setQuotes="setQuotes"
-              @selectedCurrency="openTokenSelect"
-              @success="buySuccess"
-            />
-          </template>
-          <template #tabContent2>
-            <sell-form
-              :crypto-selected="selectedCurrency"
-              :fiat-selected="selectedFiat"
-              :network-selected="selectedNetwork"
-              :fiat-amount="fiatAmount"
-              @setQuotes="setQuotes"
-              @selectedCurrency="openTokenSelect"
-              @success="sellSuccess"
-            />
-          </template>
-        </MewTabs>
-      </div>
+  <div
+    class="top-container component--buy-form elevated-box pa-3 pa-sm-6 pa-md-8"
+  >
+    <div v-if="step === 0">
+      <MewTabs
+        :items="tabItems"
+        :active-tab="activeTab"
+        active-color="greenPrimary"
+        has-underline
+        @onTab="onTab"
+      >
+        <template #tabContent1>
+          <buy-form
+            :crypto-selected="selectedCurrency"
+            :fiat-selected="selectedFiat"
+            :network-selected="selectedNetwork"
+            :fiat-amount="fiatAmount"
+            @setQuotes="setQuotes"
+            @selectedCurrency="openTokenSelect"
+            @success="buySuccess"
+          />
+        </template>
+        <template #tabContent2>
+          <sell-form
+            :crypto-selected="selectedCurrency"
+            :fiat-selected="selectedFiat"
+            :network-selected="selectedNetwork"
+            :fiat-amount="fiatAmount"
+            @setQuotes="setQuotes"
+            @selectedCurrency="openTokenSelect"
+            @success="sellSuccess"
+          />
+        </template>
+      </MewTabs>
     </div>
 
     <div class="token-select-slider" :class="step === 1 ? 'open' : ''">
