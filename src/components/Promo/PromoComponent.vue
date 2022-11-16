@@ -61,6 +61,6 @@ h1 {
   box-shadow: 0 8px 10px rgb(0 0 0 / 15%);
   border-radius: 5px 5px 10px 10px;
   background-color: white;
-  // border-top: 10px solid $purple;
+  border-top: 10px solid $purple;
 }
 </style>
