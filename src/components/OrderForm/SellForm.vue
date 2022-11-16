@@ -121,14 +121,7 @@
     <!-- ============================================================================= -->
     <div>
       <div class="d-sm-flex align-center justify-space-between mb-2">
-        <div class="mew-heading-4 mr-2">Where should we send your crypto?</div>
-        <a
-          class="text-mew small d-block mt-n1 mt-sm-0"
-          href="https://www.myetherwallet.com/wallet/create"
-          target="_blank"
-        >
-          Don't have one?
-        </a>
+        <div class="mew-heading-4 mr-2">What wallet are you sending your crypto from?</div>
       </div>
       <mew-address-select
         ref="addressSelect"
