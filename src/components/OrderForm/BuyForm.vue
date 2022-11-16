@@ -1,15 +1,15 @@
 <!-- eslint-disable vue/no-deprecated-v-on-native-modifier -->
 <template>
-  <div class="pa-3 pa-sm-2 pa-md-2" ref="formDiv">
+  <div class="pa-3 pa-sm-2 pa-md-2 components--buy-form" ref="formDiv">
     <!-- ============================================================================= -->
     <!-- Fiat amount -->
     <!-- ============================================================================= -->
     <div class="mb-6 mt-6">
-      <div class="d-flex align-center">
-        <div class="mew-heading-4 textDark--text mb-3">
+      <div class="d-flex align-center justify-space-between mb-3">
+        <div class="mew-heading-4 textDark--text">
           How much do you want to spend?
         </div>
-        <div v-if="loading.data" class="ml-2">
+        <div v-if="loading.data" class="ml-2 d-flex align-center">
           <span class="h3 font-weight-regular mr-1 text--mew">Loading</span>
           <v-progress-circular
             :size="11"
@@ -20,18 +20,18 @@
       </div>
       <div class="d-flex mt-2">
         <v-text-field
+          class="no-right-border"
           @input="fiatToCrypto"
           type="number"
           v-model.number="form.fiatAmount"
           required
           variant="outlined"
-          class="mr-1"
           :disabled="loading.data"
           :rules="rules"
         ></v-text-field>
         <v-select
           style="max-width: 120px"
-          class="rounded-right"
+          class="rounded-right no-left-border"
           v-model="form.fiatSelected"
           :items="fiatItems"
           :disabled="loading.data"
@@ -41,6 +41,7 @@
           variant="outlined"
           @focusin="dropdown.fiat = true"
           @blur="dropdown.fiat = false"
+          append-inner-icon="mdi-chevron-down"
         >
           <template #prepend-inner>
             <img
@@ -81,6 +82,7 @@
       <div class="mew-heading-4 textDark--text mb-3">You will get</div>
       <div class="d-flex mt-2">
         <v-text-field
+          class="no-right-border"
           @input="cryptoToFiat"
           type="number"
           v-model.number="form.cryptoAmount"
@@ -90,9 +92,10 @@
           :rules="rules"
           :error-messages="loading.alertMessage"
           :disabled="loading.data"
-          class="mr-1"
         ></v-text-field>
         <v-select
+          append-inner-icon="mdi-chevron-down"
+          class="no-left-border"
           style="max-width: 120px"
           v-model="form.cryptoSelected"
           :items="cryptoItems"
@@ -148,10 +151,10 @@
           :disabled="!isValidForm"
           min-height="60px"
           width="360px"
-          color="#05C0A5"
           @click="submitForm"
+          class="buy-button"
         >
-          <div class="text--white">Continue</div>
+          <div style="color: white" class="font-weight-bold">BUY NOW</div>
         </v-btn>
       </div>
     </div>
@@ -186,47 +189,47 @@ import {
   defineProps,
   PropType,
   onUnmounted,
-} from 'vue';
-import BigNumber from 'bignumber.js';
+} from "vue";
+import BigNumber from "bignumber.js";
 import {
   supportedCrypto,
   supportedFiat,
   getCryptoPrices,
   currencySymbols,
-} from './prices';
-import { isObject, isNumber, isString, isEmpty } from 'lodash';
-import WAValidator from 'multicoin-address-validator';
-import mewWallet from '@/assets/images/icon-mew-wallet.png';
-import { isHexStrict, isAddress, fromWei } from 'web3-utils';
-import { encodeAddress } from '@polkadot/keyring';
-import MewAddressSelect from '../MewAddressSelect/MewAddressSelect.vue';
+} from "./prices";
+import { isObject, isNumber, isString, isEmpty } from "lodash";
+import WAValidator from "multicoin-address-validator";
+import mewWallet from "@/assets/images/icon-mew-wallet.png";
+import { isHexStrict, isAddress, fromWei } from "web3-utils";
+import { encodeAddress } from "@polkadot/keyring";
+import MewAddressSelect from "../MewAddressSelect/MewAddressSelect.vue";
 import {
   formatFiatValue,
   formatFloatingPointValue,
-} from '@/helpers/numberFormatHelper';
-import { Networks } from './network/networks';
-import { Crypto, Data, Network, Fiat } from './network/types';
-import Web3 from 'web3';
-import { init, calculateFiatFee } from './models/purchaseSimplexFeeModel';
+} from "@/helpers/numberFormatHelper";
+import { Networks } from "./network/networks";
+import { Crypto, Data, Network, Fiat } from "./network/types";
+import Web3 from "web3";
+import { init, calculateFiatFee } from "./models/purchaseSimplexFeeModel";
 
 const mewWalletImg = mewWallet;
-const defaultFiatValue = '0';
-let gasPrice = '0';
-const polkdadot_chains = ['DOT', 'KSM'];
+const defaultFiatValue = "0";
+let gasPrice = "0";
+const polkdadot_chains = ["DOT", "KSM"];
 // eslint-disable-next-line no-undef
 let priceTimer: NodeJS.Timer;
 
 const addressBook = [
   {
-    address: '0xDECAF9CD2367cdbb726E904cD6397eDFcAe6068D',
-    currency: 'ETH',
-    nickname: 'MEW Donations',
-    resolvedAddr: '0xDECAF9CD2367cdbb726E904cD6397eDFcAe6068D',
+    address: "0xDECAF9CD2367cdbb726E904cD6397eDFcAe6068D",
+    currency: "ETH",
+    nickname: "MEW Donations",
+    resolvedAddr: "0xDECAF9CD2367cdbb726E904cD6397eDFcAe6068D",
   },
 ];
 
 onMounted(async () => {
-  form.address = '';
+  form.address = "";
   if (isEmpty(props.fiatSelected)) {
     // Load URL parameter value and verify crypto address
     loadUrlParameters();
@@ -251,11 +254,11 @@ onUnmounted(async () => {
 
 // emits
 const emit = defineEmits([
-  'success',
-  'selectedCurrency',
-  'selectedFiat',
-  'toAddress',
-  'setQuotes',
+  "success",
+  "selectedCurrency",
+  "selectedFiat",
+  "toAddress",
+  "setQuotes",
 ]);
 
 // props
@@ -274,7 +277,7 @@ const props = defineProps({
   },
   fiatAmount: {
     type: String,
-    default: '0',
+    default: "0",
   },
 });
 
@@ -341,20 +344,20 @@ let moonpayData: { [key: string]: Data } = {
 // reactive
 const form = reactive({
   fiatAmount: defaultFiatValue,
-  fiatSelected: 'USD',
-  cryptoAmount: '1',
-  cryptoSelected: 'ETH',
-  address: '',
+  fiatSelected: "USD",
+  cryptoAmount: "1",
+  cryptoSelected: "ETH",
+  address: "",
   validAddress: false,
-  addressErrorMsg: '',
-  reCaptchaToken: '',
+  addressErrorMsg: "",
+  reCaptchaToken: "",
   addressError: false,
 });
 const loading = reactive({
   data: false,
   showAlert: false,
   processingBuyForm: false,
-  alertMessage: '',
+  alertMessage: "",
 });
 const dropdown = reactive({
   fiat: false,
@@ -398,15 +401,15 @@ watch(
 // computed
 const web3 = computed(() => {
   const supportedNodes: { [key: string]: any } = {
-    ETH: 'ETH',
-    BSC: 'BSC',
-    MATIC: 'MATIC',
+    ETH: "ETH",
+    BSC: "BSC",
+    MATIC: "MATIC",
   };
   const nodeType = supportedNodes[props.cryptoSelected.network];
   const node = Networks.find((network) => {
     return network.name === nodeType;
   });
-  return new Web3(node ? node.url : '');
+  return new Web3(node ? node.url : "");
 });
 
 /**
@@ -446,7 +449,7 @@ const currencyConfig = computed(() => {
     moonpayData[form.cryptoSelected].conversion_rates[fiat] ||
     simplexData[form.cryptoSelected].conversion_rates[fiat];
   const currency = fiat;
-  return { locale: 'en-US', rate, currency };
+  return { locale: "en-US", rate, currency };
 });
 const fiatMultiplier = computed(() => {
   if (hasData()) {
@@ -488,7 +491,8 @@ const plusFee = computed(() => {
 });
 const plusFeeF = computed(() => {
   const isAvailable = isValidData(moonpayData);
-  if (!isAvailable) return `${form.cryptoSelected} is not available for this provider`;
+  if (!isAvailable)
+    return `${form.cryptoSelected} is not available for this provider`;
   const moonpayLimit =
     moonpayData[form.cryptoSelected].limits[form.fiatSelected];
   return moonpayLimit.max > Number.parseFloat(form.fiatAmount)
@@ -498,10 +502,10 @@ const plusFeeF = computed(() => {
       }`;
 });
 const percentFee = computed(() => {
-  return isEUR.value ? '0.7%' : '3.25%';
+  return isEUR.value ? "0.7%" : "3.25%";
 });
 const isEUR = computed(() => {
-  return form.fiatSelected === 'EUR' || form.fiatSelected === 'GBP';
+  return form.fiatSelected === "EUR" || form.fiatSelected === "GBP";
 });
 
 const moonpayCryptoAmount = computed(() => {
@@ -518,39 +522,44 @@ const moonpayCryptoAmount = computed(() => {
  */
 const simplexAvailable = computed(() => isValidData(simplexData));
 const fiatCurrency = computed(() => {
-  return { decimals: form.fiatSelected === 'JPY' ? 0 : 2 };
+  return { decimals: form.fiatSelected === "JPY" ? 0 : 2 };
 });
-const simplexPrice = computed(() => BigNumber(
-  simplexAvailable.value
-    ? simplexData[form.cryptoSelected].prices[form.fiatSelected]
-    : 0
-));
-const simplexFiatAmount = computed(() => simplexAvailable.value
-  ? form.fiatAmount
-  : '0.00'
+const simplexPrice = computed(() =>
+  BigNumber(
+    simplexAvailable.value
+      ? simplexData[form.cryptoSelected].prices[form.fiatSelected]
+      : 0
+  )
+);
+const simplexFiatAmount = computed(() =>
+  simplexAvailable.value ? form.fiatAmount : "0.00"
 );
 const simplexFiatFee = computed(() => {
   const { fiatSelected, cryptoSelected } = form;
   return simplexAvailable.value
-  ? calculateFiatFee(
-    Number.parseFloat(simplexFiatAmount.value), { 
-      price: simplexPrice.value.toNumber(),
-      fiatCurrency: fiatCurrency.value
-    }, {
-      rate: simplexData[cryptoSelected].conversion_rates[fiatSelected],
-      baseRate: simplexData[cryptoSelected].conversion_rates['USD'],
-      fiatCurrency: fiatCurrency.value
-    })
-  : 0
+    ? calculateFiatFee(
+        Number.parseFloat(simplexFiatAmount.value),
+        {
+          price: simplexPrice.value.toNumber(),
+          fiatCurrency: fiatCurrency.value,
+        },
+        {
+          rate: simplexData[cryptoSelected].conversion_rates[fiatSelected],
+          baseRate: simplexData[cryptoSelected].conversion_rates["USD"],
+          fiatCurrency: fiatCurrency.value,
+        }
+      )
+    : 0;
 });
-const simplexPlusFee = computed(() => 
+const simplexPlusFee = computed(() =>
   BigNumber(simplexFiatAmount.value)
     .minus(simplexFiatFee.value)
     .toFixed(fiatCurrency.value.decimals)
 );
-const simplexPlusFeeF = computed(() => simplexAvailable.value
-  ? formatFiatValue(simplexPlusFee.value, currencyConfig.value).value
-  : `${form.cryptoSelected} is not available for this provider`
+const simplexPlusFeeF = computed(() =>
+  simplexAvailable.value
+    ? formatFiatValue(simplexPlusFee.value, currencyConfig.value).value
+    : `${form.cryptoSelected} is not available for this provider`
 );
 const simplexIncludesFeeText = computed(() => {
   return `Includes 5.25% fee (${
@@ -558,9 +567,10 @@ const simplexIncludesFeeText = computed(() => {
   } min)`;
 });
 const simplexCryptoAmount = computed(() => {
-  const amount = BigNumber(simplexPlusFee.value || '0');
+  const amount = BigNumber(simplexPlusFee.value || "0");
   return simplexAvailable.value
-    ? formatFloatingPointValue(amount.dividedBy(simplexPrice.value).toString()).value
+    ? formatFloatingPointValue(amount.dividedBy(simplexPrice.value).toString())
+        .value
     : 0;
 });
 
@@ -575,14 +585,14 @@ const cryptoIcon = computed(() => {
 // methods
 const getIcon = (currency: string, isFiat = true) => {
   return require(`@/assets/images/${
-    isFiat ? 'fiat' : 'crypto'
+    isFiat ? "fiat" : "crypto"
   }/${currency}.svg`);
 };
 
 const selectCurrency = (currency: string) => {
   form.fiatSelected = currency;
   dropdown.fiat = false;
-  emit('selectedFiat', form.fiatSelected);
+  emit("selectedFiat", form.fiatSelected);
 };
 
 const isValidForm = computed(() => {
@@ -592,8 +602,8 @@ const isValidForm = computed(() => {
     form.cryptoSelected &&
     form.address &&
     !form.addressError &&
-    form.addressErrorMsg === '' &&
-    loading.alertMessage === '' &&
+    form.addressErrorMsg === "" &&
+    loading.alertMessage === "" &&
     form.validAddress
   );
 });
@@ -601,7 +611,7 @@ const isValidForm = computed(() => {
 const rules = [
   (e: any) => {
     if (isString(e) && e?.length >= 1) return true;
-    if (!isNumber(e)) return 'Must be a valid number';
+    if (!isNumber(e)) return "Must be a valid number";
     return true;
   },
 ];
@@ -655,7 +665,7 @@ const minMaxError = () => {
     return;
   }
   loading.showAlert = false;
-  loading.alertMessage = '';
+  loading.alertMessage = "";
 };
 const getPrices = async () => {
   try {
@@ -669,7 +679,7 @@ const getPrices = async () => {
           (r: any) => (tmp.conversion_rates[r.fiat_currency] = r.exchange_rate)
         );
         d.limits.forEach((l: any) => {
-          if (l.type === 'WEB') tmp.limits[l.fiat_currency] = l.limit;
+          if (l.type === "WEB") tmp.limits[l.fiat_currency] = l.limit;
         });
         d.prices.forEach((p: any) => (tmp.prices[p.fiat_currency] = p.price));
         const tokenName = d.crypto_currencies[0];
@@ -678,9 +688,9 @@ const getPrices = async () => {
         );
         // Hard code names/decimals for now
         const tokensInfo: { [key: string]: any } = {
-          USDT: { name: 'Tether', decimals: 6 },
-          USDC: { name: 'USD Coin', decimals: 6 },
-          DAI: { name: 'Dai Stablecoin', decimals: 18 },
+          USDT: { name: "Tether", decimals: 6 },
+          USDC: { name: "USD Coin", decimals: 6 },
+          DAI: { name: "Dai Stablecoin", decimals: 18 },
         };
         // If token name isnt a native network coin
         // assume the token is ERC-20(ETH)
@@ -694,21 +704,21 @@ const getPrices = async () => {
               new Crypto(
                 tokenName,
                 tokenInfo.name,
-                'ETH',
+                "ETH",
                 tokenInfo.decimals,
                 getIcon(tokenName, false)
               )
             );
           }
         }
-        if (d.name === 'SIMPLEX') simplexData[tokenName] = tmp;
-        else if (d.name === 'MOONPAY') moonpayData[tokenName] = tmp;
+        if (d.name === "SIMPLEX") simplexData[tokenName] = tmp;
+        else if (d.name === "MOONPAY") moonpayData[tokenName] = tmp;
       });
     });
     loading.data = false;
-    emit('setQuotes', simplexData, moonpayData);
-    console.log('simplexData', simplexData);
-    console.log('moonpayData', moonpayData);
+    emit("setQuotes", simplexData, moonpayData);
+    console.log("simplexData", simplexData);
+    console.log("moonpayData", moonpayData);
   } catch (e: any) {
     errorHandler(e);
   }
@@ -716,7 +726,7 @@ const getPrices = async () => {
 
 const openTokenSelect = () => {
   emit(
-    'selectedCurrency',
+    "selectedCurrency",
     {
       name: form.fiatSelected,
       value: form.fiatSelected,
@@ -743,13 +753,13 @@ const bestPrice = computed(() => {
 
 const fiatToCrypto = () => {
   const price = bestPrice.value;
-  const amount = new BigNumber(form.fiatAmount || '0');
+  const amount = new BigNumber(form.fiatAmount || "0");
   form.cryptoAmount = amount.dividedBy(price).toString();
 };
 
 const cryptoToFiat = () => {
   const price = bestPrice.value;
-  const amount = new BigNumber(form.cryptoAmount || '0');
+  const amount = new BigNumber(form.cryptoAmount || "0");
   form.fiatAmount = amount.times(price).toFixed(2).toString();
 };
 
@@ -757,15 +767,15 @@ const loadUrlParameters = () => {
   const queryString = window.location.search;
   if (queryString) {
     const urlParams = new URLSearchParams(queryString);
-    const queryCryptoAmount = urlParams.get('crypto_amount');
-    const queryFiat = urlParams.get('fiat');
-    const queryCrypto = urlParams.get('crypto');
-    const queryTo = urlParams.get('to');
-    form.fiatSelected = queryFiat ? queryFiat : 'USD';
-    form.fiatAmount = queryCryptoAmount ? queryCryptoAmount : '100';
-    form.cryptoSelected = queryCrypto ? queryCrypto : 'ETH';
-    form.cryptoAmount = queryCryptoAmount ? queryCryptoAmount : '1';
-    form.address = queryTo ? queryTo : '';
+    const queryCryptoAmount = urlParams.get("crypto_amount");
+    const queryFiat = urlParams.get("fiat");
+    const queryCrypto = urlParams.get("crypto");
+    const queryTo = urlParams.get("to");
+    form.fiatSelected = queryFiat ? queryFiat : "USD";
+    form.fiatAmount = queryCryptoAmount ? queryCryptoAmount : "100";
+    form.cryptoSelected = queryCrypto ? queryCrypto : "ETH";
+    form.cryptoAmount = queryCryptoAmount ? queryCryptoAmount : "1";
+    form.address = queryTo ? queryTo : "";
   }
 };
 // const onReCaptchaToken = (token: string): void => {
@@ -778,7 +788,7 @@ const errorHandler = (e: any): void => {
     const isErrorObj = isObject(e.response.data.error);
     if (isErrorObj) {
       // eslint-disable-next-line
-      const hasErr = e.response.data.error.hasOwnProperty('errors');
+      const hasErr = e.response.data.error.hasOwnProperty("errors");
       if (hasErr) {
         loading.alertMessage = e.response.data.error.errors[0].message;
       }
@@ -831,15 +841,15 @@ const verifyAddress = (): void => {
       validAddress(form.address)
     : isValidAddressPolkadotAddress(
         form.address,
-        form.cryptoSelected === 'DOT' ? 0 : 2
+        form.cryptoSelected === "DOT" ? 0 : 2
       );
   if (valid) {
-    form.addressErrorMsg = '';
+    form.addressErrorMsg = "";
     form.addressError = false;
     form.validAddress = true;
   } else {
     if (!form.address) {
-      form.addressErrorMsg = '';
+      form.addressErrorMsg = "";
       form.validAddress = false;
     } else {
       form.addressErrorMsg = `Please provide a valid ${form.cryptoSelected} address`;
@@ -856,11 +866,9 @@ const submitForm = (): void => {
       Number.parseFloat(form.fiatAmount)
     : true;
 
-  const moonpayFiatAmount = moonpayAvailable
-    ? form.fiatAmount
-    : '0.00';
-  
-  emit('success', {
+  const moonpayFiatAmount = moonpayAvailable ? form.fiatAmount : "0.00";
+
+  emit("success", {
     simplex_quote: {
       cryptoToFiat: simplexCryptoAmount.value,
       selectedCryptoName: cryptoSelected,
@@ -897,18 +905,35 @@ const submitForm = (): void => {
 
 const fetchGasPrice = async (): Promise<void> => {
   if (polkdadot_chains.includes(form.cryptoSelected)) {
-    gasPrice = '0';
+    gasPrice = "0";
     return;
   }
   gasPrice = await web3.value.eth.getGasPrice();
   const price = isValidData(simplexData)
-      ? simplexData[form.cryptoSelected].prices[form.fiatSelected]
-      : moonpayData[form.cryptoSelected].prices[form.fiatSelected];
+    ? simplexData[form.cryptoSelected].prices[form.fiatSelected]
+    : moonpayData[form.cryptoSelected].prices[form.fiatSelected];
   init(BigNumber(networkFee.value).times(price).toNumber());
 };
 </script>
 
+<style lang="scss" scoped>
+.buy-button {
+  background: linear-gradient(
+    90deg,
+    rgba(197, 73, 255, 1) 0%,
+    rgba(112, 75, 255, 1) 100%
+  );
+}
+</style>
+
 <style lang="scss">
+// Hide input arrows
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 // Adjust (text field) prefix font size
 .v-messages__message {
   font-weight: 300;
@@ -919,5 +944,22 @@ const fetchGasPrice = async (): Promise<void> => {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.components--buy-form {
+  .v-field__outline__end,
+  .v-field__outline__start {
+    border-color: #c2c2c2;
+  }
+  .no-right-border {
+    .v-field__outline__end {
+      border-radius: 0 !important;
+    }
+  }
+  .no-left-border {
+    .v-field__outline__start {
+      border-radius: 0 !important;
+    }
+  }
 }
 </style>
