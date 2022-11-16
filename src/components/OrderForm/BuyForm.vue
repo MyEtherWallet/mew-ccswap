@@ -221,6 +221,7 @@ import { Networks } from './network/networks';
 import { Crypto, Data, Network, Fiat } from './network/types';
 import Web3 from 'web3';
 import { init, calculateFiatFee } from './models/purchaseSimplexFeeModel';
+import { fromBase, toBase } from '@/helpers/units';
 
 const defaultFiatValue = '0';
 let gasPrice = '0';
@@ -434,7 +435,7 @@ const web3 = computed(() => {
  */
 const includesFeeText = computed(() => {
   return `Includes ${percentFee.value} fee (${
-    formatFiatValue(minFee.value.toString(), currencyConfig.value).value
+    formatFiatValue(fromBase(minFee.value.toString(), 2), currencyConfig.value).value
   } min)`;
 });
 const networkFeeText = computed(() => {
@@ -499,16 +500,17 @@ const networkFeeToFiat = computed(() => {
   return fromWei(toBN(networkFeeWei.value).muln(parseFloat(networkPrice.value)));
 });
 const minFee = computed(() => {
-  return BigNumber(3.99).toString(); // Minimum 3.99 in respective currency
+  return toBN(399); // Minimum 3.99 in respective currency
 });
 const plusFee = computed(() => {
+  const fiatAmount = toBN(toBase(parseFloat(form.fiatAmount), 2));
   const fee = isEUR.value
-    ? BigNumber(BigNumber(0.7).div(100)).times(form.fiatAmount) // 0.7% SEPA fee
-    : BigNumber(BigNumber(3.25).div(100)).times(form.fiatAmount); // Standard 3.25% fee
+    ? fiatAmount.muln(0.007) // 0.7% SEPA fee
+    : fiatAmount.muln(0.0325); // Standard 3.25% fee
   const withFee = fee.gt(minFee.value)
-    ? BigNumber(form.fiatAmount).minus(fee)
-    : BigNumber(form.fiatAmount).minus(fee).minus(minFee.value);
-  return withFee.minus(networkFeeToFiat.value).toString();
+    ? fiatAmount.sub(fee)
+    : fiatAmount.sub(fee).sub(minFee.value);
+  return fromBase(withFee.subn(parseFloat(networkFeeToFiat.value)).toString(), 2);
 });
 const plusFeeF = computed(() => {
   const isAvailable = isValidData(moonpayData);
