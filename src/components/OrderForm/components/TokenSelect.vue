@@ -122,7 +122,6 @@ import { Crypto, Network, Data, Fiat } from '../types';
 import { Networks } from '../network/networks';
 import BigNumber from 'bignumber.js';
 import { formatFiatValue } from '@/helpers/numberFormatHelper';
-import { isEmpty } from 'lodash';
 
 export default defineComponent({
   name: 'TokenSelect',

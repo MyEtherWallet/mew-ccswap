@@ -194,10 +194,6 @@
 
 <script lang="ts">
 import MultiCoinValidator from 'multicoin-address-validator';
-//   import { mapGetters, mapActions, mapState } from 'vuex';
-
-//   import { ERROR, Toast } from '@/modules/toast/handler/handlerToast';
-//   import { LOCALE } from '../helpers';
 import { executeSimplexPayment, executeMoonpayBuy } from './order';
 import { defineComponent } from 'vue';
 export default defineComponent({
