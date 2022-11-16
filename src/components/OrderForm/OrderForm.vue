@@ -1,49 +1,56 @@
 <template>
   <div class="component--buy-form elevated-box pa-3 pa-sm-6 pa-md-8">
-    <div v-if="step === 0">
-      <MewTabs
-        :items="tabItems"
-        :active-tab="activeTab"
-        active-color="greenPrimary"
-        has-underline
-        @onTab="onTab"
-      >
-        <template #tabContent1>
-          <buy-form
-            :crypto-selected="selectedCurrency"
-            :fiat-selected="selectedFiat"
-            :network-selected="selectedNetwork"
-            :fiat-amount="fiatAmount"
-            @setQuotes="setQuotes"
-            @selectedCurrency="openTokenSelect"
-            @success="buySuccess"
-          />
-        </template>
-        <template #tabContent2>
-          <sell-form
-            :crypto-selected="selectedCurrency"
-            :fiat-selected="selectedFiat"
-            :network-selected="selectedNetwork"
-            :fiat-amount="fiatAmount"
-            @setQuotes="setQuotes"
-            @selectedCurrency="openTokenSelect"
-            @success="sellSuccess"
-          />
-        </template>
-      </MewTabs>
+    <div class="top-container">
+      <div v-if="step === 0">
+        <MewTabs
+          :items="tabItems"
+          :active-tab="activeTab"
+          active-color="greenPrimary"
+          has-underline
+          @onTab="onTab"
+        >
+          <template #tabContent1>
+            <buy-form
+              :crypto-selected="selectedCurrency"
+              :fiat-selected="selectedFiat"
+              :network-selected="selectedNetwork"
+              :fiat-amount="fiatAmount"
+              @setQuotes="setQuotes"
+              @selectedCurrency="openTokenSelect"
+              @success="buySuccess"
+            />
+          </template>
+          <template #tabContent2>
+            <sell-form
+              :crypto-selected="selectedCurrency"
+              :fiat-selected="selectedFiat"
+              :network-selected="selectedNetwork"
+              :fiat-amount="fiatAmount"
+              @setQuotes="setQuotes"
+              @selectedCurrency="openTokenSelect"
+              @success="sellSuccess"
+            />
+          </template>
+        </MewTabs>
+      </div>
     </div>
-    <TokenSelect
-      v-if="step === 1"
-      :selected-network="selectedNetwork"
-      :selected-currency="selectedCurrency"
-      :fiat-selected="selectedFiat"
-      :moonpay-data="moonpayData"
-      :simplex-data="simplexData"
-      :is-sell="isSell"
-      @close="close"
-      @selectCurrency="setSelectedCurrency"
-      @selectedNetwork="setNetwork"
-    />
+
+    <div class="token-select-slider" :class="step === 1 ? 'open' : ''">
+      <TokenSelect
+        v-if="step === 1"
+        class="pa-3 pa-sm-6 pa-md-8"
+        :selected-network="selectedNetwork"
+        :selected-currency="selectedCurrency"
+        :fiat-selected="selectedFiat"
+        :moonpay-data="moonpayData"
+        :simplex-data="simplexData"
+        :is-sell="isSell"
+        @close="close"
+        @selectCurrency="setSelectedCurrency"
+        @selectedNetwork="setNetwork"
+      />
+    </div>
+
     <BuyProviders
       v-if="step === 2"
       :selected-fiat="selectedFiat"
@@ -58,14 +65,14 @@
 </template>
 
 <script lang="ts">
-import { isEmpty } from 'lodash';
+import { isEmpty } from "lodash";
 
-import MewTabs from '../MewTabs/MewTabs.vue';
-import BuyForm from './BuyForm.vue';
-import BuyProviders from './BuyProviders.vue';
-import TokenSelect from './components/TokenSelect.vue';
-import SellForm from './SellForm.vue';
-import { defineComponent } from 'vue';
+import MewTabs from "../MewTabs/MewTabs.vue";
+import BuyForm from "./BuyForm.vue";
+import BuyProviders from "./BuyProviders.vue";
+import TokenSelect from "./components/TokenSelect.vue";
+import SellForm from "./SellForm.vue";
+import { defineComponent } from "vue";
 import {
   Fiat,
   Crypto,
@@ -74,11 +81,11 @@ import {
   SubmitSellData,
   Network,
   Data,
-} from './network/types';
-import { Networks } from './network/networks';
+} from "./network/types";
+import { Networks } from "./network/networks";
 
 export default defineComponent({
-  name: 'OrderForm',
+  name: "OrderForm",
   components: {
     MewTabs,
     BuyForm,
@@ -97,12 +104,12 @@ export default defineComponent({
       selectedNetwork: {} as Network,
       selectedCurrency: {} as Crypto,
       selectedFiat: {} as Fiat,
-      fiatAmount: '0',
+      fiatAmount: "0",
       onlySimplex: false,
       buyObj: {} as QuoteData,
       step: 0,
       simplexQuote: {} as QuoteData,
-      toAddress: '',
+      toAddress: "",
       moonpayData: {} as { [key: string]: Data },
       simplexData: {} as { [key: string]: Data },
     };
@@ -115,12 +122,12 @@ export default defineComponent({
       ) {
         return {
           decimals: 18,
-          img: require('@/assets/images/crypto/ETH.svg'),
-          name: 'ETH',
-          subtext: 'Ethereum',
-          value: 'ETH',
-          symbol: 'ETH',
-          network: 'ETH',
+          img: require("@/assets/images/crypto/ETH.svg"),
+          name: "ETH",
+          subtext: "Ethereum",
+          value: "ETH",
+          symbol: "ETH",
+          network: "ETH",
         };
       }
       return this.selectedCurrency;
@@ -136,8 +143,8 @@ export default defineComponent({
     },
     supportedSell() {
       return (
-        this.selectedCurrency.symbol !== 'DOT' &&
-        this.selectedCurrency.symbol !== 'KSM'
+        this.selectedCurrency.symbol !== "DOT" &&
+        this.selectedCurrency.symbol !== "KSM"
       );
     },
     leftBtn() {
@@ -146,11 +153,11 @@ export default defineComponent({
       };
     },
     tabItems() {
-      return ['Buy', 'Sell'];
+      return ["Buy", "Sell"];
     },
     isSell() {
       return this.activeTab === 1;
-    }
+    },
   },
   beforeMount() {
     this.selectedNetwork = this.defaultNetwork;
@@ -205,8 +212,8 @@ export default defineComponent({
     reset() {
       this.selectedCurrency = this.defaultCurrency;
       this.selectedFiat = {
-        name: 'USD',
-        value: 'USD',
+        name: "USD",
+        value: "USD",
         // eslint-disable-next-line
         img: require(`@/assets/images/fiat/USD.svg`),
       };
@@ -235,4 +242,28 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.component--buy-form {
+  position: relative;
+  overflow: hidden;
+}
+
+.top-container {
+  min-height: 540px;
+}
+
+.token-select-slider {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+  height: 0%;
+  width: 100%;
+  transition: height 0.2s ease;
+  background-color: white;
+
+  &.open {
+    height: 100%;
+  }
+}
+</style>

@@ -155,8 +155,8 @@ export default defineComponent({
     },
     isSell: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   data() {
     return {
@@ -191,17 +191,15 @@ export default defineComponent({
     },
     filteredTokenList() {
       const filterText = this.searchInput.toLowerCase();
-      return this.tokensList.filter(
-        token => {
-          const tokenSymbol = token.name.toLowerCase();
-          const tokenName = token.subtext.toLowerCase();
-          if (
-            this.hasValidPrices(token.name) &&
-            (tokenSymbol.includes(filterText) ||
-            tokenName.includes(filterText))
-          ) return token;
-        }
-      );
+      return this.tokensList.filter((token) => {
+        const tokenSymbol = token.name.toLowerCase();
+        const tokenName = token.subtext.toLowerCase();
+        if (
+          this.hasValidPrices(token.name) &&
+          (tokenSymbol.includes(filterText) || tokenName.includes(filterText))
+        )
+          return token;
+      });
     },
     fiatName() {
       return this.fiatSelected.name;
