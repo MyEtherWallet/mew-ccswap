@@ -212,7 +212,6 @@ import {
   ref,
   Ref,
 } from 'vue';
-import BigNumber from 'bignumber.js';
 import {
   supportedCrypto,
   supportedFiat,
@@ -633,21 +632,23 @@ const checkBalance = () => {
 const fiatToCrypto = () => {
   const { fiatSelected, fiatAmount, cryptoSelected } = form;
   const decimals = props.cryptoSelected.decimals;
-  const price = toBN(toBase(parseFloat(moonpayData[cryptoSelected].prices[fiatSelected]), decimals));
-  const amount = toBN(toBase(parseFloat(fiatAmount || '0'), decimals));
-  console.log('price', price.toString());
-  console.log('amount', amount.toString());
-  const cryptoAmount = fromBase(amount.div(price).toString(), decimals);
-  console.log('cryptoAmount', cryptoAmount);
-  form.cryptoAmount = cryptoAmount;
+  const price = parseFloat(moonpayData[cryptoSelected].prices[fiatSelected]);
+  const amount = parseFloat(fiatAmount || '0');
+  const cryptoAmount = amount / price;
+  // Make sure decimal amount is valid
+  const decimalAmount = cryptoAmount.toString().split('.')[1]?.length || 0;
+  form.cryptoAmount = decimalAmount > decimals ? cryptoAmount.toFixed(decimals) : cryptoAmount.toString();
 };
 
 const cryptoToFiat = () => {
-  const price = new BigNumber(
+  const price = parseFloat(
     moonpayData[form.cryptoSelected].prices[form.fiatSelected]
   );
-  const amount = new BigNumber(form.cryptoAmount || '0');
-  form.fiatAmount = amount.times(price).toFixed(2).toString();
+  const amount = toBN(toBase(parseFloat(form.cryptoAmount || '0'), props.cryptoSelected.decimals));
+  form.fiatAmount = parseFloat(fromBase(
+    amount.muln(price).toString(),
+    props.cryptoSelected.decimals
+  )).toFixed(2);
 };
 
 const loadUrlParameters = () => {
@@ -667,7 +668,7 @@ const loadUrlParameters = () => {
 };
 
 const errorHandler = (e: any): void => {
-  const value = new BigNumber(form.fiatAmount).gt(0);
+  const value = parseFloat(form.fiatAmount) > 0;
   if (value) {
     const isErrorObj = isObject(e.response.data.error);
     if (isErrorObj) {
