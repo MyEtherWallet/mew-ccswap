@@ -472,19 +472,19 @@ const networkPrice = computed(() => {
     : simplexData[props.networkSelected.currencyName].prices[form.fiatSelected];
 });
 const networkFeeToFiat = computed(() => {
-  return toBN(networkFee.value).mul(toBN(networkPrice.value));
+  return BigNumber(networkFee.value).times(networkPrice.value).toString();
 });
 const minFee = computed(() => {
-  return toBN(3.99); // Minimum 3.99 in respective currency
+  return BigNumber(3.99).toString(); // Minimum 3.99 in respective currency
 });
 const plusFee = computed(() => {
   const fee = isEUR.value
-    ? toBN(toBN(0.7).divn(100).toString()).mul(toBN(form.fiatAmount)) // 0.7% SEPA fee
-    : toBN(toBN(3.25).divn(100).toString()).mul(toBN(form.fiatAmount)); // Standard 3.25% fee
+    ? BigNumber(BigNumber(0.7).div(100)).times(form.fiatAmount) // 0.7% SEPA fee
+    : BigNumber(BigNumber(3.25).div(100)).times(form.fiatAmount); // Standard 3.25% fee
   const withFee = fee.gt(minFee.value)
-    ? toBN(form.fiatAmount).sub(fee)
-    : toBN(form.fiatAmount).sub(fee).sub(minFee.value);
-  return withFee.sub(networkFeeToFiat.value).toString();
+    ? BigNumber(form.fiatAmount).minus(fee)
+    : BigNumber(form.fiatAmount).minus(fee).minus(minFee.value);
+  return withFee.minus(networkFeeToFiat.value).toString();
 });
 const plusFeeF = computed(() => {
   const isAvailable = isValidData(moonpayData);
@@ -522,7 +522,7 @@ const fiatCurrency = computed(() => {
   return { decimals: form.fiatSelected === 'JPY' ? 0 : 2 };
 });
 const simplexPrice = computed(() => {
-  return toBN(
+  return new BigNumber(
     simplexAvailable.value
       ? simplexData[form.cryptoSelected].prices[form.fiatSelected]
       : 0
