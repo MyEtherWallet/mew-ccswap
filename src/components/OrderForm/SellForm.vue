@@ -229,7 +229,7 @@ import { Crypto, Data, Network, Fiat } from './network/types';
 import Web3 from 'web3';
 import { formatFloatingPointValue } from '@/helpers/numberFormatHelper';
 // import { abi } from './handler/abiERC20';
-import { toBase } from '@/helpers/units';
+import { fromBase, toBase } from '@/helpers/units';
 
 const defaultFiatValue = '0';
 const polkdadot_chains = ['DOT', 'KSM'];
@@ -494,10 +494,11 @@ const minMax = computed(() => {
   const validData = hasData();
   if (!validData) return false;
   const limit = moonpayData[cryptoSelected].limits[cryptoSelected];
-  const amount = new BigNumber(cryptoAmount || 0);
+  const decimals = props.cryptoSelected.decimals;
+  const amount = toBN(toBase(parseFloat(cryptoAmount || '0'), decimals));
   const valid =
-    amount.gte(new BigNumber(limit.min)) &&
-    amount.lte(new BigNumber(limit.max));
+    amount.gte(toBN(toBase(limit.min, decimals))) &&
+    amount.lte(toBN(toBase(limit.max, decimals)));
   return valid;
 });
 
@@ -599,10 +600,13 @@ const checkBalance = () => {
     // MinMax check
     const limit = moonpayData[form.cryptoSelected].limits[form.cryptoSelected];
     if (!minMax.value) {
-      const amount = new BigNumber(form.cryptoAmount);
-      if (amount.lt(limit.min))
+      const decimals = props.cryptoSelected.decimals;
+      const amount = toBN(toBase(parseFloat(form.cryptoAmount || '0'), decimals));
+      const min = toBN(toBase(limit.min, decimals));
+      const max = toBN(toBase(limit.max, decimals));
+      if (amount.lt(min))
         form.balanceErrorMsg = `Minimum is ${limit.min} ${form.cryptoSelected}`;
-      else if (amount.gt(limit.max))
+      else if (amount.gt(max))
         form.balanceErrorMsg = `Maximum is ${limit.max} ${form.cryptoSelected}`;
       form.balanceError = true;
       return;
@@ -628,9 +632,14 @@ const checkBalance = () => {
 
 const fiatToCrypto = () => {
   const { fiatSelected, fiatAmount, cryptoSelected } = form;
-  const price = new BigNumber(moonpayData[cryptoSelected].prices[fiatSelected]);
-  const amount = new BigNumber(fiatAmount || '0');
-  form.cryptoAmount = amount.dividedBy(price).toString();
+  const decimals = props.cryptoSelected.decimals;
+  const price = toBN(toBase(parseFloat(moonpayData[cryptoSelected].prices[fiatSelected]), decimals));
+  const amount = toBN(toBase(parseFloat(fiatAmount || '0'), decimals));
+  console.log('price', price.toString());
+  console.log('amount', amount.toString());
+  const cryptoAmount = fromBase(amount.div(price).toString(), decimals);
+  console.log('cryptoAmount', cryptoAmount);
+  form.cryptoAmount = cryptoAmount;
 };
 
 const cryptoToFiat = () => {

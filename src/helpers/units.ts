@@ -49,7 +49,7 @@ const numberToString = (arg: any) => {
   );
 };
 
-const fromBase = (weiInput: number, decimals: number, optionsInput: any) => {
+const fromBase = (weiInput: number | string, decimals: number, optionsInput?: { pad?: boolean, commify?: boolean }): string => {
   let wei = toBN(weiInput);
   const negative = wei.lt(zero);
   const base = getValueOfUnit(decimals);
@@ -85,7 +85,7 @@ const fromBase = (weiInput: number, decimals: number, optionsInput: any) => {
   return value;
 };
 
-const toBase = (etherInput: number, decimals: number) => {
+const toBase = (etherInput: number, decimals: number): string => {
   let ether = numberToString(etherInput);
   const base = getValueOfUnit(decimals);
   const baseLength = base.toString().length - 1 || 1;
