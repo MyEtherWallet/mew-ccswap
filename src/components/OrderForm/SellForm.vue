@@ -438,6 +438,7 @@ watch(
 watch(
   () => form.address,
   () => {
+    verifyAddress();
     fetchGasPrice();
     if (!loading.data) {
       getBalance();
@@ -505,7 +506,8 @@ const rules = [
 ];
 
 const minMax = computed(() => {
-  const { cryptoSelected, cryptoAmount } = form;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { cryptoSelected, cryptoAmount, address } = form; // wont update without address
   const validData = hasData();
   if (!validData) return false;
   const limit = moonpayData[cryptoSelected].limits[cryptoSelected];

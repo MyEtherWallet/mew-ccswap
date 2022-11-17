@@ -26,6 +26,7 @@
           v-model.number="form.fiatAmount"
           required
           variant="outlined"
+          :error-messages="loading.alertMessage"
           :disabled="loading.data"
           :rules="rules"
         ></v-text-field>
@@ -100,7 +101,6 @@
           variant="outlined"
           rounded="left"
           :rules="rules"
-          :error-messages="loading.alertMessage"
           :disabled="loading.data"
         ></v-text-field>
         <v-select
@@ -960,6 +960,7 @@ input::-webkit-inner-spin-button {
 .v-messages__message {
   font-weight: 300;
   font-size: 0.9rem;
+  color:red;
 }
 
 .v-combobox__selection-text {
