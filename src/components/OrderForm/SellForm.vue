@@ -228,7 +228,7 @@ import { Networks } from './network/networks';
 import { Crypto, Data, Network, Fiat } from './network/types';
 import Web3 from 'web3';
 import { formatFloatingPointValue } from '@/helpers/numberFormatHelper';
-// import { abi } from './handler/abiERC20';
+import { abi } from './handler/abiERC20';
 import { fromBase, toBase } from '@/helpers/units';
 
 const defaultFiatValue = '0';
@@ -237,6 +237,20 @@ let gasPrice = ref('0');
 // eslint-disable-next-line no-undef
 let priceTimer: NodeJS.Timer, gasTimer: NodeJS.Timer;
 let fiatFilter = '';
+// Hard code names/decimals for now
+const tokensInfo: { [key: string]: any } = {
+  USDT: { 
+    name: 'Tether', 
+    decimals: 6,
+    contract: '0xdAC17F958D2ee523a2206206994597C13D831ec7'
+  },
+  USDC: { 
+    name: 'USD Coin', 
+    decimals: 6,
+    contract: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'
+  },
+  DAI: { name: 'Dai Stablecoin', decimals: 18, contract: '' },
+};
 
 let moonpayData: { [key: string]: Data } = {
   ETH: {
@@ -355,6 +369,7 @@ const form = reactive({
   addressError: false,
   balance: '',
   balanceWei: '',
+  balanceETH: '',
   balanceError: false,
   balanceErrorMsg: '',
 });
@@ -521,12 +536,6 @@ const getPrices = async () => {
         const mainCoin = Networks.find(
           (item) => item.currencyName === tokenName
         );
-        // Hard code names/decimals for now
-        const tokensInfo: { [key: string]: any } = {
-          USDT: { name: 'Tether', decimals: 6 },
-          USDC: { name: 'USD Coin', decimals: 6 },
-          DAI: { name: 'Dai Stablecoin', decimals: 18 },
-        };
         // If token name isnt a native network coin
         // assume the token is ERC-20(ETH)
         if (!mainCoin) {
@@ -551,7 +560,6 @@ const getPrices = async () => {
     });
     loading.data = false;
     emit('setQuotes', moonpayData);
-    console.log('moonpayData', moonpayData);
   } catch (e: any) {
     errorHandler(e);
   }
@@ -559,13 +567,24 @@ const getPrices = async () => {
 
 const getBalance = async () => {
   if (!form.validAddress) return '0';
+  const isMainCoin = props.networkSelected.currencyName === props.cryptoSelected.symbol;
+  const balance = form.address
+    ? await getETHBalance()
+    : '0';
+  if (isMainCoin) {
+    form.balanceWei = balance;
+    form.balance = fromWei(balance);
+  } else await getTokenBalance(props.cryptoSelected.symbol);
+
+  checkBalance();
+  return balance;
+};
+const getETHBalance = async () => {
+  if (!form.validAddress) return '0';
   const balance = form.address
     ? await web3.value.eth.getBalance(form.address, 'latest')
     : '0';
-  form.balanceWei = balance;
-  form.balance = fromWei(balance);
-
-  checkBalance();
+  form.balanceETH = balance;
   return balance;
 };
 
@@ -582,8 +601,10 @@ const userBalance = () => {
 
 const hasEnoughCrypto = () => {
   if (!form.balanceWei || form.balanceWei === '0') return false;
-  return totalWithFee.value.lte(toBN(form.balanceWei));
+  const isMainCoin = props.networkSelected.currencyName === props.cryptoSelected.symbol;
+  return isMainCoin ? totalWithFee.value.lte(toBN(form.balanceETH)) : networkFee.value.lte(toBN(form.balanceETH));
 };
+
 const totalWithFee = computed(() => {
   if (subtotalSell.value === toBN(0)) return networkFee.value;
   return subtotalSell.value.add(networkFee.value);
@@ -616,13 +637,12 @@ const checkBalance = () => {
   // User balance check
   if (form.validAddress) {
     const balance = userBalance();
-
     if (subtotalSell.value.gt(balance)) {
-      form.balanceErrorMsg = 'You do not have enough ETH to sell';
+      form.balanceErrorMsg = `You do not have enough ${props.cryptoSelected.name} to sell`;
       return;
     }
     if (!hasEnoughCrypto()) {
-      form.balanceErrorMsg = 'You do not have enough ETH to pay for network fees';
+      form.balanceErrorMsg = `You do not have enough ${props.networkSelected.currencyName} to pay for network fees`;
       return;
     }
   }
@@ -645,11 +665,9 @@ const cryptoToFiat = () => {
   const price = parseFloat(
     moonpayData[form.cryptoSelected].prices[form.fiatSelected]
   );
-  const amount = toBN(toBase(parseFloat(form.cryptoAmount || '0'), props.cryptoSelected.decimals));
-  form.fiatAmount = parseFloat(fromBase(
-    amount.muln(price).toString(),
-    props.cryptoSelected.decimals
-  )).toFixed(2);
+  const amount = parseFloat(form.cryptoAmount || '0');
+  const fiatAmount = amount * price;
+  form.fiatAmount = fiatAmount.toFixed(2);
 };
 
 const loadUrlParameters = () => {
@@ -755,25 +773,19 @@ const fetchGasPrice = async (): Promise<void> => {
   gasPrice.value = await web3.value.eth.getGasPrice();
 };
 
-// const getTokenBalance = (contract: string) => {
-//       // if (!isValidAddress(contract)) return;
-//       const newContract = new web3.value.eth.Contract(
-//         abi,
-//         contract
-//       );
-//       newContract.methods
-//         .balanceOf(rootState.wallet.address)
-//         .call()
-//         .then(res => {
-//           newToken.balancef = _getTokenBalance(res, item.decimals).value;
-//           newToken.balance = res;
-//           dispatch('setCustomToken', newToken);
-//         })
-//         .catch(e => Toast(e.message, {}, ERROR));
-
-//   // usdt: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
-//   // usdc: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'
-// };
+const getTokenBalance = async (tokenName: string) => {
+      // if (!isValidAddress(contract)) return;
+      const newContract = new web3.value.eth.Contract(
+        abi as any,
+        tokensInfo[tokenName].contract
+      );
+      const bal = await newContract.methods
+        .balanceOf(form.address)
+        .call()
+        .catch((e: Error) => console.error(e));
+      form.balanceWei = bal.toString();
+      form.balance = fromBase(form.balanceWei, tokensInfo[tokenName].decimals);
+};
 </script>
 
 <style lang="scss" scoped>
