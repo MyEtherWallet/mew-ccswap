@@ -1,10 +1,9 @@
 <template>
   <div class="dropShadow">
-    <img :src="enkryptDarkLogo" alt="MEW" height="36" />
+    <img :src="isEthVm ? ethvmLogo : enkryptDarkLogo" alt="MEW" height="36" />
 
     <div
-      class="text-black"
-      :class="$vuetify.display.smAndUp ? 'heading-1' : 'heading-1'"
+      class="heading-1 text-color"
       :style="
         $vuetify.display.smAndUp
           ? 'margin-top: 100px; max-width: 520px'
@@ -15,13 +14,18 @@
     </div>
 
     <div class="d-flex align-center" style="margin-top: 60px">
-      <div class="text-black mr-4">Powered by</div>
-      <img class="mr-2" :src="simplex" alt="Simplex" height="25" />
-      <img :src="moonpay" alt="Moonpay" height="25" />
+      <div class="text-color mr-4">Powered by</div>
+      <img
+        class="mr-2"
+        :src="isEthVm ? simplexLight : simplex"
+        alt="Simplex"
+        height="25"
+      />
+      <img :src="isEthVm ? moonpayWhite : moonpay" alt="Moonpay" height="25" />
     </div>
 
     <div class="d-flex flex-wrap align-center mt-4">
-      <div class="text-black mr-2">We accept</div>
+      <div class="text-color mr-2">We accept</div>
       <div class="d-flex align-center">
         <img class="mr-2" :src="visa" alt="Visa" height="22" />
         <img class="mr-2" :src="applePay" alt="Visa" height="22" />
@@ -32,12 +36,17 @@
 </template>
 
 <script setup lang="ts">
-import visa from '@/assets/images/icon-visa.svg';
-import master from '@/assets/images/icon-master.svg';
-import applePay from '@/assets/images/icon-apple-pay.svg';
-import simplex from '@/assets/images/icon-simplex.svg';
-import moonpay from '@/assets/images/icon-moonpay.svg';
-import enkryptDarkLogo from '@/assets/images/icon-enkrypt-logo-dark.svg';
+import visa from "@/assets/images/icon-visa.svg";
+import master from "@/assets/images/icon-master.svg";
+import applePay from "@/assets/images/icon-apple-pay.svg";
+import simplex from "@/assets/images/icon-simplex.svg";
+import simplexLight from "@/assets/images/icon-simplex-light.svg";
+import moonpay from "@/assets/images/icon-moonpay.svg";
+import moonpayWhite from "@/assets/images/icon-moonpay-white.svg";
+import enkryptDarkLogo from "@/assets/images/icon-enkrypt-logo-dark.svg";
+import ethvmLogo from "@/assets/images/icon-ethvm-logo.svg";
+
+const isEthVm = window.location.search.includes("ethvm");
 </script>
 
 <style lang="scss" scoped>
@@ -57,5 +66,9 @@ import enkryptDarkLogo from '@/assets/images/icon-enkrypt-logo-dark.svg';
   line-height: 24px;
 
   color: #1b1b1b;
+}
+
+.text-color {
+  color: rgb(var(--v-theme-promo-header-text));
 }
 </style>

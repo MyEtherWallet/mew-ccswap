@@ -23,7 +23,7 @@
       <v-btn
         size="x-large"
         class="rounded-pill text-white mt-3 text-none"
-        color="#7b61ff"
+        color="btn-get-wallet"
         href="https://www.myetherwallet.com/wallet/create"
         target="_blank"
       >

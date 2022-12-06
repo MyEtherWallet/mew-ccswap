@@ -24,17 +24,17 @@
 </template>
 
 <script setup lang="ts">
-import HeaderComponent from '@/components/Header/HeaderComponent.vue';
-import FooterComponent from '@/components/Footer/FooterComponent.vue';
-import OrderForm from '@/components/OrderForm/OrderForm.vue';
-import BuyFormBanner from '@/components/BuyNowBanner/BuyBanner.vue';
-import PromoComponent from '@/components/Promo/PromoComponent.vue';
-import PromoComponentThisIsWhy from '@/components/Promo/PromoComponentThisIsWhy.vue';
+import HeaderComponent from "@/components/Header/HeaderComponent.vue";
+import FooterComponent from "@/components/Footer/FooterComponent.vue";
+import OrderForm from "@/components/OrderForm/OrderForm.vue";
+import BuyFormBanner from "@/components/BuyNowBanner/BuyBanner.vue";
+import PromoComponent from "@/components/Promo/PromoComponent.vue";
+import PromoComponentThisIsWhy from "@/components/Promo/PromoComponentThisIsWhy.vue";
 </script>
 
 <style lang="scss">
-@import '@/styles/globalOldDesign.scss';
-@import '@/styles/mewDesign.scss';
+@import "@/styles/globalOldDesign.scss";
+@import "@/styles/mewDesign.scss";
 </style>
 
 <style lang="scss" scoped>
@@ -57,8 +57,6 @@ import PromoComponentThisIsWhy from '@/components/Promo/PromoComponentThisIsWhy.
 }
 
 .background-space-man-lg {
-  //background-size: 347px;
-  //background-position: calc(50% - 43px) 379px;
   background-size: 603px;
   background-position: calc(50% + 854px) 54px;
 }
@@ -71,26 +69,17 @@ import PromoComponentThisIsWhy from '@/components/Promo/PromoComponentThisIsWhy.
 }
 
 .background-image {
-  // background-color: #161a34;
-  background-color: #ffffff;
+  background-color: rgb(var(--v-theme-background-fill));
   background-image: radial-gradient(
       at top 0px right 200px,
-      rgb(112, 75, 255),
+      rgb(var(--v-theme-background-gradient)),
       transparent 900px
     ),
     radial-gradient(
       at bottom 200px left 200px,
-      rgba(112, 75, 255),
+      rgba(var(--v-theme-background-gradient)),
       transparent 500px
     ),
     radial-gradient(at bottom right, rgba(60, 47, 104, 0.5), transparent 400px);
 }
-
-/*
-background-image: radial-gradient(
-    30% 30% at left 200px bottom 250px,
-    #14377a,
-    #1d2343
-  );
-  */
 </style>

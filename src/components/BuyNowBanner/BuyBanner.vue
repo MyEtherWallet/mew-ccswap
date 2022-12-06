@@ -6,23 +6,33 @@
     >
       <v-btn
         class="buy--btn rounded-pill text-white text-none"
-        color="white"
-        style="color: #7b61ff"
+        color="buynow--banner-btn"
+        @click="scrollTop"
       >
-        <h2 class="font-weight-bold" style="color: #7b61ff">Buy Now</h2>
+        <h2 class="font-weight-bold">Buy Now</h2>
       </v-btn>
     </v-container>
   </div>
 </template>
 
+<script setup>
+const scrollTop = () => {
+  window.scrollTo(0, 0);
+};
+</script>
+
 <style lang="scss" scoped>
 .buynow--banner {
-  background-color: #7b61ff;
+  background-color: rgb(var(--v-theme-buynow--banner));
   width: 100vw;
 }
 
 .buy--btn {
   width: 300px;
   height: 64px;
+
+  h2 {
+    color: rgb(var(--v-theme-buynow--banner-btn-text));
+  }
 }
 </style>
