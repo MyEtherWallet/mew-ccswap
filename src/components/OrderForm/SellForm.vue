@@ -42,7 +42,7 @@
         >
           <template #prepend-inner>
             <img
-              class="currency-icon mr-1"
+              class="currency-icon padding--2 mr-1"
               :src="cryptoIcon"
               :alt="form.cryptoSelected"
               width="25px"
@@ -110,7 +110,7 @@
             >
               <div class="d-flex align-center">
                 <img
-                  class="currency-icon mr-1 ml-3"
+                  class="currency-icon padding--2 mr-1 ml-3"
                   :src="getIcon(data.item.value)"
                   :alt="data.item.value"
                   width="25px"
