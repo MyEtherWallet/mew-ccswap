@@ -32,7 +32,7 @@
         ></v-text-field>
         <v-select
           style="max-width: 120px"
-          class="rounded-right no-left-border"
+          class="rounded-right no-left-border buy-input"
           v-model="form.fiatSelected"
           :items="filteredFiatItems"
           :disabled="loading.data"
@@ -118,7 +118,7 @@
         >
           <template #prepend-inner>
             <img
-              class="currency-icon mr-1"
+              class="currency-icon mr-1 padding--2"
               :src="cryptoIcon"
               :alt="form.cryptoSelected"
               width="25px"
@@ -389,6 +389,7 @@ watch(
   () => {
     verifyAddress();
     fiatToCrypto();
+    minMaxError();
   }
 );
 
@@ -397,6 +398,7 @@ watch(
   () => {
     verifyAddress();
     cryptoToFiat();
+    minMaxError();
   }
 );
 
@@ -806,9 +808,6 @@ const loadUrlParameters = () => {
     form.address = queryTo ? queryTo : "";
   }
 };
-// const onReCaptchaToken = (token: string): void => {
-//   form.reCaptchaToken = token;
-// };
 
 const errorHandler = (e: any): void => {
   const value = toBN(form.fiatAmount).gt(toBN(0));
@@ -841,27 +840,11 @@ const isValidAddressPolkadotAddress = (
     return false;
   }
 };
-// const resetForm = (): void => {
-//   form.fiatAmount = defaultFiatValue;
-//   form.fiatSelected = "USD";
-//   form.cryptoAmount = "1";
-//   form.cryptoSelected = "ETH";
-//   form.address = "";
-//   getPrices();
-// };
 
 const addressInput = (value: string): void => {
   form.address = value;
   verifyAddress();
 };
-// const addressFocus = (event: Event): void => {
-//   form.address = form.address ? form.address : '';
-//   if (event.type === 'focus') {
-//     setTimeout(() => {
-//       event.target?.dispatchEvent(new Event('blur'));
-//     }, 100);
-//   }
-// };
 
 const verifyAddress = (): void => {
   const valid = !polkdadot_chains.includes(form.cryptoSelected)
@@ -955,6 +938,12 @@ const fetchGasPrice = async (): Promise<void> => {
 </style>
 
 <style lang="scss">
+.buy-input {
+  .v-input__control {
+    height: 56px !important;
+  }
+}
+
 // Hide input arrows
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {

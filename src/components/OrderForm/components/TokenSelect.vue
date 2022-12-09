@@ -24,7 +24,7 @@
         >
           <template #selection>
             <img
-              class="network-icon mr-5"
+              class="network-icon mr-5 pa-1"
               :src="networkSelected.icon"
               :alt="networkSelected.name"
               width="28px"
@@ -54,7 +54,7 @@
             >
               <div class="d-flex align-center">
                 <img
-                  class="currency-icon mr-1 ml-3"
+                  class="currency-icon padding--2 mr-1 ml-3"
                   :src="data.item.value.icon"
                   :alt="data.item.value.name"
                   width="25px"
@@ -97,7 +97,7 @@
           >
             <template #prepend>
               <img
-                class="currency-icon mr-3"
+                class="currency-icon no-border mr-3"
                 :src="item.img"
                 :alt="item.name"
                 width="25px"
@@ -247,9 +247,17 @@ export default defineComponent({
       this.networkDropdown = false;
     },
     tokenPrice(token: string) {
-      const simplexPrice = parseFloat(this.simplexData[token]?.prices[this.fiatName]);
-      const moonpayPrice = parseFloat(this.moonpayData[token]?.prices[this.fiatName]);
-      const currencyConfig = { locale: 'en-US', rate: 1, currency: this.fiatName };
+      const simplexPrice = parseFloat(
+        this.simplexData[token]?.prices[this.fiatName]
+      );
+      const moonpayPrice = parseFloat(
+        this.moonpayData[token]?.prices[this.fiatName]
+      );
+      const currencyConfig = {
+        locale: "en-US",
+        rate: 1,
+        currency: this.fiatName,
+      };
       if (isNaN(moonpayPrice))
         return formatFiatValue(simplexPrice.toFixed(2), currencyConfig).value;
       if (isNaN(simplexPrice))
@@ -291,5 +299,9 @@ $greyPrimary-base: #5a678a;
   font-size: 16px;
 
   color: #1f242f;
+}
+
+.no-border {
+  border: none;
 }
 </style>
