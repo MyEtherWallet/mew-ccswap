@@ -70,16 +70,22 @@ import PromoComponentThisIsWhy from "@/components/Promo/PromoComponentThisIsWhy.
 
 .background-image {
   background-color: rgb(var(--v-theme-background-fill));
-  background-image: radial-gradient(
-      at top 0px right 200px,
-      rgb(var(--v-theme-background-gradient)),
-      transparent 900px
-    ),
-    radial-gradient(
-      at bottom 200px left 200px,
-      rgba(var(--v-theme-background-gradient)),
-      transparent 500px
-    ),
-    radial-gradient(at bottom right, rgba(60, 47, 104, 0.5), transparent 400px);
+  @media (min-width: 768px) {
+    background-image: radial-gradient(
+        at top 0px right 200px,
+        rgb(var(--v-theme-background-gradient)),
+        transparent 900px
+      ),
+      radial-gradient(
+        at bottom 200px left 200px,
+        rgba(var(--v-theme-background-gradient)),
+        transparent 500px
+      ),
+      radial-gradient(
+        at bottom right,
+        rgba(60, 47, 104, 0.5),
+        transparent 400px
+      );
+  }
 }
 </style>

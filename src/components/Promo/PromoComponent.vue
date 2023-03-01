@@ -5,7 +5,9 @@
   >
     <div>
       <v-container>
-        <h1 class="mb-9">Increased by limits so you can do more with crypto</h1>
+        <h1 class="mb-9">
+          Increased buy limits so you can do more with crypto
+        </h1>
         <v-row>
           <v-col cols="12" md="4" v-for="(p1, key1) in promo1" :key="key1">
             <div class="elevated-box-small pa-10">

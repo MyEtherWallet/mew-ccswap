@@ -6,9 +6,13 @@
         <v-col
           cols="12"
           md="6"
+          sm="6"
           v-for="(p2, key2) in promo2"
           :key="key2"
-          :class="$vuetify.display.mdAndUp ? '' : 'd-flex justify-center'"
+          :class="[
+            $vuetify.display.mdAndUp ? 'justify-center' : 'justify-left',
+            'd-flex',
+          ]"
         >
           <div class="d-flex align-center pb-8">
             <img class="mr-4" :src="p2.icon" alt="Promo" />
@@ -47,7 +51,7 @@ const isEthVm = window.location.search.includes("ethvm");
 const promo2 = [
   {
     icon: isEthVm ? iconFeeBlue : iconFee,
-    title: "Low fee",
+    title: "Low fees",
     description:
       "Get the most crypto for your fiat with limited fees from the provider and MEW",
   },
