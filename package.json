@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build && cp dist/index.html dist/404.html && touch ./dist/CNAME && echo 'ccswap1.myetherwallet.com' >> ./dist/CNAME",
+    "build": "vue-cli-service build && cp dist/index.html dist/404.html",
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
     "lint": "vue-cli-service lint",
