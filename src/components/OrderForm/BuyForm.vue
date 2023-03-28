@@ -232,12 +232,6 @@ let priceTimer: NodeJS.Timer;
 let fiatFilter = "";
 
 const addressBook = [
-  {
-    address: "0xDECAF9CD2367cdbb726E904cD6397eDFcAe6068D",
-    currency: "ETH",
-    nickname: "MEW Donations",
-    resolvedAddr: "0xDECAF9CD2367cdbb726E904cD6397eDFcAe6068D",
-  },
 ];
 
 onMounted(async () => {

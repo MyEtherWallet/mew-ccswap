@@ -118,13 +118,11 @@ a {
 
 // Custom elements
 .elevated-box {
-  box-shadow: 0 8px 20px rgb(0 0 0 / 25%);
   border-radius: 20px;
   background-color: white;
 }
 
 .elevated-box-small {
-  box-shadow: 0 8px 10px rgb(0 0 0 / 15%);
   border-radius: 5px 5px 10px 10px;
   background-color: white;
   border-top: 10px solid $mew;

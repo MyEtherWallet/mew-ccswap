@@ -9,10 +9,7 @@
           sm="6"
           v-for="(p2, key2) in promo2"
           :key="key2"
-          :class="[
-            $vuetify.display.mdAndUp ? 'justify-center' : 'justify-left',
-            'd-flex',
-          ]"
+          :class="['justify-left', 'd-flex']"
         >
           <div class="d-flex align-center pb-8">
             <img class="mr-4" :src="p2.icon" alt="Promo" />

@@ -4,12 +4,10 @@
   <!-- Mew Address Select -->
   <!-- ===================================================================================== -->
   <v-combobox
-    append-inner-icon="mdi-chevron-down"
     ref="mewAddressSelect"
     v-model="addressValue"
     class="address-select pa-0 rounded-lg"
     color="primary"
-    :items="items"
     :label="label"
     item-value="address"
     item-text="address"
@@ -21,11 +19,8 @@
     :rules="rules"
     :no-data-text="noDataText"
     :menu-props="{ closeOnContentClick: true }"
-    :menu="dropdown"
     variant="outlined"
-    @focusin="dropdown = true"
     @update:search-input="onChange"
-    @blur="dropdown = false"
     @update:model-value="onInputChange"
   >
     <!-- ===================================================================================== -->
@@ -153,16 +148,6 @@ export default defineComponent({
       default: "To Address",
     },
     /**
-     * The items that are displayed in the dropdown.
-     * Currently takes an array of objects, i.e { address: '', nickname: ''}
-     */
-    items: {
-      type: Array,
-      default: () => {
-        return [];
-      },
-    },
-    /**
      * The input placeholder.
      */
     placeholder: {
@@ -190,10 +175,6 @@ export default defineComponent({
        * The v-model value for the combobox.
        */
       addressValue: "",
-      /**
-       * Controls the dropdown expansion.
-       */
-      dropdown: false,
       /**
        * Indicates whether the user selected from dropdown or typed in the address
        */
@@ -225,16 +206,9 @@ export default defineComponent({
       this.addressValue = "";
     },
     /**
-     * Toggles the dropdown.
-     */
-    toggle() {
-      this.dropdown = !this.dropdown;
-    },
-    /**
      * Sets the dropdown item to be the v-model value.
      */
     selectAddress(data: { value: any; raw: any }) {
-      this.dropdown = false;
       this.isTyped = USER_INPUT_TYPES.selected;
       const addressSelect = Object.assign<any, any>(
         {},

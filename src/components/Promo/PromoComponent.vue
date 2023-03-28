@@ -6,7 +6,8 @@
     <div>
       <v-container>
         <h1 class="mb-9">
-          Increased buy limits so you can do more with crypto
+          Increased buy limits <br />
+          so you can do more with crypto
         </h1>
         <v-row>
           <v-col cols="12" md="4" v-for="(p1, key1) in promo1" :key="key1">
@@ -63,7 +64,6 @@ h1 {
 }
 
 .elevated-box-small {
-  box-shadow: 0 8px 10px rgb(0 0 0 / 15%);
   border-radius: 5px 5px 10px 10px;
   background-color: white;
   border-top: 10px solid rgb(var(--v-theme-promo-border));

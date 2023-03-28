@@ -151,7 +151,7 @@
 
     <div class="text-gray mt-3 mb-6">
       After submitting your sell order, you will have to send your crypto to
-      Moonpay. Make sure to have enough currency in your wallet to cover network
+      MoonPay. Make sure to have enough currency in your wallet to cover network
       transaction fees.
       <br />
       <br />
