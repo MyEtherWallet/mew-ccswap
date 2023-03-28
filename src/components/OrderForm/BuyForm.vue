@@ -138,11 +138,10 @@
       </div>
       <mew-address-select
         ref="addressSelect"
-        :model-value="form.address"
+        :modelValue="form.address"
         :error-messages="form.addressErrorMsg"
         :autofocus="false"
         label=""
-        :items="addressBook"
         :is-valid-address="form.validAddress"
         placeholder="Enter Crypto Address"
         @keyup="verifyAddress"
@@ -231,16 +230,8 @@ const polkdadot_chains = ["DOT", "KSM"];
 let priceTimer: NodeJS.Timer;
 let fiatFilter = "";
 
-const addressBook = [
-];
-
 onMounted(async () => {
   form.address = "";
-  if (isEmpty(props.fiatSelected)) {
-    // Load URL parameter value and verify crypto address
-    loadUrlParameters();
-    verifyAddress();
-  }
 
   // Get crypto Data
   await getPrices();
@@ -249,7 +240,11 @@ onMounted(async () => {
     form.fiatSelected = props.fiatSelected.name;
     form.fiatAmount = props.fiatAmount;
     fiatToCrypto();
-  } else cryptoToFiat();
+  } else {
+    // Load URL parameter value and verify crypto address
+    loadUrlParameters();
+    cryptoToFiat();
+  }
   await fetchGasPrice();
   priceTimer = setInterval(getPrices, 1000 * 60 * 2);
 });
@@ -795,11 +790,28 @@ const loadUrlParameters = () => {
     const queryFiat = urlParams.get("fiat");
     const queryCrypto = urlParams.get("crypto");
     const queryTo = urlParams.get("to");
-    form.fiatSelected = queryFiat ? queryFiat : "USD";
-    form.fiatAmount = queryCryptoAmount ? queryCryptoAmount : "100";
-    form.cryptoSelected = queryCrypto ? queryCrypto : "ETH";
+
+    // validate queries
+    const isSupportedCrypto = supportedCrypto.find((cItem) => {
+      if (cItem.toLowerCase() === queryCrypto?.toLowerCase()) {
+        return queryCrypto;
+      }
+    });
+
+    const isSupportedFiat = supportedCrypto.find((cItem) => {
+      if (cItem.toLowerCase() === queryCrypto?.toLowerCase()) {
+        return queryCrypto;
+      }
+    });
+
+    form.fiatSelected =
+      queryFiat && isSupportedFiat ? queryFiat.toUpperCase() : "USD";
+    form.fiatAmount = queryCryptoAmount ? queryCryptoAmount : "500";
+    form.cryptoSelected =
+      queryCrypto && isSupportedCrypto ? queryCrypto.toUpperCase() : "ETH";
     form.cryptoAmount = queryCryptoAmount ? queryCryptoAmount : "1";
     form.address = queryTo ? queryTo : "";
+    verifyAddress();
   }
 };
 

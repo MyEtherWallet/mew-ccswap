@@ -95,6 +95,13 @@ export default defineComponent({
   },
   props: {
     /**
+     * value passed
+     */
+    modelValue: {
+      type: String,
+      default: "",
+    },
+    /**
      * Text displayed under the input container.
      */
     hint: {
@@ -174,7 +181,7 @@ export default defineComponent({
       /**
        * The v-model value for the combobox.
        */
-      addressValue: "",
+      addressValue: this.modelValue,
       /**
        * Indicates whether the user selected from dropdown or typed in the address
        */
@@ -196,6 +203,9 @@ export default defineComponent({
   watch: {
     clearAddress() {
       this.clear();
+    },
+    modelValue(val) {
+      this.addressValue = val;
     },
   },
   methods: {
