@@ -228,6 +228,7 @@ import Web3 from "web3";
 import { formatFloatingPointValue } from "@/helpers/numberFormatHelper";
 import { abi } from "./handler/abiERC20";
 import { fromBase, toBase } from "@/helpers/units";
+import { PriceItem } from "./types";
 
 const defaultFiatValue = "0";
 const polkdadot_chains = ["DOT", "KSM"];
@@ -523,41 +524,45 @@ const getPrices = async () => {
   try {
     loading.data = true;
     const data: any[] = (await getCryptoSellPrices()) || [];
+    console.log(data);
     data.forEach((arr: any) => {
-      arr.forEach((d: any) => {
-        const tmp: Data = { conversion_rates: {}, limits: {}, prices: {} };
+      arr.forEach((d: PriceItem) => {
+        if (isObject(d)) {
+          const tmp: Data = { conversion_rates: {}, limits: {}, prices: {} };
 
-        d.conversion_rates.forEach(
-          (r: any) => (tmp.conversion_rates[r.fiat_currency] = r.exchange_rate)
-        );
-        d.limits.forEach((l: any) => {
-          if (l.type === "WEB") tmp.limits[l.crypto_currency] = l.limit;
-        });
-        d.prices.forEach((p: any) => (tmp.prices[p.fiat_currency] = p.price));
-        const tokenName = d.crypto_currencies[0];
-        const mainCoin = Networks.find(
-          (item) => item.currencyName === tokenName
-        );
-        // If token name isnt a native network coin
-        // assume the token is ERC-20(ETH)
-        if (!mainCoin) {
-          const foundToken = Networks[0].tokens.find(
-            (item) => item.name === tokenName
+          d.conversion_rates.forEach(
+            (r: any) =>
+              (tmp.conversion_rates[r.fiat_currency] = r.exchange_rate)
           );
-          if (!foundToken) {
-            const tokenInfo = tokensInfo[tokenName];
-            Networks[0].tokens.push(
-              new Crypto(
-                tokenName,
-                tokenInfo.name,
-                "ETH",
-                tokenInfo.decimals,
-                getIcon(tokenName, false)
-              )
+          d.limits.forEach((l: any) => {
+            if (l.type === "WEB") tmp.limits[l.crypto_currency] = l.limit;
+          });
+          d.prices.forEach((p: any) => (tmp.prices[p.fiat_currency] = p.price));
+          const tokenName = d.crypto_currencies[0];
+          const mainCoin = Networks.find(
+            (item) => item.currencyName === tokenName
+          );
+          // If token name isnt a native network coin
+          // assume the token is ERC-20(ETH)
+          if (!mainCoin) {
+            const foundToken = Networks[0].tokens.find(
+              (item) => item.name === tokenName
             );
+            if (!foundToken) {
+              const tokenInfo = tokensInfo[tokenName];
+              Networks[0].tokens.push(
+                new Crypto(
+                  tokenName,
+                  tokenInfo.name,
+                  "ETH",
+                  tokenInfo.decimals,
+                  getIcon(tokenName, false)
+                )
+              );
+            }
           }
+          moonpayData[tokenName] = tmp;
         }
-        moonpayData[tokenName] = tmp;
       });
     });
     loading.data = false;

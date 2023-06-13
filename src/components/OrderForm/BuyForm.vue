@@ -40,7 +40,6 @@
           active-color="primary"
           return-object
           variant="outlined"
-          append-inner-icon="mdi-chevron-down"
         >
           <template #prepend-inner>
             <img
@@ -104,7 +103,6 @@
           :disabled="loading.data"
         ></v-text-field>
         <v-select
-          append-inner-icon="mdi-chevron-down"
           class="no-left-border"
           style="max-width: 120px"
           v-model="form.cryptoSelected"

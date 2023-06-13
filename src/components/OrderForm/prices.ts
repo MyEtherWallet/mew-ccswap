@@ -70,7 +70,7 @@ const filterData = (res: any) => {
 async function getCryptoPrices(
   cryptoCurrency?: "ETH" | "MATIC" | "BNB" | "DOT" | "KSM" | "USDT" | "USDC" | "DAI"
 ) {
-  const apiQuote = `${API}/v3/purchase/providers/ios`;
+  const apiQuote = `${API}/v3/purchase/providers/web`;
   if (cryptoCurrency)
     return await axios
       .get(apiQuote, {
@@ -107,13 +107,13 @@ async function getCryptoPrices(
  * Moonpay
  */
 async function getFiatRatesForBuy() {
-    return axios
-      .get(`${API}/v3/purchase/moonpay/quotes`, {
-        headers: {
-          'Accept-Language': 'en-US'
-        }
-      })
-      .then(res => res.data);
+  return axios
+    .get(`${API}/v3/purchase/moonpay/quotes`, {
+      headers: {
+        'Accept-Language': 'en-US'
+      }
+    })
+    .then(res => res.data);
 }
 /**
  *
@@ -121,25 +121,25 @@ async function getFiatRatesForBuy() {
  * @returns
  */
 async function getSupportedFiatToBuy(symbol: string) {
-    return axios
-      .get(`${API}/v3/purchase/providers/web?iso=us&cryptoCurrency=${symbol}`, {
-        headers: {
-          'Accept-Language': 'en-US'
-        }
-      })
-      .then(res => res.data);
+  return axios
+    .get(`${API}/v3/purchase/providers/web?iso=us&cryptoCurrency=${symbol}`, {
+      headers: {
+        'Accept-Language': 'en-US'
+      }
+    })
+    .then(res => res.data);
 }
 /*
  * Get supported fiat to sell from Moonpay
  */
 async function getSupportedFiatToSell(symbol: string) {
-    return axios
-      .get(`${API}/v3/sell/providers/web?iso=us&cryptoCurrency=${symbol}`, {
-        headers: {
-          'Accept-Language': 'en-US'
-        }
-      })
-      .then(res => res.data);
+  return axios
+    .get(`${API}/v3/sell/providers/web?iso=us&cryptoCurrency=${symbol}`, {
+      headers: {
+        'Accept-Language': 'en-US'
+      }
+    })
+    .then(res => res.data);
 }
 
 async function getCryptoSellPrices(
@@ -155,10 +155,10 @@ async function getCryptoSellPrices(
   return Promise.all(
     cryptos.map((c) =>
       getSupportedFiatToSell(c)
-      .catch((e) => {
-        throw e;
-      }))
-    ).catch((e) => {
+        .catch((e) => {
+          throw e;
+        }))
+  ).catch((e) => {
     throw e;
   });
 }
