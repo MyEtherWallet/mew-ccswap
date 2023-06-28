@@ -6,7 +6,7 @@
       <MewTabs
         :items="tabItems"
         :active-tab="activeTab"
-        active-color="greenPrimary"
+        base-color="greenPrimary"
         has-underline
         @onTab="onTab"
       >

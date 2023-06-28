@@ -92,7 +92,7 @@
             v-for="(item, i) in filteredTokenList"
             :key="i"
             :value="item"
-            active-color="primary"
+            base-color="primary"
             @click="selectCurrency(item, true)"
           >
             <template #prepend>
