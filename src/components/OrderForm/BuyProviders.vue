@@ -193,11 +193,11 @@
 </template>
 
 <script lang="ts">
-import MultiCoinValidator from 'multicoin-address-validator';
-import { executeSimplexPayment, executeMoonpayBuy } from './order';
-import { defineComponent } from 'vue';
+import MultiCoinValidator from "multicoin-address-validator";
+import { executeSimplexPayment, executeMoonpayBuy } from "./order";
+import { defineComponent } from "vue";
 export default defineComponent({
-  name: 'BuyProviders',
+  name: "BuyProviders",
   props: {
     orderHandler: {
       type: Object,
@@ -229,7 +229,7 @@ export default defineComponent({
     },
     toAddress: {
       type: String,
-      default: '',
+      default: "",
     },
   },
   data() {
@@ -249,44 +249,44 @@ export default defineComponent({
       return this.selectedCurrency.symbol;
     },
     isEUR() {
-      return this.selectedFiatName === 'EUR' || this.selectedFiatName === 'GBP';
+      return this.selectedFiatName === "EUR" || this.selectedFiatName === "GBP";
     },
     hideMoonpay() {
       return this.onlySimplex;
     },
     hideSimplex() {
       return (
-        this.selectedCryptoName === 'USDC' ||
-        this.selectedCryptoName === 'USDT' ||
-        this.selectedCryptoName === 'DAI'
+        this.selectedCryptoName === "USDC" ||
+        this.selectedCryptoName === "USDT" ||
+        this.selectedCryptoName === "DAI"
       );
     },
     simplexBtnTitle() {
-      return 'BUY WITH SIMPLEX';
+      return "BUY WITH SIMPLEX";
     },
     moonpayBtnTitle() {
-      return 'BUY WITH MOONPAY';
+      return "BUY WITH MOONPAY";
     },
     paymentOptionString() {
-      return `Visa, Mastercard, Apple Pay${this.isEUR ? ', Bank account' : ''}`;
+      return `Visa, Mastercard, Apple Pay${this.isEUR ? ", Bank account" : ""}`;
     },
     visaIcon() {
-      return require('@/assets/images/icon-visa.svg');
+      return require("@/assets/images/icon-visa.svg");
     },
     masterIcon() {
-      return require('@/assets/images/icon-master.svg');
+      return require("@/assets/images/icon-master.svg");
     },
     bankIcon() {
-      return require('@/assets/images/icon-bank.svg');
+      return require("@/assets/images/icon-bank.svg");
     },
     applePayIcon() {
-      return require('@/assets/images/icon-apple-pay.svg');
+      return require("@/assets/images/icon-apple-pay.svg");
     },
     simplexLogo() {
-      return require('@/assets/images/icon-simplex.svg');
+      return require("@/assets/images/icon-simplex.svg");
     },
     moonpayLogo() {
-      return require('@/assets/images/icon-moonpay.svg');
+      return require("@/assets/images/icon-moonpay.svg");
     },
   },
   methods: {
@@ -306,19 +306,18 @@ export default defineComponent({
         .then(() => {
           this.reset(true);
           this.close();
-          this.$emit('reset');
+          this.$emit("reset");
         })
-        .catch((err: Error) => {
+        .catch(() => {
           this.reset();
-          console.error(err); // console error for now
           this.close();
-          this.$emit('reset');
+          this.$emit("reset");
         });
     },
     currencyFormatter(value: number) {
-      const locale = 'en-US';
+      const locale = "en-US";
       return new Intl.NumberFormat(locale, {
-        style: 'currency',
+        style: "currency",
         currency: this.selectedFiatName,
       }).format(value);
     },
@@ -338,13 +337,12 @@ export default defineComponent({
         .then(() => {
           this.reset(true);
           this.close();
-          this.$emit('reset');
+          this.$emit("reset");
         })
-        .catch((err: Error) => {
+        .catch(() => {
           this.reset();
-          console.error(err); // console error for now
           this.close();
-          this.$emit('reset');
+          this.$emit("reset");
         });
     },
   },
@@ -353,35 +351,35 @@ export default defineComponent({
 <style lang="scss" scoped>
 $greyLight-base: #f2f3f6;
 $greyPrimary-base: #5a678a;
-  .section-block {
-    border-radius: 12px;
-    left: 0px;
-    top: 0px;
-    box-sizing: border-box;
-    border: 1px solid #d7dae3;
-    flex: none;
-    order: 0;
-    align-self: stretch;
-    flex-grow: 0;
-    margin: 8px 0px;
-    position: relative;
-  }
-  .provider-logo {
-    position: absolute;
-    top: 18px;
-    right: 20px;
-  }
-  .grey-light {
-    background-color: $greyLight-base !important;
-    border-color: $greyLight-base !important;
-  }
-  .greyPrimary--text {
-    color: $greyPrimary-base !important;
-    caret-color: $greyPrimary-base !important;
-  }
+.section-block {
+  border-radius: 12px;
+  left: 0px;
+  top: 0px;
+  box-sizing: border-box;
+  border: 1px solid #d7dae3;
+  flex: none;
+  order: 0;
+  align-self: stretch;
+  flex-grow: 0;
+  margin: 8px 0px;
+  position: relative;
+}
+.provider-logo {
+  position: absolute;
+  top: 18px;
+  right: 20px;
+}
+.grey-light {
+  background-color: $greyLight-base !important;
+  border-color: $greyLight-base !important;
+}
+.greyPrimary--text {
+  color: $greyPrimary-base !important;
+  caret-color: $greyPrimary-base !important;
+}
 </style>
 <style lang="scss">
-  .v-tooltip .v-overlay__content{
-    background: transparent !important;
-  }
+.v-tooltip .v-overlay__content {
+  background: transparent !important;
+}
 </style>

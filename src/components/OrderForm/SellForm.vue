@@ -78,7 +78,7 @@
           :items="filteredFiatItems"
           :disabled="loading.data"
           :menu-props="{ closeOnContentClick: true }"
-          active-color="primary"
+          base-color="primary"
           return-object
           variant="outlined"
         >

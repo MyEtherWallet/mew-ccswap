@@ -239,7 +239,11 @@ export default defineComponent({
      */
     onInputChange(data: { address: string }) {
       this.isTyped = USER_INPUT_TYPES.typed;
-      this.addressValue = data.address ? data.address : data.toString();
+      this.addressValue = data
+        ? data.address
+          ? data.address
+          : data.toString()
+        : "";
       this.onChange(this.addressValue);
     },
   },

@@ -37,7 +37,7 @@
           :items="filteredFiatItems"
           :disabled="loading.data"
           :menu-props="{ closeOnContentClick: true }"
-          active-color="primary"
+          base-color="primary"
           return-object
           variant="outlined"
         >
@@ -241,7 +241,9 @@ onMounted(async () => {
   } else {
     // Load URL parameter value and verify crypto address
     loadUrlParameters();
-    cryptoToFiat();
+    if (form.fiatAmount === "0") {
+      cryptoToFiat();
+    }
   }
   await fetchGasPrice();
   priceTimer = setInterval(getPrices, 1000 * 60 * 2);
@@ -771,7 +773,7 @@ const bestPrice = computed(() => {
 const fiatToCrypto = () => {
   const price = bestPrice.value;
   const amount = new BigNumber(form.fiatAmount || "0");
-  form.cryptoAmount = amount.dividedBy(price).toString();
+  form.cryptoAmount = BigNumber(amount).div(price).toString();
 };
 
 const cryptoToFiat = () => {
@@ -802,14 +804,25 @@ const loadUrlParameters = () => {
       }
     });
 
-    form.fiatSelected =
-      queryFiat && isSupportedFiat ? queryFiat.toUpperCase() : "USD";
-    form.fiatAmount = queryCryptoAmount ? queryCryptoAmount : "500";
-    form.cryptoSelected =
+    const fiat = queryFiat && isSupportedFiat ? queryFiat.toUpperCase() : "USD";
+    const crypto =
       queryCrypto && isSupportedCrypto ? queryCrypto.toUpperCase() : "ETH";
-    form.cryptoAmount = queryCryptoAmount ? queryCryptoAmount : "1";
+    form.fiatSelected = fiat;
+
+    form.cryptoSelected = crypto;
     form.address = queryTo ? queryTo : "";
-    verifyAddress();
+    if (queryTo) {
+      verifyAddress();
+    }
+    const queryCryptoAmountHolder = BigNumber(
+      queryCryptoAmount ? queryCryptoAmount : "1"
+    );
+    const cryptoToFiat = BigNumber(
+      queryCryptoAmountHolder.times(priceOb.value)
+    ).lt(min.value)
+      ? BigNumber(min.value).div(priceOb.value).times(2).toString()
+      : queryCryptoAmount;
+    form.cryptoAmount = cryptoToFiat;
   }
 };
 
