@@ -223,7 +223,8 @@ import { fromBase, toBase } from "@/helpers/units";
 
 const defaultFiatValue = "0";
 let gasPrice = "0";
-const polkdadot_chains = ["DOT", "KSM"];
+const polkadot_chains = ["DOT", "KSM"];
+const bitcoin_chains = ["BTC", "BCH", "DOGE", "LTC"];
 // eslint-disable-next-line no-undef
 let priceTimer: NodeJS.Timer;
 let fiatFilter = "";
@@ -458,15 +459,15 @@ const monthlyLimit = () => {
 const currencyConfig = computed(() => {
   const fiat = form.fiatSelected;
   const rate =
-    moonpayData[form.cryptoSelected].conversion_rates[fiat] ||
-    simplexData[form.cryptoSelected].conversion_rates[fiat];
+    moonpayData[form.cryptoSelected]?.conversion_rates[fiat] ||
+    simplexData[form.cryptoSelected]?.conversion_rates[fiat];
   const currency = fiat;
   return { locale: "en-US", rate, currency };
 });
 const fiatMultiplier = computed(() => {
   if (hasData()) {
     const selectedCurrencyPrice =
-      moonpayData[form.cryptoSelected].conversion_rates[form.fiatSelected];
+      moonpayData[form.cryptoSelected]?.conversion_rates[form.fiatSelected];
     return selectedCurrencyPrice
       ? toBN(selectedCurrencyPrice).toString()
       : toBN(1).toString();
@@ -515,7 +516,7 @@ const plusFeeF = computed(() => {
   if (!isAvailable)
     return `${form.cryptoSelected} is not available for this provider`;
   const moonpayLimit =
-    moonpayData[form.cryptoSelected].limits[form.fiatSelected];
+    moonpayData[form.cryptoSelected]?.limits[form.fiatSelected];
   return moonpayLimit.max > Number.parseFloat(form.fiatAmount)
     ? formatFiatValue(plusFee.value, currencyConfig.value).value
     : `Value exceeds max: ${
@@ -647,7 +648,7 @@ const min = computed(() => {
   const { cryptoSelected, fiatSelected } = form;
   if (!hasData()) return 0;
   const simplexLimit = simplexData[cryptoSelected]?.limits[fiatSelected];
-  const moonpayLimit = moonpayData[cryptoSelected].limits[fiatSelected];
+  const moonpayLimit = moonpayData[cryptoSelected]?.limits[fiatSelected];
   if (!isValidData(moonpayData)) return simplexLimit.min;
   if (!isValidData(simplexData)) return moonpayLimit.min;
   return moonpayLimit.min < simplexLimit.min
@@ -658,7 +659,7 @@ const max = computed(() => {
   const { cryptoSelected, fiatSelected } = form;
   if (!hasData()) return 0;
   const simplexLimit = simplexData[cryptoSelected]?.limits[fiatSelected];
-  const moonpayLimit = moonpayData[cryptoSelected].limits[fiatSelected];
+  const moonpayLimit = moonpayData[cryptoSelected]?.limits[fiatSelected];
   if (!isValidData(moonpayData)) return simplexLimit.max;
   if (!isValidData(simplexData)) return moonpayLimit.max;
   return moonpayLimit.max > simplexLimit.max
@@ -864,9 +865,11 @@ const addressInput = (value: string): void => {
 };
 
 const verifyAddress = (): void => {
-  const valid = !polkdadot_chains.includes(form.cryptoSelected)
-    ? WAValidator.validate(form.address, form.cryptoSelected) &&
-      validAddress(form.address)
+  const valid = !polkadot_chains.includes(form.cryptoSelected)
+    ? bitcoin_chains.includes(form.cryptoSelected)
+      ? WAValidator.validate(form.address, form.cryptoSelected)
+      : WAValidator.validate(form.address, form.cryptoSelected) &&
+        validAddress(form.address)
     : isValidAddressPolkadotAddress(
         form.address,
         form.cryptoSelected === "DOT" ? 0 : 2
@@ -932,7 +935,10 @@ const submitForm = (): void => {
 };
 
 const fetchGasPrice = async (): Promise<void> => {
-  if (polkdadot_chains.includes(form.cryptoSelected)) {
+  if (
+    polkadot_chains.includes(form.cryptoSelected) ||
+    bitcoin_chains.includes(form.cryptoSelected)
+  ) {
     gasPrice = "0";
     return;
   }
