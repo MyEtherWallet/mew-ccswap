@@ -1,9 +1,10 @@
 import axios from "axios";
 import { toNumber } from "lodash";
 import { sha3 } from "web3-utils";
+// const API = "https://qa.mewwallet.dev";
 const API = "https://mainnet.mewwallet.dev";
 
-const supportedCrypto = ["ETH", "BNB", "MATIC", "USDT", "USDC", "DAI", "DOT", "KSM"];
+const supportedCrypto = ["ETH", "BTC", "BCH", "LTC", "DOGE", "BNB", "MATIC", "USDT", "USDC", "DAI", "DOT", "KSM"];
 
 const supportedFiat = ["USD", "EUR", "JPY", "AUD", "CAD", "GBP"];
 // const supportedFiat = [
@@ -68,7 +69,7 @@ const filterData = (res: any) => {
 };
 
 async function getCryptoPrices(
-  cryptoCurrency?: "ETH" | "MATIC" | "BNB" | "DOT" | "KSM" | "USDT" | "USDC" | "DAI"
+  cryptoCurrency?: "ETH" | "BTC" | "BCH" | "LTC" | "DOGE" | "BNB" | "MATIC" | "USDT" | "USDC" | "DAI" | "DOT" | "KSM"
 ) {
   const apiQuote = `${API}/v3/purchase/providers/web`;
   if (cryptoCurrency)
@@ -83,9 +84,8 @@ async function getCryptoPrices(
       .catch((e) => {
         throw e;
       });
-  const cryptos = ["ETH", "BNB", "MATIC", "USDT", "USDC", "DAI", "DOT", "KSM"];
   return Promise.all(
-    cryptos.map((c) =>
+    supportedCrypto.map((c) =>
       axios
         .get(apiQuote, {
           params: {

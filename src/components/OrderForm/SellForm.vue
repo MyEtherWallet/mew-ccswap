@@ -524,7 +524,6 @@ const getPrices = async () => {
   try {
     loading.data = true;
     const data: any[] = (await getCryptoSellPrices()) || [];
-    console.log(data);
     data.forEach((arr: any) => {
       arr.forEach((d: PriceItem) => {
         if (isObject(d)) {
