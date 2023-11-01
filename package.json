@@ -8,7 +8,7 @@
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
     "lint": "vue-cli-service lint",
-    "publish": "git subtree push --prefix dist origin gh-pages"
+    "publish-gh-pages": "git subtree push --prefix dist origin gh-pages"
   },
   "dependencies": {
     "@mdi/font": "5.9.55",
