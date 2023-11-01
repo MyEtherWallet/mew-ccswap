@@ -34,6 +34,7 @@
           class="no-left-border custom-btn"
           @click="openTokenSelect"
           append-icon="mdi-menu-down"
+          :disabled="loading.data"
         >
           <template #prepend>
             <img
@@ -216,7 +217,7 @@ import {
   ref,
   Ref,
 } from "vue";
-import { supportedCrypto, supportedFiat, getCryptoSellPrices } from "./prices";
+import { supportedFiat, getCryptoSellPrices } from "./prices";
 import { executeMoonpaySell } from "./order";
 import { isObject, isNumber, isString, isEmpty } from "lodash";
 import WAValidator from "multicoin-address-validator";

@@ -107,8 +107,9 @@
           rounded="right"
           variant="outlined"
           class="no-left-border custom-btn"
-          @click="openTokenSelect"
           append-icon="mdi-menu-down"
+          :disabled="loading.data"
+          @click="openTokenSelect"
         >
           <template #prepend>
             <img
