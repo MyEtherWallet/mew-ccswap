@@ -21,6 +21,7 @@ const COLORS = {
   'grey-1': '#1B1B1B',
   'dark-blue': '#1A2C5C',
   'dark-blue-2': '#1D2342',
+  'grey-2': '#797982'
 
 };
 
@@ -45,7 +46,8 @@ const enkryptTheme = {
     white: COLORS.white,
     blue: COLORS.blue,
     navy: COLORS.navy,
-    'grey-1': COLORS['grey-1']
+    'grey-1': COLORS['grey-1'],
+    'grey-2': COLORS['grey-2']
   },
 };
 
@@ -68,7 +70,8 @@ const ethvmTheme = {
     'background-fill': COLORS['dark-blue-2'],
     'background-gradient': COLORS.blue,
     white: COLORS.white,
-    'grey-1': COLORS['grey-1']
+    'grey-1': COLORS['grey-1'],
+    'grey-2': COLORS['grey-2']
   },
 };
 

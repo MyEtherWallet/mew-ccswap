@@ -27,29 +27,30 @@
           :error="form.balanceError"
           class="no-right-border"
         ></v-text-field>
-        <v-select
-          style="max-width: 120px"
+        <v-btn
           v-model="form.cryptoSelected"
-          :items="cryptoItems"
-          :disabled="loading.data"
-          :menu-props="{ closeOnContentClick: true }"
-          :menu="dropdown.crypto"
           rounded="right"
           variant="outlined"
-          return-object
-          class="no-left-border"
-          @click:control="openTokenSelect"
+          class="no-left-border custom-btn"
+          @click="openTokenSelect"
+          append-icon="mdi-menu-down"
         >
-          <template #prepend-inner>
+          <template #prepend>
             <img
-              class="currency-icon padding--2 mr-1"
+              class="currency-icon mr-1 padding--2"
               :src="cryptoIcon"
               :alt="form.cryptoSelected"
               width="25px"
               height="25px"
             />
           </template>
-        </v-select>
+          <span>
+            {{ form.cryptoSelected }}
+          </span>
+          <template v-slot:append>
+            <v-icon color="grey-2" size="large"></v-icon>
+          </template>
+        </v-btn>
       </div>
     </div>
 
@@ -344,8 +345,6 @@ onUnmounted(async () => {
   clearInterval(gasTimer);
 });
 
-// non-reactive
-const cryptoItems: string[] = supportedCrypto;
 // reactive
 const fiatItems: string[] = supportedFiat;
 const filteredFiatItems: Ref<string[]> = ref(fiatItems);
@@ -829,6 +828,20 @@ const getTokenBalance = async (tokenName: string) => {
     .v-field__outline__start {
       border-radius: 0 !important;
     }
+  }
+}
+.custom-btn {
+  max-width: 120px !important;
+  height: 56px !important;
+  border: 1px solid rgba(211, 211, 211, 0.5);
+  border-radius: 0;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+  font-size: 14px;
+  font-weight: normal;
+
+  &:hover {
+    border: 1px solid rgba(211, 211, 211, 1);
   }
 }
 </style>
