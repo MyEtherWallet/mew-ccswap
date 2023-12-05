@@ -1,6 +1,6 @@
 <template>
   <div
-    class="top-container component--buy-form elevated-box pa-3 pa-sm-6 pa-md-8"
+    class="top-container component--buy-form elevated-box elevation-4 pa-3 pa-sm-6 pa-md-8"
   >
     <div v-if="step === 0">
       <MewTabs

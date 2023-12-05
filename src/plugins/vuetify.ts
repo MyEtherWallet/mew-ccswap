@@ -74,8 +74,32 @@ const ethvmTheme = {
     'grey-2': COLORS['grey-2']
   },
 };
+const mewTheme = {
+  dark: false,
+  colors: {
+    blue: COLORS.blue,
+    navy: COLORS.navy,
+    mew: COLORS.mew,
+    black: COLORS['black-1'],
+    'promo--bottom': COLORS['dark-blue-2'],
+    'buynow--banner': COLORS.white,
+    'buynow--banner-btn-text': COLORS.white,
+    'buynow--banner-btn': COLORS.mew,
+    'btn-linear-1': COLORS.mew,
+    'btn-linear-2': COLORS.mew,
+    'btn-get-wallet': COLORS.mew,
+    'promo-border': COLORS.mew,
+    'promo-header-text': COLORS.black,
+    'background-fill': COLORS.white,
+    'background-gradient': COLORS.mew,
+    white: COLORS.white,
+    'grey-1': COLORS['grey-1'],
+    'grey-2': COLORS['grey-2']
+  },
+};
 
-const defaultTheme = window.location.search.includes('ethvm') ? 'ethvmTheme' : 'enkryptTheme';
+const q = window.location.search;
+const defaultTheme = q.includes('ethvm') ? 'ethvmTheme' : q.includes('mew') ? 'mewTheme' : 'enkryptTheme';
 
 export default createVuetify({
   components,
@@ -86,6 +110,7 @@ export default createVuetify({
     themes: {
       enkryptTheme,
       ethvmTheme,
+      mewTheme
     },
   },
 });

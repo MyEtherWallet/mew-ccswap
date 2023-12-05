@@ -82,9 +82,9 @@ import PromoComponentThisIsWhy from "@/components/Promo/PromoComponentThisIsWhy.
         transparent 500px
       ),
       radial-gradient(
-        at bottom right,
-        rgba(60, 47, 104, 0.5),
-        transparent 400px
+        circle at bottom right,
+        rgba(var(--v-theme-background-gradient)),
+        transparent 300px
       );
   }
 }

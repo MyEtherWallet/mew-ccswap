@@ -1,6 +1,10 @@
 <template>
   <div class="dropShadow">
-    <img :src="isEthVm ? ethvmLogo : enkryptDarkLogo" alt="MEW" height="36" />
+    <img
+      :src="isEthVm ? ethvmLogo : isMEW ? mewLogo : enkryptDarkLogo"
+      alt="MEW"
+      height="36"
+    />
 
     <div
       class="heading-1 text-color"
@@ -45,8 +49,10 @@ import moonpay from "@/assets/images/icon-moonpay.svg";
 import moonpayWhite from "@/assets/images/icon-moonpay-white.svg";
 import enkryptDarkLogo from "@/assets/images/icon-enkrypt-logo-dark.svg";
 import ethvmLogo from "@/assets/images/icon-ethvm-logo.svg";
+import mewLogo from "@/assets/images/icon-mew-logo-dark.svg";
 
 const isEthVm = window.location.search.includes("ethvm");
+const isMEW = window.location.search.includes("mew");
 </script>
 
 <style lang="scss" scoped>

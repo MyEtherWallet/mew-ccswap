@@ -38,32 +38,41 @@
 <script setup lang="ts">
 import iconFee from "@/assets/images/promo/icon-fee.png";
 import iconFeeBlue from "@/assets/images/promo/icon-fee-blue.png";
+import iconFeeMew from "@/assets/images/promo/icon-fee-mew.png";
 import iconQuick from "@/assets/images/promo/icon-quick.png";
 import iconQuickBlue from "@/assets/images/promo/icon-quick-blue.png";
+import iconQuickMew from "@/assets/images/promo/icon-quick-mew.png";
 import iconVerification from "@/assets/images/promo/icon-verification.png";
 import iconVerificationBlue from "@/assets/images/promo/icon-verification-blue.png";
+import iconVerificationMew from "@/assets/images/promo/icon-verification-mew.png";
 import iconSupport from "@/assets/images/promo/icon-support.png";
 import iconSupportBlue from "@/assets/images/promo/icon-support-blue.png";
+import iconSupportMew from "@/assets/images/promo/icon-support-mew.png";
 const isEthVm = window.location.search.includes("ethvm");
+const isMEW = window.location.search.includes("mew");
 const promo2 = [
   {
-    icon: isEthVm ? iconFeeBlue : iconFee,
+    icon: isEthVm ? iconFeeBlue : isMEW ? iconFeeMew : iconFee,
     title: "Low fees",
     description:
       "Get the most crypto for your fiat with limited fees from the provider and MEW",
   },
   {
-    icon: isEthVm ? iconQuickBlue : iconQuick,
+    icon: isEthVm ? iconQuickBlue : isMEW ? iconQuickMew : iconQuick,
     title: "Quick transactions",
     description: "Get crypto in your wallet in minutes",
   },
   {
-    icon: isEthVm ? iconVerificationBlue : iconVerification,
+    icon: isEthVm
+      ? iconVerificationBlue
+      : isMEW
+      ? iconVerificationMew
+      : iconVerification,
     title: "Easy verification",
     description: "Payment is processed in a few short steps",
   },
   {
-    icon: isEthVm ? iconSupportBlue : iconSupport,
+    icon: isEthVm ? iconSupportBlue : isMEW ? iconSupportMew : iconSupport,
     title: "Human support",
     description: `Reach out to ${
       isEthVm ? "support@ethvm.com" : "support@enkrypt.com"
@@ -75,6 +84,13 @@ const promo2 = [
 <style lang="scss" scoped>
 .promo--bottom {
   background-color: rgb(var(--v-theme-promo--bottom));
+  @media (min-width: 768px) {
+    background-image: radial-gradient(
+      circle at top right,
+      rgb(var(--v-theme-background-gradient)),
+      transparent 300px
+    );
+  }
 }
 
 h1 {
