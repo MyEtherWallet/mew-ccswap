@@ -189,6 +189,7 @@ export default defineComponent({
         this.networkSelected.icon
       );
       let tokensList = [mainCoin];
+      if (this.fiatName === "CAD") return tokensList;
       if (this.networkSelected.tokens)
         tokensList = tokensList.concat(this.networkSelected.tokens);
       return tokensList;
