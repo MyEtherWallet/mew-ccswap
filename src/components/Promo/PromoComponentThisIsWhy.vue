@@ -48,31 +48,32 @@ import iconVerificationMew from "@/assets/images/promo/icon-verification-mew.png
 import iconSupport from "@/assets/images/promo/icon-support.png";
 import iconSupportBlue from "@/assets/images/promo/icon-support-blue.png";
 import iconSupportMew from "@/assets/images/promo/icon-support-mew.png";
-const isEthVm = window.location.search.includes("ethvm");
-const isMEW = window.location.search.includes("mew");
+const isEthVm = window.location.search.includes("platform=ethvm");
+const isEnkrypt = window.location.search.includes("platform=enkrypt");
+
 const promo2 = [
   {
-    icon: isEthVm ? iconFeeBlue : isMEW ? iconFeeMew : iconFee,
+    icon: isEthVm ? iconFeeBlue : isEnkrypt ? iconFee : iconFeeMew,
     title: "Low fees",
     description:
       "Get the most crypto for your fiat with limited fees from the provider and MEW",
   },
   {
-    icon: isEthVm ? iconQuickBlue : isMEW ? iconQuickMew : iconQuick,
+    icon: isEthVm ? iconQuickBlue : isEnkrypt ? iconQuick : iconQuickMew,
     title: "Quick transactions",
     description: "Get crypto in your wallet in minutes",
   },
   {
     icon: isEthVm
       ? iconVerificationBlue
-      : isMEW
-      ? iconVerificationMew
-      : iconVerification,
+      : isEnkrypt
+      ? iconVerification
+      : iconVerificationMew,
     title: "Easy verification",
     description: "Payment is processed in a few short steps",
   },
   {
-    icon: isEthVm ? iconSupportBlue : isMEW ? iconSupportMew : iconSupport,
+    icon: isEthVm ? iconSupportBlue : isEnkrypt ? iconSupport : iconSupportMew,
     title: "Human support",
     description: `Reach out to ${
       isEthVm ? "support@ethvm.com" : "support@enkrypt.com"

@@ -1,7 +1,7 @@
 <template>
   <div class="dropShadow">
     <img
-      :src="isEthVm ? ethvmLogo : isMEW ? mewLogo : enkryptDarkLogo"
+      :src="isEthVm ? ethvmLogo : isEnkrypt ? enkryptDarkLogo : mewLogo"
       alt="MEW"
       height="36"
     />
@@ -51,8 +51,8 @@ import enkryptDarkLogo from "@/assets/images/icon-enkrypt-logo-dark.svg";
 import ethvmLogo from "@/assets/images/icon-ethvm-logo.svg";
 import mewLogo from "@/assets/images/icon-mew-logo-dark.svg";
 
-const isEthVm = window.location.search.includes("ethvm");
-const isMEW = window.location.search.includes("mew");
+const isEthVm = window.location.search.includes("platform=ethvm");
+const isEnkrypt = window.location.search.includes("platform=enkrypt");
 </script>
 
 <style lang="scss" scoped>

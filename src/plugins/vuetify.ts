@@ -99,7 +99,7 @@ const mewTheme = {
 };
 
 const q = window.location.search;
-const defaultTheme = q.includes('ethvm') ? 'ethvmTheme' : q.includes('mew') ? 'mewTheme' : 'enkryptTheme';
+const defaultTheme = q.includes('platform=ethvm') ? 'ethvmTheme' : q.includes('platform=enkrypt') ? 'enkryptTheme' : 'mewTheme';
 
 export default createVuetify({
   components,
