@@ -453,7 +453,7 @@ const dailyLimit = (isMoonpay = false) => {
   }`;
 };
 const monthlyLimit = () => {
-  const value = toBN(fiatMultiplier.value).muln(50000);
+  const value = BigNumber(fiatMultiplier.value).times(50000);
   return `Monthly limit: ${
     formatFiatValue(value.toString(), currencyConfig.value).value
   }`;
@@ -471,7 +471,7 @@ const fiatMultiplier = computed(() => {
     const selectedCurrencyPrice =
       moonpayData[form.cryptoSelected]?.conversion_rates[form.fiatSelected];
     return selectedCurrencyPrice
-      ? toBN(selectedCurrencyPrice).toString()
+      ? BigNumber(selectedCurrencyPrice).toString()
       : toBN(1).toString();
   }
   return toBN(1).toString();
