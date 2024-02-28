@@ -71,7 +71,7 @@ const filterData = (res: any) => {
 async function getCryptoPrices(
   cryptoCurrency?: "ETH" | "BTC" | "BCH" | "LTC" | "DOGE" | "BNB" | "MATIC" | "USDT" | "USDC" | "DAI" | "DOT" | "KSM"
 ) {
-  const apiQuote = `${API}/v3/purchase/providers/web`;
+  const apiQuote = `${API}/v4/purchase/providers/web`;
   if (cryptoCurrency)
     return await axios
       .get(apiQuote, {
@@ -108,7 +108,7 @@ async function getCryptoPrices(
  */
 async function getFiatRatesForBuy() {
   return axios
-    .get(`${API}/v3/purchase/moonpay/quotes`, {
+    .get(`${API}/v4/purchase/moonpay/quotes`, {
       headers: {
         'Accept-Language': 'en-US'
       }
@@ -122,7 +122,7 @@ async function getFiatRatesForBuy() {
  */
 async function getSupportedFiatToBuy(symbol: string) {
   return axios
-    .get(`${API}/v3/purchase/providers/web?iso=us&cryptoCurrency=${symbol}`, {
+    .get(`${API}/v4/purchase/providers/web?iso=us&cryptoCurrency=${symbol}`, {
       headers: {
         'Accept-Language': 'en-US'
       }
@@ -134,7 +134,7 @@ async function getSupportedFiatToBuy(symbol: string) {
  */
 async function getSupportedFiatToSell(symbol: string) {
   return axios
-    .get(`${API}/v3/sell/providers/web?iso=us&cryptoCurrency=${symbol}`, {
+    .get(`${API}/v4/sell/providers/web?iso=us&cryptoCurrency=${symbol}`, {
       headers: {
         'Accept-Language': 'en-US'
       }

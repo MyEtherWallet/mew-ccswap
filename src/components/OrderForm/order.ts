@@ -77,31 +77,31 @@ async function executeSimplexPayment(
   ** MoonPay
   */
 async function executeMoonpayBuy(tokenSymbol: string, fiatCurrency: string, amount: string, address: string) {
-    const hash = sha3(address);
-    const id = `WEB|${hash?.substring(0, 42)}`;
-    return new Promise<void>(resolve => {
-      let link = `${API}/v3/purchase/moonpay/order?address=${address}&id=${id}&cryptoCurrency=${tokenSymbol}&fiatCurrency=${fiatCurrency}`;
-      if (amount) {
-        link += `&requestedAmount=${amount}`;
-      }
-      const parsedUrl = encodeURI(link);
-      // eslint-disable-next-line
-      window.location.href = parsedUrl;
-      resolve();
-    });
+  const hash = sha3(address);
+  const id = `WEB|${hash?.substring(0, 42)}`;
+  return new Promise<void>(resolve => {
+    let link = `${API}/v3/purchase/moonpay/order?address=${address}&id=${id}&cryptoCurrency=${tokenSymbol}&fiatCurrency=${fiatCurrency}&platform=web`;
+    if (amount) {
+      link += `&requestedAmount=${amount}`;
+    }
+    const parsedUrl = encodeURI(link);
+    // eslint-disable-next-line
+    window.location.href = parsedUrl;
+    resolve();
+  });
 }
 
 async function executeMoonpaySell(tokenSymbol: string, amount: string, address: string) {
-    const hash = sha3(address);
-    const id = `WEB|${hash?.substring(0, 42)}`;
-    return new Promise<void>(resolve => {
-      const parsedUrl = encodeURI(
-        `${API}/v3/sell/moonpay/order?address=${address}&id=${id}&cryptoCurrency=${tokenSymbol}&requestedAmount=${amount}`
-      );
-      // eslint-disable-next-line
-      window.location.href = parsedUrl;
-      resolve();
-    });
+  const hash = sha3(address);
+  const id = `WEB|${hash?.substring(0, 42)}`;
+  return new Promise<void>(resolve => {
+    const parsedUrl = encodeURI(
+      `${API}/v3/sell/moonpay/order?address=${address}&id=${id}&cryptoCurrency=${tokenSymbol}&requestedAmount=${amount}&platform=web`
+    );
+    // eslint-disable-next-line
+    window.location.href = parsedUrl;
+    resolve();
+  });
 }
 
 export { executeSimplexPayment, executeMoonpaySell, executeMoonpayBuy };
