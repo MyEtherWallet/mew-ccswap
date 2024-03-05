@@ -11,6 +11,7 @@
     "publish-gh-pages": "git subtree push --prefix dist origin gh-pages"
   },
   "dependencies": {
+    "@amplitude/analytics-browser": "^2.5.2",
     "@mdi/font": "5.9.55",
     "@polkadot/keyring": "^10.1.7",
     "@polkadot/util": "^10.1.7",

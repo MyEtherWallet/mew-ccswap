@@ -24,12 +24,31 @@
 </template>
 
 <script setup lang="ts">
+import { inject } from "vue";
+
 import HeaderComponent from "@/components/Header/HeaderComponent.vue";
 import FooterComponent from "@/components/Footer/FooterComponent.vue";
 import OrderForm from "@/components/OrderForm/OrderForm.vue";
 import BuyFormBanner from "@/components/BuyNowBanner/BuyBanner.vue";
 import PromoComponent from "@/components/Promo/PromoComponent.vue";
 import PromoComponentThisIsWhy from "@/components/Promo/PromoComponentThisIsWhy.vue";
+
+const amplitude: any = inject("$amplitude");
+
+const VIEWED_CC_SWAP = "CCSwapShown";
+
+const isEthVm = window.location.search.includes("platform=ethvm");
+const isEnkrypt = window.location.search.includes("platform=enkrypt");
+
+if (isEthVm) {
+  amplitude.track(`${VIEWED_CC_SWAP}EthVM`);
+}
+if (isEnkrypt) {
+  amplitude.track(`${VIEWED_CC_SWAP}Enkrypt`);
+}
+if (!isEthVm && !isEnkrypt) {
+  amplitude.track(`${VIEWED_CC_SWAP}Web`);
+}
 </script>
 
 <style lang="scss">
