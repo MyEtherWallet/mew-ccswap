@@ -1,6 +1,6 @@
 {
   "name": "mew-ccswap",
-  "version": "0.2.0",
+  "version": "6.9.4",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",

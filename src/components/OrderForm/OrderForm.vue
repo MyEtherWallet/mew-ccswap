@@ -67,12 +67,12 @@
 <script lang="ts">
 import { isEmpty } from "lodash";
 
+import { defineComponent, inject } from "vue";
 import MewTabs from "../MewTabs/MewTabs.vue";
 import BuyForm from "./BuyForm.vue";
 import BuyProviders from "./BuyProviders.vue";
 import TokenSelect from "./components/TokenSelect.vue";
 import SellForm from "./SellForm.vue";
-import { defineComponent } from "vue";
 import {
   Fiat,
   Crypto,
@@ -96,6 +96,10 @@ export default defineComponent({
   props: {
     // Removing breaks the page for some reason
     open: Boolean,
+  },
+  setup() {
+    const amplitude: any = inject("$amplitude");
+    return { amplitude };
   },
   data() {
     return {
@@ -170,6 +174,7 @@ export default defineComponent({
       this.selectedNetwork = {} as Network;
       this.selectedNetwork = this.defaultNetwork;
       this.activeTab = val;
+      this.amplitude.track(`BuySell${val === 0 ? "BuyTab" : "SellTab"}`);
     },
     close() {
       this.step = 0;
@@ -192,6 +197,9 @@ export default defineComponent({
       this.step = 1;
       this.selectedFiat = selectedFiat;
       this.fiatAmount = fiatAmount;
+      this.amplitude.track(
+        `BuySell${this.activeTab === 0 ? "BuyInput" : "SellInput"}`
+      );
     },
     setBuyObj(val: QuoteData) {
       this.buyObj = val;

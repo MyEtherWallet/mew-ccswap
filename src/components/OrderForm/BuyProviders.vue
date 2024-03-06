@@ -195,7 +195,8 @@
 <script lang="ts">
 import MultiCoinValidator from "multicoin-address-validator";
 import { executeSimplexPayment, executeMoonpayBuy } from "./order";
-import { defineComponent } from "vue";
+import { defineComponent, inject } from "vue";
+
 export default defineComponent({
   name: "BuyProviders",
   props: {
@@ -231,6 +232,10 @@ export default defineComponent({
       type: String,
       default: "",
     },
+  },
+  setup() {
+    const amplitude: any = inject("$amplitude");
+    return { amplitude };
   },
   data() {
     return {
@@ -296,6 +301,7 @@ export default defineComponent({
     // Simplex buy
     openSimplex() {
       this.processingBuy = true;
+      this.amplitude.track(`BuySellBuyWithSimplex`);
       executeSimplexPayment(
         this.selectedFiatName,
         this.selectedCryptoName,
@@ -307,11 +313,13 @@ export default defineComponent({
           this.reset(true);
           this.close();
           this.$emit("reset");
+          this.amplitude.track(`BuySellBuyWithSimplexSuccess`);
         })
         .catch(() => {
           this.reset();
           this.close();
           this.$emit("reset");
+          this.amplitude.track(`BuySellBuyWithSimplexFailed`);
         });
     },
     currencyFormatter(value: number) {
@@ -328,6 +336,7 @@ export default defineComponent({
     // Moonpay buy
     buy() {
       this.processingBuy = true;
+      this.amplitude.track(`BuySellBuyWithMoonpay`);
       executeMoonpayBuy(
         this.selectedCryptoName,
         this.selectedFiatName,
@@ -338,11 +347,13 @@ export default defineComponent({
           this.reset(true);
           this.close();
           this.$emit("reset");
+          this.amplitude.track(`BuySellBuyWithMoonpaySuccess`);
         })
         .catch(() => {
           this.reset();
           this.close();
           this.$emit("reset");
+          this.amplitude.track(`BuySellBuyWithMoonpayFailed`);
         });
     },
   },

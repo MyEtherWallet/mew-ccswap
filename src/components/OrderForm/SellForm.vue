@@ -216,6 +216,7 @@ import {
   onUnmounted,
   ref,
   Ref,
+  inject,
 } from "vue";
 import { supportedFiat, getCryptoSellPrices } from "./prices";
 import { executeMoonpaySell } from "./order";
@@ -231,6 +232,8 @@ import { formatFloatingPointValue } from "@/helpers/numberFormatHelper";
 import { abi } from "./handler/abiERC20";
 import { fromBase, toBase } from "@/helpers/units";
 import { PriceItem } from "./types";
+
+const amplitude: any = inject("$amplitude");
 
 const defaultFiatValue = "0";
 const polkdadot_chains = ["DOT", "KSM"];
@@ -765,6 +768,7 @@ const verifyAddress = (): void => {
 
 const submitForm = (): void => {
   loading.processingBuyForm = true;
+  amplitude.track("BuySellSellWithMoonpay");
   executeMoonpaySell(form.cryptoSelected, form.cryptoAmount, form.address);
 };
 

@@ -134,7 +134,7 @@ async function getSupportedFiatToBuy(symbol: string) {
  */
 async function getSupportedFiatToSell(symbol: string) {
   return axios
-    .get(`${API}/v4/sell/providers/web?iso=us&cryptoCurrency=${symbol}`, {
+    .get(`${API}/v3/sell/providers/web?iso=us&cryptoCurrency=${symbol}`, {
       headers: {
         'Accept-Language': 'en-US'
       }
