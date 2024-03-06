@@ -174,7 +174,7 @@ export default defineComponent({
       this.selectedNetwork = {} as Network;
       this.selectedNetwork = this.defaultNetwork;
       this.activeTab = val;
-      this.amplitude.track(`BuySell${val === 0 ? "BuyTab" : "SellTab"}`);
+      this.amplitude.track(`CCBuySell${val === 0 ? "BuyTab" : "SellTab"}`);
     },
     close() {
       this.step = 0;
@@ -198,7 +198,7 @@ export default defineComponent({
       this.selectedFiat = selectedFiat;
       this.fiatAmount = fiatAmount;
       this.amplitude.track(
-        `BuySell${this.activeTab === 0 ? "BuyInput" : "SellInput"}`
+        `CCBuySell${this.activeTab === 0 ? "BuyInput" : "SellInput"}`
       );
     },
     setBuyObj(val: QuoteData) {

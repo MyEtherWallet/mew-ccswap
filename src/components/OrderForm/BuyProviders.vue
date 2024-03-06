@@ -301,7 +301,7 @@ export default defineComponent({
     // Simplex buy
     openSimplex() {
       this.processingBuy = true;
-      this.amplitude.track(`BuySellBuyWithSimplex`);
+      this.amplitude.track(`CCBuySellBuyWithSimplex`);
       executeSimplexPayment(
         this.selectedFiatName,
         this.selectedCryptoName,
@@ -313,13 +313,13 @@ export default defineComponent({
           this.reset(true);
           this.close();
           this.$emit("reset");
-          this.amplitude.track(`BuySellBuyWithSimplexSuccess`);
+          this.amplitude.track(`CCBuySellBuyWithSimplexSuccess`);
         })
         .catch(() => {
           this.reset();
           this.close();
           this.$emit("reset");
-          this.amplitude.track(`BuySellBuyWithSimplexFailed`);
+          this.amplitude.track(`CCBuySellBuyWithSimplexFailed`);
         });
     },
     currencyFormatter(value: number) {
@@ -336,7 +336,7 @@ export default defineComponent({
     // Moonpay buy
     buy() {
       this.processingBuy = true;
-      this.amplitude.track(`BuySellBuyWithMoonpay`);
+      this.amplitude.track(`CCBuySellBuyWithMoonpay`);
       executeMoonpayBuy(
         this.selectedCryptoName,
         this.selectedFiatName,
@@ -347,13 +347,13 @@ export default defineComponent({
           this.reset(true);
           this.close();
           this.$emit("reset");
-          this.amplitude.track(`BuySellBuyWithMoonpaySuccess`);
+          this.amplitude.track(`CCBuySellBuyWithMoonpaySuccess`);
         })
         .catch(() => {
           this.reset();
           this.close();
           this.$emit("reset");
-          this.amplitude.track(`BuySellBuyWithMoonpayFailed`);
+          this.amplitude.track(`CCBuySellBuyWithMoonpayFailed`);
         });
     },
   },

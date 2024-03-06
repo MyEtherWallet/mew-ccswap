@@ -768,7 +768,7 @@ const verifyAddress = (): void => {
 
 const submitForm = (): void => {
   loading.processingBuyForm = true;
-  amplitude.track("BuySellSellWithMoonpay");
+  amplitude.track("CCBuySellSellWithMoonpay");
   executeMoonpaySell(form.cryptoSelected, form.cryptoAmount, form.address);
 };
 
