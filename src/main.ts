@@ -11,10 +11,10 @@ amplitude.init(
   "f90fa07c6624d9c3273268b866fc8788733e4dbac6feb32a420949e8bd45331f",
   {
     instanceName:
-      process.env.MODE === "production" ? "mew-web-prod" : "mew-web-dev",
+      process.env.NODE_ENV === "production" ? "mew-web-prod" : "mew-web-dev",
     optOut: false,
     serverUrl:
-      process.env.MODE === "production"
+      process.env.NODE_ENV === "production"
         ? "https://analytics-web.mewwallet.dev/record"
         : "https://analytics-web-development.mewwallet.dev/record",
     appVersion: "0.0.1",
