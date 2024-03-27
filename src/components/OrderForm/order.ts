@@ -79,8 +79,10 @@ async function executeSimplexPayment(
 async function executeMoonpayBuy(tokenSymbol: string, fiatCurrency: string, amount: string, address: string) {
   const hash = sha3(address);
   const id = `WEB|${hash?.substring(0, 42)}`;
+  const q = window.location.search;
+  const platform = q.includes('platform=enkrypt') ? 'enkrypt' : 'web';
   return new Promise<void>(resolve => {
-    let link = `${API}/v3/purchase/moonpay/order?address=${address}&id=${id}&cryptoCurrency=${tokenSymbol}&fiatCurrency=${fiatCurrency}&platform=web`;
+    let link = `${API}/v3/purchase/moonpay/order?address=${address}&id=${id}&cryptoCurrency=${tokenSymbol}&fiatCurrency=${fiatCurrency}&platform=${platform}`;
     if (amount) {
       link += `&requestedAmount=${amount}`;
     }
@@ -94,9 +96,12 @@ async function executeMoonpayBuy(tokenSymbol: string, fiatCurrency: string, amou
 async function executeMoonpaySell(tokenSymbol: string, amount: string, address: string) {
   const hash = sha3(address);
   const id = `WEB|${hash?.substring(0, 42)}`;
+
+  const q = window.location.search;
+  const platform = q.includes('platform=enkrypt') ? 'enkrypt' : 'web';
   return new Promise<void>(resolve => {
     const parsedUrl = encodeURI(
-      `${API}/v3/sell/moonpay/order?address=${address}&id=${id}&cryptoCurrency=${tokenSymbol}&requestedAmount=${amount}&platform=web`
+      `${API}/v3/sell/moonpay/order?address=${address}&id=${id}&cryptoCurrency=${tokenSymbol}&requestedAmount=${amount}&platform=${platform}`
     );
     // eslint-disable-next-line
     window.location.href = parsedUrl;
