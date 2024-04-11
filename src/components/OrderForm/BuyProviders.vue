@@ -94,30 +94,14 @@
       <div class="section-block pa-5">
         <div v-if="!loading" class="mb-3">
           <div class="d-flex mb-1 align-center justify-space-between">
-            <div
-              class="d-flex mew-heading-3"
-              :class="hideSimplex ? 'text-red' : ''"
-            >
+            <div class="d-flex mew-heading-3">
               {{ simplexQuote.cryptoToFiat }}
-              <span
-                class="mew-heading-3 pl-1"
-                :class="hideSimplex ? 'text-red' : ''"
-                >{{ selectedCryptoName }}</span
-              >
+              <span class="mew-heading-3 pl-1">{{ selectedCryptoName }}</span>
             </div>
           </div>
           <div class="d-flex align-center">
-            <div
-              v-if="!hideSimplex"
-              class="mr-1"
-              :class="hideSimplex ? 'text-red' : ''"
-            >
-              ≈ {{ simplexQuote.plusFeeF }}
-            </div>
-            <div v-else class="mr-1 text-red">
-              {{ simplexQuote.plusFeeF }}
-            </div>
-            <v-tooltip v-if="!hideSimplex" location="bottom">
+            <div class="mr-1">≈ {{ simplexQuote.plusFeeF }}</div>
+            <v-tooltip location="bottom">
               <template #activator="{ props }">
                 <v-icon
                   v-bind="props"
@@ -164,7 +148,7 @@
         <div class="mew-label mb-5">Visa, Mastercard</div>
         <div>
           <v-btn
-            :disabled="hideSimplex || loading"
+            :disabled="loading"
             size="large"
             class="grey-light greyPrimary--text"
             width="100%"
@@ -258,13 +242,6 @@ export default defineComponent({
     },
     hideMoonpay() {
       return this.onlySimplex;
-    },
-    hideSimplex() {
-      return (
-        this.selectedCryptoName === "USDC" ||
-        this.selectedCryptoName === "USDT" ||
-        this.selectedCryptoName === "DAI"
-      );
     },
     simplexBtnTitle() {
       return "BUY WITH SIMPLEX";
