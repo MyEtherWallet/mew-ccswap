@@ -1,6 +1,6 @@
 {
   "name": "mew-ccswap",
-  "version": "6.9.4-ccswap.1",
+  "version": "6.9.6",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -9,6 +9,9 @@
     "test:e2e": "vue-cli-service test:e2e",
     "lint": "vue-cli-service lint",
     "publish-gh-pages": "git subtree push --prefix dist origin gh-pages"
+  },
+  "engines": {
+    "node": ">= 18"
   },
   "dependencies": {
     "@amplitude/analytics-browser": "^2.5.2",
