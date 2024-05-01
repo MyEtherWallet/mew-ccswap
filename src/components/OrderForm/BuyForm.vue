@@ -767,11 +767,6 @@ const kdaValidator = (address: string) => {
 };
 
 const addressValid = computed(() => {
-  console.log(
-    other_chains.includes(form.cryptoSelected),
-    form.cryptoSelected === "KDA",
-    kdaValidator(form.address)
-  );
   return other_chains.includes(form.cryptoSelected)
     ? form.cryptoSelected === "KDA"
       ? kdaValidator(form.address)
@@ -896,7 +891,6 @@ const addressInput = (value: string): void => {
 
 const verifyAddress = (): void => {
   const valid = addressValid.value;
-  console.log(valid);
   if (valid) {
     form.addressErrorMsg = "";
     form.addressError = false;
