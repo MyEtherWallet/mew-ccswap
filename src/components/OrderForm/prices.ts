@@ -4,7 +4,7 @@ import { sha3 } from "web3-utils";
 // const API = "https://qa.mewwallet.dev";
 const API = "https://mainnet.mewwallet.dev";
 
-const supportedCrypto = ["ETH", "BTC", "BCH", "LTC", "DOGE", "BNB", "MATIC", "USDT", "USDC", "DAI", "DOT", "KSM"];
+const supportedCrypto = ["ETH", "BTC", "BCH", "LTC", "DOGE", "BNB", "MATIC", "USDT", "USDC", "DAI", "DOT", "KSM", "KDA"];
 
 const supportedFiat = ["USD", "EUR", "JPY", "AUD", "CAD", "GBP"];
 // const supportedFiat = [
@@ -69,7 +69,7 @@ const filterData = (res: any) => {
 };
 
 async function getCryptoPrices(
-  cryptoCurrency?: "ETH" | "BTC" | "BCH" | "LTC" | "DOGE" | "BNB" | "MATIC" | "USDT" | "USDC" | "DAI" | "DOT" | "KSM"
+  cryptoCurrency?: "ETH" | "BTC" | "BCH" | "LTC" | "DOGE" | "BNB" | "MATIC" | "USDT" | "USDC" | "DAI" | "DOT" | "KSM" | "KDA"
 ) {
   const apiQuote = `${API}/v4/purchase/providers/web`;
   if (cryptoCurrency)

@@ -144,6 +144,22 @@ export const Networks = <Array<Network>>[
     username: '',
     password: '',
   },
+  {
+    name: 'KDA',
+    name_long: 'Kadena',
+    chainID: 1,
+    tokens: [],
+    icon: getIcon('KDA'),
+    currencyName: 'KDA',
+    gasPriceMultiplier: 1,
+    coingeckoID: 'kadena',
+    service: '',
+    url: '',
+    port: 443,
+    auth: false,
+    username: '',
+    password: '',
+  },
 ];
 
 function getIcon(currency: string) {

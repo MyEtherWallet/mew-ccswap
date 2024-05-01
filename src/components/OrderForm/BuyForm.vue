@@ -211,7 +211,7 @@ import {
 } from "./prices";
 import { isObject, isNumber, isString, isEmpty } from "lodash";
 import WAValidator from "multicoin-address-validator";
-import { isHexStrict, isAddress, fromWei, toBN } from "web3-utils";
+import { isHexStrict, isAddress, fromWei, toBN, isHex } from "web3-utils";
 import { encodeAddress } from "@polkadot/keyring";
 import MewAddressSelect from "../MewAddressSelect/MewAddressSelect.vue";
 import {
@@ -228,6 +228,7 @@ const defaultFiatValue = "0";
 let gasPrice = "0";
 const polkadot_chains = ["DOT", "KSM"];
 const bitcoin_chains = ["BTC", "BCH", "DOGE", "LTC"];
+const other_chains = ["KDA"];
 // eslint-disable-next-line no-undef
 let priceTimer: NodeJS.Timer;
 let fiatFilter = "";
@@ -759,6 +760,33 @@ const openTokenSelect = () => {
   );
 };
 
+const kdaValidator = (address: string) => {
+  const kPrefixed = address.substr(0, 2) === "k:";
+  const checkHex = isHex(address.substring(2));
+  return kPrefixed && checkHex;
+};
+
+const addressValid = computed(() => {
+  console.log(
+    other_chains.includes(form.cryptoSelected),
+    form.cryptoSelected === "KDA",
+    kdaValidator(form.address)
+  );
+  return other_chains.includes(form.cryptoSelected)
+    ? form.cryptoSelected === "KDA"
+      ? kdaValidator(form.address)
+      : WAValidator.validate(form.address, form.cryptoSelected)
+    : !polkadot_chains.includes(form.cryptoSelected)
+    ? bitcoin_chains.includes(form.cryptoSelected)
+      ? WAValidator.validate(form.address, form.cryptoSelected)
+      : WAValidator.validate(form.address, form.cryptoSelected) &&
+        validAddress(form.address)
+    : isValidAddressPolkadotAddress(
+        form.address,
+        form.cryptoSelected === "DOT" ? 0 : 2
+      );
+});
+
 // Best price for display
 const bestPrice = computed(() => {
   const { fiatSelected, cryptoSelected } = form;
@@ -867,15 +895,8 @@ const addressInput = (value: string): void => {
 };
 
 const verifyAddress = (): void => {
-  const valid = !polkadot_chains.includes(form.cryptoSelected)
-    ? bitcoin_chains.includes(form.cryptoSelected)
-      ? WAValidator.validate(form.address, form.cryptoSelected)
-      : WAValidator.validate(form.address, form.cryptoSelected) &&
-        validAddress(form.address)
-    : isValidAddressPolkadotAddress(
-        form.address,
-        form.cryptoSelected === "DOT" ? 0 : 2
-      );
+  const valid = addressValid.value;
+  console.log(valid);
   if (valid) {
     form.addressErrorMsg = "";
     form.addressError = false;
@@ -939,7 +960,8 @@ const submitForm = (): void => {
 const fetchGasPrice = async (): Promise<void> => {
   if (
     polkadot_chains.includes(form.cryptoSelected) ||
-    bitcoin_chains.includes(form.cryptoSelected)
+    bitcoin_chains.includes(form.cryptoSelected) ||
+    other_chains.includes(form.cryptoSelected)
   ) {
     gasPrice = "0";
     return;
