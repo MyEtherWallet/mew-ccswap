@@ -874,12 +874,15 @@ const loadUrlParameters = () => {
     const queryCryptoAmountHolder = BigNumber(
       queryCryptoAmount ? queryCryptoAmount : "1"
     );
+
+    const locPriceOb = BigNumber(priceOb.value);
+    const locMin = BigNumber(min.value);
     const cryptoToFiat = BigNumber(
-      queryCryptoAmountHolder.times(priceOb.value)
-    ).lt(min.value)
-      ? BigNumber(min.value).div(priceOb.value).times(2).toString()
-      : queryCryptoAmount;
-    form.cryptoAmount = cryptoToFiat;
+      queryCryptoAmountHolder.times(locPriceOb)
+    ).lt(locMin)
+      ? locMin.div(locPriceOb).times(2).toString()
+      : queryCryptoAmountHolder;
+    form.cryptoAmount = BigNumber(cryptoToFiat).toNumber();
   }
 };
 
