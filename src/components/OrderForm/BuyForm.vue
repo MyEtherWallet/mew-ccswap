@@ -880,7 +880,7 @@ const loadUrlParameters = () => {
     const cryptoToFiat = BigNumber(
       queryCryptoAmountHolder.times(locPriceOb)
     ).lt(locMin)
-      ? locMin.div(locPriceOb).times(2).toString()
+      ? locMin.div(locPriceOb).times(10).toString()
       : queryCryptoAmountHolder;
     form.cryptoAmount = BigNumber(cryptoToFiat).toNumber();
   }
