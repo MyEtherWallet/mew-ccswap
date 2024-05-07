@@ -265,6 +265,8 @@ const emit = defineEmits([
   "selectedFiat",
   "toAddress",
   "setQuotes",
+  "selectedNetwork",
+  "selectCurrency",
 ]);
 
 // props
@@ -835,7 +837,36 @@ const loadUrlParameters = () => {
       queryCrypto && isSupportedCrypto ? queryCrypto.toUpperCase() : "ETH";
     form.fiatSelected = fiat;
 
-    form.cryptoSelected = crypto;
+    let tokensList;
+    if (crypto !== props.networkSelected.name) {
+      const network = Networks.find((network) => {
+        return network.name === crypto;
+      });
+      if (!network) return;
+      // generate token list
+      let decimals = 18;
+
+      if (network.name === "DOT") decimals = 10;
+      else if (network.name === "KSM") decimals = 12;
+      const mainCoin = new Crypto(
+        network.currencyName,
+        network.name_long,
+        network.name,
+        decimals,
+        network.icon
+      );
+      tokensList = [mainCoin];
+      if (form.fiatSelected === "CAD") return tokensList;
+      if (network.tokens) tokensList = tokensList.concat(network.tokens);
+      emit("selectedNetwork", network);
+    }
+    const foundToken = tokensList
+      ? tokensList.find((item) => {
+          return item.symbol === crypto;
+        })
+      : undefined;
+    if (foundToken) emit("selectCurrency", foundToken);
+    form.cryptoSelected = foundToken ? foundToken.symbol : crypto;
     form.address = queryTo ? queryTo : "";
     if (queryTo) {
       verifyAddress();
@@ -907,15 +938,14 @@ const verifyAddress = (): void => {
 };
 
 const submitForm = (): void => {
-  const { fiatSelected, cryptoSelected } = form;
+  const { fiatSelected, cryptoSelected, address, fiatAmount } = form;
   const moonpayAvailable = isValidData(moonpayData);
   const moonpayOverMax = moonpayAvailable
     ? moonpayData[cryptoSelected].limits[fiatSelected].max <
-      Number.parseFloat(form.fiatAmount)
+      Number.parseFloat(fiatAmount)
     : true;
 
-  const moonpayFiatAmount = moonpayAvailable ? form.fiatAmount : "0.00";
-
+  const moonpayFiatAmount = moonpayAvailable ? fiatAmount : "0.00";
   emit("success", {
     simplex_quote: {
       cryptoToFiat: simplexCryptoAmount.value,
@@ -927,7 +957,7 @@ const submitForm = (): void => {
       monthlyLimit: monthlyLimit(),
       fiatAmount: simplexFiatAmount.value,
     },
-    address: form.address,
+    address: address,
     buy_obj: {
       cryptoToFiat: moonpayCryptoAmount,
       selectedCryptoName: cryptoSelected,
@@ -941,12 +971,12 @@ const submitForm = (): void => {
     open_providers: 2,
     selected_currency: props.cryptoSelected,
     selected_fiat: {
-      name: form.fiatSelected,
-      value: form.fiatSelected,
+      name: fiatSelected,
+      value: fiatSelected,
       // eslint-disable-next-line
-      img: require(`@/assets/images/fiat/${form.fiatSelected}.svg`),
+      img: require(`@/assets/images/fiat/${fiatSelected}.svg`),
     },
-    fiat_amount: form.fiatAmount,
+    fiat_amount: fiatAmount,
     disable_moonpay: !moonpayAvailable || moonpayOverMax,
   });
 };

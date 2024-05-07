@@ -19,6 +19,8 @@
             @setQuotes="setQuotes"
             @selectedCurrency="openTokenSelect"
             @success="buySuccess"
+            @selectedNetwork="setNetwork"
+            @selectCurrency="setSelectedCurrency"
           />
         </template>
         <template #tabContent2>
