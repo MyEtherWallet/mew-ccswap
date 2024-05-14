@@ -4,7 +4,53 @@ export const Networks = <Array<Network>>[
     name: 'ETH',
     name_long: 'Ethereum',
     chainID: 1,
-    tokens: [],
+    tokens: [
+      {
+        img: require('@/assets/images/crypto/PYUSD.png'),
+        name: 'PayPal USD',
+        subtext: 'PayPal USD',
+        value: 'PayPal USD',
+        symbol: 'PYUSD',
+        network: 'ETH',
+        decimals: 6
+      },
+      {
+        img: getIcon('USDT'),
+        name: 'Tether',
+        subtext: 'Tether',
+        value: 'Tether',
+        symbol: 'USDT',
+        network: 'ETH',
+        decimals: 6
+      },
+      {
+        img: getIcon('USDC'),
+        name: 'USD Coin',
+        subtext: 'USD Coin',
+        value: 'USD Coin',
+        symbol: 'USDC',
+        network: 'ETH',
+        decimals: 6
+      },
+      {
+        img: getIcon('DAI'),
+        name: 'Dai Stablecoin',
+        subtext: 'Dai Stablecoin',
+        value: 'Dai Stablecoin',
+        symbol: 'DAI',
+        network: 'ETH',
+        decimals: 18
+      },
+      {
+        img: require('@/assets/images/crypto/TUSD.png'),
+        name: 'True USD',
+        subtext: 'True USD',
+        value: 'True USD',
+        symbol: 'TUSD',
+        network: 'ETH',
+        decimals: 18
+      }
+    ],
     icon: getIcon('ETH'),
     currencyName: 'ETH',
     gasPriceMultiplier: 1,
@@ -48,27 +94,75 @@ export const Networks = <Array<Network>>[
     username: '',
     password: '',
   },
-  // {
-  //   name: 'BSC',
-  //   name_long: 'Binance Smart Chain',
-  //   chainID: 56,
-  //   tokens: [],
-  //   icon: getIcon('BNB'),
-  //   currencyName: 'BNB',
-  //   gasPriceMultiplier: 1,
-  //   coingeckoID: 'binancecoin',
-  //   service: 'myetherwallet.com-ws',
-  //   url: 'wss://nodes.mewapi.io/ws/bsc',
-  //   port: 443,
-  //   auth: false,
-  //   username: '',
-  //   password: '',
-  // },
+  {
+    name: 'BSC',
+    name_long: 'Binance Smart Chain',
+    chainID: 56,
+    tokens: [
+      {
+        img: require('@/assets/images/crypto/FDUSD-SC.png'),
+        name: 'First Digital USD',
+        subtext: 'First Digital USD',
+        value: 'First Digital USD',
+        symbol: 'FUDSD-SC',
+        network: 'BNB',
+        decimals: 18
+      },
+      {
+        img: getIcon('USDC'),
+        name: 'USD Coin (Binance Pegged)',
+        subtext: 'USD Coin (Binance Pegged)',
+        value: 'USD Coin (Binance Pegged)',
+        symbol: 'USDC-SC',
+        network: 'BNB',
+        decimals: 18
+      },
+      {
+        img: getIcon('USDT'),
+        name: 'Tether USD (Binance Smart Chain)',
+        subtext: 'Tether USD (Binance Smart Chain)',
+        value: 'Tether USD (Binance Smart Chain)',
+        symbol: 'USDT-SC',
+        network: 'BNB',
+        decimals: 18
+      },
+    ],
+    icon: getIcon('BNB'),
+    currencyName: 'BNB',
+    gasPriceMultiplier: 1,
+    coingeckoID: 'binancecoin',
+    service: 'myetherwallet.com-ws',
+    url: 'wss://nodes.mewapi.io/ws/bsc',
+    port: 443,
+    auth: false,
+    username: '',
+    password: '',
+  },
   {
     name: 'MATIC',
     name_long: 'Polygon (Matic)',
     chainID: 137,
-    tokens: [],
+    tokens: [
+      {
+        img: getIcon('USDC'),
+        name: 'USD Coin (PoS)',
+        subtext: 'USD Coin (PoS)',
+        value: 'USD Coin (PoS)',
+        symbol: 'USDC-MATIC',
+        network: 'MATIC',
+        decimals: 6
+      },
+      {
+        img: getIcon('USDT'),
+        name: 'Tether USD (PoS)',
+        subtext: 'Tether USD (PoS)',
+        value: 'Tether USD (PoS)',
+        symbol: 'USDT-MATIC',
+        network: 'MATIC',
+        decimals: 6
+      },
+
+    ],
     icon: getIcon('MATIC'),
     currencyName: 'MATIC',
     gasPriceMultiplier: 1.7,
@@ -155,6 +249,58 @@ export const Networks = <Array<Network>>[
     coingeckoID: 'kadena',
     service: '',
     url: '',
+    port: 443,
+    auth: false,
+    username: '',
+    password: '',
+  },
+  {
+    name: 'ARB',
+    name_long: 'Arbitrum',
+    chainID: 42161,
+    tokens: [
+      {
+        img: getIcon('USDT'),
+        name: 'Tether USD',
+        subtext: 'Tether USD',
+        value: 'Tether USD',
+        symbol: 'USDT-ARBITRUM',
+        network: 'ARB',
+        decimals: 6
+      }
+    ],
+    icon: getIcon('ARB'),
+    currencyName: 'ARB',
+    gasPriceMultiplier: 1,
+    coingeckoID: 'arbitrum',
+    service: 'myetherwallet.com-ws',
+    url: 'wss://nodes.mewapi.io/ws/arb',
+    port: 443,
+    auth: false,
+    username: '',
+    password: '',
+  },
+  {
+    name: 'OP',
+    name_long: 'Optimism',
+    chainID: 10,
+    tokens: [
+      {
+        img: getIcon('USDT'),
+        name: 'Tether USD',
+        subtext: 'Tether USD',
+        value: 'Tether USD',
+        symbol: 'USDT-OPTIMISM',
+        network: 'ARB',
+        decimals: 6
+      }
+    ],
+    icon: getIcon('OP'),
+    currencyName: 'OP',
+    gasPriceMultiplier: 1,
+    coingeckoID: 'optimism',
+    service: 'myetherwallet.com-ws',
+    url: 'wss://nodes.mewapi.io/ws/op',
     port: 443,
     auth: false,
     username: '',

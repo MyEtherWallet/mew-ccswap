@@ -115,7 +115,7 @@
               </div>
             </v-list-item-title>
             <template #append>
-              <span>{{ tokenPrice(item.name) }}</span>
+              <span>{{ tokenPrice(item.symbol) }}</span>
             </template>
           </v-list-item>
         </v-list>
@@ -190,7 +190,7 @@ export default defineComponent({
       );
       let tokensList = [mainCoin];
       if (this.fiatName === "CAD") return tokensList;
-      if (this.networkSelected.tokens)
+      if (this.networkSelected.tokens.length > 0)
         tokensList = tokensList.concat(this.networkSelected.tokens);
       return tokensList;
     },
@@ -200,7 +200,7 @@ export default defineComponent({
         const tokenSymbol = token.name.toLowerCase();
         const tokenName = token.subtext.toLowerCase();
         if (
-          this.hasValidPrices(token.name) &&
+          this.hasValidPrices(token.symbol) &&
           (tokenSymbol.includes(filterText) || tokenName.includes(filterText))
         )
           return token;

@@ -103,7 +103,6 @@
           :disabled="loading.data"
         ></v-text-field>
         <v-btn
-          v-model="form.cryptoSelected"
           rounded="right"
           variant="outlined"
           class="no-left-border custom-btn"
@@ -239,7 +238,7 @@ onMounted(async () => {
   // Get crypto Data
   await getPrices();
   if (!isEmpty(props.fiatSelected)) {
-    form.cryptoSelected = props.cryptoSelected.name;
+    form.cryptoSelected = props.cryptoSelected.symbol;
     form.fiatSelected = props.fiatSelected.name;
     form.fiatAmount = props.fiatAmount;
     fiatToCrypto();
@@ -418,8 +417,10 @@ watch(
 const web3 = computed(() => {
   const supportedNodes: { [key: string]: string } = {
     ETH: "ETH",
-    BSC: "BSC",
+    BNB: "BNB",
     MATIC: "MATIC",
+    ARB: "ARB",
+    OP: "OP",
   };
   const nodeType = supportedNodes[props.cryptoSelected.network];
   const node = Networks.find((network) => {
@@ -554,7 +555,7 @@ const fiatCurrency = computed(() => {
 const simplexPrice = computed(() => {
   return new BigNumber(
     simplexAvailable.value
-      ? simplexData[form.cryptoSelected].prices[form.fiatSelected]
+      ? simplexData[form.cryptoSelected]?.prices[form.fiatSelected]
       : 0
   );
 });
@@ -606,6 +607,12 @@ const fiatIcon = computed(() => {
   return require(`@/assets/images/fiat/${form.fiatSelected}.svg`);
 });
 const cryptoIcon = computed(() => {
+  if (
+    form.cryptoSelected === "PYUSD" ||
+    form.cryptoSelected === "FDUSD-SC" ||
+    form.cryptoSelected === "TUSD"
+  )
+    return require(`@/assets/images/crypto/${form.cryptoSelected}.png`);
   return require(`@/assets/images/crypto/${form.cryptoSelected}.svg`);
 });
 
@@ -710,34 +717,6 @@ const getPrices = async () => {
         });
         d.prices.forEach((p: any) => (tmp.prices[p.fiat_currency] = p.price));
         const tokenName = d.crypto_currencies[0];
-        const mainCoin = Networks.find(
-          (item) => item.currencyName === tokenName
-        );
-        // Hard code names/decimals for now
-        const tokensInfo: { [key: string]: any } = {
-          USDT: { name: "Tether", decimals: 6 },
-          USDC: { name: "USD Coin", decimals: 6 },
-          DAI: { name: "Dai Stablecoin", decimals: 18 },
-        };
-        // If token name isnt a native network coin
-        // assume the token is ERC-20(ETH)
-        if (!mainCoin) {
-          const foundToken = Networks[0].tokens.find(
-            (item) => item.name === tokenName
-          );
-          if (!foundToken) {
-            const tokenInfo = tokensInfo[tokenName];
-            Networks[0].tokens.push(
-              new Crypto(
-                tokenName,
-                tokenInfo.name,
-                "ETH",
-                tokenInfo.decimals,
-                getIcon(tokenName, false)
-              )
-            );
-          }
-        }
         if (d.name === "SIMPLEX") simplexData[tokenName] = tmp;
         else if (d.name === "MOONPAY") moonpayData[tokenName] = tmp;
       });
@@ -776,7 +755,7 @@ const addressValid = computed(() => {
     : !polkadot_chains.includes(form.cryptoSelected)
     ? bitcoin_chains.includes(form.cryptoSelected)
       ? WAValidator.validate(form.address, form.cryptoSelected)
-      : WAValidator.validate(form.address, form.cryptoSelected) &&
+      : WAValidator.validate(form.address, props.networkSelected.name) &&
         validAddress(form.address)
     : isValidAddressPolkadotAddress(
         form.address,
@@ -995,8 +974,8 @@ const fetchGasPrice = async (): Promise<void> => {
   }
   gasPrice = await web3.value.eth.getGasPrice();
   const price = isValidData(simplexData)
-    ? simplexData[form.cryptoSelected].prices[form.fiatSelected]
-    : moonpayData[form.cryptoSelected].prices[form.fiatSelected];
+    ? simplexData[form.cryptoSelected]?.prices[form.fiatSelected]
+    : moonpayData[form.cryptoSelected]?.prices[form.fiatSelected];
   init(parseFloat(networkFee.value) * parseFloat(price));
 };
 </script>
