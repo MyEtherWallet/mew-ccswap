@@ -292,6 +292,8 @@ $greyPrimary-base: #5a678a;
   flex: none;
   order: 1;
   flex-grow: 0;
+
+  padding-top: 5px;
 }
 .text--bold {
   font-family: "Roboto";

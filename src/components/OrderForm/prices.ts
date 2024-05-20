@@ -5,7 +5,7 @@ import { sha3 } from "web3-utils";
 const API = "https://mainnet.mewwallet.dev";
 
 const supportedCrypto = ["ETH", "BTC", "BCH", "MATIC", "USDT", "USDC", "DAI", "DOT", "KSM", "KDA", "PYUSD", "BSC", "OP", "ARB", 'TUSD',
-  'FUDSD-SC',
+  'FDUSD-SC',
   'USDC-SC',
   'USDT-SC',
   'USDC-MATIC',

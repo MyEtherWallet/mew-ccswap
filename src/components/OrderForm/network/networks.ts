@@ -104,7 +104,7 @@ export const Networks = <Array<Network>>[
         name: 'First Digital USD',
         subtext: 'First Digital USD',
         value: 'First Digital USD',
-        symbol: 'FUDSD-SC',
+        symbol: 'FDUSD-SC',
         network: 'BNB',
         decimals: 18
       },
