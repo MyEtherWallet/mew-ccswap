@@ -33,6 +33,7 @@
       <div class="d-flex align-center">
         <img class="mr-2" :src="visa" alt="Visa" height="22" />
         <img class="mr-2" :src="applePay" alt="Visa" height="22" />
+        <img class="mr-2" :src="paypal" alt="Visa" height="22" />
         <img :src="master" alt="Master" height="22" />
       </div>
     </div>
@@ -43,6 +44,7 @@
 import visa from "@/assets/images/icon-visa.svg";
 import master from "@/assets/images/icon-master.svg";
 import applePay from "@/assets/images/icon-apple-pay.svg";
+import paypal from "@/assets/images/icon-paypal-logo.svg";
 import simplex from "@/assets/images/icon-simplex.svg";
 import simplexLight from "@/assets/images/icon-simplex-light.svg";
 import moonpay from "@/assets/images/icon-moonpay.svg";

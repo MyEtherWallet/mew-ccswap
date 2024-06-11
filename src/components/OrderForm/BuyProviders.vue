@@ -70,6 +70,7 @@
           <img :src="visaIcon" alt="Visa" height="24" class="mr-2" />
           <img :src="masterIcon" alt="Master" height="24" class="mr-2" />
           <img :src="applePayIcon" alt="ApplePay" height="24" class="mr-2" />
+          <img :src="paypalIcon" alt="Paypal" height="24" class="mr-2" />
           <img v-if="isEUR" :src="bankIcon" alt="Bank" height="24" />
         </div>
         <div class="mew-label mb-5">
@@ -263,6 +264,9 @@ export default defineComponent({
     },
     applePayIcon() {
       return require("@/assets/images/icon-apple-pay.svg");
+    },
+    paypalIcon() {
+      return require("@/assets/images/icon-paypal-logo.svg");
     },
     simplexLogo() {
       return require("@/assets/images/icon-simplex.svg");
