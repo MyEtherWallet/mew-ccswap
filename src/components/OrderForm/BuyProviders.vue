@@ -251,7 +251,9 @@ export default defineComponent({
       return "BUY WITH MOONPAY";
     },
     paymentOptionString() {
-      return `Visa, Mastercard, Apple Pay${this.isEUR ? ", Bank account" : ""}`;
+      return `Visa, Mastercard, Apple Pay, Paypal${
+        this.isEUR ? ", Bank account" : ""
+      }`;
     },
     visaIcon() {
       return require("@/assets/images/icon-visa.svg");
