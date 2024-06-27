@@ -31,7 +31,7 @@
           :rules="rules"
         ></v-text-field>
         <v-select
-          style="max-width: 120px"
+          style="max-width: 130px"
           class="rounded-right no-left-border buy-input"
           v-model="form.fiatSelected"
           :items="filteredFiatItems"
@@ -1034,7 +1034,7 @@ input::-webkit-inner-spin-button {
   }
 }
 .custom-btn {
-  max-width: 120px !important;
+  width: 130px !important;
   height: 56px !important;
   border: 1px solid rgba(211, 211, 211, 0.5);
   border-radius: 0;

@@ -836,7 +836,7 @@ const getTokenBalance = async (tokenName: string) => {
   }
 }
 .custom-btn {
-  max-width: 120px !important;
+  width: 130px !important;
   height: 56px !important;
   border: 1px solid rgba(211, 211, 211, 0.5);
   border-radius: 0;
