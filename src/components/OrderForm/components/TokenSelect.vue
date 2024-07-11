@@ -196,7 +196,7 @@ export default defineComponent({
     },
     filteredTokenList() {
       const filterText = this.searchInput.toLowerCase();
-      return this.tokensList.filter((token) => {
+      const a = this.tokensList.filter((token) => {
         const tokenSymbol = token.name.toLowerCase();
         const tokenName = token.subtext.toLowerCase();
         if (
@@ -205,6 +205,7 @@ export default defineComponent({
         )
           return token;
       });
+      return a;
     },
     fiatName() {
       return this.fiatSelected.name;

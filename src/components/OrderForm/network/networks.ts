@@ -95,7 +95,7 @@ export const Networks = <Array<Network>>[
     password: '',
   },
   {
-    name: 'BSC',
+    name: 'BNB',
     name_long: 'Binance Smart Chain',
     chainID: 56,
     tokens: [

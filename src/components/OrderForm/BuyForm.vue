@@ -20,6 +20,7 @@
       </div>
       <div class="d-flex mt-2">
         <v-text-field
+          style="max-width: 196px"
           class="no-right-border"
           @input="fiatToCrypto"
           type="number"
@@ -120,7 +121,7 @@
             />
           </template>
           <span>
-            {{ form.cryptoSelected }}
+            {{ concatenate(form.cryptoSelected) }}
           </span>
           <template v-slot:append>
             <v-icon color="grey-2" size="large"></v-icon>
@@ -613,6 +614,10 @@ const cryptoIcon = computed(() => {
     form.cryptoSelected === "TUSD"
   )
     return require(`@/assets/images/crypto/${form.cryptoSelected}.png`);
+  if (form.cryptoSelected.includes("USDT"))
+    return require(`@/assets/images/crypto/USDT.svg`);
+  if (form.cryptoSelected.includes("USDC"))
+    return require(`@/assets/images/crypto/USDC.svg`);
   return require(`@/assets/images/crypto/${form.cryptoSelected}.svg`);
 });
 
@@ -691,6 +696,12 @@ const minMax = computed(() => {
 
 const minMaxError = () => {
   const limit = { min: min.value, max: max.value };
+  if (bestPrice.value.toString() === "NaN") {
+    loading.showAlert = true;
+    loading.alertMessage = `No price data available for ${form.cryptoSelected}.`;
+    return;
+  }
+
   if (!minMax.value) {
     loading.showAlert = true;
     loading.alertMessage = `Fiat price must be between ${
@@ -755,6 +766,9 @@ const addressValid = computed(() => {
     : !polkadot_chains.includes(form.cryptoSelected)
     ? bitcoin_chains.includes(form.cryptoSelected)
       ? WAValidator.validate(form.address, form.cryptoSelected)
+      : props.networkSelected.name === "OP" ||
+        props.networkSelected.name === "ARB"
+      ? WAValidator.validate(form.address, "ETH")
       : WAValidator.validate(form.address, props.networkSelected.name) &&
         validAddress(form.address)
     : isValidAddressPolkadotAddress(
@@ -778,13 +792,13 @@ const bestPrice = computed(() => {
 });
 
 const fiatToCrypto = () => {
-  const price = bestPrice.value;
+  const price = new BigNumber(bestPrice.value || "0");
   const amount = new BigNumber(form.fiatAmount || "0");
   form.cryptoAmount = BigNumber(amount).div(price).toString();
 };
 
 const cryptoToFiat = () => {
-  const price = bestPrice.value;
+  const price = new BigNumber(bestPrice.value || "0");
   const amount = new BigNumber(form.cryptoAmount || "0");
   form.fiatAmount = amount.times(price).toFixed(2).toString();
 };
@@ -861,7 +875,7 @@ const loadUrlParameters = () => {
     ).lt(locMin)
       ? locMin.div(locPriceOb).times(10).toString()
       : queryCryptoAmountHolder;
-    form.cryptoAmount = BigNumber(cryptoToFiat).toNumber();
+    form.cryptoAmount = BigNumber(cryptoToFiat).toString();
   }
 };
 
@@ -977,6 +991,10 @@ const fetchGasPrice = async (): Promise<void> => {
     ? simplexData[form.cryptoSelected]?.prices[form.fiatSelected]
     : moonpayData[form.cryptoSelected]?.prices[form.fiatSelected];
   init(parseFloat(networkFee.value) * parseFloat(price));
+};
+
+const concatenate = (value: string) => {
+  return value.length > 3 ? `${value.slice(0, 3)}...` : value;
 };
 </script>
 

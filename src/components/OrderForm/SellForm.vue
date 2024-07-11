@@ -244,16 +244,20 @@ let fiatFilter = "";
 // Hard code names/decimals for now
 const tokensInfo: { [key: string]: any } = {
   USDT: {
-    name: "Tether",
+    name: "USDT",
     decimals: 6,
     contract: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
   },
   USDC: {
-    name: "USD Coin",
+    name: "USDC",
     decimals: 6,
     contract: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
   },
-  DAI: { name: "Dai Stablecoin", decimals: 18, contract: "" },
+  DAI: {
+    name: "DAI",
+    decimals: 18,
+    contract: "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+  },
 };
 
 let moonpayData: { [key: string]: Data } = {
@@ -455,7 +459,7 @@ const fiatIcon = computed(() => {
   return require(`@/assets/images/fiat/${form.fiatSelected}.svg`);
 });
 const cryptoIcon = computed(() => {
-  return require(`@/assets/images/crypto/${form.cryptoSelected}.svg`);
+  return require(`@/assets/images/crypto/${props.cryptoSelected.symbol}.svg`);
 });
 
 const networkFee = computed(() => {
@@ -472,14 +476,9 @@ const getIcon = (currency: string, isFiat = true) => {
   }/${currency}.svg`);
 };
 
-const selectCurrency = (currency: string, isFiat = true) => {
-  if (isFiat) {
-    form.fiatSelected = currency;
-    dropdown.fiat = false;
-  } else {
-    form.cryptoSelected = currency;
-    dropdown.crypto = false;
-  }
+const selectCurrency = (currency: string) => {
+  form.fiatSelected = currency;
+  dropdown.fiat = false;
 };
 
 const hasData = () => {
@@ -541,28 +540,28 @@ const getPrices = async () => {
           });
           d.prices.forEach((p: any) => (tmp.prices[p.fiat_currency] = p.price));
           const tokenName = d.crypto_currencies[0];
-          const mainCoin = Networks.find(
-            (item) => item.currencyName === tokenName
-          );
+          // const mainCoin = Networks.find(
+          //   (item) => item.currencyName === tokenName
+          // );
           // If token name isnt a native network coin
           // assume the token is ERC-20(ETH)
-          if (!mainCoin) {
-            const foundToken = Networks[0].tokens.find(
-              (item) => item.name === tokenName
-            );
-            if (!foundToken) {
-              const tokenInfo = tokensInfo[tokenName];
-              Networks[0].tokens.push(
-                new Crypto(
-                  tokenName,
-                  tokenInfo.name,
-                  "ETH",
-                  tokenInfo.decimals,
-                  getIcon(tokenName, false)
-                )
-              );
-            }
-          }
+          // if (!mainCoin) {
+          //   const foundToken = Networks[0].tokens.find(
+          //     (item) => item.name === tokenName
+          //   );
+          //   if (!foundToken) {
+          //     const tokenInfo = tokensInfo[tokenName];
+          //     Networks[0].tokens.push(
+          //       new Crypto(
+          //         tokenName,
+          //         tokenInfo.name,
+          //         "ETH",
+          //         tokenInfo.decimals,
+          //         getIcon(tokenName, false)
+          //       )
+          //     );
+          //   }
+          // }
           moonpayData[tokenName] = tmp;
         }
       });
@@ -667,9 +666,11 @@ const checkBalance = () => {
 };
 
 const fiatToCrypto = () => {
-  const { fiatSelected, fiatAmount, cryptoSelected } = form;
+  const { fiatSelected, fiatAmount } = form;
   const decimals = props.cryptoSelected.decimals;
-  const price = parseFloat(moonpayData[cryptoSelected].prices[fiatSelected]);
+  const price = parseFloat(
+    moonpayData[props.cryptoSelected.symbol].prices[fiatSelected]
+  );
   const amount = parseFloat(fiatAmount || "0");
   const cryptoAmount = amount / price;
   // Make sure decimal amount is valid
