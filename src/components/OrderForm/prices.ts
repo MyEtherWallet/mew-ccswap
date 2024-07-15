@@ -2,7 +2,7 @@ import axios from "axios";
 import { toNumber } from "lodash";
 import { sha3 } from "web3-utils";
 // const API = "https://qa.mewwallet.dev";
-const API = "https://mainnet.mewwallet.dev";
+const API = "https://development.mewwallet.dev";
 
 const supportedCrypto = ["ETH", "BTC", "BCH", "MATIC", "USDT", "USDC", "DAI", "DOT", "KSM", "KDA", "PYUSD", "BSC", "OP", "ARB", 'TUSD',
   'FDUSD-SC',
@@ -70,9 +70,34 @@ async function getSimplexQuote(
       throw e;
     });
 }
+async function getTopperUrl(
+  fiatCurrency: string,
+  cryptoCurrency: string,
+  requestedAmount: string,
+  address = "0xDECAF9CD2367cdbb726E904cD6397eDFcAe6068D"
+) {
+  const apiQuote = `${API}/v3/purchase/topper/order`;
+
+  return await axios
+    .get(apiQuote, {
+      params: {
+        id: `WEB|${sha3(address)?.substring(0, 42)}`,
+        fiatCurrency: fiatCurrency,
+        cryptoCurrency: cryptoCurrency,
+        amount: toNumber(requestedAmount),
+        address: address
+      },
+    })
+    .then((response) => {
+      return response.data;
+    })
+    .catch((e) => {
+      throw e;
+    });
+}
 const filterData = (res: any) => {
   const { data } = res;
-  if (Array.isArray(data)) return data.filter((i) => (i.name === "SIMPLEX" || i.name === "MOONPAY"));
+  if (Array.isArray(data)) return data.filter((i) => (i.name === "SIMPLEX" || i.name === "MOONPAY" || i.name === "TOPPER"));
 };
 
 async function getCryptoPrices(
@@ -179,5 +204,6 @@ export {
   getFiatRatesForBuy,
   getSupportedFiatToBuy,
   getSupportedFiatToSell,
-  getCryptoSellPrices
+  getCryptoSellPrices,
+  getTopperUrl
 };

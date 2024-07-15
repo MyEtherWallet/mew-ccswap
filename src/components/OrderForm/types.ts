@@ -36,7 +36,7 @@ interface QuoteData {
 interface SubmitData {
     simplex_quote: QuoteData,
     address: string,
-    buy_obj: QuoteData, // Rename when done
+    moonpay_quote: QuoteData, // Rename when done
     open_providers: number,
     selected_currency: Crypto,
     selected_fiat: Fiat,

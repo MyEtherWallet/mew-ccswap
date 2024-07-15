@@ -122,7 +122,7 @@ export function calculateFiat(
   );
 }
 
-export function calculateFiatFee(
+export function calculateSimplexFiatFee(
   Amount: number,
   price: PurchasePrice,
   fiatConversionRate: FiatCurrencyConversionRate

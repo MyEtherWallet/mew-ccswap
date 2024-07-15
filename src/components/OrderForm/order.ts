@@ -1,8 +1,8 @@
 import axios from "axios";
-import { getSimplexQuote } from "./prices";
+import { getSimplexQuote, getTopperUrl } from "./prices";
 import { sha3 } from "web3-utils";
-const API = "https://mainnet.mewwallet.dev";
-const apiOrder = "https://mainnet.mewwallet.dev/purchase/simplex/order";
+const API = "https://development.mewwallet.dev";
+const apiOrder = "https://development.mewwallet.dev/purchase/simplex/order";
 
 // ===================================================================================================
 // Get the quote confirmed by Simplex
@@ -73,6 +73,25 @@ async function executeSimplexPayment(
   return responseOrder.form;
 }
 
+/**
+ * Execute Topper payment
+ */
+
+async function executeTopperPayment(
+  fiatCurrency: string,
+  cryptoCurrency: string,
+  requestedCurrency: string,
+  requestedAmount: string,
+  address: string) {
+  let response = null;
+  try {
+    response = await getTopperUrl(fiatCurrency, cryptoCurrency, requestedAmount, address);
+  } catch (e: any) {
+    throw new Error(e);
+  }
+  return response;
+}
+
 /*
   ** MoonPay
   */
@@ -109,4 +128,4 @@ async function executeMoonpaySell(tokenSymbol: string, amount: string, address: 
   });
 }
 
-export { executeSimplexPayment, executeMoonpaySell, executeMoonpayBuy };
+export { executeSimplexPayment, executeMoonpaySell, executeMoonpayBuy, executeTopperPayment };

@@ -86,7 +86,7 @@
       <!-- ============================================================== -->
       <!-- Token Selection List -->
       <!-- ============================================================== -->
-      <div class="d-flex">
+      <div class="d-flex token-container-overflow">
         <v-list lines="one" class="full-width">
           <v-list-item
             v-for="(item, i) in filteredTokenList"
@@ -107,10 +107,10 @@
             <v-list-item-title>
               <div>
                 <span class="text-capitalize text--bold">
-                  {{ item.name }}
+                  {{ item.symbol }}
                 </span>
                 <span>
-                  {{ ` - ${item.subtext}` }}
+                  {{ ` - ${item.name_long ? item.name_long : item.name}` }}
                 </span>
               </div>
             </v-list-item-title>
@@ -307,5 +307,10 @@ $greyPrimary-base: #5a678a;
 
 .no-border {
   border: none;
+}
+
+.token-container-overflow {
+  overflow-y: auto;
+  max-height: 270px;
 }
 </style>

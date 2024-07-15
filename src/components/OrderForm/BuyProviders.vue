@@ -25,7 +25,7 @@
               class="d-flex mew-heading-3"
               :class="hideMoonpay ? 'text-red' : ''"
             >
-              {{ buyObj.cryptoToFiat }}
+              {{ moonpayQuote.cryptoToFiat }}
               <span
                 class="mew-heading-3 pl-1"
                 :class="hideMoonpay ? 'text-red' : ''"
@@ -35,10 +35,10 @@
           </div>
           <div class="d-flex align-center">
             <div v-if="!hideMoonpay" class="mr-1 textDark--text">
-              ≈ {{ buyObj.plusFeeF }}
+              ≈ {{ moonpayQuote.plusFeeF }}
             </div>
             <div v-else class="mr-1 text-red">
-              {{ buyObj.plusFeeF }}
+              {{ moonpayQuote.plusFeeF }}
             </div>
             <v-tooltip v-if="!hideMoonpay" location="bottom">
               <template #activator="{ props }">
@@ -52,15 +52,15 @@
                 </v-icon>
               </template>
               <div class="elevated-box pa-3">
-                {{ buyObj.includesFeeText }}
+                {{ moonpayQuote.includesFeeText }}
                 <br />
                 <br />
-                {{ buyObj.networkFeeText }}
+                {{ moonpayQuote.networkFeeText }}
                 <br />
                 <br />
-                {{ buyObj.dailyLimit }}
+                {{ moonpayQuote.dailyLimit }}
                 <br />
-                {{ buyObj.monthlyLimit }}
+                {{ moonpayQuote.monthlyLimit }}
               </div>
             </v-tooltip>
           </div>
@@ -159,6 +159,81 @@
           >
         </div>
       </div>
+      <!-- ============================================================== -->
+      <!-- Topper -->
+      <!-- ============================================================== -->
+      <div class="section-block pa-5">
+        <div v-if="!loading" class="mb-3">
+          <div class="d-flex mb-1 align-center justify-space-between">
+            <div class="d-flex mew-heading-3">
+              {{ topperQuote.cryptoToFiat }}
+              <span class="mew-heading-3 pl-1">{{ selectedCryptoName }}</span>
+            </div>
+          </div>
+          <div class="d-flex align-center">
+            <div class="mr-1">≈ {{ topperQuote.plusFeeF }}</div>
+            <v-tooltip location="bottom">
+              <template #activator="{ props }">
+                <v-icon
+                  v-bind="props"
+                  color="grey-lighten-1"
+                  size="x-small"
+                  class="cursor-pointer"
+                >
+                  mdi-information
+                </v-icon>
+              </template>
+              <div class="elevated-box pa-3">
+                {{ topperQuote.includesFeeText }}
+                <br />
+                <br />
+                {{ topperQuote.networkFeeText }}
+                <br />
+                <br />
+                {{ topperQuote.dailyLimit }}
+                <br />
+                {{ topperQuote.monthlyLimit }}
+              </div>
+            </v-tooltip>
+          </div>
+        </div>
+
+        <div v-else class="mb-3">
+          <!-- v-skeleton-loader is not supported in Vuetify 3 -->
+          <!-- <v-skeleton-loader type="heading" class="mb-1" />
+          <v-skeleton-loader max-width="200px" type="heading" /> -->
+        </div>
+
+        <div class="d-flex align-center justify-space-between">
+          <div class="d-flex align-start mb-1">
+            <img :src="visaIcon" alt="Visa" height="24" class="mr-2" />
+            <img :src="masterIcon" alt="Master" height="24" class="mr-2" />
+            <img :src="applePayIcon" alt="ApplePay" height="24" class="mr-2" />
+            <img :src="googlePayIcon" alt="Paypal" height="24" class="mr-2" />
+            <img :src="pixIcon" alt="Paypal" height="24" class="mr-2" />
+          </div>
+          <img
+            class="provider-logo"
+            :src="topperLogo"
+            alt="Simplex"
+            height="28"
+          />
+        </div>
+        <div class="mew-label mb-5">
+          Visa, Mastercard, Apple Pay, Google Pay, Pix
+        </div>
+        <div>
+          <v-btn
+            :disabled="loading"
+            size="large"
+            class="grey-light greyPrimary--text"
+            width="100%"
+            variant="flat"
+            @click.native="openTopper"
+            >{{ topperBtnTitle }}</v-btn
+          >
+        </div>
+      </div>
     </div>
     <div v-else class="text-center py-5">
       <v-progress-circular
@@ -179,7 +254,11 @@
 
 <script lang="ts">
 import MultiCoinValidator from "multicoin-address-validator";
-import { executeSimplexPayment, executeMoonpayBuy } from "./order";
+import {
+  executeSimplexPayment,
+  executeMoonpayBuy,
+  executeTopperPayment,
+} from "./order";
 import { defineComponent, inject } from "vue";
 
 export default defineComponent({
@@ -205,11 +284,15 @@ export default defineComponent({
       type: Object,
       default: () => ({}),
     },
-    buyObj: {
+    moonpayQuote: {
       type: Object,
       default: () => ({}),
     },
     simplexQuote: {
+      type: Object,
+      default: () => ({}),
+    },
+    topperQuote: {
       type: Object,
       default: () => ({}),
     },
@@ -247,6 +330,9 @@ export default defineComponent({
     simplexBtnTitle() {
       return "BUY WITH SIMPLEX";
     },
+    topperBtnTitle() {
+      return "BUY WITH TOPPER";
+    },
     moonpayBtnTitle() {
       return "BUY WITH MOONPAY";
     },
@@ -270,11 +356,20 @@ export default defineComponent({
     paypalIcon() {
       return require("@/assets/images/icon-paypal-logo.svg");
     },
+    googlePayIcon() {
+      return require("@/assets/images/icon-google-pay-logo.svg");
+    },
+    pixIcon() {
+      return require("@/assets/images/icon-pix-logo.jpeg");
+    },
     simplexLogo() {
       return require("@/assets/images/icon-simplex.svg");
     },
     moonpayLogo() {
       return require("@/assets/images/icon-moonpay.svg");
+    },
+    topperLogo() {
+      return require("@/assets/images/icon-topper.png");
     },
   },
   methods: {
@@ -305,6 +400,30 @@ export default defineComponent({
           this.amplitude.track(`CCBuySellBuyWithSimplexFailed`);
         });
     },
+    openTopper() {
+      this.processingBuy = true;
+      this.amplitude.track(`CCBuySellBuyWithTopper`);
+      executeTopperPayment(
+        this.selectedFiatName,
+        this.selectedCryptoName,
+        this.selectedFiatName,
+        this.simplexQuote.fiatAmount,
+        this.actualAddress
+      )
+        .then((data) => {
+          window.open(data.url, "_blank");
+          this.amplitude.track(`CCBuySellBuyWithTopperSuccess`);
+          this.reset();
+          this.close();
+          this.$emit("reset");
+        })
+        .catch(() => {
+          this.reset();
+          this.close();
+          this.$emit("reset");
+          this.amplitude.track(`CCBuySellBuyWithTopperFailed`);
+        });
+    },
     currencyFormatter(value: number) {
       const locale = "en-US";
       return new Intl.NumberFormat(locale, {
@@ -323,7 +442,7 @@ export default defineComponent({
       executeMoonpayBuy(
         this.selectedCryptoName,
         this.selectedFiatName,
-        this.buyObj.fiatAmount,
+        this.moonpayQuote.fiatAmount,
         this.actualAddress
       )
         .then(() => {

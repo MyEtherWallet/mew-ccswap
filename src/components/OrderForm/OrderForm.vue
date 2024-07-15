@@ -58,10 +58,12 @@
       :selected-fiat="selectedFiat"
       :selected-currency="selectedCurrency"
       :only-simplex="onlySimplex"
-      :buy-obj="buyObj"
+      :moonpay-quote="moonpayQuote"
       :simplex-quote="simplexQuote"
+      :topper-quote="topperQuote"
       :to-address="toAddress"
       @close="close"
+      @reset="reset"
     />
   </div>
 </template>
@@ -112,12 +114,14 @@ export default defineComponent({
       selectedFiat: {} as Fiat,
       fiatAmount: "0",
       onlySimplex: false,
-      buyObj: {} as QuoteData,
+      moonpayQuote: {} as QuoteData,
       step: 0,
       simplexQuote: {} as QuoteData,
+      topperQuote: {} as QuoteData,
       toAddress: "",
       moonpayData: {} as { [key: string]: Data },
       simplexData: {} as { [key: string]: Data },
+      topperData: {} as { [key: string]: Data },
     };
   },
   computed: {
@@ -203,21 +207,26 @@ export default defineComponent({
         `CCBuySell${this.activeTab === 0 ? "BuyInput" : "SellInput"}`
       );
     },
-    setBuyObj(val: QuoteData) {
-      this.buyObj = val;
+    setMoonpayQuote(val: QuoteData) {
+      this.moonpayQuote = val;
     },
     setSimplexQuote(val: QuoteData) {
       this.simplexQuote = val;
+    },
+    setTopperQuote(val: QuoteData) {
+      this.topperQuote = val;
     },
     setToAddress(val: string) {
       this.toAddress = val;
     },
     setQuotes(
       simplexQuote: { [key: string]: Data },
-      moonpayQuote: { [key: string]: Data }
+      moonpayQuote: { [key: string]: Data },
+      topperQuote: { [key: string]: Data }
     ) {
       this.simplexData = simplexQuote;
       this.moonpayData = moonpayQuote;
+      this.topperData = topperQuote;
     },
     reset() {
       this.selectedCurrency = this.defaultCurrency;
@@ -228,14 +237,16 @@ export default defineComponent({
         img: require(`@/assets/images/fiat/USD.svg`),
       };
       this.onlySimplex = false;
+      this.close();
     },
     disableMoonpay(val: boolean) {
       this.onlySimplex = val;
     },
     buySuccess(data: SubmitData) {
+      this.setTopperQuote(data.topper_quote);
       this.setSimplexQuote(data.simplex_quote);
       this.setToAddress(data.address);
-      this.setBuyObj(data.buy_obj);
+      this.setMoonpayQuote(data.moonpay_quote);
       this.setSelectedCurrency(data.selected_currency);
       this.openProviders(data.open_providers);
       this.setSelectedFiat(data.selected_fiat);

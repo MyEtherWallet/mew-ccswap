@@ -6,13 +6,15 @@ class Crypto {
   value: string;
   symbol: string;
   network: string;
+  name_long?: string;
 
   constructor(
     name: string,
     subtext: string,
     network: string,
     decimals: number,
-    img: string
+    img: string,
+    name_long?: string
   ) {
     this.decimals = decimals;
     this.img = img;
@@ -21,6 +23,7 @@ class Crypto {
     this.value = name;
     this.symbol = name;
     this.network = network;
+    this.name_long = name_long;
   }
 }
 interface Fiat {
@@ -41,8 +44,9 @@ interface QuoteData {
 }
 interface SubmitData {
   simplex_quote: QuoteData;
+  topper_quote: QuoteData;
   address: string;
-  buy_obj: QuoteData; // Rename when done
+  moonpay_quote: QuoteData; // Rename when done
   open_providers: number;
   selected_currency: Crypto;
   selected_fiat: Fiat;

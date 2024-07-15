@@ -221,42 +221,11 @@ import {
 import { Networks } from "./network/networks";
 import { Crypto, Data, Network, Fiat } from "./network/types";
 import Web3 from "web3";
-import { init, calculateFiatFee } from "./models/purchaseSimplexFeeModel";
+import {
+  init,
+  calculateSimplexFiatFee,
+} from "./models/purchaseSimplexFeeModel";
 import { fromBase, toBase } from "@/helpers/units";
-
-const defaultFiatValue = "0";
-let gasPrice = "0";
-const polkadot_chains = ["DOT", "KSM"];
-const bitcoin_chains = ["BTC", "BCH", "DOGE", "LTC"];
-const other_chains = ["KDA"];
-// eslint-disable-next-line no-undef
-let priceTimer: NodeJS.Timer;
-let fiatFilter = "";
-
-onMounted(async () => {
-  form.address = "";
-
-  // Get crypto Data
-  await getPrices();
-  if (!isEmpty(props.fiatSelected)) {
-    form.cryptoSelected = props.cryptoSelected.symbol;
-    form.fiatSelected = props.fiatSelected.name;
-    form.fiatAmount = props.fiatAmount;
-    fiatToCrypto();
-  } else {
-    // Load URL parameter value and verify crypto address
-    loadUrlParameters();
-    if (form.fiatAmount === "0") {
-      cryptoToFiat();
-    }
-  }
-  await fetchGasPrice();
-  priceTimer = setInterval(getPrices, 1000 * 60 * 2);
-});
-
-onUnmounted(async () => {
-  clearInterval(priceTimer);
-});
 
 // emits
 const emit = defineEmits([
@@ -290,6 +259,14 @@ const props = defineProps({
 });
 
 // data
+const defaultFiatValue = "0";
+let gasPrice = "0";
+const polkadot_chains = ["DOT", "KSM"];
+const bitcoin_chains = ["BTC", "BCH", "DOGE", "LTC"];
+const other_chains = ["KDA"];
+// eslint-disable-next-line no-undef
+let priceTimer: NodeJS.Timer;
+let fiatFilter = "";
 
 // non-reactive
 const fiatItems: string[] = supportedFiat;
@@ -355,6 +332,33 @@ let moonpayData: { [key: string]: Data } = {
     prices: {},
   },
 };
+let topperData: { [key: string]: Data } = {
+  ETH: {
+    conversion_rates: {},
+    limits: {},
+    prices: {},
+  },
+  MATIC: {
+    conversion_rates: {},
+    limits: {},
+    prices: {},
+  },
+  BNB: {
+    conversion_rates: {},
+    limits: {},
+    prices: {},
+  },
+  DOT: {
+    conversion_rates: {},
+    limits: {},
+    prices: {},
+  },
+  KSM: {
+    conversion_rates: {},
+    limits: {},
+    prices: {},
+  },
+};
 // reactive
 const form = reactive({
   fiatAmount: defaultFiatValue,
@@ -376,6 +380,31 @@ const loading = reactive({
 const dropdown = reactive({
   fiat: false,
   crypto: false,
+});
+
+onMounted(async () => {
+  form.address = "";
+
+  // Get crypto Data
+  await getPrices();
+  if (!isEmpty(props.fiatSelected)) {
+    form.cryptoSelected = props.cryptoSelected.symbol;
+    form.fiatSelected = props.fiatSelected.name;
+    form.fiatAmount = props.fiatAmount;
+    fiatToCrypto();
+  } else {
+    // Load URL parameter value and verify crypto address
+    loadUrlParameters();
+    if (form.fiatAmount === "0") {
+      cryptoToFiat();
+    }
+  }
+  await fetchGasPrice();
+  priceTimer = setInterval(getPrices, 1000 * 60 * 2);
+});
+
+onUnmounted(async () => {
+  clearInterval(priceTimer);
 });
 
 // watchers
@@ -546,13 +575,64 @@ const moonpayCryptoAmount = computed(() => {
     : 0;
 });
 
+const fiatCurrency = computed(() => {
+  return { decimals: form.fiatSelected === "JPY" ? 0 : 2 };
+});
+
+/**
+ * Topper Calculations
+ */
+const topperAvailable = computed(() => isValidData(topperData));
+const topperPrice = computed(() => {
+  return new BigNumber(
+    topperAvailable.value
+      ? topperData[form.cryptoSelected]?.prices[form.fiatSelected]
+      : 0
+  );
+});
+const topperFiatAmount = computed(() => {
+  return topperAvailable.value ? form.fiatAmount : "0.00";
+});
+const topperFiatFee = computed(() => {
+  const { cryptoAmount } = form;
+  return topperAvailable.value
+    ? BigNumber(topperFiatAmount.value)
+        .times(cryptoAmount)
+        .times(0.029)
+        .toFixed(fiatCurrency.value.decimals)
+    : 0;
+});
+const topperPlusFee = computed(() => {
+  return BigNumber(topperFiatAmount.value)
+    .minus(topperFiatFee.value)
+    .minus(BigNumber(topperFiatAmount.value).times(0.025))
+    .minus(0.6) // temp network fee
+    .toFixed(fiatCurrency.value.decimals);
+});
+const topperPlusFeeF = computed(() => {
+  return topperAvailable.value
+    ? formatFiatValue(topperFiatAmount.value, currencyConfig.value).value
+    : `${form.cryptoSelected} is not available for this provider`;
+});
+
+const topperIncludesFeeText = computed(() => {
+  return `Includes 2.9% Topper fee  and 2.5% MyEtherWallet fee. (${
+    formatFiatValue(BigNumber(10.0).toString(), currencyConfig.value).value
+  } min)`;
+});
+
+const topperCryptoAmount = computed(() => {
+  const amount = BigNumber(topperPlusFee.value || "0"); // 60 cents network fee
+  return topperAvailable.value
+    ? formatFloatingPointValue(amount.dividedBy(topperPrice.value).toString())
+        .value
+    : 0;
+});
+
 /**
  * Simplex Fee calculations
  */
 const simplexAvailable = computed(() => isValidData(simplexData));
-const fiatCurrency = computed(() => {
-  return { decimals: form.fiatSelected === "JPY" ? 0 : 2 };
-});
 const simplexPrice = computed(() => {
   return new BigNumber(
     simplexAvailable.value
@@ -566,7 +646,7 @@ const simplexFiatAmount = computed(() => {
 const simplexFiatFee = computed(() => {
   const { fiatSelected, cryptoSelected } = form;
   return simplexAvailable.value
-    ? calculateFiatFee(
+    ? calculateSimplexFiatFee(
         Number.parseFloat(simplexFiatAmount.value),
         {
           price: simplexPrice.value.toNumber(),
@@ -666,22 +746,34 @@ const min = computed(() => {
   if (!hasData()) return 0;
   const simplexLimit = simplexData[cryptoSelected]?.limits[fiatSelected];
   const moonpayLimit = moonpayData[cryptoSelected]?.limits[fiatSelected];
+  const topperLimit = topperData[cryptoSelected]?.limits[fiatSelected];
   if (!isValidData(moonpayData)) return simplexLimit.min;
   if (!isValidData(simplexData)) return moonpayLimit.min;
-  return moonpayLimit.min < simplexLimit.min
+  if (!isValidData(simplexData) && !isValidData(moonpayData))
+    return topperLimit.min;
+  return moonpayLimit.min < simplexLimit.min ||
+    moonpayLimit.min < topperLimit.min
     ? moonpayLimit.min
-    : simplexLimit.min;
+    : simplexLimit.min < topperLimit.min
+    ? simplexLimit.min
+    : topperLimit.min;
 });
 const max = computed(() => {
   const { cryptoSelected, fiatSelected } = form;
   if (!hasData()) return 0;
   const simplexLimit = simplexData[cryptoSelected]?.limits[fiatSelected];
   const moonpayLimit = moonpayData[cryptoSelected]?.limits[fiatSelected];
+  const topperLimit = topperData[cryptoSelected]?.limits[fiatSelected];
   if (!isValidData(moonpayData)) return simplexLimit.max;
   if (!isValidData(simplexData)) return moonpayLimit.max;
-  return moonpayLimit.max > simplexLimit.max
+  if (!isValidData(simplexData) && !isValidData(moonpayData))
+    return topperLimit.max;
+  return moonpayLimit.max > simplexLimit.max ||
+    moonpayLimit.max > topperLimit.max
     ? moonpayLimit.max
-    : simplexLimit.max;
+    : simplexLimit.max > topperLimit.max
+    ? simplexLimit.max
+    : topperLimit.max;
 });
 const minMax = computed(() => {
   const { fiatAmount } = form;
@@ -724,16 +816,20 @@ const getPrices = async () => {
           (r: any) => (tmp.conversion_rates[r.fiat_currency] = r.exchange_rate)
         );
         d.limits.forEach((l: any) => {
-          if (l.type === "WEB") tmp.limits[l.fiat_currency] = l.limit;
+          if (l.type === "WEB" || l.type === "CREDIT-CARD") {
+            tmp.limits[l.fiat_currency] = l.limit;
+            return;
+          }
         });
         d.prices.forEach((p: any) => (tmp.prices[p.fiat_currency] = p.price));
         const tokenName = d.crypto_currencies[0];
         if (d.name === "SIMPLEX") simplexData[tokenName] = tmp;
         else if (d.name === "MOONPAY") moonpayData[tokenName] = tmp;
+        else if (d.name === "TOPPER") topperData[tokenName] = tmp;
       });
     });
     loading.data = false;
-    emit("setQuotes", simplexData, moonpayData);
+    emit("setQuotes", simplexData, moonpayData, topperData);
   } catch (e: any) {
     errorHandler(e);
   }
@@ -943,6 +1039,16 @@ const submitForm = (): void => {
 
   const moonpayFiatAmount = moonpayAvailable ? fiatAmount : "0.00";
   emit("success", {
+    topper_quote: {
+      cryptoToFiat: topperCryptoAmount.value,
+      selectedCryptoName: cryptoSelected,
+      plusFeeF: topperPlusFeeF.value,
+      includesFeeText: topperIncludesFeeText,
+      networkFeeText: networkFeeText,
+      dailyLimit: dailyLimit(),
+      monthlyLimit: monthlyLimit(),
+      fiatAmount: topperFiatAmount.value,
+    },
     simplex_quote: {
       cryptoToFiat: simplexCryptoAmount.value,
       selectedCryptoName: cryptoSelected,
@@ -954,7 +1060,7 @@ const submitForm = (): void => {
       fiatAmount: simplexFiatAmount.value,
     },
     address: address,
-    buy_obj: {
+    moonpay_quote: {
       cryptoToFiat: moonpayCryptoAmount,
       selectedCryptoName: cryptoSelected,
       plusFeeF: plusFeeF,

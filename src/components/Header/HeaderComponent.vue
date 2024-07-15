@@ -26,15 +26,18 @@
         height="25"
       />
       <img :src="isEthVm ? moonpayWhite : moonpay" alt="Moonpay" height="25" />
+      <img :src="isEthVm ? topperDark : topper" alt="Topper" height="25" />
     </div>
 
     <div class="d-flex flex-wrap align-center mt-4">
       <div class="text-color mr-2">We accept</div>
       <div class="d-flex align-center">
         <img class="mr-2" :src="visa" alt="Visa" height="22" />
-        <img class="mr-2" :src="applePay" alt="Visa" height="22" />
-        <img class="mr-2" :src="paypal" alt="Visa" height="22" />
-        <img :src="master" alt="Master" height="22" />
+        <img class="mr-2" :src="master" alt="Master" height="22" />
+        <img class="mr-2" :src="paypal" alt="paypal" height="30" />
+        <img class="mr-2" :src="applePay" alt="Visa" height="24" />
+        <img class="mr-2" :src="googlePay" alt="google pay" height="30" />
+        <img class="mr-2" :src="pix" alt="pix" height="22" />
       </div>
     </div>
   </div>
@@ -45,10 +48,14 @@ import visa from "@/assets/images/icon-visa.svg";
 import master from "@/assets/images/icon-master.svg";
 import applePay from "@/assets/images/icon-apple-pay.svg";
 import paypal from "@/assets/images/icon-paypal-logo.svg";
+import googlePay from "@/assets/images/icon-google-pay-logo.svg";
+import pix from "@/assets/images/icon-pix-logo.jpeg";
 import simplex from "@/assets/images/icon-simplex.svg";
 import simplexLight from "@/assets/images/icon-simplex-light.svg";
 import moonpay from "@/assets/images/icon-moonpay.svg";
 import moonpayWhite from "@/assets/images/icon-moonpay-white.svg";
+import topper from "@/assets/images/icon-topper.png";
+import topperDark from "@/assets/images/icon-topper-dark.png";
 import enkryptDarkLogo from "@/assets/images/icon-enkrypt-logo-dark.svg";
 import ethvmLogo from "@/assets/images/icon-ethvm-logo.svg";
 import mewLogo from "@/assets/images/icon-mew-logo-dark.svg";
