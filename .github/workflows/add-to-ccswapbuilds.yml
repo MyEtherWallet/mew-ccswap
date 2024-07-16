@@ -1,11 +1,6 @@
 name: add to ccswapbuilds
 
-on:
-  push:
-    branches-ignore:
-      - "main"
-      - "develop"
-      - "gh-pages"
+on: push
 
 jobs:
   ccswapBuild:
