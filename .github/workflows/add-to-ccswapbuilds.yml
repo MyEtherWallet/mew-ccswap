@@ -1,9 +1,17 @@
 name: add to ccswapbuilds
 
-on: pull_request
+on:
+  push:
+    branches-ignore:
+      - "main"
+      - "develop"
+      - "gh-pages"
+
 jobs:
   ccswapBuild:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -27,7 +35,7 @@ jobs:
             --metadata-directive REPLACE --cache-control max-age=0,no-cache,no-store,must-revalidate \
             --content-type text/html --acl public-read
       - name: comment on PR
-        uses: thollander/actions-comment-pull-request@v2
+        uses: mshick/add-pr-comment@v2
         with:
           message: |
-            Copy of this build can be found at <br/>https://builds.ethvm.dev/${GITHUB_SHA}/index.html<br/>
+            Copy of this build can be found at https://builds.ethvm.dev/${GITHUB_SHA}/index.html
