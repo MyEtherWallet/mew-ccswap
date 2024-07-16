@@ -1,12 +1,6 @@
 name: add to ccswapbuilds
 
-on:
-  push:
-    branches-ignore:
-      - "main"
-      - "develop"
-      - "gh-pages"
-
+on: pull_request
 jobs:
   ccswapBuild:
     runs-on: ubuntu-latest
@@ -37,4 +31,3 @@ jobs:
         with:
           message: |
             Copy of this build can be found at <br/>https://builds.ethvm.dev/${GITHUB_SHA}/index.html<br/>
-          pr_number: ${{ github.event.number }}
