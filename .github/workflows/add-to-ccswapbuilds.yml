@@ -33,4 +33,4 @@ jobs:
         uses: mshick/add-pr-comment@v2
         with:
           message: |
-            Copy of this build can be found at `https://builds.ethvm.dev/${GITHUB_SHA}/index.html`
+            "Copy of this build can be found at https://builds.ethvm.dev/${GITHUB_SHA}/index.html"
