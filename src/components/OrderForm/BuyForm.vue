@@ -602,11 +602,16 @@ const topperFiatFee = computed(() => {
         .toFixed(fiatCurrency.value.decimals)
     : 0;
 });
+const topperMewFiatFee = computed(() => {
+  return BigNumber(topperFiatAmount.value)
+    .times(0.0175)
+    .toFixed(fiatCurrency.value.decimals);
+});
 const topperPlusFee = computed(() => {
   return BigNumber(topperFiatAmount.value)
     .minus(topperFiatFee.value)
-    .minus(BigNumber(topperFiatAmount.value).times(0.025))
-    .minus(0.6) // temp network fee
+    .minus(BigNumber(topperMewFiatFee.value))
+    .minus(0.2) // temp network fee
     .toFixed(fiatCurrency.value.decimals);
 });
 const topperPlusFeeF = computed(() => {
@@ -616,7 +621,7 @@ const topperPlusFeeF = computed(() => {
 });
 
 const topperIncludesFeeText = computed(() => {
-  return `Includes 2.9% Topper fee  and 2.5% MyEtherWallet fee. (${
+  return `Includes 2.9% Topper fee  and 1.75% MyEtherWallet fee. (${
     formatFiatValue(BigNumber(10.0).toString(), currencyConfig.value).value
   } min)`;
 });
@@ -624,8 +629,9 @@ const topperIncludesFeeText = computed(() => {
 const topperCryptoAmount = computed(() => {
   const amount = BigNumber(topperPlusFee.value || "0"); // 60 cents network fee
   return topperAvailable.value
-    ? formatFloatingPointValue(amount.dividedBy(topperPrice.value).toString())
-        .value
+    ? formatFloatingPointValue(
+        amount.dividedBy(topperPrice.value.toFixed(2)).toString()
+      ).value
     : 0;
 });
 
