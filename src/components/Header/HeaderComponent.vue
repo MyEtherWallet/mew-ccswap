@@ -49,7 +49,7 @@ import master from "@/assets/images/icon-master.svg";
 import applePay from "@/assets/images/icon-apple-pay.svg";
 import paypal from "@/assets/images/icon-paypal-logo.svg";
 import googlePay from "@/assets/images/icon-google-pay-logo.svg";
-import pix from "@/assets/images/icon-pix-logo.jpeg";
+import pix from "@/assets/images/icon-pix-logo.svg";
 import simplex from "@/assets/images/icon-simplex.svg";
 import simplexLight from "@/assets/images/icon-simplex-light.svg";
 import moonpay from "@/assets/images/icon-moonpay.svg";

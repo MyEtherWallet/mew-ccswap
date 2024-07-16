@@ -70,7 +70,7 @@
           <img :src="visaIcon" alt="Visa" height="24" class="mr-2" />
           <img :src="masterIcon" alt="Master" height="24" class="mr-2" />
           <img :src="applePayIcon" alt="ApplePay" height="24" class="mr-2" />
-          <img :src="paypalIcon" alt="Paypal" height="24" class="mr-2" />
+          <img :src="paypalIcon" alt="Paypal" height="32" class="mr-2" />
           <img v-if="isEUR" :src="bankIcon" alt="Bank" height="24" />
         </div>
         <div class="mew-label mb-5">
@@ -135,7 +135,7 @@
         </div>
 
         <div class="d-flex align-center justify-space-between">
-          <div class="d-flex align-start mb-1">
+          <div class="d-flex align-center mb-1">
             <img :src="visaIcon" alt="Visa" height="24" class="mr-2" />
             <img :src="masterIcon" alt="Master" height="24" class="mr-2" />
           </div>
@@ -205,11 +205,16 @@
         </div>
 
         <div class="d-flex align-center justify-space-between">
-          <div class="d-flex align-start mb-1">
+          <div class="d-flex align-center mb-1">
             <img :src="visaIcon" alt="Visa" height="24" class="mr-2" />
             <img :src="masterIcon" alt="Master" height="24" class="mr-2" />
             <img :src="applePayIcon" alt="ApplePay" height="24" class="mr-2" />
-            <img :src="googlePayIcon" alt="Paypal" height="24" class="mr-2" />
+            <img
+              :src="googlePayIcon"
+              alt="googlePay"
+              height="35"
+              class="mr-2"
+            />
             <img :src="pixIcon" alt="Paypal" height="24" class="mr-2" />
           </div>
           <img
@@ -360,7 +365,7 @@ export default defineComponent({
       return require("@/assets/images/icon-google-pay-logo.svg");
     },
     pixIcon() {
-      return require("@/assets/images/icon-pix-logo.jpeg");
+      return require("@/assets/images/icon-pix-logo.svg");
     },
     simplexLogo() {
       return require("@/assets/images/icon-simplex.svg");
