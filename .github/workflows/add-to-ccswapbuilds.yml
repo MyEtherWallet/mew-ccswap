@@ -33,4 +33,3 @@ jobs:
         uses: mshick/add-pr-comment@v2
         with:
           message: Copy of this build can be found at <br>https://builds.ethvm.dev/${{github.sha}}/index.html</br>
-          preformatted: true
