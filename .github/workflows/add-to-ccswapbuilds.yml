@@ -37,3 +37,4 @@ jobs:
         with:
           message: |
             Copy of this build can be found at <br/>https://builds.ethvm.dev/${GITHUB_SHA}/index.html<br/>
+          pr_number: ${{ github.event.number }}
