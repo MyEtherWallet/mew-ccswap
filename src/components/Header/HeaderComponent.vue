@@ -19,13 +19,13 @@
 
     <div class="d-flex align-center" style="margin-top: 60px">
       <div class="text-color mr-4">Powered by</div>
+      <img :src="isEthVm ? moonpayWhite : moonpay" alt="Moonpay" height="25" />
       <img
         class="mr-2"
         :src="isEthVm ? simplexLight : simplex"
         alt="Simplex"
         height="25"
       />
-      <img :src="isEthVm ? moonpayWhite : moonpay" alt="Moonpay" height="25" />
       <img :src="isEthVm ? topperDark : topper" alt="Topper" height="25" />
     </div>
 

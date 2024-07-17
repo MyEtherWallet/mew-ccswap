@@ -590,6 +590,11 @@ const topperPrice = computed(() => {
       : 0
   );
 });
+const topperNetworkFeeText = computed(() => {
+  return `${form.cryptoSelected} network fee (for transfers to your wallet) ~${
+    formatFiatValue(0.2, currencyConfig.value).value
+  }`;
+});
 const topperFiatAmount = computed(() => {
   return topperAvailable.value ? form.fiatAmount : "0.00";
 });
@@ -621,13 +626,11 @@ const topperPlusFeeF = computed(() => {
 });
 
 const topperIncludesFeeText = computed(() => {
-  return `Includes 2.9% Topper fee  and 1.75% MyEtherWallet fee. (${
-    formatFiatValue(BigNumber(10.0).toString(), currencyConfig.value).value
-  } min)`;
+  return `Includes 2.9% Topper fee  and 1.75% MyEtherWallet fee.`;
 });
 
 const topperCryptoAmount = computed(() => {
-  const amount = BigNumber(topperPlusFee.value || "0"); // 60 cents network fee
+  const amount = BigNumber(topperPlusFee.value || "0");
   return topperAvailable.value
     ? formatFloatingPointValue(
         amount.dividedBy(topperPrice.value.toFixed(2)).toString()
@@ -1050,7 +1053,7 @@ const submitForm = (): void => {
       selectedCryptoName: cryptoSelected,
       plusFeeF: topperPlusFeeF.value,
       includesFeeText: topperIncludesFeeText,
-      networkFeeText: networkFeeText,
+      networkFeeText: topperNetworkFeeText,
       dailyLimit: dailyLimit(),
       monthlyLimit: monthlyLimit(),
       fiatAmount: topperFiatAmount.value,
