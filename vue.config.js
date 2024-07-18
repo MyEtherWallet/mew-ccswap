@@ -2,7 +2,7 @@ const webpack = require("webpack");
 const { defineConfig } = require("@vue/cli-service");
 const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 module.exports = defineConfig({
-  publicPath: process.env.BUILD === "qa" ? "" : "./",
+  publicPath: process.env.NODE_ENV === "qa" ? "" : "./",
   transpileDependencies: true,
   lintOnSave: true,
   configureWebpack: {

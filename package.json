@@ -4,8 +4,10 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build:release": "BUILD=release vue-cli-service build && cp dist/index.html dist/404.html",
-    "build:qa": "BUILD=qa vue-cli-service build && cp dist/index.html dist/404.html",
+    "build": "vue-cli-service build cp dist/index.html dist/404.html",
+    "serve:dev": "NODE_ENV=qa yarn serve",
+    "build:release": "NODE_ENV=production yarn build",
+    "build:qa": "NODE_ENV=qa yarn build",
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
     "lint": "vue-cli-service lint",
