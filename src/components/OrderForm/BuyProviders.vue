@@ -7,7 +7,9 @@
       </v-icon>
       <div class="mew-heading-2">Select provider</div>
     </div>
-
+    <div class="mew-heading-4">
+      Spending <b>{{ topperQuote.plusFeeF }}</b>
+    </div>
     <div v-if="!processingBuy">
       <!-- ============================================================== -->
       <!-- Moonpay -->
@@ -26,43 +28,37 @@
               :class="hideMoonpay ? 'text-red' : ''"
             >
               {{ moonpayQuote.cryptoToFiat }}
-              <span
-                class="mew-heading-3 pl-1"
-                :class="hideMoonpay ? 'text-red' : ''"
-                >{{ selectedCryptoName }}</span
-              >
-            </div>
-          </div>
-          <div class="d-flex align-center">
-            <div v-if="!hideMoonpay" class="mr-1 textDark--text">
-              ≈ {{ moonpayQuote.plusFeeF }}
-            </div>
-            <div v-else class="mr-1 text-red">
-              {{ moonpayQuote.plusFeeF }}
-            </div>
-            <v-tooltip v-if="!hideMoonpay" location="bottom">
-              <template #activator="{ props }">
-                <v-icon
-                  v-bind="props"
-                  color="grey-lighten-1"
-                  size="x-small"
-                  class="cursor-pointer"
+              <div class="d-flex align-center">
+                <span
+                  class="mew-heading-3 pl-1 mr-1"
+                  :class="hideMoonpay ? 'text-red' : ''"
+                  >{{ selectedCryptoName }}</span
                 >
-                  mdi-information
-                </v-icon>
-              </template>
-              <div class="elevated-box pa-3">
-                {{ moonpayQuote.includesFeeText }}
-                <br />
-                <br />
-                {{ moonpayQuote.networkFeeText }}
-                <br />
-                <br />
-                {{ moonpayQuote.dailyLimit }}
-                <br />
-                {{ moonpayQuote.monthlyLimit }}
+                <v-tooltip v-if="!hideMoonpay" location="bottom">
+                  <template #activator="{ props }">
+                    <v-icon
+                      v-bind="props"
+                      color="grey-lighten-1"
+                      size="x-small"
+                      class="cursor-pointer"
+                    >
+                      mdi-information
+                    </v-icon>
+                  </template>
+                  <div class="elevated-box pa-3">
+                    {{ moonpayQuote.includesFeeText }}
+                    <br />
+                    <br />
+                    {{ moonpayQuote.networkFeeText }}
+                    <br />
+                    <br />
+                    {{ moonpayQuote.dailyLimit }}
+                    <br />
+                    {{ moonpayQuote.monthlyLimit }}
+                  </div>
+                </v-tooltip>
               </div>
-            </v-tooltip>
+            </div>
           </div>
         </div>
 
@@ -92,39 +88,40 @@
       <!-- ============================================================== -->
       <!-- Simplex -->
       <!-- ============================================================== -->
-      <div class="section-block pa-5">
+      <div class="section-block pa-5 mb-6">
         <div v-if="!loading" class="mb-3">
           <div class="d-flex mb-1 align-center justify-space-between">
             <div class="d-flex mew-heading-3">
               {{ simplexQuote.cryptoToFiat }}
-              <span class="mew-heading-3 pl-1">{{ selectedCryptoName }}</span>
-            </div>
-          </div>
-          <div class="d-flex align-center">
-            <div class="mr-1">≈ {{ simplexQuote.plusFeeF }}</div>
-            <v-tooltip location="bottom">
-              <template #activator="{ props }">
-                <v-icon
-                  v-bind="props"
-                  color="grey-lighten-1"
-                  size="x-small"
-                  class="cursor-pointer"
-                >
-                  mdi-information
-                </v-icon>
-              </template>
-              <div class="elevated-box pa-3">
-                {{ simplexQuote.includesFeeText }}
-                <br />
-                <br />
-                {{ simplexQuote.networkFeeText }}
-                <br />
-                <br />
-                {{ simplexQuote.dailyLimit }}
-                <br />
-                {{ simplexQuote.monthlyLimit }}
+              <div class="d-flex align-center">
+                <span class="mew-heading-3 pl-1 mr-1">{{
+                  selectedCryptoName
+                }}</span>
+                <v-tooltip location="bottom">
+                  <template #activator="{ props }">
+                    <v-icon
+                      v-bind="props"
+                      color="grey-lighten-1"
+                      size="x-small"
+                      class="cursor-pointer"
+                    >
+                      mdi-information
+                    </v-icon>
+                  </template>
+                  <div class="elevated-box pa-3">
+                    {{ simplexQuote.includesFeeText }}
+                    <br />
+                    <br />
+                    {{ simplexQuote.networkFeeText }}
+                    <br />
+                    <br />
+                    {{ simplexQuote.dailyLimit }}
+                    <br />
+                    {{ simplexQuote.monthlyLimit }}
+                  </div>
+                </v-tooltip>
               </div>
-            </v-tooltip>
+            </div>
           </div>
         </div>
 
@@ -167,34 +164,35 @@
           <div class="d-flex mb-1 align-center justify-space-between">
             <div class="d-flex mew-heading-3">
               {{ topperQuote.cryptoToFiat }}
-              <span class="mew-heading-3 pl-1">{{ selectedCryptoName }}</span>
-            </div>
-          </div>
-          <div class="d-flex align-center">
-            <div class="mr-1">≈ {{ topperQuote.plusFeeF }}</div>
-            <v-tooltip location="bottom">
-              <template #activator="{ props }">
-                <v-icon
-                  v-bind="props"
-                  color="grey-lighten-1"
-                  size="x-small"
-                  class="cursor-pointer"
-                >
-                  mdi-information
-                </v-icon>
-              </template>
-              <div class="elevated-box pa-3">
-                {{ topperQuote.includesFeeText }}
-                <br />
-                <br />
-                {{ topperQuote.networkFeeText }}
-                <br />
-                <br />
-                {{ topperQuote.dailyLimit }}
-                <br />
-                {{ topperQuote.monthlyLimit }}
+              <div class="d-flex align-center">
+                <span class="mew-heading-3 pl-1 mr-1">{{
+                  selectedCryptoName
+                }}</span>
+                <v-tooltip location="bottom">
+                  <template #activator="{ props }">
+                    <v-icon
+                      v-bind="props"
+                      color="grey-lighten-1"
+                      size="x-small"
+                      class="cursor-pointer"
+                    >
+                      mdi-information
+                    </v-icon>
+                  </template>
+                  <div class="elevated-box pa-3">
+                    {{ topperQuote.includesFeeText }}
+                    <br />
+                    <br />
+                    {{ topperQuote.networkFeeText }}
+                    <br />
+                    <br />
+                    {{ topperQuote.dailyLimit }}
+                    <br />
+                    {{ topperQuote.monthlyLimit }}
+                  </div>
+                </v-tooltip>
               </div>
-            </v-tooltip>
+            </div>
           </div>
         </div>
 
@@ -238,6 +236,11 @@
             >{{ topperBtnTitle }}</v-btn
           >
         </div>
+      </div>
+
+      <div class="pt-2 text-center mew-label">
+        Fees, availability, and purchase limits vary between providers, you can
+        check their quotes and select on that works for you.
       </div>
     </div>
     <div v-else class="text-center py-5">
@@ -304,6 +307,10 @@ export default defineComponent({
     toAddress: {
       type: String,
       default: "",
+    },
+    fiatAmount: {
+      type: String,
+      default: "0",
     },
   },
   setup() {
@@ -416,7 +423,7 @@ export default defineComponent({
         this.actualAddress
       )
         .then((data) => {
-          window.open(data.url, "_blank");
+          window.open(data.url);
           this.amplitude.track(`CCBuySellBuyWithTopperSuccess`);
           this.reset();
           this.close();

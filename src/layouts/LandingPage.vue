@@ -89,22 +89,20 @@ if (!isEthVm && !isEnkrypt) {
 
 .background-image {
   background-color: rgb(var(--v-theme-background-fill));
-  @media (min-width: 768px) {
-    background-image: radial-gradient(
-        at top 0px right 200px,
-        rgb(var(--v-theme-background-gradient)),
-        transparent 900px
-      ),
-      radial-gradient(
-        at bottom 200px left 200px,
-        rgba(var(--v-theme-background-gradient)),
-        transparent 500px
-      ),
-      radial-gradient(
-        circle at bottom right,
-        rgba(var(--v-theme-background-gradient)),
-        transparent 300px
-      );
-  }
+  background-image: radial-gradient(
+      at top 0px right 200px,
+      rgb(var(--v-theme-background-gradient)),
+      transparent 900px
+    ),
+    radial-gradient(
+      at bottom 200px left 200px,
+      rgba(var(--v-theme-background-gradient)),
+      transparent 500px
+    ),
+    radial-gradient(
+      circle at bottom right,
+      rgba(var(--v-theme-background-gradient)),
+      transparent 300px
+    );
 }
 </style>

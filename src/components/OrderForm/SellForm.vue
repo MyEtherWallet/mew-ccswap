@@ -34,6 +34,7 @@
           class="no-left-border custom-btn"
           @click="openTokenSelect"
           append-icon="mdi-menu-down"
+          style="max-width: 130px"
           :disabled="loading.data"
         >
           <template #prepend>
@@ -46,7 +47,7 @@
             />
           </template>
           <span>
-            {{ form.cryptoSelected }}
+            {{ concatenate(form.cryptoSelected) }}
           </span>
           <template v-slot:append>
             <v-icon color="grey-2" size="large"></v-icon>
@@ -74,7 +75,7 @@
           class="no-right-border"
         ></v-text-field>
         <v-select
-          style="max-width: 120px"
+          style="max-width: 130px"
           class="rounded-right no-left-border"
           v-model="form.fiatSelected"
           :items="filteredFiatItems"
@@ -806,6 +807,10 @@ const getTokenBalance = async (tokenName: string) => {
     .catch((e: Error) => console.error(e));
   form.balanceWei = bal.toString();
   form.balance = fromBase(form.balanceWei, tokensInfo[tokenName].decimals);
+};
+
+const concatenate = (value: string) => {
+  return value.length > 3 ? `${value.slice(0, 3)}...` : value;
 };
 </script>
 

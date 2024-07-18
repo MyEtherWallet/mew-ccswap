@@ -56,6 +56,7 @@
     <BuyProviders
       v-if="step === 2"
       :selected-fiat="selectedFiat"
+      :fiat-amount="fiatAmount"
       :selected-currency="selectedCurrency"
       :only-simplex="onlySimplex"
       :moonpay-quote="moonpayQuote"

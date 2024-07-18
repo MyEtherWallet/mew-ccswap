@@ -20,7 +20,6 @@
       </div>
       <div class="d-flex mt-2">
         <v-text-field
-          style="max-width: 196px"
           class="no-right-border"
           @input="fiatToCrypto"
           type="number"
@@ -522,11 +521,25 @@ const priceOb = computed(() => {
     : simplexData[form.cryptoSelected].prices[form.fiatSelected];
 });
 const networkPrice = computed(() => {
-  return isValidData(moonpayData)
-    ? moonpayData[props.networkSelected.currencyName].prices[form.fiatSelected]
-    : simplexData[props.networkSelected.currencyName].prices[form.fiatSelected];
+  const moonpayPrice = isValidData(moonpayData)
+    ? moonpayData[form.cryptoSelected]?.prices[form.fiatSelected]
+    : undefined;
+  const simplexPrice = isValidData(simplexData)
+    ? simplexData[form.cryptoSelected]?.prices[form.fiatSelected]
+    : undefined;
+  const topperPrice = isValidData(topperData)
+    ? topperData[form.cryptoSelected]?.prices[form.fiatSelected]
+    : undefined;
+  return moonpayPrice
+    ? moonpayPrice
+    : simplexPrice
+    ? simplexPrice
+    : topperPrice
+    ? topperPrice
+    : "0";
 });
 const networkFeeToFiat = computed(() => {
+  console.log(networkFeeWei.value, networkPrice.value);
   return fromWei(
     toBN(networkFeeWei.value).muln(parseFloat(networkPrice.value))
   );
