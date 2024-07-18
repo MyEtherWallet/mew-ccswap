@@ -254,7 +254,7 @@
 
       <div class="pt-2 text-center mew-label">
         Fees, availability, and purchase limits vary between providers, you can
-        check their quotes and select on that works for you.
+        check their quotes and select one that works for you.
       </div>
     </div>
     <div v-else class="text-center py-5">
