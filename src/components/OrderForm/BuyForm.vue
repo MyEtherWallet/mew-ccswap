@@ -29,7 +29,7 @@
           :error-messages="loading.alertMessage"
           :disabled="loading.data"
           :rules="rules"
-        ></v-text-field>
+        />
         <v-select
           style="max-width: 130px"
           class="rounded-right no-left-border buy-input"
@@ -99,6 +99,7 @@
           required
           variant="outlined"
           rounded="left"
+          readonly
           :rules="rules"
           :disabled="loading.data"
         ></v-text-field>
@@ -539,7 +540,6 @@ const networkPrice = computed(() => {
     : "0";
 });
 const networkFeeToFiat = computed(() => {
-  console.log(networkFeeWei.value, networkPrice.value);
   return fromWei(
     toBN(networkFeeWei.value).muln(parseFloat(networkPrice.value))
   );
@@ -605,17 +605,15 @@ const topperPrice = computed(() => {
 });
 const topperNetworkFeeText = computed(() => {
   return `${form.cryptoSelected} network fee (for transfers to your wallet) ~${
-    formatFiatValue(0.2, currencyConfig.value).value
+    formatFiatValue("0.2", currencyConfig.value).value
   }`;
 });
 const topperFiatAmount = computed(() => {
   return topperAvailable.value ? form.fiatAmount : "0.00";
 });
 const topperFiatFee = computed(() => {
-  const { cryptoAmount } = form;
   return topperAvailable.value
     ? BigNumber(topperFiatAmount.value)
-        .times(cryptoAmount)
         .times(0.029)
         .toFixed(fiatCurrency.value.decimals)
     : 0;

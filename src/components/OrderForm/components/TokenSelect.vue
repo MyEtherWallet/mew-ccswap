@@ -199,10 +199,7 @@ export default defineComponent({
       const a = this.tokensList.filter((token) => {
         const tokenSymbol = token.name.toLowerCase();
         const tokenName = token.subtext.toLowerCase();
-        if (
-          this.hasValidPrices(token.symbol) &&
-          (tokenSymbol.includes(filterText) || tokenName.includes(filterText))
-        )
+        if (tokenSymbol.includes(filterText) || tokenName.includes(filterText))
           return token;
       });
       return a;
@@ -212,14 +209,15 @@ export default defineComponent({
     },
     networkList() {
       return this.isSell
-        ? this.networks.filter(
-            (network) => network.name !== "DOT" && network.name !== "KSM"
-          )
+        ? this.networks.filter((network) => network.name === "ETH")
         : this.networks;
     },
     filteredNetworkList() {
+      const withTokensNetwork = this.networkList.filter(
+        (network) => network.tokens.length > 0
+      );
       const filter = this.networkSearchInput.toLowerCase();
-      return this.networkList.filter(
+      return withTokensNetwork.filter(
         (network) =>
           network.name.toLowerCase().includes(filter) ||
           network.name_long.toLowerCase().includes(filter) ||

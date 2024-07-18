@@ -7,7 +7,7 @@
       </v-icon>
       <div class="mew-heading-2">Select provider</div>
     </div>
-    <div class="mew-heading-4">
+    <div class="mew-heading-2 font-weight-regular pb-2">
       Spending <b>{{ topperQuote.plusFeeF }}</b>
     </div>
     <div v-if="!processingBuy">
@@ -25,16 +25,16 @@
           <div class="d-flex mb-1 align-center justify-space-between">
             <div
               class="d-flex mew-heading-3"
-              :class="hideMoonpay ? 'text-red' : ''"
+              :class="disableMoonpay ? 'text-red' : ''"
             >
               {{ moonpayQuote.cryptoToFiat }}
               <div class="d-flex align-center">
                 <span
                   class="mew-heading-3 pl-1 mr-1"
-                  :class="hideMoonpay ? 'text-red' : ''"
+                  :class="disableMoonpay ? 'text-red' : ''"
                   >{{ selectedCryptoName }}</span
                 >
-                <v-tooltip v-if="!hideMoonpay" location="bottom">
+                <v-tooltip v-if="!disableMoonpay" location="bottom">
                   <template #activator="{ props }">
                     <v-icon
                       v-bind="props"
@@ -78,7 +78,7 @@
             class="grey-light greyPrimary--text"
             width="100%"
             variant="flat"
-            :disabled="hideMoonpay || loading"
+            :disabled="disableMoonpay || loading"
             @click.native="buy"
             >{{ moonpayBtnTitle }}</v-btn
           >
@@ -91,13 +91,20 @@
       <div class="section-block pa-5 mb-6">
         <div v-if="!loading" class="mb-3">
           <div class="d-flex mb-1 align-center justify-space-between">
-            <div class="d-flex mew-heading-3">
+            <div
+              class="d-flex mew-heading-3"
+              :class="disableSimplex ? 'text-red' : ''"
+            >
               {{ simplexQuote.cryptoToFiat }}
               <div class="d-flex align-center">
-                <span class="mew-heading-3 pl-1 mr-1">{{
-                  selectedCryptoName
-                }}</span>
-                <v-tooltip location="bottom">
+                <span
+                  :class="[
+                    disableSimplex ? 'text-red' : '',
+                    'mew-heading-3 pl-1 mr-1',
+                  ]"
+                  >{{ selectedCryptoName }}</span
+                >
+                <v-tooltip location="bottom" v-if="!disableSimplex">
                   <template #activator="{ props }">
                     <v-icon
                       v-bind="props"
@@ -146,7 +153,7 @@
         <div class="mew-label mb-5">Visa, Mastercard</div>
         <div>
           <v-btn
-            :disabled="loading"
+            :disabled="loading || disableSimplex"
             size="large"
             class="grey-light greyPrimary--text"
             width="100%"
@@ -162,13 +169,20 @@
       <div class="section-block pa-5">
         <div v-if="!loading" class="mb-3">
           <div class="d-flex mb-1 align-center justify-space-between">
-            <div class="d-flex mew-heading-3">
+            <div
+              class="d-flex mew-heading-3"
+              :class="disableTopper ? 'text-red' : ''"
+            >
               {{ topperQuote.cryptoToFiat }}
               <div class="d-flex align-center">
-                <span class="mew-heading-3 pl-1 mr-1">{{
-                  selectedCryptoName
-                }}</span>
-                <v-tooltip location="bottom">
+                <span
+                  :class="[
+                    disableTopper ? 'text-red' : '',
+                    'mew-heading-3 pl-1 mr-1',
+                  ]"
+                  >{{ selectedCryptoName }}</span
+                >
+                <v-tooltip location="bottom" v-if="!disableTopper">
                   <template #activator="{ props }">
                     <v-icon
                       v-bind="props"
@@ -227,7 +241,7 @@
         </div>
         <div>
           <v-btn
-            :disabled="loading"
+            :disabled="loading || disableTopper"
             size="large"
             class="grey-light greyPrimary--text"
             width="100%"
@@ -268,6 +282,7 @@ import {
   executeTopperPayment,
 } from "./order";
 import { defineComponent, inject } from "vue";
+import BigNumber from "bignumber.js";
 
 export default defineComponent({
   name: "BuyProviders",
@@ -336,8 +351,14 @@ export default defineComponent({
     isEUR() {
       return this.selectedFiatName === "EUR" || this.selectedFiatName === "GBP";
     },
-    hideMoonpay() {
-      return this.onlySimplex;
+    disableMoonpay() {
+      return BigNumber(this.moonpayQuote.cryptoToFiat).isLessThanOrEqualTo(0);
+    },
+    disableSimplex() {
+      return BigNumber(this.simplexQuote.cryptoToFiat).isLessThanOrEqualTo(0);
+    },
+    disableTopper() {
+      return BigNumber(this.topperQuote.cryptoToFiat).isLessThanOrEqualTo(0);
     },
     simplexBtnTitle() {
       return "BUY WITH SIMPLEX";
