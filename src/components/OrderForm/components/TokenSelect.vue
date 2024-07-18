@@ -191,18 +191,21 @@ export default defineComponent({
       let tokensList = [mainCoin];
       if (this.fiatName === "CAD") return tokensList;
       if (this.networkSelected.tokens.length > 0)
-        tokensList = tokensList.concat(this.networkSelected.tokens);
+        return tokensList.concat(this.networkSelected.tokens);
       return tokensList;
     },
     filteredTokenList() {
       const filterText = this.searchInput.toLowerCase();
-      const a = this.tokensList.filter((token) => {
+      const tokens = this.tokensList.filter((token) => {
         const tokenSymbol = token.name.toLowerCase();
         const tokenName = token.subtext.toLowerCase();
-        if (tokenSymbol.includes(filterText) || tokenName.includes(filterText))
+        if (
+          this.hasValidPrices(token.symbol) &&
+          (tokenSymbol.includes(filterText) || tokenName.includes(filterText))
+        )
           return token;
       });
-      return a;
+      return tokens;
     },
     fiatName() {
       return this.fiatSelected.name;
@@ -213,10 +216,11 @@ export default defineComponent({
         : this.networks;
     },
     filteredNetworkList() {
-      const withTokensNetwork = this.networkList.filter(
-        (network) => network.tokens.length > 0
-      );
+      const withTokensNetwork = this.networkList
+        .filter((network) => network.tokens.length > 0)
+        .filter((network) => this.hasValidPrices(network.name));
       const filter = this.networkSearchInput.toLowerCase();
+
       return withTokensNetwork.filter(
         (network) =>
           network.name.toLowerCase().includes(filter) ||
