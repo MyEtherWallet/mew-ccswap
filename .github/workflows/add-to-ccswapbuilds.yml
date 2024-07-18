@@ -16,7 +16,7 @@ jobs:
         with:
           node-version: "18"
       - run: yarn install
-      - run: yarn build
+      - run: yarn build:qa
       - name: Deploy to S3
         if: github.base_ref == ''
         env:
