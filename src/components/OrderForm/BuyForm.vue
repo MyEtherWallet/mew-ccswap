@@ -99,7 +99,6 @@
           required
           variant="outlined"
           rounded="left"
-          readonly
           :rules="rules"
           :disabled="loading.data"
         ></v-text-field>
@@ -637,7 +636,7 @@ const topperPlusFeeF = computed(() => {
 });
 
 const topperIncludesFeeText = computed(() => {
-  return `Includes 2.9% Topper fee  and 1.75% MyEtherWallet fee.`;
+  return `Includes 4.65$ fee. First transaction is free.`;
 });
 
 const topperCryptoAmount = computed(() => {

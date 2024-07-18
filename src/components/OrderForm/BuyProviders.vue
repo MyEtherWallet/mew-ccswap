@@ -5,7 +5,7 @@
       <v-icon color="textDark" class="cursor-pointer" @click="$emit('close')">
         mdi-arrow-left mr-4
       </v-icon>
-      <div class="mew-heading-2">Select provider</div>
+      <div class="mew-heading-2 provider-text">Select provider</div>
     </div>
     <div class="mew-heading-2 font-weight-regular pb-2">
       Spending <b>{{ topperQuote.plusFeeF }}</b>
@@ -522,6 +522,12 @@ $greyPrimary-base: #5a678a;
 .greyPrimary--text {
   color: $greyPrimary-base !important;
   caret-color: $greyPrimary-base !important;
+}
+
+.provider-text {
+  text-align: center;
+  width: 100%;
+  padding-right: 20px;
 }
 </style>
 <style lang="scss">
