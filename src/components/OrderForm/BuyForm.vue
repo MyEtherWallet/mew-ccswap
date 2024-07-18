@@ -636,7 +636,7 @@ const topperPlusFeeF = computed(() => {
 });
 
 const topperIncludesFeeText = computed(() => {
-  return `Includes 4.65$ fee. First transaction is free.`;
+  return `Includes 4.65% fee. First transaction is free.`;
 });
 
 const topperCryptoAmount = computed(() => {
