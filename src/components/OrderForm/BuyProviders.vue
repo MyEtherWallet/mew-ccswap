@@ -444,7 +444,7 @@ export default defineComponent({
         this.actualAddress
       )
         .then((data) => {
-          window.open(data.url);
+          window.open(data.url, "_self");
           this.amplitude.track(`CCBuySellBuyWithTopperSuccess`);
           this.reset();
           this.close();
