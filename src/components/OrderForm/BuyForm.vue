@@ -59,6 +59,7 @@
               density="compact"
               placeholder="Search"
               @update:model-value="updateFiatFilter"
+              @click.stop="() => {}"
             ></v-text-field>
           </template>
           <template #item="data">
