@@ -14,7 +14,7 @@
       <!-- ============================================================== -->
       <!-- Moonpay -->
       <!-- ============================================================== -->
-      <div class="section-block pa-5 mb-6">
+      <div v-if="disableMoonpay" class="section-block pa-5 mb-6">
         <img
           class="provider-logo"
           :src="moonpayLogo"
@@ -23,18 +23,13 @@
         />
         <div v-if="!loading" class="mb-3">
           <div class="d-flex mb-1 align-center justify-space-between">
-            <div
-              class="d-flex mew-heading-3"
-              :class="disableMoonpay ? 'text-red' : ''"
-            >
+            <div class="d-flex mew-heading-3">
               {{ moonpayQuote.cryptoToFiat }}
               <div class="d-flex align-center">
-                <span
-                  class="mew-heading-3 pl-1 mr-1"
-                  :class="disableMoonpay ? 'text-red' : ''"
-                  >{{ selectedCryptoName }}</span
-                >
-                <v-tooltip v-if="!disableMoonpay" location="bottom">
+                <span class="mew-heading-3 pl-1 mr-1">{{
+                  selectedCryptoName
+                }}</span>
+                <v-tooltip location="bottom">
                   <template #activator="{ props }">
                     <v-icon
                       v-bind="props"
@@ -78,7 +73,6 @@
             class="grey-light greyPrimary--text"
             width="100%"
             variant="flat"
-            :disabled="disableMoonpay || loading"
             @click.native="buy"
             >{{ moonpayBtnTitle }}</v-btn
           >
@@ -88,23 +82,16 @@
       <!-- ============================================================== -->
       <!-- Simplex -->
       <!-- ============================================================== -->
-      <div class="section-block pa-5 mb-6">
+      <div v-if="disableSimplex" class="section-block pa-5 mb-6">
         <div v-if="!loading" class="mb-3">
           <div class="d-flex mb-1 align-center justify-space-between">
-            <div
-              class="d-flex mew-heading-3"
-              :class="disableSimplex ? 'text-red' : ''"
-            >
+            <div class="d-flex mew-heading-3">
               {{ simplexQuote.cryptoToFiat }}
               <div class="d-flex align-center">
-                <span
-                  :class="[
-                    disableSimplex ? 'text-red' : '',
-                    'mew-heading-3 pl-1 mr-1',
-                  ]"
-                  >{{ selectedCryptoName }}</span
-                >
-                <v-tooltip location="bottom" v-if="!disableSimplex">
+                <span :class="['mew-heading-3 pl-1 mr-1']">{{
+                  selectedCryptoName
+                }}</span>
+                <v-tooltip location="bottom">
                   <template #activator="{ props }">
                     <v-icon
                       v-bind="props"
@@ -153,7 +140,6 @@
         <div class="mew-label mb-5">Visa, Mastercard</div>
         <div>
           <v-btn
-            :disabled="loading || disableSimplex"
             size="large"
             class="grey-light greyPrimary--text"
             width="100%"
@@ -166,23 +152,16 @@
       <!-- ============================================================== -->
       <!-- Topper -->
       <!-- ============================================================== -->
-      <div class="section-block pa-5">
+      <div v-if="disableTopper" class="section-block pa-5">
         <div v-if="!loading" class="mb-3">
           <div class="d-flex mb-1 align-center justify-space-between">
-            <div
-              class="d-flex mew-heading-3"
-              :class="disableTopper ? 'text-red' : ''"
-            >
+            <div class="d-flex mew-heading-3">
               {{ topperQuote.cryptoToFiat }}
               <div class="d-flex align-center">
-                <span
-                  :class="[
-                    disableTopper ? 'text-red' : '',
-                    'mew-heading-3 pl-1 mr-1',
-                  ]"
-                  >{{ selectedCryptoName }}</span
-                >
-                <v-tooltip location="bottom" v-if="!disableTopper">
+                <span :class="['mew-heading-3 pl-1 mr-1']">{{
+                  selectedCryptoName
+                }}</span>
+                <v-tooltip location="bottom">
                   <template #activator="{ props }">
                     <v-icon
                       v-bind="props"
@@ -241,7 +220,6 @@
         </div>
         <div>
           <v-btn
-            :disabled="loading || disableTopper"
             size="large"
             class="grey-light greyPrimary--text"
             width="100%"
