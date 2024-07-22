@@ -227,7 +227,7 @@
               height="35"
               class="mr-2"
             />
-            <img :src="pixIcon" alt="Paypal" height="24" class="mr-2" />
+            <img :src="pixIcon" alt="pixpay" height="24" class="mr-2" />
           </div>
           <img
             class="provider-logo"
