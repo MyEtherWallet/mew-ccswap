@@ -80,7 +80,6 @@ async function executeSimplexPayment(
 async function executeTopperPayment(
   fiatCurrency: string,
   cryptoCurrency: string,
-  requestedCurrency: string,
   requestedAmount: string,
   address: string) {
   let response = null;
