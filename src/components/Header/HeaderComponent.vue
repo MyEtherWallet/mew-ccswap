@@ -17,21 +17,30 @@
       Buy and Sell Crypto Fast and Secure
     </div>
     <v-row class="mt-15" no-gutters>
-      <v-col sm="3" cols="12"
+      <v-col cols="12"
         ><div class="text-color mr-4 font-weight-bold">Powered by</div></v-col
       >
-      <v-col cols="4" sm="3"
-        ><img :src="isEthVm ? moonpayWhite : moonpay" alt="Moonpay" height="25"
+      <v-col cols="4" align-self="center" style="text-align: center"
+        ><img
+          :src="isEthVm ? moonpayWhite : moonpay"
+          alt="Moonpay"
+          width="100%"
+          style="max-width: 140px"
       /></v-col>
-      <v-col cols="4" sm="3"
+      <v-col cols="4" align-self="center" style="text-align: center"
         ><img
           class="mr-2"
           :src="isEthVm ? simplexLight : simplex"
           alt="Simplex"
-          height="25"
+          width="100%"
+          style="max-width: 140px"
       /></v-col>
-      <v-col cols="4" sm="3"
-        ><img :src="isEthVm ? topperDark : topper" alt="Topper" height="25"
+      <v-col cols="4" align-self="center" style="text-align: center"
+        ><img
+          :src="isEthVm ? topperDark : topper"
+          alt="Topper"
+          width="100%"
+          style="max-width: 140px"
       /></v-col>
     </v-row>
 

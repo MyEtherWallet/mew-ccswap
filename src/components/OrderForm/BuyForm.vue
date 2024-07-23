@@ -778,11 +778,11 @@ const min = computed(() => {
   if (!isValidData(simplexData)) return moonpayLimit.min;
   if (!isValidData(simplexData) && !isValidData(moonpayData))
     return topperLimit.min;
-  return moonpayLimit.min < simplexLimit.min ||
-    moonpayLimit.min < topperLimit.min
-    ? moonpayLimit.min
-    : simplexLimit.min < topperLimit.min
+  return simplexLimit.min < moonpayLimit.min ||
+    simplexLimit.min < topperLimit.min
     ? simplexLimit.min
+    : moonpayLimit.min < topperLimit.min
+    ? moonpayLimit.min
     : topperLimit.min;
 });
 const max = computed(() => {
@@ -1085,6 +1085,7 @@ const submitForm = (): void => {
       dailyLimit: dailyLimit("topper"),
       monthlyLimit: monthlyLimit(),
       fiatAmount: topperFiatAmount.value,
+      min: topperData[cryptoSelected]?.limits[fiatSelected].min,
     },
     simplex_quote: {
       cryptoToFiat: simplexCryptoAmount.value,
@@ -1095,6 +1096,7 @@ const submitForm = (): void => {
       dailyLimit: dailyLimit("simplex"),
       monthlyLimit: monthlyLimit(),
       fiatAmount: simplexFiatAmount.value,
+      min: simplexData[cryptoSelected]?.limits[fiatSelected].min,
     },
     address: address,
     moonpay_quote: {
@@ -1106,6 +1108,7 @@ const submitForm = (): void => {
       dailyLimit: dailyLimit("moonpay"),
       monthlyLimit: monthlyLimit(),
       fiatAmount: moonpayFiatAmount,
+      min: moonpayData[cryptoSelected]?.limits[fiatSelected].min,
     },
     open_providers: 2,
     selected_currency: props.cryptoSelected,
