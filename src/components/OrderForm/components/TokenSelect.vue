@@ -110,7 +110,7 @@
                   {{ item.symbol }}
                 </span>
                 <span>
-                  {{ ` - ${item.name_long ? item.name_long : item.name}` }}
+                  {{ ` - ${item.subtext ? item.subtext : item.name}` }}
                 </span>
               </div>
             </v-list-item-title>
