@@ -31,7 +31,8 @@ interface QuoteData {
     networkFeeText: string,
     dailyLimit: string,
     monthlyLimit: string,
-    fiatAmount: string
+    fiatAmount: string,
+    min: string
 }
 interface SubmitData {
     simplex_quote: QuoteData,

@@ -1085,7 +1085,7 @@ const submitForm = (): void => {
       dailyLimit: dailyLimit("topper"),
       monthlyLimit: monthlyLimit(),
       fiatAmount: topperFiatAmount.value,
-      min: topperData[cryptoSelected]?.limits[fiatSelected].min,
+      min: topperData[cryptoSelected]?.limits[fiatSelected]?.min || 50,
     },
     simplex_quote: {
       cryptoToFiat: simplexCryptoAmount.value,
@@ -1096,7 +1096,7 @@ const submitForm = (): void => {
       dailyLimit: dailyLimit("simplex"),
       monthlyLimit: monthlyLimit(),
       fiatAmount: simplexFiatAmount.value,
-      min: simplexData[cryptoSelected]?.limits[fiatSelected].min,
+      min: simplexData[cryptoSelected]?.limits[fiatSelected]?.min || 50,
     },
     address: address,
     moonpay_quote: {
@@ -1108,7 +1108,7 @@ const submitForm = (): void => {
       dailyLimit: dailyLimit("moonpay"),
       monthlyLimit: monthlyLimit(),
       fiatAmount: moonpayFiatAmount,
-      min: moonpayData[cryptoSelected]?.limits[fiatSelected].min,
+      min: moonpayData[cryptoSelected]?.limits[fiatSelected]?.min || 50,
     },
     open_providers: 2,
     selected_currency: props.cryptoSelected,
