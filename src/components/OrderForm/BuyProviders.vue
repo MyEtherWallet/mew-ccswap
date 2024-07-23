@@ -14,7 +14,7 @@
       <!-- ============================================================== -->
       <!-- Moonpay -->
       <!-- ============================================================== -->
-      <div v-if="disableMoonpay" class="section-block pa-5 mb-6">
+      <div v-if="!disableMoonpay" class="section-block pa-5 mb-6">
         <img
           class="provider-logo"
           :src="moonpayLogo"
@@ -82,7 +82,7 @@
       <!-- ============================================================== -->
       <!-- Simplex -->
       <!-- ============================================================== -->
-      <div v-if="disableSimplex" class="section-block pa-5 mb-6">
+      <div v-if="!disableSimplex" class="section-block pa-5 mb-6">
         <div v-if="!loading" class="mb-3">
           <div class="d-flex mb-1 align-center justify-space-between">
             <div class="d-flex mew-heading-3">
@@ -152,7 +152,7 @@
       <!-- ============================================================== -->
       <!-- Topper -->
       <!-- ============================================================== -->
-      <div v-if="disableTopper" class="section-block pa-5">
+      <div v-if="!disableTopper" class="section-block pa-5">
         <div v-if="!loading" class="mb-3">
           <div class="d-flex mb-1 align-center justify-space-between">
             <div class="d-flex mew-heading-3">
@@ -330,13 +330,13 @@ export default defineComponent({
       return this.selectedFiatName === "EUR" || this.selectedFiatName === "GBP";
     },
     disableMoonpay(): boolean {
-      return BigNumber(this.moonpayQuote.cryptoToFiat).isLessThanOrEqualTo(0);
+      return BigNumber(this.moonpayQuote.cryptoToFiat).isEqualTo(0);
     },
     disableSimplex(): boolean {
-      return BigNumber(this.simplexQuote.cryptoToFiat).isLessThanOrEqualTo(0);
+      return BigNumber(this.simplexQuote.cryptoToFiat).isEqualTo(0);
     },
     disableTopper(): boolean {
-      return BigNumber(this.topperQuote.cryptoToFiat).isLessThanOrEqualTo(0);
+      return BigNumber(this.topperQuote.cryptoToFiat).isEqualTo(0);
     },
     simplexBtnTitle(): string {
       return "BUY WITH SIMPLEX";

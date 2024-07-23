@@ -2,7 +2,7 @@
 <template>
   <div>
     <div class="d-flex align-center textDark--text mb-10">
-      <v-icon color="textDark" class="cursor-pointer" @click="$emit('close')">
+      <v-icon color="textDark" class="cursor-pointer" @click="close">
         mdi-arrow-left mr-4
       </v-icon>
       <div class="mew-heading-2">Select Token</div>
@@ -140,7 +140,7 @@ import { Networks } from "../network/networks";
 import { formatFiatValue } from "@/helpers/numberFormatHelper";
 
 // emit
-const emit = defineEmits(["selectedNetwork", "selectCurrency"]);
+const emit = defineEmits(["selectedNetwork", "selectCurrency", "close"]);
 
 // props
 const props = defineProps({
@@ -338,6 +338,10 @@ const hasValidPrices = (token: string) => {
   price = price?.substring(1, price.length);
   if (props.fiatSelected.name === "JPY") return price !== "0";
   return price !== "0.00";
+};
+
+const close = () => {
+  emit("close");
 };
 </script>
 
