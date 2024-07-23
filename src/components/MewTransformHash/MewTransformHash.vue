@@ -16,16 +16,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue";
 export default defineComponent({
-  name: 'MewTransformHash',
+  name: "MewTransformHash",
   props: {
     /**
      * Hash to truncate.
      */
     hash: {
       type: String,
-      default: '',
+      default: "",
     },
     /**
      * Adds justify start to parent div
@@ -37,11 +37,11 @@ export default defineComponent({
     },
   },
   computed: {
-    start() {
+    start(): string {
       const n = this.hash.length;
       return this.hash.slice(0, n - 4);
     },
-    end() {
+    end(): string {
       const n = this.hash.length;
       return this.hash.slice(n - 4, n);
     },

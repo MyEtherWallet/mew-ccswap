@@ -317,69 +317,69 @@ export default defineComponent({
     };
   },
   computed: {
-    selectedFiatName() {
+    selectedFiatName(): string {
       return this.selectedFiat.name;
     },
-    actualAddress() {
+    actualAddress(): string {
       return this.toAddress;
     },
-    selectedCryptoName() {
+    selectedCryptoName(): string {
       return this.selectedCurrency.symbol;
     },
-    isEUR() {
+    isEUR(): boolean {
       return this.selectedFiatName === "EUR" || this.selectedFiatName === "GBP";
     },
-    disableMoonpay() {
+    disableMoonpay(): boolean {
       return BigNumber(this.moonpayQuote.cryptoToFiat).isLessThanOrEqualTo(0);
     },
-    disableSimplex() {
+    disableSimplex(): boolean {
       return BigNumber(this.simplexQuote.cryptoToFiat).isLessThanOrEqualTo(0);
     },
-    disableTopper() {
+    disableTopper(): boolean {
       return BigNumber(this.topperQuote.cryptoToFiat).isLessThanOrEqualTo(0);
     },
-    simplexBtnTitle() {
+    simplexBtnTitle(): string {
       return "BUY WITH SIMPLEX";
     },
-    topperBtnTitle() {
+    topperBtnTitle(): string {
       return "BUY WITH TOPPER";
     },
-    moonpayBtnTitle() {
+    moonpayBtnTitle(): string {
       return "BUY WITH MOONPAY";
     },
-    paymentOptionString() {
+    paymentOptionString(): string {
       return `Visa, Mastercard, Apple Pay, Paypal${
         this.isEUR ? ", Bank account" : ""
       }`;
     },
-    visaIcon() {
+    visaIcon(): string {
       return require("@/assets/images/icon-visa.svg");
     },
-    masterIcon() {
+    masterIcon(): string {
       return require("@/assets/images/icon-master.svg");
     },
-    bankIcon() {
+    bankIcon(): string {
       return require("@/assets/images/icon-bank.svg");
     },
-    applePayIcon() {
+    applePayIcon(): string {
       return require("@/assets/images/icon-apple-pay.svg");
     },
-    paypalIcon() {
+    paypalIcon(): string {
       return require("@/assets/images/icon-paypal-logo.svg");
     },
-    googlePayIcon() {
+    googlePayIcon(): string {
       return require("@/assets/images/icon-google-pay-logo.svg");
     },
-    pixIcon() {
+    pixIcon(): string {
       return require("@/assets/images/icon-pix-logo.svg");
     },
-    simplexLogo() {
+    simplexLogo(): string {
       return require("@/assets/images/icon-simplex.svg");
     },
-    moonpayLogo() {
+    moonpayLogo(): string {
       return require("@/assets/images/icon-moonpay.svg");
     },
-    topperLogo() {
+    topperLogo(): string {
       return require("@/assets/images/icon-topper.png");
     },
   },
@@ -417,7 +417,6 @@ export default defineComponent({
       executeTopperPayment(
         this.selectedFiatName,
         this.selectedCryptoName,
-        this.selectedFiatName,
         this.simplexQuote.fiatAmount,
         this.actualAddress
       )

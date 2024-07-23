@@ -89,6 +89,10 @@ import {
 } from "./network/types";
 import { Networks } from "./network/networks";
 
+interface leftBtn {
+  method: () => void;
+}
+
 export default defineComponent({
   name: "OrderForm",
   components: {
@@ -152,13 +156,13 @@ export default defineComponent({
       }
       return this.selectedNetwork;
     },
-    supportedSell() {
+    supportedSell(): boolean {
       return (
         this.selectedCurrency.symbol !== "DOT" &&
         this.selectedCurrency.symbol !== "KSM"
       );
     },
-    leftBtn() {
+    leftBtn(): leftBtn {
       return {
         method: this.close,
       };
@@ -166,7 +170,7 @@ export default defineComponent({
     tabItems() {
       return ["Buy", "Sell"];
     },
-    isSell() {
+    isSell(): boolean {
       return this.activeTab === 1;
     },
   },
@@ -183,7 +187,7 @@ export default defineComponent({
       this.activeTab = val;
       this.amplitude.track(`CCBuySell${val === 0 ? "BuyTab" : "SellTab"}`);
     },
-    close() {
+    close(): void {
       this.step = 0;
       this.onlySimplex = false;
     },
