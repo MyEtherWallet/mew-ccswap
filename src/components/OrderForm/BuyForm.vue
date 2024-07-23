@@ -923,9 +923,11 @@ const bestPrice = computed(() => {
 });
 
 const fiatToCrypto = () => {
-  const price = new BigNumber(bestPrice.value || "0");
-  const amount = new BigNumber(form.fiatAmount || "0");
-  form.cryptoAmount = BigNumber(amount).div(price).toString();
+  if (isNumber(form.fiatAmount)) {
+    const price = new BigNumber(bestPrice.value || "0");
+    const amount = new BigNumber(form.fiatAmount || "0");
+    form.cryptoAmount = BigNumber(amount).div(price).toString();
+  }
 };
 
 const cryptoToFiat = () => {

@@ -398,7 +398,11 @@ export default defineComponent({
         this.simplexQuote.fiatAmount,
         this.actualAddress
       )
-        .then(() => {
+        .then((data) => {
+          window.open(data, "_blank");
+          this.reset(true);
+          this.close();
+          this.$emit("reset");
           this.amplitude.track(`CCBuySellBuyWithSimplexSuccess`);
         })
         .catch(() => {
@@ -418,8 +422,11 @@ export default defineComponent({
         this.actualAddress
       )
         .then((data) => {
-          window.open(data.url, "_self");
+          window.open(data.url, "_blank");
           this.amplitude.track(`CCBuySellBuyWithTopperSuccess`);
+          this.reset();
+          this.close();
+          this.$emit("reset");
         })
         .catch(() => {
           this.reset();
@@ -449,7 +456,11 @@ export default defineComponent({
         this.moonpayQuote.fiatAmount,
         this.actualAddress
       )
-        .then(() => {
+        .then((data) => {
+          window.open(data, "_blank");
+          this.reset(true);
+          this.close();
+          this.$emit("reset");
           this.amplitude.track(`CCBuySellBuyWithMoonpaySuccess`);
         })
         .catch(() => {
