@@ -2,6 +2,7 @@
   "name": "mew-ccswap",
   "version": "6.9.10",
   "private": true,
+  "packageManager": "yarn@1.22.19",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build && cp dist/index.html dist/404.html",
