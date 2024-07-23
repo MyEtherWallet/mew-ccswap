@@ -46,6 +46,7 @@
         :fiat-selected="selectedFiat"
         :moonpay-data="moonpayData"
         :simplex-data="simplexData"
+        :topper-data="topperData"
         :is-sell="isSell"
         @close="close"
         @selectCurrency="setSelectedCurrency"

@@ -160,6 +160,10 @@ const props = defineProps({
     type: Object as PropType<{ [key: string]: Data }>,
     default: () => ({}),
   },
+  topperData: {
+    type: Object as PropType<{ [key: string]: Data }>,
+    default: () => ({}),
+  },
   simplexData: {
     type: Object as PropType<{ [key: string]: Data }>,
     default: () => ({}),
@@ -306,22 +310,33 @@ const tokenPrice = (token: string) => {
   const moonpayPrice = parseFloat(
     props.moonpayData[token]?.prices[fiatName.value]
   );
+  const topperPrice = parseFloat(
+    props.topperData[token]?.prices[fiatName.value]
+  );
   const currencyConfig = {
     locale: "en-US",
     rate: 1,
     currency: fiatName.value,
   };
-  if (isNaN(moonpayPrice))
+  if (isNaN(moonpayPrice) && isNaN(topperPrice))
     return formatFiatValue(simplexPrice.toFixed(2), currencyConfig).value;
-  if (isNaN(simplexPrice))
+  if (isNaN(simplexPrice) && isNaN(topperPrice))
     return formatFiatValue(moonpayPrice.toFixed(2), currencyConfig).value;
-  const price = simplexPrice <= moonpayPrice ? simplexPrice : moonpayPrice;
+  if (isNaN(simplexPrice) && isNaN(moonpayPrice))
+    return formatFiatValue(topperPrice.toFixed(2), currencyConfig).value;
+  const price =
+    simplexPrice <= moonpayPrice
+      ? simplexPrice
+      : moonpayPrice <= topperPrice
+      ? moonpayPrice
+      : topperPrice;
   return formatFiatValue(price.toFixed(2), currencyConfig).value;
 };
 
 const hasValidPrices = (token: string) => {
   let price = tokenPrice(token);
   price = price?.substring(1, price.length);
+  if (props.fiatSelected.name === "JPY") return price !== "0";
   return price !== "0.00";
 };
 </script>
