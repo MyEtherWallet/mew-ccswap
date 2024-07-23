@@ -329,24 +329,7 @@ onMounted(async () => {
   form.address = "";
 
   // Load URL parameter value and verify crypto address
-  loadUrlParameters();
-  verifyAddress();
-
-  // Get crypto Data
-  await getPrices();
-  await fetchGasPrice();
-  if (!isEmpty(props.fiatSelected)) {
-    form.cryptoSelected = props.cryptoSelected.name;
-    form.fiatSelected = props.fiatSelected.name;
-    form.fiatAmount = props.fiatAmount;
-    fiatToCrypto();
-  } else cryptoToFiat();
-  getBalance();
-  priceTimer = setInterval(getPrices, 1000 * 60 * 2);
-  gasTimer = setInterval(fetchGasPrice, 1000 * 60 * 2);
-  filteredFiatItems.value = Object.getOwnPropertyNames(
-    moonpayData["ETH"]?.prices
-  );
+  setup();
 });
 
 onUnmounted(async () => {
@@ -768,10 +751,55 @@ const verifyAddress = (): void => {
   }
 };
 
-const submitForm = (): void => {
+const submitForm = async (): Promise<void> => {
   loading.processingBuyForm = true;
   amplitude.track("CCBuySellSellWithMoonpay");
-  executeMoonpaySell(form.cryptoSelected, form.cryptoAmount, form.address);
+  executeMoonpaySell(form.cryptoSelected, form.cryptoAmount, form.address).then(
+    (res) => {
+      if (res) {
+        window.open(res, "_blank");
+        reset();
+      }
+    }
+  );
+};
+
+const reset = () => {
+  form.fiatAmount = defaultFiatValue;
+  form.cryptoAmount = "1";
+  form.address = "";
+  form.validAddress = false;
+  form.addressErrorMsg = "";
+  form.addressError = false;
+  form.balance = "";
+  form.balanceWei = "";
+  form.balanceETH = "";
+  form.balanceError = false;
+  form.balanceErrorMsg = "";
+  loading.processingBuyForm = false;
+  loading.alertMessage = "";
+  setup();
+};
+
+const setup = async () => {
+  loadUrlParameters();
+  verifyAddress();
+
+  // Get crypto Data
+  await getPrices();
+  await fetchGasPrice();
+  if (!isEmpty(props.fiatSelected)) {
+    form.cryptoSelected = props.cryptoSelected.name;
+    form.fiatSelected = props.fiatSelected.name;
+    form.fiatAmount = props.fiatAmount;
+    fiatToCrypto();
+  } else cryptoToFiat();
+  getBalance();
+  priceTimer = setInterval(getPrices, 1000 * 60 * 2);
+  gasTimer = setInterval(fetchGasPrice, 1000 * 60 * 2);
+  filteredFiatItems.value = Object.getOwnPropertyNames(
+    moonpayData["ETH"]?.prices
+  );
 };
 
 const openTokenSelect = () => {
