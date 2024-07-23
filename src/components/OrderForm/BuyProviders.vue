@@ -399,9 +399,6 @@ export default defineComponent({
         this.actualAddress
       )
         .then(() => {
-          this.reset(true);
-          this.close();
-          this.$emit("reset");
           this.amplitude.track(`CCBuySellBuyWithSimplexSuccess`);
         })
         .catch(() => {
@@ -423,9 +420,6 @@ export default defineComponent({
         .then((data) => {
           window.open(data.url, "_self");
           this.amplitude.track(`CCBuySellBuyWithTopperSuccess`);
-          this.reset();
-          this.close();
-          this.$emit("reset");
         })
         .catch(() => {
           this.reset();
@@ -456,9 +450,6 @@ export default defineComponent({
         this.actualAddress
       )
         .then(() => {
-          this.reset(true);
-          this.close();
-          this.$emit("reset");
           this.amplitude.track(`CCBuySellBuyWithMoonpaySuccess`);
         })
         .catch(() => {

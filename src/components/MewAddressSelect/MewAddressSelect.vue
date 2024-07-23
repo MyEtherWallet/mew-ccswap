@@ -220,7 +220,10 @@ export default defineComponent({
      */
     selectAddress(data: { value: any; raw: any }) {
       this.isTyped = USER_INPUT_TYPES.selected;
-      const addressSelect: any = this.$refs.mewAddressSelect;
+      const addressSelect = Object.assign<any, any>(
+        {},
+        this.$refs.mewAddressSelect
+      );
       this.addressValue = data.raw.address;
       addressSelect.modelValue = this.addressValue;
       this.onChange(this.addressValue);
