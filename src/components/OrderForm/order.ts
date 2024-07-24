@@ -1,8 +1,8 @@
 import axios from "axios";
 import { getSimplexQuote, getTopperUrl } from "./prices";
 import { sha3 } from "web3-utils";
-const API = "https://development.mewwallet.dev";
-const apiOrder = "https://development.mewwallet.dev/purchase/simplex/order";
+const API = "https://qa.mewwallet.dev";
+const apiOrder = "https://qa.mewwallet.dev/purchase/simplex/order";
 
 // ===================================================================================================
 // Get the quote confirmed by Simplex
