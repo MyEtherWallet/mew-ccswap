@@ -219,6 +219,7 @@ import {
   Ref,
   inject,
 } from "vue";
+import BigNumber from "bignumber.js";
 import { supportedFiat, getCryptoSellPrices } from "./prices";
 import { executeMoonpaySell } from "./order";
 import { isObject, isNumber, isString, isEmpty } from "lodash";
@@ -403,6 +404,10 @@ watch(
 watch(
   () => form.fiatSelected,
   () => {
+    const inList = filteredFiatItems.value.findIndex(
+      (item) => item === form.fiatSelected
+    );
+    if (inList < 0) form.fiatSelected = "USD";
     verifyAddress();
     cryptoToFiat();
   }
@@ -499,7 +504,8 @@ const minMax = computed(() => {
   if (!validData) return false;
   const limit = moonpayData[cryptoSelected].limits[cryptoSelected];
   const decimals = props.cryptoSelected.decimals;
-  const amount = toBN(toBase(parseFloat(cryptoAmount || "0"), decimals));
+  const parsedAmount = BigNumber(cryptoAmount).isNaN() ? "0" : cryptoAmount;
+  const amount = toBN(toBase(parseFloat(parsedAmount), decimals));
   const valid =
     amount.gte(toBN(toBase(limit.min, decimals))) &&
     amount.lte(toBN(toBase(limit.max, decimals)));
@@ -620,7 +626,12 @@ const checkBalance = () => {
     if (!minMax.value) {
       const decimals = props.cryptoSelected.decimals;
       const amount = toBN(
-        toBase(parseFloat(form.cryptoAmount || "0"), decimals)
+        toBase(
+          parseFloat(
+            BigNumber(form.cryptoAmount).isNaN() ? "0" : form.cryptoAmount
+          ),
+          decimals
+        )
       );
       const min = toBN(toBase(limit.min, decimals));
       const max = toBN(toBase(limit.max, decimals));
@@ -789,7 +800,7 @@ const setup = async () => {
   await getPrices();
   await fetchGasPrice();
   if (!isEmpty(props.fiatSelected)) {
-    form.cryptoSelected = props.cryptoSelected.name;
+    form.cryptoSelected = props.cryptoSelected.symbol;
     form.fiatSelected = props.fiatSelected.name;
     form.fiatAmount = props.fiatAmount;
     fiatToCrypto();

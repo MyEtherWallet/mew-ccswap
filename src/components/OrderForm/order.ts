@@ -67,7 +67,7 @@ async function executeSimplexPayment(
   );
 
   // Submit payment form data and goto Simplex payment page.
-  return await submitForm(responseOrder.form);
+  return encodeURI(await submitForm(responseOrder.form));
 
   // Manual form submission for development only
   // return responseOrder.form;
