@@ -1,8 +1,8 @@
 import axios from "axios";
 import { toNumber } from "lodash";
 import { sha3 } from "web3-utils";
-// const API = "https://qa.mewwallet.dev";
-const API = "https://development.mewwallet.dev";
+const API = "https://qa.mewwallet.dev";
+// const API = "https://development.mewwallet.dev";
 
 const supportedCrypto = ["ETH", "BTC", "BCH", "MATIC", "USDT", "USDC", "DAI", "DOT", "KSM", "KDA", "PYUSD", "BSC", "OP", "ARB", 'TUSD',
   'FDUSD-SC',
