@@ -912,6 +912,7 @@ const bestPrice = computed(() => {
   const topperPrice = new BigNumber(
     topperData[cryptoSelected]?.prices[fiatSelected]
   );
+
   if (moonpayPrice.isNaN() && topperPrice.isNaN()) return simplexPrice;
   if (simplexPrice.isNaN() && topperPrice.isNaN()) return moonpayPrice;
   if (simplexPrice.isNaN() && moonpayPrice.isNaN()) return topperPrice;
@@ -923,10 +924,12 @@ const bestPrice = computed(() => {
 });
 
 const fiatToCrypto = () => {
-  if (isNumber(form.fiatAmount)) {
+  if (!isNaN(parseInt(form.fiatAmount))) {
     const price = new BigNumber(bestPrice.value || "0");
     const amount = new BigNumber(form.fiatAmount || "0");
     form.cryptoAmount = BigNumber(amount).div(price).toString();
+  } else {
+    loading.alertMessage = "Please provide a valid fiat amount";
   }
 };
 
