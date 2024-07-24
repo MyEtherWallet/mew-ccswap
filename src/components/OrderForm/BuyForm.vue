@@ -592,7 +592,7 @@ const moonpayCryptoAmount = computed(() => {
     ? formatFloatingPointValue(
         BigNumber(plusFee.value).div(priceOb.value).toString()
       ).value
-    : 0;
+    : "0";
 });
 
 const fiatCurrency = computed(() => {

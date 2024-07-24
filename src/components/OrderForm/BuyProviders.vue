@@ -330,18 +330,33 @@ export default defineComponent({
       return this.selectedFiatName === "EUR" || this.selectedFiatName === "GBP";
     },
     disableMoonpay(): boolean {
-      if (BigNumber(this.moonpayQuote.cryptoToFiat).isGreaterThan(0))
+      if (
+        BigNumber(
+          this.moonpayQuote.cryptoToFiat.replace(",", "")
+        ).isGreaterThan(0)
+      ) {
         return BigNumber(this.fiatAmount).gte(this.moonpayQuote.min);
+      }
       return false;
     },
     disableSimplex(): boolean {
-      if (BigNumber(this.simplexQuote.cryptoToFiat).isGreaterThan(0))
+      if (
+        BigNumber(
+          this.simplexQuote.cryptoToFiat.replace(",", "")
+        ).isGreaterThan(0)
+      ) {
         return BigNumber(this.fiatAmount).gte(this.simplexQuote.min);
+      }
       return false;
     },
     disableTopper(): boolean {
-      if (BigNumber(this.topperQuote.cryptoToFiat).isGreaterThan(0))
+      if (
+        BigNumber(this.topperQuote.cryptoToFiat.replace(",", "")).isGreaterThan(
+          0
+        )
+      ) {
         return BigNumber(this.fiatAmount).gte(this.topperQuote.min);
+      }
       return false;
     },
     simplexBtnTitle(): string {
