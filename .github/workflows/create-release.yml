@@ -1,0 +1,24 @@
+name: create release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: set node version
+        uses: actions/setup-node@v2
+        with:
+          node-version: "18"
+      - name: Install dependencies
+        run: yarn install
+      - name: Create build
+        run: yarn build:release
+      - name: deploy to github pages
+        run: yarn publish-gh-pages

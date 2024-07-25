@@ -1,8 +1,8 @@
 import axios from "axios";
 import { getSimplexQuote, getTopperUrl } from "./prices";
 import { sha3 } from "web3-utils";
-const API = "https://development.mewwallet.dev";
-const apiOrder = "https://development.mewwallet.dev/purchase/simplex/order";
+const API = "https://mainnet.mewwallet.dev";
+const apiOrder = "https://mainnet.mewwallet.dev/purchase/simplex/order";
 
 // ===================================================================================================
 // Get the quote confirmed by Simplex
@@ -29,7 +29,7 @@ async function submitForm(form: any) {
     42
   )}`;
   const url = `${API}/v2/purchase/simplex/order?id=${id}&fiatCurrency=${form["fiat_total_amount[currency]"]}&requestedCurrency=${form["fiat_total_amount[currency]"]}&requestedAmount=${form["fiat_total_amount[amount]"]}&address=${form["destination_wallet[address]"]}&cryptoCurrency=${form["destination_wallet[currency]"]}`;
-  window.location.href = encodeURI(url);
+  return url;
 }
 
 // ===================================================================================================
@@ -67,10 +67,10 @@ async function executeSimplexPayment(
   );
 
   // Submit payment form data and goto Simplex payment page.
-  await submitForm(responseOrder.form);
+  return encodeURI(await submitForm(responseOrder.form));
 
   // Manual form submission for development only
-  return responseOrder.form;
+  // return responseOrder.form;
 }
 
 /**
@@ -80,7 +80,6 @@ async function executeSimplexPayment(
 async function executeTopperPayment(
   fiatCurrency: string,
   cryptoCurrency: string,
-  requestedCurrency: string,
   requestedAmount: string,
   address: string) {
   let response = null;
@@ -100,15 +99,14 @@ async function executeMoonpayBuy(tokenSymbol: string, fiatCurrency: string, amou
   const id = `WEB|${hash?.substring(0, 42)}`;
   const q = window.location.search;
   const platform = q.includes('platform=enkrypt') ? 'enkrypt' : 'web';
-  return new Promise<void>(resolve => {
+  return new Promise<string>(resolve => {
     let link = `${API}/v3/purchase/moonpay/order?address=${address}&id=${id}&cryptoCurrency=${tokenSymbol}&fiatCurrency=${fiatCurrency}&platform=${platform}`;
     if (amount) {
       link += `&requestedAmount=${amount}`;
     }
     const parsedUrl = encodeURI(link);
     // eslint-disable-next-line
-    window.location.href = parsedUrl;
-    resolve();
+    resolve(parsedUrl);
   });
 }
 
@@ -118,13 +116,11 @@ async function executeMoonpaySell(tokenSymbol: string, amount: string, address: 
 
   const q = window.location.search;
   const platform = q.includes('platform=enkrypt') ? 'enkrypt' : 'web';
-  return new Promise<void>(resolve => {
+  return new Promise<string>(resolve => {
     const parsedUrl = encodeURI(
       `${API}/v3/sell/moonpay/order?address=${address}&id=${id}&cryptoCurrency=${tokenSymbol}&requestedAmount=${amount}&platform=${platform}`
     );
-    // eslint-disable-next-line
-    window.location.href = parsedUrl;
-    resolve();
+    resolve(parsedUrl);
   });
 }
 

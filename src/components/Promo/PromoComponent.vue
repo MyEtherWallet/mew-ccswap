@@ -11,7 +11,7 @@
         </h1>
         <v-row>
           <v-col cols="12" md="4" v-for="(p1, key1) in promo1" :key="key1">
-            <div class="elevated-box-small elevation-5 pa-10">
+            <div class="elevated-box-small elevation-5 pa-lg-10 pa-7">
               <div class="heading-2 description-text mb-2">
                 {{ p1.amount }}
               </div>

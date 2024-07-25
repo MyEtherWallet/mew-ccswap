@@ -6,10 +6,10 @@
     <div class="background-image pt-15">
       <v-container>
         <v-row>
-          <v-col cols="12" md="5" lg="7">
+          <v-col cols="12" md="5" lg="6">
             <HeaderComponent />
           </v-col>
-          <v-col cols="12" md="7" lg="5">
+          <v-col cols="12" md="7" lg="6">
             <OrderForm />
           </v-col>
         </v-row>
@@ -89,22 +89,20 @@ if (!isEthVm && !isEnkrypt) {
 
 .background-image {
   background-color: rgb(var(--v-theme-background-fill));
-  @media (min-width: 768px) {
-    background-image: radial-gradient(
-        at top 0px right 200px,
-        rgb(var(--v-theme-background-gradient)),
-        transparent 900px
-      ),
-      radial-gradient(
-        at bottom 200px left 200px,
-        rgba(var(--v-theme-background-gradient)),
-        transparent 500px
-      ),
-      radial-gradient(
-        circle at bottom right,
-        rgba(var(--v-theme-background-gradient)),
-        transparent 300px
-      );
-  }
+  background-image: radial-gradient(
+      at top 0px right 200px,
+      rgb(var(--v-theme-background-gradient)),
+      transparent 900px
+    ),
+    radial-gradient(
+      at bottom 200px left 200px,
+      rgba(var(--v-theme-background-gradient)),
+      transparent 500px
+    ),
+    radial-gradient(
+      circle at bottom right,
+      rgba(var(--v-theme-background-gradient)),
+      transparent 300px
+    );
 }
 </style>

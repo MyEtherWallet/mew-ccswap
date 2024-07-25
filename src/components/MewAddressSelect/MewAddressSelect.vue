@@ -224,7 +224,7 @@ export default defineComponent({
         {},
         this.$refs.mewAddressSelect
       );
-      this.addressValue = data.value.address;
+      this.addressValue = data.raw.address;
       addressSelect.modelValue = this.addressValue;
       this.onChange(this.addressValue);
     },

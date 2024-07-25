@@ -2,7 +2,7 @@
 <template>
   <div>
     <div class="d-flex align-center textDark--text mb-10">
-      <v-icon color="textDark" class="cursor-pointer" @click="$emit('close')">
+      <v-icon color="textDark" class="cursor-pointer" @click="close">
         mdi-arrow-left mr-4
       </v-icon>
       <div class="mew-heading-2">Select Token</div>
@@ -110,7 +110,7 @@
                   {{ item.symbol }}
                 </span>
                 <span>
-                  {{ ` - ${item.name_long ? item.name_long : item.name}` }}
+                  {{ ` - ${item.subtext ? item.subtext : item.name}` }}
                 </span>
               </div>
             </v-list-item-title>
@@ -124,156 +124,225 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from "vue";
+<script lang="ts" setup>
+import {
+  defineProps,
+  ref,
+  Ref,
+  computed,
+  onBeforeMount,
+  defineEmits,
+  watch,
+  PropType,
+} from "vue";
 import { Crypto, Network, Data, Fiat } from "../types";
 import { Networks } from "../network/networks";
 import { formatFiatValue } from "@/helpers/numberFormatHelper";
 
-export default defineComponent({
-  name: "TokenSelect",
-  props: {
-    close: {
-      type: Function,
-      default: () => ({}),
-    },
-    selectedNetwork: {
-      type: Object as PropType<Network>,
-      default: () => ({}),
-    },
-    selectedCurrency: {
-      type: Object as PropType<Crypto>,
-      default: () => ({}),
-    },
-    moonpayData: {
-      type: Object as PropType<{ [key: string]: Data }>,
-      default: () => ({}),
-    },
-    simplexData: {
-      type: Object as PropType<{ [key: string]: Data }>,
-      default: () => ({}),
-    },
-    fiatSelected: {
-      type: Object as PropType<Fiat>,
-      default: () => ({}),
-    },
-    isSell: {
-      type: Boolean,
-      default: false,
-    },
+// emit
+const emit = defineEmits(["selectedNetwork", "selectCurrency", "close"]);
+
+// props
+const props = defineProps({
+  close: {
+    type: Function,
+    default: () => ({}),
   },
-  data() {
-    return {
-      networks: Networks,
-      networkSelected: {} as Network,
-      cryptoSelected: {} as Crypto,
-      networkDropdown: false,
-      cryptoDropdown: false,
-      searchInput: "",
-      networkSearchInput: "",
-    };
+  selectedNetwork: {
+    type: Object as PropType<Network>,
+    default: () => ({}),
   },
-  computed: {
-    cryptoIcon() {
-      return require(`@/assets/images/crypto/${this.cryptoSelected.name}.svg`);
-    },
-    tokensList() {
-      let decimals = 18;
-      if (this.networkSelected.name === "DOT") decimals = 10;
-      else if (this.networkSelected.name === "KSM") decimals = 12;
-      const mainCoin = new Crypto(
-        this.networkSelected.currencyName,
-        this.networkSelected.name_long,
-        this.networkSelected.name,
-        decimals,
-        this.networkSelected.icon
-      );
-      let tokensList = [mainCoin];
-      if (this.fiatName === "CAD") return tokensList;
-      if (this.networkSelected.tokens.length > 0)
-        tokensList = tokensList.concat(this.networkSelected.tokens);
-      return tokensList;
-    },
-    filteredTokenList() {
-      const filterText = this.searchInput.toLowerCase();
-      const a = this.tokensList.filter((token) => {
-        const tokenSymbol = token.name.toLowerCase();
-        const tokenName = token.subtext.toLowerCase();
-        if (
-          this.hasValidPrices(token.symbol) &&
-          (tokenSymbol.includes(filterText) || tokenName.includes(filterText))
-        )
-          return token;
-      });
-      return a;
-    },
-    fiatName() {
-      return this.fiatSelected.name;
-    },
-    networkList() {
-      return this.isSell
-        ? this.networks.filter(
-            (network) => network.name !== "DOT" && network.name !== "KSM"
-          )
-        : this.networks;
-    },
-    filteredNetworkList() {
-      const filter = this.networkSearchInput.toLowerCase();
-      return this.networkList.filter(
-        (network) =>
-          network.name.toLowerCase().includes(filter) ||
-          network.name_long.toLowerCase().includes(filter) ||
-          network.currencyName.toLowerCase().includes(filter)
-      );
-    },
+  selectedCurrency: {
+    type: Object as PropType<Crypto>,
+    default: () => ({}),
   },
-  beforeMount() {
-    this.networks = Networks;
-    this.networkSelected = this.selectedNetwork;
-    this.cryptoSelected = this.selectedCurrency;
+  moonpayData: {
+    type: Object as PropType<{ [key: string]: Data }>,
+    default: () => ({}),
   },
-  watch: {
-    networkSelected() {
-      this.selectCurrency(this.tokensList[0]);
-      this.$emit("selectedNetwork", this.networkSelected);
-    },
+  topperData: {
+    type: Object as PropType<{ [key: string]: Data }>,
+    default: () => ({}),
   },
-  methods: {
-    selectCurrency(currency: Crypto, emit = false) {
-      this.cryptoSelected = currency;
-      this.cryptoDropdown = false;
-      if (emit) this.$emit("selectCurrency", this.cryptoSelected);
-    },
-    selectNetwork(network: Network) {
-      this.networkSelected = network;
-      this.networkDropdown = false;
-    },
-    tokenPrice(token: string) {
-      const simplexPrice = parseFloat(
-        this.simplexData[token]?.prices[this.fiatName]
-      );
-      const moonpayPrice = parseFloat(
-        this.moonpayData[token]?.prices[this.fiatName]
-      );
-      const currencyConfig = {
-        locale: "en-US",
-        rate: 1,
-        currency: this.fiatName,
-      };
-      if (isNaN(moonpayPrice))
-        return formatFiatValue(simplexPrice.toFixed(2), currencyConfig).value;
-      if (isNaN(simplexPrice))
-        return formatFiatValue(moonpayPrice.toFixed(2), currencyConfig).value;
-      const price = simplexPrice <= moonpayPrice ? simplexPrice : moonpayPrice;
-      return formatFiatValue(price.toFixed(2), currencyConfig).value;
-    },
-    hasValidPrices(token: string) {
-      let price = this.tokenPrice(token);
-      price = price?.substring(1, price.length);
-      return price !== "0.00";
-    },
+  simplexData: {
+    type: Object as PropType<{ [key: string]: Data }>,
+    default: () => ({}),
+  },
+  fiatSelected: {
+    type: Object as PropType<Fiat>,
+    default: () => ({}),
+  },
+  isSell: {
+    type: Boolean,
+    default: false,
   },
 });
+
+// reactive data
+const networks: Network[] = Networks;
+const networkSelected: Ref<Network> = ref<Network>({
+  name: "",
+  name_long: "",
+  chainID: 0,
+  tokens: [],
+  icon: "",
+  currencyName: "",
+  gasPriceMultiplier: 0,
+  coingeckoID: "",
+  service: "",
+  url: "",
+  port: 443,
+  auth: false,
+  username: "",
+  password: "",
+});
+const cryptoSelected: Ref<Crypto> = ref<Crypto>({
+  decimals: 18,
+  img: "",
+  name: "",
+  subtext: "",
+  value: "",
+  symbol: "",
+  network: "",
+});
+
+const networkDropdown: Ref<boolean> = ref(false);
+const cryptoDropdown: Ref<boolean> = ref(false);
+const searchInput: Ref<string> = ref("");
+const networkSearchInput: Ref<string> = ref("");
+
+// computed
+
+const tokensList = computed<Crypto[]>(() => {
+  let decimals = 18;
+  if (networkSelected.value.name === "DOT") decimals = 10;
+  else if (networkSelected.value.name === "KSM") decimals = 12;
+  const mainCoin = new Crypto(
+    networkSelected.value.currencyName,
+    networkSelected.value.name_long,
+    networkSelected.value.name,
+    decimals,
+    networkSelected.value.icon
+  );
+  let tokensList = [mainCoin];
+  if (fiatName.value === "CAD") return tokensList;
+  if (networkSelected.value.tokens.length > 0)
+    return tokensList.concat(networkSelected.value.tokens);
+  return tokensList;
+});
+
+const filteredTokenList = computed<Crypto[]>(() => {
+  const filterText = searchInput.value.toLowerCase();
+  const tokens = tokensList.value.filter((token) => {
+    const tokenSymbol = token.name.toLowerCase();
+    const tokenName = token.subtext.toLowerCase();
+    if (
+      hasValidPrices(token.symbol) &&
+      (tokenSymbol.includes(filterText) || tokenName.includes(filterText))
+    )
+      return token;
+  });
+  return tokens;
+});
+
+const fiatName = computed<string>(() => {
+  return props.fiatSelected.name;
+});
+
+const networkList = computed<Network[]>(() => {
+  return props.isSell
+    ? networks.filter((network) => {
+        if (network.name === "ETH") return network;
+      })
+    : networks;
+});
+
+const filteredNetworkList = computed<Network[]>(() => {
+  const withTokensNetwork = networkList.value
+    .filter((network) => {
+      if (network.tokens.length > 0) return network;
+    })
+    .filter((network) => {
+      if (hasValidPrices(network.name)) return network;
+    });
+  const filter = networkSearchInput.value.toLowerCase();
+  return withTokensNetwork.filter((network) => {
+    if (
+      network.name.toLowerCase().includes(filter) ||
+      network.name_long.toLowerCase().includes(filter) ||
+      network.currencyName.toLowerCase().includes(filter)
+    )
+      return network;
+  });
+});
+
+// beforeMount
+onBeforeMount(() => {
+  networkSelected.value = props.selectedNetwork;
+  cryptoSelected.value = props.selectedCurrency;
+});
+
+// watch
+watch(
+  () => networkSelected,
+  () => {
+    selectCurrency(tokensList.value[0]);
+    emit("selectedNetwork", networkSelected.value);
+  }
+);
+
+// methods
+const selectCurrency = (currency: Crypto, shouldEmit = false) => {
+  cryptoSelected.value = currency;
+  cryptoDropdown.value = false;
+  if (shouldEmit) emit("selectCurrency", cryptoSelected.value);
+};
+
+const selectNetwork = (network: Network) => {
+  networkSelected.value = network;
+  networkDropdown.value = false;
+};
+
+const tokenPrice = (token: string) => {
+  const simplexPrice = parseFloat(
+    props.simplexData[token]?.prices[fiatName.value]
+  );
+  const moonpayPrice = parseFloat(
+    props.moonpayData[token]?.prices[fiatName.value]
+  );
+  const topperPrice = parseFloat(
+    props.topperData[token]?.prices[fiatName.value]
+  );
+  const currencyConfig = {
+    locale: "en-US",
+    rate: 1,
+    currency: fiatName.value,
+  };
+  if (isNaN(moonpayPrice) && isNaN(topperPrice))
+    return formatFiatValue(simplexPrice.toFixed(2), currencyConfig).value;
+  if (isNaN(simplexPrice) && isNaN(topperPrice))
+    return formatFiatValue(moonpayPrice.toFixed(2), currencyConfig).value;
+  if (isNaN(simplexPrice) && isNaN(moonpayPrice))
+    return formatFiatValue(topperPrice.toFixed(2), currencyConfig).value;
+  const price =
+    simplexPrice <= moonpayPrice
+      ? simplexPrice
+      : moonpayPrice <= topperPrice
+      ? moonpayPrice
+      : topperPrice;
+  return formatFiatValue(price.toFixed(2), currencyConfig).value;
+};
+
+const hasValidPrices = (token: string) => {
+  let price = tokenPrice(token);
+  price = price?.substring(1, price.length);
+  if (props.fiatSelected.name === "JPY") return price !== "0";
+  return price !== "0.00";
+};
+
+const close = () => {
+  emit("close");
+};
 </script>
 
 <style lang="scss" scoped>

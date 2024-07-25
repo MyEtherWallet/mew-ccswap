@@ -16,18 +16,33 @@
     >
       Buy and Sell Crypto Fast and Secure
     </div>
-
-    <div class="d-flex align-center" style="margin-top: 60px">
-      <div class="text-color mr-4">Powered by</div>
-      <img
-        class="mr-2"
-        :src="isEthVm ? simplexLight : simplex"
-        alt="Simplex"
-        height="25"
-      />
-      <img :src="isEthVm ? moonpayWhite : moonpay" alt="Moonpay" height="25" />
-      <img :src="isEthVm ? topperDark : topper" alt="Topper" height="25" />
-    </div>
+    <v-row class="mt-15" no-gutters>
+      <v-col cols="12"
+        ><div class="text-color mr-4 font-weight-bold">Powered by</div></v-col
+      >
+      <v-col cols="4" align-self="center" style="text-align: center"
+        ><img
+          :src="isEthVm ? moonpayWhite : moonpay"
+          alt="Moonpay"
+          width="100%"
+          style="max-width: 140px"
+      /></v-col>
+      <v-col cols="4" align-self="center" style="text-align: center"
+        ><img
+          class="mr-2"
+          :src="isEthVm ? simplexLight : simplex"
+          alt="Simplex"
+          width="100%"
+          style="max-width: 140px"
+      /></v-col>
+      <v-col cols="4" align-self="center" style="text-align: center"
+        ><img
+          :src="isEthVm ? topperDark : topper"
+          alt="Topper"
+          width="100%"
+          style="max-width: 140px"
+      /></v-col>
+    </v-row>
 
     <div class="d-flex flex-wrap align-center mt-4">
       <div class="text-color mr-2">We accept</div>
@@ -49,7 +64,7 @@ import master from "@/assets/images/icon-master.svg";
 import applePay from "@/assets/images/icon-apple-pay.svg";
 import paypal from "@/assets/images/icon-paypal-logo.svg";
 import googlePay from "@/assets/images/icon-google-pay-logo.svg";
-import pix from "@/assets/images/icon-pix-logo.jpeg";
+import pix from "@/assets/images/icon-pix-logo.svg";
 import simplex from "@/assets/images/icon-simplex.svg";
 import simplexLight from "@/assets/images/icon-simplex-light.svg";
 import moonpay from "@/assets/images/icon-moonpay.svg";

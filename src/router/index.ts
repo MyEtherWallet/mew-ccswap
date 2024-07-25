@@ -1,7 +1,7 @@
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHashHistory, createWebHistory } from "vue-router";
 import LandingPage from "@/layouts/LandingPage.vue";
 const router = createRouter({
-  history: createWebHistory(),
+  history: process.env.NODE_ENV === 'qa' ? createWebHashHistory() : createWebHistory(),
   routes: [
     {
       path: "/",

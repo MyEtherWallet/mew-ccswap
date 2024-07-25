@@ -5,14 +5,16 @@
       <v-icon color="textDark" class="cursor-pointer" @click="$emit('close')">
         mdi-arrow-left mr-4
       </v-icon>
-      <div class="mew-heading-2">Select provider</div>
+      <div class="mew-heading-2 provider-text">Select provider</div>
     </div>
-
+    <div class="mew-heading-2 font-weight-regular pb-2">
+      Spending <b>{{ topperQuote.plusFeeF }}</b>
+    </div>
     <div v-if="!processingBuy">
       <!-- ============================================================== -->
       <!-- Moonpay -->
       <!-- ============================================================== -->
-      <div class="section-block pa-5 mb-6">
+      <div v-if="disableMoonpay" class="section-block pa-5 mb-6">
         <img
           class="provider-logo"
           :src="moonpayLogo"
@@ -21,48 +23,37 @@
         />
         <div v-if="!loading" class="mb-3">
           <div class="d-flex mb-1 align-center justify-space-between">
-            <div
-              class="d-flex mew-heading-3"
-              :class="hideMoonpay ? 'text-red' : ''"
-            >
+            <div class="d-flex mew-heading-3">
               {{ moonpayQuote.cryptoToFiat }}
-              <span
-                class="mew-heading-3 pl-1"
-                :class="hideMoonpay ? 'text-red' : ''"
-                >{{ selectedCryptoName }}</span
-              >
-            </div>
-          </div>
-          <div class="d-flex align-center">
-            <div v-if="!hideMoonpay" class="mr-1 textDark--text">
-              ≈ {{ moonpayQuote.plusFeeF }}
-            </div>
-            <div v-else class="mr-1 text-red">
-              {{ moonpayQuote.plusFeeF }}
-            </div>
-            <v-tooltip v-if="!hideMoonpay" location="bottom">
-              <template #activator="{ props }">
-                <v-icon
-                  v-bind="props"
-                  color="grey-lighten-1"
-                  size="x-small"
-                  class="cursor-pointer"
-                >
-                  mdi-information
-                </v-icon>
-              </template>
-              <div class="elevated-box pa-3">
-                {{ moonpayQuote.includesFeeText }}
-                <br />
-                <br />
-                {{ moonpayQuote.networkFeeText }}
-                <br />
-                <br />
-                {{ moonpayQuote.dailyLimit }}
-                <br />
-                {{ moonpayQuote.monthlyLimit }}
+              <div class="d-flex align-center">
+                <span class="mew-heading-3 pl-1 mr-1">{{
+                  selectedCryptoName
+                }}</span>
+                <v-tooltip location="bottom">
+                  <template #activator="{ props }">
+                    <v-icon
+                      v-bind="props"
+                      color="grey-lighten-1"
+                      size="x-small"
+                      class="cursor-pointer"
+                    >
+                      mdi-information
+                    </v-icon>
+                  </template>
+                  <div class="elevated-box pa-3">
+                    {{ moonpayQuote.includesFeeText }}
+                    <br />
+                    <br />
+                    {{ moonpayQuote.networkFeeText }}
+                    <br />
+                    <br />
+                    {{ moonpayQuote.dailyLimit }}
+                    <br />
+                    {{ moonpayQuote.monthlyLimit }}
+                  </div>
+                </v-tooltip>
               </div>
-            </v-tooltip>
+            </div>
           </div>
         </div>
 
@@ -70,7 +61,7 @@
           <img :src="visaIcon" alt="Visa" height="24" class="mr-2" />
           <img :src="masterIcon" alt="Master" height="24" class="mr-2" />
           <img :src="applePayIcon" alt="ApplePay" height="24" class="mr-2" />
-          <img :src="paypalIcon" alt="Paypal" height="24" class="mr-2" />
+          <img :src="paypalIcon" alt="Paypal" height="32" class="mr-2" />
           <img v-if="isEUR" :src="bankIcon" alt="Bank" height="24" />
         </div>
         <div class="mew-label mb-5">
@@ -82,7 +73,6 @@
             class="grey-light greyPrimary--text"
             width="100%"
             variant="flat"
-            :disabled="hideMoonpay || loading"
             @click.native="buy"
             >{{ moonpayBtnTitle }}</v-btn
           >
@@ -92,39 +82,40 @@
       <!-- ============================================================== -->
       <!-- Simplex -->
       <!-- ============================================================== -->
-      <div class="section-block pa-5">
+      <div v-if="disableSimplex" class="section-block pa-5 mb-6">
         <div v-if="!loading" class="mb-3">
           <div class="d-flex mb-1 align-center justify-space-between">
             <div class="d-flex mew-heading-3">
               {{ simplexQuote.cryptoToFiat }}
-              <span class="mew-heading-3 pl-1">{{ selectedCryptoName }}</span>
-            </div>
-          </div>
-          <div class="d-flex align-center">
-            <div class="mr-1">≈ {{ simplexQuote.plusFeeF }}</div>
-            <v-tooltip location="bottom">
-              <template #activator="{ props }">
-                <v-icon
-                  v-bind="props"
-                  color="grey-lighten-1"
-                  size="x-small"
-                  class="cursor-pointer"
-                >
-                  mdi-information
-                </v-icon>
-              </template>
-              <div class="elevated-box pa-3">
-                {{ simplexQuote.includesFeeText }}
-                <br />
-                <br />
-                {{ simplexQuote.networkFeeText }}
-                <br />
-                <br />
-                {{ simplexQuote.dailyLimit }}
-                <br />
-                {{ simplexQuote.monthlyLimit }}
+              <div class="d-flex align-center">
+                <span :class="['mew-heading-3 pl-1 mr-1']">{{
+                  selectedCryptoName
+                }}</span>
+                <v-tooltip location="bottom">
+                  <template #activator="{ props }">
+                    <v-icon
+                      v-bind="props"
+                      color="grey-lighten-1"
+                      size="x-small"
+                      class="cursor-pointer"
+                    >
+                      mdi-information
+                    </v-icon>
+                  </template>
+                  <div class="elevated-box pa-3">
+                    {{ simplexQuote.includesFeeText }}
+                    <br />
+                    <br />
+                    {{ simplexQuote.networkFeeText }}
+                    <br />
+                    <br />
+                    {{ simplexQuote.dailyLimit }}
+                    <br />
+                    {{ simplexQuote.monthlyLimit }}
+                  </div>
+                </v-tooltip>
               </div>
-            </v-tooltip>
+            </div>
           </div>
         </div>
 
@@ -135,7 +126,7 @@
         </div>
 
         <div class="d-flex align-center justify-space-between">
-          <div class="d-flex align-start mb-1">
+          <div class="d-flex align-center mb-1">
             <img :src="visaIcon" alt="Visa" height="24" class="mr-2" />
             <img :src="masterIcon" alt="Master" height="24" class="mr-2" />
           </div>
@@ -149,7 +140,6 @@
         <div class="mew-label mb-5">Visa, Mastercard</div>
         <div>
           <v-btn
-            :disabled="loading"
             size="large"
             class="grey-light greyPrimary--text"
             width="100%"
@@ -162,39 +152,40 @@
       <!-- ============================================================== -->
       <!-- Topper -->
       <!-- ============================================================== -->
-      <div class="section-block pa-5">
+      <div v-if="disableTopper" class="section-block pa-5">
         <div v-if="!loading" class="mb-3">
           <div class="d-flex mb-1 align-center justify-space-between">
             <div class="d-flex mew-heading-3">
               {{ topperQuote.cryptoToFiat }}
-              <span class="mew-heading-3 pl-1">{{ selectedCryptoName }}</span>
-            </div>
-          </div>
-          <div class="d-flex align-center">
-            <div class="mr-1">≈ {{ topperQuote.plusFeeF }}</div>
-            <v-tooltip location="bottom">
-              <template #activator="{ props }">
-                <v-icon
-                  v-bind="props"
-                  color="grey-lighten-1"
-                  size="x-small"
-                  class="cursor-pointer"
-                >
-                  mdi-information
-                </v-icon>
-              </template>
-              <div class="elevated-box pa-3">
-                {{ topperQuote.includesFeeText }}
-                <br />
-                <br />
-                {{ topperQuote.networkFeeText }}
-                <br />
-                <br />
-                {{ topperQuote.dailyLimit }}
-                <br />
-                {{ topperQuote.monthlyLimit }}
+              <div class="d-flex align-center">
+                <span :class="['mew-heading-3 pl-1 mr-1']">{{
+                  selectedCryptoName
+                }}</span>
+                <v-tooltip location="bottom">
+                  <template #activator="{ props }">
+                    <v-icon
+                      v-bind="props"
+                      color="grey-lighten-1"
+                      size="x-small"
+                      class="cursor-pointer"
+                    >
+                      mdi-information
+                    </v-icon>
+                  </template>
+                  <div class="elevated-box pa-3">
+                    {{ topperQuote.includesFeeText }}
+                    <br />
+                    <br />
+                    {{ topperQuote.networkFeeText }}
+                    <br />
+                    <br />
+                    {{ topperQuote.dailyLimit }}
+                    <br />
+                    {{ topperQuote.monthlyLimit }}
+                  </div>
+                </v-tooltip>
               </div>
-            </v-tooltip>
+            </div>
           </div>
         </div>
 
@@ -205,12 +196,17 @@
         </div>
 
         <div class="d-flex align-center justify-space-between">
-          <div class="d-flex align-start mb-1">
+          <div class="d-flex align-center mb-1">
             <img :src="visaIcon" alt="Visa" height="24" class="mr-2" />
             <img :src="masterIcon" alt="Master" height="24" class="mr-2" />
             <img :src="applePayIcon" alt="ApplePay" height="24" class="mr-2" />
-            <img :src="googlePayIcon" alt="Paypal" height="24" class="mr-2" />
-            <img :src="pixIcon" alt="Paypal" height="24" class="mr-2" />
+            <img
+              :src="googlePayIcon"
+              alt="googlePay"
+              height="35"
+              class="mr-2"
+            />
+            <img :src="pixIcon" alt="pixpay" height="24" class="mr-2" />
           </div>
           <img
             class="provider-logo"
@@ -224,7 +220,6 @@
         </div>
         <div>
           <v-btn
-            :disabled="loading"
             size="large"
             class="grey-light greyPrimary--text"
             width="100%"
@@ -233,6 +228,11 @@
             >{{ topperBtnTitle }}</v-btn
           >
         </div>
+      </div>
+
+      <div class="pt-2 text-center mew-label">
+        Fees, availability, and purchase limits vary between providers, you can
+        check their quotes and select one that works for you.
       </div>
     </div>
     <div v-else class="text-center py-5">
@@ -260,6 +260,7 @@ import {
   executeTopperPayment,
 } from "./order";
 import { defineComponent, inject } from "vue";
+import BigNumber from "bignumber.js";
 
 export default defineComponent({
   name: "BuyProviders",
@@ -300,6 +301,10 @@ export default defineComponent({
       type: String,
       default: "",
     },
+    fiatAmount: {
+      type: String,
+      default: "0",
+    },
   },
   setup() {
     const amplitude: any = inject("$amplitude");
@@ -312,63 +317,90 @@ export default defineComponent({
     };
   },
   computed: {
-    selectedFiatName() {
+    selectedFiatName(): string {
       return this.selectedFiat.name;
     },
-    actualAddress() {
+    actualAddress(): string {
       return this.toAddress;
     },
-    selectedCryptoName() {
+    selectedCryptoName(): string {
       return this.selectedCurrency.symbol;
     },
-    isEUR() {
+    isEUR(): boolean {
       return this.selectedFiatName === "EUR" || this.selectedFiatName === "GBP";
     },
-    hideMoonpay() {
-      return this.onlySimplex;
+    disableMoonpay(): boolean {
+      if (
+        BigNumber(
+          this.moonpayQuote.cryptoToFiat.replace(",", "")
+        ).isGreaterThan(0)
+      ) {
+        return BigNumber(this.fiatAmount).gte(this.moonpayQuote.min);
+      }
+      return false;
     },
-    simplexBtnTitle() {
+    disableSimplex(): boolean {
+      if (
+        BigNumber(
+          this.simplexQuote.cryptoToFiat.replace(",", "")
+        ).isGreaterThan(0)
+      ) {
+        return BigNumber(this.fiatAmount).gte(this.simplexQuote.min);
+      }
+      return false;
+    },
+    disableTopper(): boolean {
+      if (
+        BigNumber(this.topperQuote.cryptoToFiat.replace(",", "")).isGreaterThan(
+          0
+        )
+      ) {
+        return BigNumber(this.fiatAmount).gte(this.topperQuote.min);
+      }
+      return false;
+    },
+    simplexBtnTitle(): string {
       return "BUY WITH SIMPLEX";
     },
-    topperBtnTitle() {
+    topperBtnTitle(): string {
       return "BUY WITH TOPPER";
     },
-    moonpayBtnTitle() {
+    moonpayBtnTitle(): string {
       return "BUY WITH MOONPAY";
     },
-    paymentOptionString() {
+    paymentOptionString(): string {
       return `Visa, Mastercard, Apple Pay, Paypal${
         this.isEUR ? ", Bank account" : ""
       }`;
     },
-    visaIcon() {
+    visaIcon(): string {
       return require("@/assets/images/icon-visa.svg");
     },
-    masterIcon() {
+    masterIcon(): string {
       return require("@/assets/images/icon-master.svg");
     },
-    bankIcon() {
+    bankIcon(): string {
       return require("@/assets/images/icon-bank.svg");
     },
-    applePayIcon() {
+    applePayIcon(): string {
       return require("@/assets/images/icon-apple-pay.svg");
     },
-    paypalIcon() {
+    paypalIcon(): string {
       return require("@/assets/images/icon-paypal-logo.svg");
     },
-    googlePayIcon() {
+    googlePayIcon(): string {
       return require("@/assets/images/icon-google-pay-logo.svg");
     },
-    pixIcon() {
-      return require("@/assets/images/icon-pix-logo.jpeg");
+    pixIcon(): string {
+      return require("@/assets/images/icon-pix-logo.svg");
     },
-    simplexLogo() {
+    simplexLogo(): string {
       return require("@/assets/images/icon-simplex.svg");
     },
-    moonpayLogo() {
+    moonpayLogo(): string {
       return require("@/assets/images/icon-moonpay.svg");
     },
-    topperLogo() {
+    topperLogo(): string {
       return require("@/assets/images/icon-topper.png");
     },
   },
@@ -387,7 +419,8 @@ export default defineComponent({
         this.simplexQuote.fiatAmount,
         this.actualAddress
       )
-        .then(() => {
+        .then((data) => {
+          window.open(data, "_blank");
           this.reset(true);
           this.close();
           this.$emit("reset");
@@ -406,7 +439,6 @@ export default defineComponent({
       executeTopperPayment(
         this.selectedFiatName,
         this.selectedCryptoName,
-        this.selectedFiatName,
         this.simplexQuote.fiatAmount,
         this.actualAddress
       )
@@ -445,7 +477,8 @@ export default defineComponent({
         this.moonpayQuote.fiatAmount,
         this.actualAddress
       )
-        .then(() => {
+        .then((data) => {
+          window.open(data, "_blank");
           this.reset(true);
           this.close();
           this.$emit("reset");
@@ -489,6 +522,12 @@ $greyPrimary-base: #5a678a;
 .greyPrimary--text {
   color: $greyPrimary-base !important;
   caret-color: $greyPrimary-base !important;
+}
+
+.provider-text {
+  text-align: center;
+  width: 100%;
+  padding-right: 20px;
 }
 </style>
 <style lang="scss">

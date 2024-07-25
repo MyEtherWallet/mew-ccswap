@@ -20,17 +20,15 @@
       </div>
       <div class="d-flex mt-2">
         <v-text-field
-          style="max-width: 196px"
           class="no-right-border"
           @input="fiatToCrypto"
-          type="number"
           v-model.number="form.fiatAmount"
           required
           variant="outlined"
           :error-messages="loading.alertMessage"
           :disabled="loading.data"
           :rules="rules"
-        ></v-text-field>
+        />
         <v-select
           style="max-width: 130px"
           class="rounded-right no-left-border buy-input"
@@ -61,6 +59,7 @@
               density="compact"
               placeholder="Search"
               @update:model-value="updateFiatFilter"
+              @click.stop="() => {}"
             ></v-text-field>
           </template>
           <template #item="data">
@@ -95,7 +94,6 @@
         <v-text-field
           class="no-right-border"
           @input="cryptoToFiat"
-          type="number"
           v-model.number="form.cryptoAmount"
           required
           variant="outlined"
@@ -474,14 +472,22 @@ const networkFeeText = computed(() => {
       .value
   }`;
 });
-const dailyLimit = (isMoonpay = false) => {
+const dailyLimit = (provider: string) => {
   const simplexMax = isValidData(simplexData)
     ? simplexData[form.cryptoSelected].limits[form.fiatSelected].max
     : 0;
   const moonpayMax = isValidData(moonpayData)
     ? moonpayData[form.cryptoSelected].limits[form.fiatSelected].max
     : 0;
-  const value = isMoonpay ? moonpayMax : simplexMax;
+  const topperMax = isValidData(topperData)
+    ? topperData[form.cryptoSelected].limits[form.fiatSelected].max
+    : 0;
+  const value =
+    provider === "moonpay"
+      ? moonpayMax
+      : provider === "simplex"
+      ? simplexMax
+      : topperMax;
   return `Daily limit: ${
     formatFiatValue(value.toString(), currencyConfig.value).value
   }`;
@@ -496,7 +502,8 @@ const currencyConfig = computed(() => {
   const fiat = form.fiatSelected;
   const rate =
     moonpayData[form.cryptoSelected]?.conversion_rates[fiat] ||
-    simplexData[form.cryptoSelected]?.conversion_rates[fiat];
+    simplexData[form.cryptoSelected]?.conversion_rates[fiat] ||
+    topperData[form.cryptoSelected]?.conversion_rates[fiat];
   const currency = fiat;
   return { locale: "en-US", rate, currency };
 });
@@ -522,9 +529,22 @@ const priceOb = computed(() => {
     : simplexData[form.cryptoSelected].prices[form.fiatSelected];
 });
 const networkPrice = computed(() => {
-  return isValidData(moonpayData)
-    ? moonpayData[props.networkSelected.currencyName].prices[form.fiatSelected]
-    : simplexData[props.networkSelected.currencyName].prices[form.fiatSelected];
+  const moonpayPrice = isValidData(moonpayData)
+    ? moonpayData[form.cryptoSelected]?.prices[form.fiatSelected]
+    : undefined;
+  const simplexPrice = isValidData(simplexData)
+    ? simplexData[form.cryptoSelected]?.prices[form.fiatSelected]
+    : undefined;
+  const topperPrice = isValidData(topperData)
+    ? topperData[form.cryptoSelected]?.prices[form.fiatSelected]
+    : undefined;
+  return moonpayPrice
+    ? moonpayPrice
+    : simplexPrice
+    ? simplexPrice
+    : topperPrice
+    ? topperPrice
+    : "0";
 });
 const networkFeeToFiat = computed(() => {
   return fromWei(
@@ -572,7 +592,7 @@ const moonpayCryptoAmount = computed(() => {
     ? formatFloatingPointValue(
         BigNumber(plusFee.value).div(priceOb.value).toString()
       ).value
-    : 0;
+    : "0";
 });
 
 const fiatCurrency = computed(() => {
@@ -590,23 +610,31 @@ const topperPrice = computed(() => {
       : 0
   );
 });
+const topperNetworkFeeText = computed(() => {
+  return `${form.cryptoSelected} network fee (for transfers to your wallet) ~${
+    formatFiatValue("0.2", currencyConfig.value).value
+  }`;
+});
 const topperFiatAmount = computed(() => {
   return topperAvailable.value ? form.fiatAmount : "0.00";
 });
 const topperFiatFee = computed(() => {
-  const { cryptoAmount } = form;
   return topperAvailable.value
     ? BigNumber(topperFiatAmount.value)
-        .times(cryptoAmount)
         .times(0.029)
         .toFixed(fiatCurrency.value.decimals)
     : 0;
 });
+const topperMewFiatFee = computed(() => {
+  return BigNumber(topperFiatAmount.value)
+    .times(0.0175)
+    .toFixed(fiatCurrency.value.decimals);
+});
 const topperPlusFee = computed(() => {
   return BigNumber(topperFiatAmount.value)
     .minus(topperFiatFee.value)
-    .minus(BigNumber(topperFiatAmount.value).times(0.025))
-    .minus(0.6) // temp network fee
+    .minus(BigNumber(topperMewFiatFee.value))
+    .minus(0.2) // temp network fee
     .toFixed(fiatCurrency.value.decimals);
 });
 const topperPlusFeeF = computed(() => {
@@ -616,16 +644,15 @@ const topperPlusFeeF = computed(() => {
 });
 
 const topperIncludesFeeText = computed(() => {
-  return `Includes 2.9% Topper fee  and 2.5% MyEtherWallet fee. (${
-    formatFiatValue(BigNumber(10.0).toString(), currencyConfig.value).value
-  } min)`;
+  return `Includes 4.65% fee. First transaction is free.`;
 });
 
 const topperCryptoAmount = computed(() => {
-  const amount = BigNumber(topperPlusFee.value || "0"); // 60 cents network fee
+  const amount = BigNumber(topperPlusFee.value || "0");
   return topperAvailable.value
-    ? formatFloatingPointValue(amount.dividedBy(topperPrice.value).toString())
-        .value
+    ? formatFloatingPointValue(
+        amount.dividedBy(topperPrice.value.toFixed(2)).toString()
+      ).value
     : 0;
 });
 
@@ -751,11 +778,11 @@ const min = computed(() => {
   if (!isValidData(simplexData)) return moonpayLimit.min;
   if (!isValidData(simplexData) && !isValidData(moonpayData))
     return topperLimit.min;
-  return moonpayLimit.min < simplexLimit.min ||
-    moonpayLimit.min < topperLimit.min
-    ? moonpayLimit.min
-    : simplexLimit.min < topperLimit.min
+  return simplexLimit.min < moonpayLimit.min ||
+    simplexLimit.min < topperLimit.min
     ? simplexLimit.min
+    : moonpayLimit.min < topperLimit.min
+    ? moonpayLimit.min
     : topperLimit.min;
 });
 const max = computed(() => {
@@ -882,15 +909,28 @@ const bestPrice = computed(() => {
   const moonpayPrice = new BigNumber(
     moonpayData[cryptoSelected]?.prices[fiatSelected]
   );
-  if (moonpayPrice.isNaN()) return simplexPrice;
-  if (simplexPrice.isNaN()) return moonpayPrice;
-  return simplexPrice.lte(moonpayPrice) ? simplexPrice : moonpayPrice;
+  const topperPrice = new BigNumber(
+    topperData[cryptoSelected]?.prices[fiatSelected]
+  );
+
+  if (moonpayPrice.isNaN() && topperPrice.isNaN()) return simplexPrice;
+  if (simplexPrice.isNaN() && topperPrice.isNaN()) return moonpayPrice;
+  if (simplexPrice.isNaN() && moonpayPrice.isNaN()) return topperPrice;
+  return simplexPrice.lte(moonpayPrice)
+    ? simplexPrice
+    : moonpayPrice.lte(topperPrice)
+    ? moonpayPrice
+    : topperPrice;
 });
 
 const fiatToCrypto = () => {
-  const price = new BigNumber(bestPrice.value || "0");
-  const amount = new BigNumber(form.fiatAmount || "0");
-  form.cryptoAmount = BigNumber(amount).div(price).toString();
+  if (!isNaN(parseInt(form.fiatAmount))) {
+    const price = new BigNumber(bestPrice.value || "0");
+    const amount = new BigNumber(form.fiatAmount || "0");
+    form.cryptoAmount = BigNumber(amount).div(price).toString();
+  } else {
+    loading.alertMessage = "Please provide a valid fiat amount";
+  }
 };
 
 const cryptoToFiat = () => {
@@ -1043,32 +1083,35 @@ const submitForm = (): void => {
       cryptoToFiat: topperCryptoAmount.value,
       selectedCryptoName: cryptoSelected,
       plusFeeF: topperPlusFeeF.value,
-      includesFeeText: topperIncludesFeeText,
-      networkFeeText: networkFeeText,
-      dailyLimit: dailyLimit(),
+      includesFeeText: topperIncludesFeeText.value,
+      networkFeeText: topperNetworkFeeText.value,
+      dailyLimit: dailyLimit("topper"),
       monthlyLimit: monthlyLimit(),
       fiatAmount: topperFiatAmount.value,
+      min: topperData[cryptoSelected]?.limits[fiatSelected]?.min || 50,
     },
     simplex_quote: {
       cryptoToFiat: simplexCryptoAmount.value,
       selectedCryptoName: cryptoSelected,
       plusFeeF: simplexPlusFeeF.value,
-      includesFeeText: simplexIncludesFeeText,
-      networkFeeText: networkFeeText,
-      dailyLimit: dailyLimit(),
+      includesFeeText: simplexIncludesFeeText.value,
+      networkFeeText: networkFeeText.value,
+      dailyLimit: dailyLimit("simplex"),
       monthlyLimit: monthlyLimit(),
       fiatAmount: simplexFiatAmount.value,
+      min: simplexData[cryptoSelected]?.limits[fiatSelected]?.min || 50,
     },
     address: address,
     moonpay_quote: {
-      cryptoToFiat: moonpayCryptoAmount,
+      cryptoToFiat: moonpayCryptoAmount.value,
       selectedCryptoName: cryptoSelected,
-      plusFeeF: plusFeeF,
-      includesFeeText: includesFeeText,
-      networkFeeText: networkFeeText,
-      dailyLimit: dailyLimit(true),
+      plusFeeF: plusFeeF.value,
+      includesFeeText: includesFeeText.value,
+      networkFeeText: networkFeeText.value,
+      dailyLimit: dailyLimit("moonpay"),
       monthlyLimit: monthlyLimit(),
       fiatAmount: moonpayFiatAmount,
+      min: moonpayData[cryptoSelected]?.limits[fiatSelected]?.min || 50,
     },
     open_providers: 2,
     selected_currency: props.cryptoSelected,
