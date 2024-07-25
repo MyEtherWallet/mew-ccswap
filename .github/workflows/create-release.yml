@@ -18,7 +18,5 @@ jobs:
           node-version: "18"
       - name: Install dependencies
         run: yarn install
-      - name: Create build
-        run: yarn build:release
-      - name: deploy to github pages
-        run: yarn publish-gh-pages
+      - name: Create build and release
+        run: yarn build:release && yarn publish-gh-pages
