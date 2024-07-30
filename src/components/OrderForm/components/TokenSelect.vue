@@ -258,13 +258,13 @@ const networkList = computed<Network[]>(() => {
 });
 
 const filteredNetworkList = computed<Network[]>(() => {
-  const withTokensNetwork = networkList.value
-    .filter((network) => {
-      if (network.tokens.length > 0) return network;
-    })
-    .filter((network) => {
-      if (hasValidPrices(network.name)) return network;
-    });
+  const withTokensNetwork = networkList.value;
+  // .filter((network) => {
+  //   if (network.tokens.length > 0) return network;
+  // })
+  // .filter((network) => {
+  //   if (hasValidPrices(network.name)) return network;
+  // });
   const filter = networkSearchInput.value.toLowerCase();
   return withTokensNetwork.filter((network) => {
     if (
