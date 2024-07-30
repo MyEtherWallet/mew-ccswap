@@ -607,7 +607,7 @@ const topperPrice = computed(() => {
   return new BigNumber(
     topperAvailable.value
       ? topperData[form.cryptoSelected]?.prices[form.fiatSelected]
-      : 0
+      : "0"
   );
 });
 const topperNetworkFeeText = computed(() => {
@@ -653,7 +653,7 @@ const topperCryptoAmount = computed(() => {
     ? formatFloatingPointValue(
         amount.dividedBy(topperPrice.value.toFixed(2)).toString()
       ).value
-    : 0;
+    : "0";
 });
 
 /**
@@ -1088,6 +1088,8 @@ const submitForm = (): void => {
       dailyLimit: dailyLimit("topper"),
       monthlyLimit: monthlyLimit(),
       fiatAmount: topperFiatAmount.value,
+      fiatAmountF: formatFiatValue(topperFiatAmount.value, currencyConfig.value)
+        .value,
       min: topperData[cryptoSelected]?.limits[fiatSelected]?.min || 50,
     },
     simplex_quote: {
@@ -1099,6 +1101,10 @@ const submitForm = (): void => {
       dailyLimit: dailyLimit("simplex"),
       monthlyLimit: monthlyLimit(),
       fiatAmount: simplexFiatAmount.value,
+      fiatAmountF: formatFiatValue(
+        simplexFiatAmount.value,
+        currencyConfig.value
+      ).value,
       min: simplexData[cryptoSelected]?.limits[fiatSelected]?.min || 50,
     },
     address: address,
@@ -1111,6 +1117,8 @@ const submitForm = (): void => {
       dailyLimit: dailyLimit("moonpay"),
       monthlyLimit: monthlyLimit(),
       fiatAmount: moonpayFiatAmount,
+      fiatAmountF: formatFiatValue(moonpayFiatAmount, currencyConfig.value)
+        .value,
       min: moonpayData[cryptoSelected]?.limits[fiatSelected]?.min || 50,
     },
     open_providers: 2,

@@ -41,6 +41,7 @@ interface QuoteData {
   dailyLimit: string;
   monthlyLimit: string;
   fiatAmount: string;
+  fiatAmountF: string;
 }
 interface SubmitData {
   simplex_quote: QuoteData;
