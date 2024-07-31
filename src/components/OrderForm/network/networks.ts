@@ -95,50 +95,6 @@ export const Networks = <Array<Network>>[
     password: '',
   },
   {
-    name: 'BNB',
-    name_long: 'Binance Smart Chain',
-    chainID: 56,
-    tokens: [
-      {
-        img: require('@/assets/images/crypto/FDUSD-SC.png'),
-        name: 'First Digital USD',
-        subtext: 'First Digital USD',
-        value: 'First Digital USD',
-        symbol: 'FDUSD-SC',
-        network: 'BNB',
-        decimals: 18
-      },
-      {
-        img: getIcon('USDC'),
-        name: 'USD Coin (Binance Pegged)',
-        subtext: 'USD Coin (Binance Pegged)',
-        value: 'USD Coin (Binance Pegged)',
-        symbol: 'USDC-SC',
-        network: 'BNB',
-        decimals: 18
-      },
-      {
-        img: getIcon('USDT'),
-        name: 'Tether USD (Binance Smart Chain)',
-        subtext: 'Tether USD (Binance Smart Chain)',
-        value: 'Tether USD (Binance Smart Chain)',
-        symbol: 'USDT-SC',
-        network: 'BNB',
-        decimals: 18
-      },
-    ],
-    icon: getIcon('BNB'),
-    currencyName: 'BNB',
-    gasPriceMultiplier: 1,
-    coingeckoID: 'binancecoin',
-    service: 'myetherwallet.com-ws',
-    url: 'wss://nodes.mewapi.io/ws/bsc',
-    port: 443,
-    auth: false,
-    username: '',
-    password: '',
-  },
-  {
     name: 'MATIC',
     name_long: 'Polygon (Matic)',
     chainID: 137,

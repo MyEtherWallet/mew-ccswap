@@ -8,7 +8,7 @@
       <div class="mew-heading-2 provider-text">Select provider</div>
     </div>
     <div class="mew-heading-2 font-weight-regular pb-2">
-      Spending <b>{{ topperQuote.plusFeeF }}</b>
+      Spending <b>{{ formattedFiat }}</b>
     </div>
     <div v-if="!processingBuy">
       <!-- ============================================================== -->
@@ -317,6 +317,13 @@ export default defineComponent({
     };
   },
   computed: {
+    formattedFiat(): string {
+      return (
+        this.simplexQuote.fiatAmountF ||
+        this.moonpayQuote.fiatAmountF ||
+        this.topperQuote.fiatAmountF
+      );
+    },
     selectedFiatName(): string {
       return this.selectedFiat.name;
     },
