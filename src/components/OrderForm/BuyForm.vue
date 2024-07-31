@@ -882,20 +882,21 @@ const kdaValidator = (address: string) => {
 };
 
 const addressValid = computed(() => {
+  const address = form.address.toLowerCase();
   return other_chains.includes(form.cryptoSelected)
     ? form.cryptoSelected === "KDA"
-      ? kdaValidator(form.address)
-      : WAValidator.validate(form.address, form.cryptoSelected)
+      ? kdaValidator(address)
+      : WAValidator.validate(address, form.cryptoSelected)
     : !polkadot_chains.includes(form.cryptoSelected)
     ? bitcoin_chains.includes(form.cryptoSelected)
-      ? WAValidator.validate(form.address, form.cryptoSelected)
+      ? WAValidator.validate(address, form.cryptoSelected)
       : props.networkSelected.name === "OP" ||
         props.networkSelected.name === "ARB"
-      ? WAValidator.validate(form.address, "ETH")
-      : WAValidator.validate(form.address, props.networkSelected.name) &&
-        validAddress(form.address)
+      ? WAValidator.validate(address, "ETH")
+      : WAValidator.validate(address, props.networkSelected.name) &&
+        validAddress(address)
     : isValidAddressPolkadotAddress(
-        form.address,
+        address,
         form.cryptoSelected === "DOT" ? 0 : 2
       );
 });
