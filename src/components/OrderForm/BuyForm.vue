@@ -409,6 +409,7 @@ onUnmounted(async () => {
 watch(
   () => form.cryptoSelected,
   () => {
+    console.log(form.cryptoSelected);
     verifyAddress();
     fiatToCrypto();
     minMaxError();
@@ -883,6 +884,7 @@ const kdaValidator = (address: string) => {
 
 const addressValid = computed(() => {
   const address = form.address.toLowerCase();
+  console.log(form.cryptoSelected, props.networkSelected.name);
   return other_chains.includes(form.cryptoSelected)
     ? form.cryptoSelected === "KDA"
       ? kdaValidator(address)
@@ -893,7 +895,7 @@ const addressValid = computed(() => {
       : props.networkSelected.name === "OP" ||
         props.networkSelected.name === "ARB"
       ? WAValidator.validate(address, "ETH")
-      : WAValidator.validate(address, props.networkSelected.name) &&
+      : WAValidator.validate(address, form.cryptoSelected) &&
         validAddress(address)
     : isValidAddressPolkadotAddress(
         address,
@@ -1108,7 +1110,7 @@ const submitForm = (): void => {
       ).value,
       min: simplexData[cryptoSelected]?.limits[fiatSelected]?.min || 50,
     },
-    address: address,
+    address: address.toLowerCase(),
     moonpay_quote: {
       cryptoToFiat: moonpayCryptoAmount.value,
       selectedCryptoName: cryptoSelected,
