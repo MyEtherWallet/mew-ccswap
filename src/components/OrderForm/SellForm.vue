@@ -858,7 +858,6 @@ const concatenate = (value: string) => {
 .components--sell-form {
   .v-field__outline__end,
   .v-field__outline__notch::after,
-  ,
   .v-field__outline__start {
     border-color: #c2c2c2 !important;
   }
