@@ -146,6 +146,7 @@
         label=""
         :is-valid-address="form.validAddress"
         placeholder="Enter Crypto Address"
+        :network="props.networkSelected"
         @keyup="verifyAddress"
         @changed="addressInput"
       />
@@ -856,8 +857,10 @@ const concatenate = (value: string) => {
 <style lang="scss">
 .components--sell-form {
   .v-field__outline__end,
+  .v-field__outline__notch::after,
+  ,
   .v-field__outline__start {
-    border-color: #c2c2c2;
+    border-color: #c2c2c2 !important;
   }
   .no-right-border {
     .v-field__outline__end {

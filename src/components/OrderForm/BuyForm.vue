@@ -140,9 +140,9 @@
         :modelValue="form.address"
         :error-messages="form.addressErrorMsg"
         :autofocus="false"
-        label=""
-        :is-valid-address="form.validAddress"
+        :is-valid-address="addressValid"
         placeholder="Enter Crypto Address"
+        :network="props.networkSelected"
         @keyup="verifyAddress"
         @changed="addressInput"
       />
@@ -1177,13 +1177,6 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
-// Adjust (text field) prefix font size
-.v-messages__message {
-  font-weight: 300;
-  font-size: 0.9rem;
-  color: red;
-}
-
 .v-combobox__selection-text {
   white-space: nowrap;
   overflow: hidden;
@@ -1192,8 +1185,9 @@ input::-webkit-inner-spin-button {
 
 .components--buy-form {
   .v-field__outline__end,
+  .v-field__outline__notch::after,
   .v-field__outline__start {
-    border-color: #c2c2c2;
+    border-color: #c2c2c2 !important;
   }
   .no-right-border {
     .v-field__outline__end {
