@@ -95,4 +95,17 @@ interface PriceItem {
     limits: Array<Limits>;
     name: string;
 }
-export { Crypto, Fiat, QuoteData, SubmitData, Network, Data, PriceItem }
+
+
+interface NameResolver {
+    resolveAddress(name: string, type: string): Promise<string>;
+}
+
+interface resolvedName {
+    name: string;
+}
+
+export {
+    Crypto, Fiat, QuoteData, SubmitData, Network, Data, PriceItem, NameResolver,
+    resolvedName
+}

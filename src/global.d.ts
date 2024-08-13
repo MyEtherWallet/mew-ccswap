@@ -9,3 +9,5 @@ declare module "multicoin-address-validator";
 interface Window {
   open: any;
 }
+
+declare module "eth-ens-namehash";

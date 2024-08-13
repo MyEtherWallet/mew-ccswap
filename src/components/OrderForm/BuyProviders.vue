@@ -258,7 +258,7 @@ import {
   executeSimplexPayment,
   executeMoonpayBuy,
   executeTopperPayment,
-} from "./order";
+} from "./handler/order";
 import { defineComponent, inject } from "vue";
 import BigNumber from "bignumber.js";
 

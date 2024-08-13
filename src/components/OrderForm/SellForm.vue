@@ -144,7 +144,6 @@
         :error-messages="form.addressErrorMsg"
         :autofocus="false"
         label=""
-        :items="addressBook"
         :is-valid-address="form.validAddress"
         placeholder="Enter Crypto Address"
         @keyup="verifyAddress"
@@ -220,8 +219,8 @@ import {
   inject,
 } from "vue";
 import BigNumber from "bignumber.js";
-import { supportedFiat, getCryptoSellPrices } from "./prices";
-import { executeMoonpaySell } from "./order";
+import { supportedFiat, getCryptoSellPrices } from "./handler/prices";
+import { executeMoonpaySell } from "./handler/order";
 import { isObject, isNumber, isString, isEmpty } from "lodash";
 import WAValidator from "multicoin-address-validator";
 import { isHexStrict, isAddress, fromWei, toBN } from "web3-utils";
@@ -289,15 +288,6 @@ let moonpayData: { [key: string]: Data } = {
     prices: {},
   },
 };
-
-const addressBook = [
-  {
-    address: "0xDECAF9CD2367cdbb726E904cD6397eDFcAe6068D",
-    currency: "ETH",
-    nickname: "MEW Donations",
-    resolvedAddr: "0xDECAF9CD2367cdbb726E904cD6397eDFcAe6068D",
-  },
-];
 
 const emit = defineEmits([
   "success",

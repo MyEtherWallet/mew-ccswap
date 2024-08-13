@@ -206,7 +206,7 @@ import {
   supportedFiat,
   getCryptoPrices,
   currencySymbols,
-} from "./prices";
+} from "./handler/prices";
 import { isObject, isNumber, isString, isEmpty } from "lodash";
 import WAValidator from "multicoin-address-validator";
 import { isHexStrict, isAddress, fromWei, toBN, isHex } from "web3-utils";
@@ -257,7 +257,7 @@ const props = defineProps({
 });
 
 // data
-const defaultFiatValue = "0";
+const defaultFiatValue = "300";
 let gasPrice = "0";
 const polkadot_chains = ["DOT", "KSM"];
 const bitcoin_chains = ["BTC", "BCH", "DOGE", "LTC"];
@@ -361,7 +361,7 @@ let topperData: { [key: string]: Data } = {
 const form = reactive({
   fiatAmount: defaultFiatValue,
   fiatSelected: "USD",
-  cryptoAmount: "1",
+  cryptoAmount: "0",
   cryptoSelected: "ETH",
   address: "",
   validAddress: false,
@@ -399,6 +399,7 @@ onMounted(async () => {
   }
   await fetchGasPrice();
   priceTimer = setInterval(getPrices, 1000 * 60 * 2);
+  fiatToCrypto();
 });
 
 onUnmounted(async () => {
@@ -409,7 +410,6 @@ onUnmounted(async () => {
 watch(
   () => form.cryptoSelected,
   () => {
-    console.log(form.cryptoSelected);
     verifyAddress();
     fiatToCrypto();
     minMaxError();
@@ -744,7 +744,6 @@ const selectCurrency = (currency: string) => {
 
 const isValidForm = computed(() => {
   return (
-    minMax.value &&
     form.fiatSelected &&
     form.cryptoSelected &&
     form.address &&
@@ -803,30 +802,23 @@ const max = computed(() => {
     ? simplexLimit.max
     : topperLimit.max;
 });
-const minMax = computed(() => {
-  const { fiatAmount } = form;
-  if (!hasData()) return false;
-  const limit = { min: min.value, max: max.value };
-  const amount = new BigNumber(fiatAmount || 0);
-  const valid =
-    amount.gte(new BigNumber(limit.min)) &&
-    amount.lte(new BigNumber(limit.max));
-  return valid;
-});
 
 const minMaxError = () => {
-  const limit = { min: min.value, max: max.value };
+  const amount = new BigNumber(form.fiatAmount);
+  const valid =
+    amount.gte(new BigNumber(min.value)) &&
+    amount.lte(new BigNumber(max.value));
   if (bestPrice.value.toString() === "NaN") {
     loading.showAlert = true;
     loading.alertMessage = `No price data available for ${form.cryptoSelected}.`;
     return;
   }
 
-  if (!minMax.value) {
+  if (!valid) {
     loading.showAlert = true;
     loading.alertMessage = `Fiat price must be between ${
       currencySymbols[form.fiatSelected]
-    }${limit.min} and ${currencySymbols[form.fiatSelected]}${limit.max}`;
+    }${min.value} and ${currencySymbols[form.fiatSelected]}${max.value}`;
     return;
   }
   loading.showAlert = false;
@@ -884,7 +876,6 @@ const kdaValidator = (address: string) => {
 
 const addressValid = computed(() => {
   const address = form.address.toLowerCase();
-  console.log(form.cryptoSelected, props.networkSelected.name);
   return other_chains.includes(form.cryptoSelected)
     ? form.cryptoSelected === "KDA"
       ? kdaValidator(address)
@@ -928,8 +919,12 @@ const bestPrice = computed(() => {
 
 const fiatToCrypto = () => {
   if (!isNaN(parseInt(form.fiatAmount))) {
-    const price = new BigNumber(bestPrice.value || "0");
-    const amount = new BigNumber(form.fiatAmount || "0");
+    const price = bestPrice.value
+      ? new BigNumber(bestPrice.value)
+      : BigNumber("0");
+    const amount = form.fiatAmount
+      ? new BigNumber(form.fiatAmount)
+      : BigNumber("0");
     form.cryptoAmount = BigNumber(amount).div(price).toString();
   } else {
     loading.alertMessage = "Please provide a valid fiat amount";
