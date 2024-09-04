@@ -766,7 +766,11 @@ const isValidData = (data: { [key: string]: Data }) => {
   return !isEmpty(data[cryptoSelected]?.limits[fiatSelected]);
 };
 const hasData = () => {
-  return isValidData(simplexData) || isValidData(moonpayData);
+  return (
+    isValidData(simplexData) ||
+    isValidData(moonpayData) ||
+    isValidData(topperData)
+  );
 };
 const min = computed(() => {
   const { cryptoSelected, fiatSelected } = form;
@@ -774,8 +778,8 @@ const min = computed(() => {
   const simplexLimit = simplexData[cryptoSelected]?.limits[fiatSelected];
   const moonpayLimit = moonpayData[cryptoSelected]?.limits[fiatSelected];
   const topperLimit = topperData[cryptoSelected]?.limits[fiatSelected];
-  if (!isValidData(moonpayData)) return simplexLimit.min;
-  if (!isValidData(simplexData)) return moonpayLimit.min;
+  if (!isValidData(moonpayData) && simplexLimit) return simplexLimit.min;
+  if (!isValidData(simplexData) && moonpayLimit) return moonpayLimit.min;
   if (!isValidData(simplexData) && !isValidData(moonpayData))
     return topperLimit.min;
   return simplexLimit.min < moonpayLimit.min ||
@@ -791,10 +795,12 @@ const max = computed(() => {
   const simplexLimit = simplexData[cryptoSelected]?.limits[fiatSelected];
   const moonpayLimit = moonpayData[cryptoSelected]?.limits[fiatSelected];
   const topperLimit = topperData[cryptoSelected]?.limits[fiatSelected];
-  if (!isValidData(moonpayData)) return simplexLimit.max;
-  if (!isValidData(simplexData)) return moonpayLimit.max;
+
+  if (!isValidData(moonpayData) && simplexLimit) return simplexLimit.max;
+  if (!isValidData(simplexData) && moonpayLimit) return moonpayLimit.max;
   if (!isValidData(simplexData) && !isValidData(moonpayData))
     return topperLimit.max;
+
   return moonpayLimit.max > simplexLimit.max ||
     moonpayLimit.max > topperLimit.max
     ? moonpayLimit.max
