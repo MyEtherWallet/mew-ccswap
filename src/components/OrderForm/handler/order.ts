@@ -1,8 +1,8 @@
 import axios from "axios";
 import { getSimplexQuote, getTopperUrl } from "./prices";
 import { sha3 } from "web3-utils";
-const API = "https://mainnet.mewwallet.dev";
-const apiOrder = "https://mainnet.mewwallet.dev/purchase/simplex/order";
+import api from './api';
+const apiOrder = `${api.endpoint}purchase/simplex/order`;
 
 // ===================================================================================================
 // Get the quote confirmed by Simplex
@@ -28,7 +28,7 @@ async function submitForm(form: any) {
     0,
     42
   )}`;
-  const url = `${API}/v2/purchase/simplex/order?id=${id}&fiatCurrency=${form["fiat_total_amount[currency]"]}&requestedCurrency=${form["fiat_total_amount[currency]"]}&requestedAmount=${form["fiat_total_amount[amount]"]}&address=${form["destination_wallet[address]"]}&cryptoCurrency=${form["destination_wallet[currency]"]}`;
+  const url = `${api.endpoint}/v2/purchase/simplex/order?id=${id}&fiatCurrency=${form["fiat_total_amount[currency]"]}&requestedCurrency=${form["fiat_total_amount[currency]"]}&requestedAmount=${form["fiat_total_amount[amount]"]}&address=${form["destination_wallet[address]"]}&cryptoCurrency=${form["destination_wallet[currency]"]}`;
   return url;
 }
 
@@ -100,7 +100,7 @@ async function executeMoonpayBuy(tokenSymbol: string, fiatCurrency: string, amou
   const q = window.location.search;
   const platform = q.includes('platform=enkrypt') ? 'enkrypt' : 'web';
   return new Promise<string>(resolve => {
-    let link = `${API}/v3/purchase/moonpay/order?address=${address}&id=${id}&cryptoCurrency=${tokenSymbol}&fiatCurrency=${fiatCurrency}&platform=${platform}`;
+    let link = `${api.endpoint}/v3/purchase/moonpay/order?address=${address}&id=${id}&cryptoCurrency=${tokenSymbol}&fiatCurrency=${fiatCurrency}&platform=${platform}`;
     if (amount) {
       link += `&requestedAmount=${amount}`;
     }
@@ -118,7 +118,7 @@ async function executeMoonpaySell(tokenSymbol: string, amount: string, address: 
   const platform = q.includes('platform=enkrypt') ? 'enkrypt' : 'web';
   return new Promise<string>(resolve => {
     const parsedUrl = encodeURI(
-      `${API}/v3/sell/moonpay/order?address=${address}&id=${id}&cryptoCurrency=${tokenSymbol}&requestedAmount=${amount}&platform=${platform}`
+      `${api.endpoint}/v3/sell/moonpay/order?address=${address}&id=${id}&cryptoCurrency=${tokenSymbol}&requestedAmount=${amount}&platform=${platform}`
     );
     resolve(parsedUrl);
   });

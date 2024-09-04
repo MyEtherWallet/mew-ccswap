@@ -318,11 +318,12 @@ export default defineComponent({
   },
   computed: {
     formattedFiat(): string {
-      return (
-        this.simplexQuote.fiatAmountF ||
-        this.moonpayQuote.fiatAmountF ||
-        this.topperQuote.fiatAmountF
-      );
+      const amount = BigNumber(this.simplexQuote.cryptoToFiat).isGreaterThan(0)
+        ? this.simplexQuote.fiatAmountF
+        : BigNumber(this.moonpayQuote.cryptoToFiat).isGreaterThan(0)
+        ? this.moonpayQuote.fiatAmountF
+        : this.topperQuote.fiatAmountF;
+      return amount;
     },
     selectedFiatName(): string {
       return this.selectedFiat.name;

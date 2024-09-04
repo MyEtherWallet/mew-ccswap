@@ -261,7 +261,7 @@ const defaultFiatValue = "300";
 let gasPrice = "0";
 const polkadot_chains = ["DOT", "KSM"];
 const bitcoin_chains = ["BTC", "BCH", "DOGE", "LTC"];
-const other_chains = ["KDA"];
+const other_chains = ["KDA", "SOL"];
 // eslint-disable-next-line no-undef
 let priceTimer: NodeJS.Timer;
 let fiatFilter = "";
@@ -1078,7 +1078,7 @@ const submitForm = (): void => {
   const moonpayFiatAmount = moonpayAvailable ? fiatAmount : "0.00";
   emit("success", {
     topper_quote: {
-      cryptoToFiat: topperCryptoAmount.value,
+      cryptoToFiat: BigNumber(topperCryptoAmount.value).toString(),
       selectedCryptoName: cryptoSelected,
       plusFeeF: topperPlusFeeF.value,
       includesFeeText: topperIncludesFeeText.value,
@@ -1091,7 +1091,7 @@ const submitForm = (): void => {
       min: topperData[cryptoSelected]?.limits[fiatSelected]?.min || 50,
     },
     simplex_quote: {
-      cryptoToFiat: simplexCryptoAmount.value,
+      cryptoToFiat: BigNumber(simplexCryptoAmount.value).toString(),
       selectedCryptoName: cryptoSelected,
       plusFeeF: simplexPlusFeeF.value,
       includesFeeText: simplexIncludesFeeText.value,
@@ -1107,7 +1107,7 @@ const submitForm = (): void => {
     },
     address: address.toLowerCase(),
     moonpay_quote: {
-      cryptoToFiat: moonpayCryptoAmount.value,
+      cryptoToFiat: BigNumber(moonpayCryptoAmount.value).toString(),
       selectedCryptoName: cryptoSelected,
       plusFeeF: plusFeeF.value,
       includesFeeText: includesFeeText.value,

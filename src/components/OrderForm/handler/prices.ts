@@ -1,8 +1,7 @@
 import axios from "axios";
 import { toNumber } from "lodash";
 import { sha3 } from "web3-utils";
-const API = "https://mainnet.mewwallet.dev";
-// const API = "https://development.mewwallet.dev";
+import api from './api';
 
 const supportedCrypto = ["ETH", "BTC", "BCH", "MATIC", "USDT", "USDC", "DAI", "DOT", "KSM", "KDA", "PYUSD", "BSC", "OP", "ARB", 'TUSD',
   'FDUSD-SC',
@@ -11,7 +10,9 @@ const supportedCrypto = ["ETH", "BTC", "BCH", "MATIC", "USDT", "USDC", "DAI", "D
   'USDC-MATIC',
   'USDT-MATIC',
   'USDT-ARBITRUM',
-  'USDT-OPTIMISM']
+  'USDT-OPTIMISM',
+  'SOL', 'DOGE', 'LTC'
+];
 
 const supportedFiat = ["USD", "EUR", "JPY", "AUD", "CAD", "GBP"];
 // const supportedFiat = [
@@ -51,7 +52,7 @@ async function getSimplexQuote(
   requestedAmount: string,
   address = "0xDECAF9CD2367cdbb726E904cD6397eDFcAe6068D"
 ) {
-  const apiQuote = `${API}/purchase/simplex/quote`;
+  const apiQuote = `${api.endpoint}/purchase/simplex/quote`;
 
   return await axios
     .get(apiQuote, {
@@ -76,7 +77,7 @@ async function getTopperUrl(
   requestedAmount: string,
   address = "0xDECAF9CD2367cdbb726E904cD6397eDFcAe6068D"
 ) {
-  const apiQuote = `${API}/v3/purchase/topper/order`;
+  const apiQuote = `${api.endpoint}/v3/purchase/topper/order`;
 
   return await axios
     .get(apiQuote, {
@@ -101,9 +102,9 @@ const filterData = (res: any) => {
 };
 
 async function getCryptoPrices(
-  cryptoCurrency?: "ETH" | "BTC" | "BCH" | "LTC" | "DOGE" | "MATIC" | "USDT" | "USDC" | "DAI" | "DOT" | "KSM" | "KDA" | "PYUSD" | "OP" | "ARB" | "BSC" | "TUSD" | "FUDSD-SC" | "USDC-SC" | "USDT-SC" | "USDC-MATIC" | "USDT-MATIC" | "USDT-ARBITRUM" | "USDT-OPTIMISM"
+  cryptoCurrency?: "ETH" | "BTC" | "BCH" | "LTC" | "DOGE" | "MATIC" | "USDT" | "USDC" | "DAI" | "DOT" | "KSM" | "KDA" | "PYUSD" | "OP" | "ARB" | "BSC" | "TUSD" | "FUDSD-SC" | "USDC-SC" | "USDT-SC" | "USDC-MATIC" | "USDT-MATIC" | "USDT-ARBITRUM" | "USDT-OPTIMISM" | "SOL"
 ) {
-  const apiQuote = `${API}/v4/purchase/providers/web`;
+  const apiQuote = `${api.endpoint}/v4/purchase/providers/web`;
   if (cryptoCurrency)
     return await axios
       .get(apiQuote, {
@@ -140,7 +141,7 @@ async function getCryptoPrices(
  */
 async function getFiatRatesForBuy() {
   return axios
-    .get(`${API}/v4/purchase/moonpay/quotes`, {
+    .get(`${api.endpoint}/v4/purchase/moonpay/quotes`, {
       headers: {
         'Accept-Language': 'en-US'
       }
@@ -154,7 +155,7 @@ async function getFiatRatesForBuy() {
  */
 async function getSupportedFiatToBuy(symbol: string) {
   return axios
-    .get(`${API}/v4/purchase/providers/web?iso=us&cryptoCurrency=${symbol}`, {
+    .get(`${api.endpoint}/v4/purchase/providers/web?iso=us&cryptoCurrency=${symbol}`, {
       headers: {
         'Accept-Language': 'en-US'
       }
@@ -166,7 +167,7 @@ async function getSupportedFiatToBuy(symbol: string) {
  */
 async function getSupportedFiatToSell(symbol: string) {
   return axios
-    .get(`${API}/v3/sell/providers/web?iso=us&cryptoCurrency=${symbol}`, {
+    .get(`${api.endpoint}/v3/sell/providers/web?iso=us&cryptoCurrency=${symbol}`, {
       headers: {
         'Accept-Language': 'en-US'
       }
