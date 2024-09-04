@@ -447,7 +447,7 @@ export default defineComponent({
       executeTopperPayment(
         this.selectedFiatName,
         this.selectedCryptoName,
-        this.simplexQuote.fiatAmount,
+        this.topperQuote.fiatAmount,
         this.actualAddress
       )
         .then((data) => {
