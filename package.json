@@ -1,6 +1,6 @@
 {
   "name": "mew-ccswap",
-  "version": "6.9.11-ccswap.2",
+  "version": "6.9.13",
   "private": true,
   "packageManager": "yarn@1.22.19",
   "scripts": {
@@ -35,6 +35,7 @@
     "lodash": "^4.17.21",
     "multicoin-address-validator": "^0.5.9",
     "node-polyfill-webpack-plugin": "^1.1.4",
+    "pinia": "^2.2.2",
     "register-service-worker": "^1.7.2",
     "roboto-fontface": "*",
     "sass": "^1.51.0",

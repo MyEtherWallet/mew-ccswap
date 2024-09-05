@@ -11,28 +11,10 @@
         @onTab="onTab"
       >
         <template #tabContent1>
-          <buy-form
-            :crypto-selected="selectedCurrency"
-            :fiat-selected="selectedFiat"
-            :network-selected="selectedNetwork"
-            :fiat-amount="fiatAmount"
-            @setQuotes="setQuotes"
-            @selectedCurrency="openTokenSelect"
-            @success="buySuccess"
-            @selectedNetwork="setNetwork"
-            @selectCurrency="setSelectedCurrency"
-          />
+          <BuyForm />
         </template>
         <template #tabContent2>
-          <sell-form
-            :crypto-selected="selectedCurrency"
-            :fiat-selected="selectedFiat"
-            :network-selected="selectedNetwork"
-            :fiat-amount="fiatAmount"
-            @setQuotes="setQuotes"
-            @selectedCurrency="openTokenSelect"
-            @success="sellSuccess"
-          />
+          <SellForm />
         </template>
       </MewTabs>
     </div>
@@ -41,232 +23,62 @@
       <TokenSelect
         v-if="step === 1"
         class="pa-3 pa-sm-6 pa-md-8"
-        :selected-network="selectedNetwork"
-        :selected-currency="selectedCurrency"
-        :fiat-selected="selectedFiat"
-        :moonpay-data="moonpayData"
-        :simplex-data="simplexData"
-        :topper-data="topperData"
         :is-sell="isSell"
         @close="close"
-        @selectCurrency="setSelectedCurrency"
-        @selectedNetwork="setNetwork"
       />
     </div>
 
-    <BuyProviders
-      v-if="step === 2"
-      :selected-fiat="selectedFiat"
-      :fiat-amount="fiatAmount"
-      :selected-currency="selectedCurrency"
-      :only-simplex="onlySimplex"
-      :moonpay-quote="moonpayQuote"
-      :simplex-quote="simplexQuote"
-      :topper-quote="topperQuote"
-      :to-address="toAddress"
-      @close="close"
-      @reset="reset"
-    />
+    <BuyProviders v-if="step === 2" @close="close" @reset="reset" />
   </div>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import { isEmpty } from "lodash";
 
-import { defineComponent, inject } from "vue";
+import { ref, inject, computed } from "vue";
 import MewTabs from "../MewTabs/MewTabs.vue";
 import BuyForm from "./BuyForm.vue";
 import BuyProviders from "./BuyProviders.vue";
 import TokenSelect from "./components/TokenSelect.vue";
 import SellForm from "./SellForm.vue";
-import {
-  Fiat,
-  Crypto,
-  QuoteData,
-  SubmitData,
-  SubmitSellData,
-  Network,
-  Data,
-} from "./network/types";
+
 import { Networks } from "./network/networks";
+import { storeToRefs } from "pinia";
+import { useGlobalStore } from "@/plugins/globalStore";
+import { defaultCrypto, defaultFiat } from "./handler/defaults";
 
-interface leftBtn {
-  method: () => void;
-}
+const amplitude: any = inject("$amplitude");
 
-export default defineComponent({
-  name: "OrderForm",
-  components: {
-    MewTabs,
-    BuyForm,
-    SellForm,
-    BuyProviders,
-    TokenSelect,
-  },
-  props: {
-    // Removing breaks the page for some reason
-    open: Boolean,
-  },
-  setup() {
-    const amplitude: any = inject("$amplitude");
-    return { amplitude };
-  },
-  data() {
-    return {
-      activeTab: 0,
-      orderHandler: {},
-      selectedNetwork: {} as Network,
-      selectedCurrency: {} as Crypto,
-      selectedFiat: {} as Fiat,
-      fiatAmount: "0",
-      onlySimplex: false,
-      moonpayQuote: {} as QuoteData,
-      step: 0,
-      simplexQuote: {} as QuoteData,
-      topperQuote: {} as QuoteData,
-      toAddress: "",
-      moonpayData: {} as { [key: string]: Data },
-      simplexData: {} as { [key: string]: Data },
-      topperData: {} as { [key: string]: Data },
-    };
-  },
-  computed: {
-    defaultCurrency(): Crypto {
-      if (
-        isEmpty(this.selectedCurrency) ||
-        (this.activeTab === 1 && !this.supportedSell)
-      ) {
-        return {
-          decimals: 18,
-          img: require("@/assets/images/crypto/ETH.svg"),
-          name: "ETH",
-          subtext: "Ethereum",
-          value: "ETH",
-          symbol: "ETH",
-          network: "ETH",
-        };
-      }
-      return this.selectedCurrency;
-    },
-    defaultNetwork(): Network {
-      if (
-        isEmpty(this.selectedNetwork) ||
-        (this.activeTab === 1 && !this.supportedSell)
-      ) {
-        return Networks[0];
-      }
-      return this.selectedNetwork;
-    },
-    supportedSell(): boolean {
-      return (
-        this.selectedCurrency.symbol !== "DOT" &&
-        this.selectedCurrency.symbol !== "KSM"
-      );
-    },
-    leftBtn(): leftBtn {
-      return {
-        method: this.close,
-      };
-    },
-    tabItems() {
-      return ["Buy", "Sell"];
-    },
-    isSell(): boolean {
-      return this.activeTab === 1;
-    },
-  },
-  beforeMount() {
-    this.selectedNetwork = this.defaultNetwork;
-    this.selectedCurrency = this.defaultCurrency;
-  },
-  methods: {
-    onTab(val: number) {
-      this.selectedCurrency = {} as Crypto;
-      this.selectedCurrency = this.defaultCurrency;
-      this.selectedNetwork = {} as Network;
-      this.selectedNetwork = this.defaultNetwork;
-      this.activeTab = val;
-      this.amplitude.track(`CCBuySell${val === 0 ? "BuyTab" : "SellTab"}`);
-    },
-    close(): void {
-      this.step = 0;
-      this.onlySimplex = false;
-    },
-    setNetwork(network: Network) {
-      this.selectedNetwork = network;
-    },
-    setSelectedCurrency(e: Crypto) {
-      this.selectedCurrency = e;
-      this.step = 0;
-    },
-    setSelectedFiat(e: Fiat) {
-      this.selectedFiat = e;
-    },
-    openProviders(val: number) {
-      this.step = val;
-    },
-    openTokenSelect(selectedFiat: Fiat, fiatAmount: string) {
-      this.step = 1;
-      this.selectedFiat = selectedFiat;
-      this.fiatAmount = fiatAmount;
-      this.amplitude.track(
-        `CCBuySell${this.activeTab === 0 ? "BuyInput" : "SellInput"}`
-      );
-    },
-    setMoonpayQuote(val: QuoteData) {
-      this.moonpayQuote = val;
-    },
-    setSimplexQuote(val: QuoteData) {
-      this.simplexQuote = val;
-    },
-    setTopperQuote(val: QuoteData) {
-      this.topperQuote = val;
-    },
-    setToAddress(val: string) {
-      this.toAddress = val;
-    },
-    setQuotes(
-      simplexQuote: { [key: string]: Data },
-      moonpayQuote: { [key: string]: Data },
-      topperQuote: { [key: string]: Data }
-    ) {
-      this.simplexData = simplexQuote;
-      this.moonpayData = moonpayQuote;
-      this.topperData = topperQuote;
-    },
-    reset() {
-      this.selectedCurrency = this.defaultCurrency;
-      this.selectedFiat = {
-        name: "USD",
-        value: "USD",
-        // eslint-disable-next-line
-        img: require(`@/assets/images/fiat/USD.svg`),
-      };
-      this.onlySimplex = false;
-      this.close();
-    },
-    disableMoonpay(val: boolean) {
-      this.onlySimplex = val;
-    },
-    buySuccess(data: SubmitData) {
-      this.setTopperQuote(data.topper_quote);
-      this.setSimplexQuote(data.simplex_quote);
-      this.setToAddress(data.address);
-      this.setMoonpayQuote(data.moonpay_quote);
-      this.setSelectedCurrency(data.selected_currency);
-      this.openProviders(data.open_providers);
-      this.setSelectedFiat(data.selected_fiat);
-      this.fiatAmount = data.fiat_amount;
-      this.disableMoonpay(data.disable_moonpay);
-    },
-    sellSuccess(data: SubmitSellData) {
-      this.setToAddress(data.address);
-      this.setSelectedCurrency(data.selected_currency);
-      this.setSelectedFiat(data.selected_fiat);
-      this.fiatAmount = data.fiat_amount;
-    },
-  },
+const { setSelectedCrypto, setSelectedFiat, setSelectedNetwork } =
+  useGlobalStore();
+
+// data
+const tabItems = ["Buy", "Sell"];
+const activeTab = ref(0);
+const step = ref(0);
+
+// computed
+const isSell = computed(() => {
+  return activeTab.value === 1;
 });
+
+// methods
+const close = () => {
+  step.value = 0;
+};
+
+const reset = () => {
+  setSelectedCrypto(defaultCrypto);
+  setSelectedFiat(defaultFiat);
+  setSelectedNetwork(Networks[0]);
+  close();
+};
+
+const onTab = (tab: number) => {
+  activeTab.value = tab;
+  step.value = 1;
+  amplitude.track(`CCBuySell${tab === 0 ? "BuyTab" : "SellTab"}`);
+};
 </script>
 
 <style lang="scss" scoped>

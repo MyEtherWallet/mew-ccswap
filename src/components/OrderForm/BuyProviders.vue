@@ -265,10 +265,6 @@ import BigNumber from "bignumber.js";
 export default defineComponent({
   name: "BuyProviders",
   props: {
-    orderHandler: {
-      type: Object,
-      default: () => ({}),
-    },
     close: {
       type: Function,
       default: () => ({}),

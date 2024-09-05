@@ -6,9 +6,7 @@
     <!-- ============================================================================= -->
     <div class="mb-6 mt-6">
       <div class="d-flex align-center justify-space-between mb-3">
-        <div class="mew-heading-4 textDark--text">
-          How much do you want to spend?
-        </div>
+        <div class="mew-heading-4 textDark--text">I want to Buy</div>
         <div v-if="loading.data" class="ml-2 d-flex align-center">
           <span class="h3 font-weight-regular mr-1">Loading</span>
           <v-progress-circular
@@ -18,6 +16,104 @@
           ></v-progress-circular>
         </div>
       </div>
+      <div class="d-flex mt-2">
+        <v-btn
+          rounded="right"
+          variant="outlined"
+          class="no-left-border full-button"
+          append-icon="mdi-menu-down"
+          :disabled="loading.data"
+          @click="openTokenSelect"
+        >
+          <template #prepend>
+            <img
+              class="currency-icon mr-1 padding--2"
+              :src="cryptoIcon"
+              :alt="form.cryptoSelected"
+              width="25px"
+              height="25px"
+            />
+          </template>
+          <span>
+            {{ concatenate(form.cryptoSelected) }}
+          </span>
+          <template v-slot:append>
+            <v-icon color="grey-2" size="large"></v-icon>
+          </template>
+        </v-btn>
+      </div>
+      <!-- <div class="d-flex mt-2">
+        <v-text-field
+          class="no-right-border"
+          @input="fiatToCrypto"
+          v-model.number="form.fiatAmount"
+          required
+          variant="outlined"
+          :error-messages="loading.alertMessage"
+          :disabled="loading.data"
+          :rules="rules"
+        />
+        <v-select
+          style="max-width: 130px"
+          class="rounded-right no-left-border buy-input"
+          v-model="form.fiatSelected"
+          :items="filteredFiatItems"
+          :disabled="loading.data"
+          :menu-props="{ closeOnContentClick: true }"
+          base-color="primary"
+          return-object
+          variant="outlined"
+        >
+          <template #prepend-inner>
+            <img
+              class="currency-icon mr-1"
+              :src="fiatIcon"
+              :alt="form.fiatSelected"
+              width="25px"
+              height="25px"
+            />
+          </template>
+          <template #prepend-item>
+            <v-text-field
+              v-model="fiatFilter"
+              variant="outlined"
+              class="px-2"
+              prepend-inner-icon="mdi-magnify"
+              :autofocus="true"
+              density="compact"
+              placeholder="Search"
+              @update:model-value="updateFiatFilter"
+              @click.stop="() => {}"
+            ></v-text-field>
+          </template>
+          <template #item="data">
+            <div
+              class="d-flex align-center justify-space-between full-width cursor-pointer"
+              @click="selectCurrency(data.item.value)"
+            >
+              <div class="d-flex align-center">
+                <img
+                  class="currency-icon mr-1 ml-3"
+                  :src="getIcon(data.item.value)"
+                  :alt="data.item.value"
+                  width="25px"
+                  height="25px"
+                />
+                <span class="text-capitalize ml-2 my-2 d-flex flex-column">{{
+                  data.item.value
+                }}</span>
+              </div>
+            </div>
+          </template>
+        </v-select>
+      </div> -->
+    </div>
+
+    <!-- ============================================================================= -->
+    <!-- Crypto amount -->
+    <!-- ============================================================================= -->
+    <div class="mb-6">
+      <div class="mew-heading-4 textDark--text mb-3">I am spending</div>
       <div class="d-flex mt-2">
         <v-text-field
           class="no-right-border"
@@ -83,14 +179,7 @@
           </template>
         </v-select>
       </div>
-    </div>
-
-    <!-- ============================================================================= -->
-    <!-- Crypto amount -->
-    <!-- ============================================================================= -->
-    <div class="mb-6">
-      <div class="mew-heading-4 textDark--text mb-3">You will get</div>
-      <div class="d-flex mt-2">
+      <!-- <div class="d-flex mt-2">
         <v-text-field
           class="no-right-border"
           @input="cryptoToFiat"
@@ -125,7 +214,7 @@
             <v-icon color="grey-2" size="large"></v-icon>
           </template>
         </v-btn>
-      </div>
+      </div> -->
     </div>
 
     <!-- ============================================================================= -->
@@ -142,7 +231,7 @@
         :autofocus="false"
         :is-valid-address="addressValid"
         placeholder="Enter Crypto Address"
-        :network="props.networkSelected"
+        :network="selectedNetwork.value"
         @keyup="verifyAddress"
         @changed="addressInput"
       />
@@ -162,7 +251,7 @@
           @click="submitForm"
           class="buy-button"
         >
-          <div class="text-white font-weight-bold">BUY NOW</div>
+          <div class="text-white font-weight-bold">Preview Quotes</div>
         </v-btn>
       </div>
     </div>
@@ -211,6 +300,10 @@ import { isObject, isNumber, isString, isEmpty } from "lodash";
 import WAValidator from "multicoin-address-validator";
 import { isHexStrict, isAddress, fromWei, toBN, isHex } from "web3-utils";
 import { encodeAddress } from "@polkadot/keyring";
+import Web3 from "web3";
+
+import { useGlobalStore } from "@/plugins/globalStore";
+
 import MewAddressSelect from "../MewAddressSelect/MewAddressSelect.vue";
 import {
   formatFiatValue,
@@ -218,12 +311,12 @@ import {
 } from "@/helpers/numberFormatHelper";
 import { Networks } from "./network/networks";
 import { Crypto, Data, Network, Fiat } from "./network/types";
-import Web3 from "web3";
 import {
   init,
   calculateSimplexFiatFee,
 } from "./models/purchaseSimplexFeeModel";
 import { fromBase, toBase } from "@/helpers/units";
+import { storeToRefs } from "pinia";
 
 // emits
 const emit = defineEmits([
@@ -236,25 +329,28 @@ const emit = defineEmits([
   "selectCurrency",
 ]);
 
+const store = useGlobalStore();
+const { selectedFiat, selectedCrypto, selectedNetwork } = storeToRefs(store);
+
 // props
-const props = defineProps({
-  cryptoSelected: {
-    type: Object,
-    default: () => ({}),
-  },
-  networkSelected: {
-    type: Object as PropType<Network>,
-    default: () => ({}),
-  },
-  fiatSelected: {
-    type: Object as PropType<Fiat>,
-    default: () => ({}),
-  },
-  fiatAmount: {
-    type: String,
-    default: "0",
-  },
-});
+// const props = defineProps({
+//   cryptoSelected: {
+//     type: Object,
+//     default: () => ({}),
+//   },
+//   networkSelected: {
+//     type: Object as PropType<Network>,
+//     default: () => ({}),
+//   },
+//   fiatSelected: {
+//     type: Object as PropType<Fiat>,
+//     default: () => ({}),
+//   },
+//   fiatAmount: {
+//     type: String,
+//     default: "0",
+//   },
+// });
 
 // data
 const defaultFiatValue = "300";
@@ -262,6 +358,7 @@ let gasPrice = "0";
 const polkadot_chains = ["DOT", "KSM"];
 const bitcoin_chains = ["BTC", "BCH", "DOGE", "LTC"];
 const other_chains = ["KDA", "SOL"];
+
 // eslint-disable-next-line no-undef
 let priceTimer: NodeJS.Timer;
 let fiatFilter = "";
@@ -385,10 +482,10 @@ onMounted(async () => {
 
   // Get crypto Data
   await getPrices();
-  if (!isEmpty(props.fiatSelected)) {
-    form.cryptoSelected = props.cryptoSelected.symbol;
-    form.fiatSelected = props.fiatSelected.name;
-    form.fiatAmount = props.fiatAmount;
+  if (!isEmpty(selectedFiat.value)) {
+    form.cryptoSelected = selectedCrypto.value.symbol;
+    form.fiatSelected = selectedFiat.value.name;
+    form.fiatAmount = "300";
     fiatToCrypto();
   } else {
     // Load URL parameter value and verify crypto address
@@ -451,7 +548,7 @@ const web3 = computed(() => {
     ARB: "ARB",
     OP: "OP",
   };
-  const nodeType = supportedNodes[props.cryptoSelected.network];
+  const nodeType = supportedNodes[selectedCrypto.value.network];
   const node = Networks.find((network) => {
     return network.name === nodeType;
   });
@@ -889,8 +986,8 @@ const addressValid = computed(() => {
     : !polkadot_chains.includes(form.cryptoSelected)
     ? bitcoin_chains.includes(form.cryptoSelected)
       ? WAValidator.validate(address, form.cryptoSelected)
-      : props.networkSelected.name === "OP" ||
-        props.networkSelected.name === "ARB"
+      : selectedNetwork.value.name === "OP" ||
+        selectedNetwork.value.name === "ARB"
       ? WAValidator.validate(address, "ETH")
       : WAValidator.validate(address, form.cryptoSelected) &&
         validAddress(address)
@@ -971,7 +1068,7 @@ const loadUrlParameters = () => {
     form.fiatSelected = fiat;
 
     let tokensList;
-    if (crypto !== props.networkSelected.name) {
+    if (crypto !== selectedNetwork.value.name) {
       const network = Networks.find((network) => {
         return network.name === crypto;
       });
@@ -1126,7 +1223,7 @@ const submitForm = (): void => {
       min: moonpayData[cryptoSelected]?.limits[fiatSelected]?.min || 50,
     },
     open_providers: 2,
-    selected_currency: props.cryptoSelected,
+    selected_currency: selectedCrypto.value,
     selected_fiat: {
       name: fiatSelected,
       value: fiatSelected,
@@ -1206,6 +1303,7 @@ input::-webkit-inner-spin-button {
     }
   }
 }
+
 .custom-btn {
   width: 130px !important;
   height: 56px !important;
@@ -1219,5 +1317,12 @@ input::-webkit-inner-spin-button {
   &:hover {
     border: 1px solid rgba(211, 211, 211, 1);
   }
+}
+
+.full-button {
+  @extend .custom-btn;
+  width: 100% !important;
+  display: flex;
+  justify-content: space-between;
 }
 </style>

@@ -96,6 +96,42 @@ interface PriceItem {
     name: string;
 }
 
+interface Assets {
+    chain: string;
+    name: string;
+    assets: Array<NewToken>;
+}
+
+interface NewToken {
+    chain: string;
+    contract_address: string;
+    providers: Array<string>;
+    symbol: string;
+}
+
+interface NewLimits {
+    min: number;
+    max: number;
+}
+
+interface NewFiat {
+    fiat_currency: string;
+    is_sell_supported: boolean;
+    limits: NewLimits;
+    payment_methods: Array<string>;
+}
+
+interface Providers {
+    fiats: Array<NewFiat>
+    fiats_list: Array<string>
+    isos_list: Array<string>
+    provider: string
+}
+
+interface LeftBtn {
+    method: () => void;
+}
+
 
 interface NameResolver {
     resolveAddress(name: string, type: string): Promise<string>;
@@ -107,5 +143,5 @@ interface resolvedName {
 
 export {
     Crypto, Fiat, QuoteData, SubmitData, Network, Data, PriceItem, NameResolver,
-    resolvedName
+    resolvedName, Assets, NewToken, Providers, NewFiat, LeftBtn
 }
