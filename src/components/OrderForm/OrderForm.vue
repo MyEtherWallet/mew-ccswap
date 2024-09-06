@@ -33,8 +33,6 @@
 </template>
 
 <script lang="ts" setup>
-import { isEmpty } from "lodash";
-
 import { ref, inject, computed } from "vue";
 import MewTabs from "../MewTabs/MewTabs.vue";
 import BuyForm from "./BuyForm.vue";
@@ -43,7 +41,6 @@ import TokenSelect from "./components/TokenSelect.vue";
 import SellForm from "./SellForm.vue";
 
 import { Networks } from "./network/networks";
-import { storeToRefs } from "pinia";
 import { useGlobalStore } from "@/plugins/globalStore";
 import { defaultCrypto, defaultFiat } from "./handler/defaults";
 

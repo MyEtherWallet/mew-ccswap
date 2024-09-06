@@ -119,6 +119,7 @@ interface NewFiat {
     is_sell_supported: boolean;
     limits: NewLimits;
     payment_methods: Array<string>;
+    img?: string;
 }
 
 interface Providers {

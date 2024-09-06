@@ -2,44 +2,37 @@ import { ref, computed } from "vue";
 import { defineStore } from "pinia";
 import { Crypto, Fiat, Network, Assets, Providers, NewFiat } from "@/components/OrderForm/types";
 import { Networks } from "@/components/OrderForm/network/networks";
+import { defaultCrypto, defaultFiat } from "@/components/OrderForm/handler/defaults";
 
 export const useGlobalStore = defineStore('global', () => {
   const isTokenModalOpen = ref(false);
-  const selectedFiat = ref({
-    name: "USD",
-    value: "USD",
-    // eslint-disable-next-line
-    img: require(`@/assets/images/fiat/USD.svg`),
-  });
-  const selectedCrypto = ref({
-    decimals: 18,
-    img: require("@/assets/images/crypto/ETH.svg"),
-    name: "ETH",
-    subtext: "Ethereum",
-    value: "ETH",
-    symbol: "ETH",
-    network: "ETH",
-  });
+  const selectedFiat = ref(defaultFiat);
+  const selectedCrypto = ref(defaultCrypto);
   const selectedNetwork = ref(Networks[0]);
   const networks = ref<Assets[]>([]);
   const providers = ref<Providers[]>([]);
 
   const fiats = computed(() => {
-    const newArray = <NewFiat[]>[];
+    const fiatsMap = new Map<string, NewFiat>();
     providers.value.forEach((provider) => {
       provider.fiats.forEach((fiat) => {
-        const added = newArray.findIndex((item) => item.fiat_currency === fiat.fiat_currency);
-        if (added !== -1) {
-          const max = newArray[added].limits.max;
-          const min = newArray[added].limits.min;
-          newArray[added].limits = {
+        const fiatMap = fiatsMap.get(fiat.fiat_currency);
+        if (fiatMap) {
+          const max = fiatMap.limits.max;
+          const min = fiatMap.limits.min;
+          fiatMap.limits = {
             max: fiat.limits.max > max ? fiat.limits.max : max,
             min: fiat.limits.min < min ? fiat.limits.min : min
           }
+          fiatMap.img = require(`@/assets/images/fiat/${fiat.fiat_currency}.svg`);
+          fiatsMap.set(fiat.fiat_currency, fiatMap);
+        } else {
+          fiat.img = require(`@/assets/images/fiat/${fiat.fiat_currency}.svg`);
+          fiatsMap.set(fiat.fiat_currency, fiat);
         }
       });
     })
-    return newArray;
+    return fiatsMap;
   })
 
   const toggleTokenModal = () => {
