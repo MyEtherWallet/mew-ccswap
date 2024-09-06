@@ -140,9 +140,9 @@
         :modelValue="form.address"
         :error-messages="form.addressErrorMsg"
         :autofocus="false"
-        label=""
-        :is-valid-address="form.validAddress"
+        :is-valid-address="addressValid"
         placeholder="Enter Crypto Address"
+        :network="props.networkSelected"
         @keyup="verifyAddress"
         @changed="addressInput"
       />
@@ -206,7 +206,7 @@ import {
   supportedFiat,
   getCryptoPrices,
   currencySymbols,
-} from "./prices";
+} from "./handler/prices";
 import { isObject, isNumber, isString, isEmpty } from "lodash";
 import WAValidator from "multicoin-address-validator";
 import { isHexStrict, isAddress, fromWei, toBN, isHex } from "web3-utils";
@@ -257,11 +257,11 @@ const props = defineProps({
 });
 
 // data
-const defaultFiatValue = "0";
+const defaultFiatValue = "300";
 let gasPrice = "0";
 const polkadot_chains = ["DOT", "KSM"];
 const bitcoin_chains = ["BTC", "BCH", "DOGE", "LTC"];
-const other_chains = ["KDA"];
+const other_chains = ["KDA", "SOL"];
 // eslint-disable-next-line no-undef
 let priceTimer: NodeJS.Timer;
 let fiatFilter = "";
@@ -361,7 +361,7 @@ let topperData: { [key: string]: Data } = {
 const form = reactive({
   fiatAmount: defaultFiatValue,
   fiatSelected: "USD",
-  cryptoAmount: "1",
+  cryptoAmount: "0",
   cryptoSelected: "ETH",
   address: "",
   validAddress: false,
@@ -399,6 +399,7 @@ onMounted(async () => {
   }
   await fetchGasPrice();
   priceTimer = setInterval(getPrices, 1000 * 60 * 2);
+  fiatToCrypto();
 });
 
 onUnmounted(async () => {
@@ -743,7 +744,6 @@ const selectCurrency = (currency: string) => {
 
 const isValidForm = computed(() => {
   return (
-    minMax.value &&
     form.fiatSelected &&
     form.cryptoSelected &&
     form.address &&
@@ -766,7 +766,11 @@ const isValidData = (data: { [key: string]: Data }) => {
   return !isEmpty(data[cryptoSelected]?.limits[fiatSelected]);
 };
 const hasData = () => {
-  return isValidData(simplexData) || isValidData(moonpayData);
+  return (
+    isValidData(simplexData) ||
+    isValidData(moonpayData) ||
+    isValidData(topperData)
+  );
 };
 const min = computed(() => {
   const { cryptoSelected, fiatSelected } = form;
@@ -774,8 +778,8 @@ const min = computed(() => {
   const simplexLimit = simplexData[cryptoSelected]?.limits[fiatSelected];
   const moonpayLimit = moonpayData[cryptoSelected]?.limits[fiatSelected];
   const topperLimit = topperData[cryptoSelected]?.limits[fiatSelected];
-  if (!isValidData(moonpayData)) return simplexLimit.min;
-  if (!isValidData(simplexData)) return moonpayLimit.min;
+  if (!isValidData(moonpayData) && simplexLimit) return simplexLimit.min;
+  if (!isValidData(simplexData) && moonpayLimit) return moonpayLimit.min;
   if (!isValidData(simplexData) && !isValidData(moonpayData))
     return topperLimit.min;
   return simplexLimit.min < moonpayLimit.min ||
@@ -791,10 +795,12 @@ const max = computed(() => {
   const simplexLimit = simplexData[cryptoSelected]?.limits[fiatSelected];
   const moonpayLimit = moonpayData[cryptoSelected]?.limits[fiatSelected];
   const topperLimit = topperData[cryptoSelected]?.limits[fiatSelected];
-  if (!isValidData(moonpayData)) return simplexLimit.max;
-  if (!isValidData(simplexData)) return moonpayLimit.max;
+
+  if (!isValidData(moonpayData) && simplexLimit) return simplexLimit.max;
+  if (!isValidData(simplexData) && moonpayLimit) return moonpayLimit.max;
   if (!isValidData(simplexData) && !isValidData(moonpayData))
     return topperLimit.max;
+
   return moonpayLimit.max > simplexLimit.max ||
     moonpayLimit.max > topperLimit.max
     ? moonpayLimit.max
@@ -802,30 +808,23 @@ const max = computed(() => {
     ? simplexLimit.max
     : topperLimit.max;
 });
-const minMax = computed(() => {
-  const { fiatAmount } = form;
-  if (!hasData()) return false;
-  const limit = { min: min.value, max: max.value };
-  const amount = new BigNumber(fiatAmount || 0);
-  const valid =
-    amount.gte(new BigNumber(limit.min)) &&
-    amount.lte(new BigNumber(limit.max));
-  return valid;
-});
 
 const minMaxError = () => {
-  const limit = { min: min.value, max: max.value };
+  const amount = new BigNumber(form.fiatAmount);
+  const valid =
+    amount.gte(new BigNumber(min.value)) &&
+    amount.lte(new BigNumber(max.value));
   if (bestPrice.value.toString() === "NaN") {
     loading.showAlert = true;
     loading.alertMessage = `No price data available for ${form.cryptoSelected}.`;
     return;
   }
 
-  if (!minMax.value) {
+  if (!valid) {
     loading.showAlert = true;
     loading.alertMessage = `Fiat price must be between ${
       currencySymbols[form.fiatSelected]
-    }${limit.min} and ${currencySymbols[form.fiatSelected]}${limit.max}`;
+    }${min.value} and ${currencySymbols[form.fiatSelected]}${max.value}`;
     return;
   }
   loading.showAlert = false;
@@ -882,20 +881,21 @@ const kdaValidator = (address: string) => {
 };
 
 const addressValid = computed(() => {
+  const address = form.address.toLowerCase();
   return other_chains.includes(form.cryptoSelected)
     ? form.cryptoSelected === "KDA"
-      ? kdaValidator(form.address)
-      : WAValidator.validate(form.address, form.cryptoSelected)
+      ? kdaValidator(address)
+      : WAValidator.validate(address, form.cryptoSelected)
     : !polkadot_chains.includes(form.cryptoSelected)
     ? bitcoin_chains.includes(form.cryptoSelected)
-      ? WAValidator.validate(form.address, form.cryptoSelected)
+      ? WAValidator.validate(address, form.cryptoSelected)
       : props.networkSelected.name === "OP" ||
         props.networkSelected.name === "ARB"
-      ? WAValidator.validate(form.address, "ETH")
-      : WAValidator.validate(form.address, props.networkSelected.name) &&
-        validAddress(form.address)
+      ? WAValidator.validate(address, "ETH")
+      : WAValidator.validate(address, form.cryptoSelected) &&
+        validAddress(address)
     : isValidAddressPolkadotAddress(
-        form.address,
+        address,
         form.cryptoSelected === "DOT" ? 0 : 2
       );
 });
@@ -925,8 +925,12 @@ const bestPrice = computed(() => {
 
 const fiatToCrypto = () => {
   if (!isNaN(parseInt(form.fiatAmount))) {
-    const price = new BigNumber(bestPrice.value || "0");
-    const amount = new BigNumber(form.fiatAmount || "0");
+    const price = bestPrice.value
+      ? new BigNumber(bestPrice.value)
+      : BigNumber("0");
+    const amount = form.fiatAmount
+      ? new BigNumber(form.fiatAmount)
+      : BigNumber("0");
     form.cryptoAmount = BigNumber(amount).div(price).toString();
   } else {
     loading.alertMessage = "Please provide a valid fiat amount";
@@ -1080,7 +1084,7 @@ const submitForm = (): void => {
   const moonpayFiatAmount = moonpayAvailable ? fiatAmount : "0.00";
   emit("success", {
     topper_quote: {
-      cryptoToFiat: topperCryptoAmount.value,
+      cryptoToFiat: BigNumber(topperCryptoAmount.value).toString(),
       selectedCryptoName: cryptoSelected,
       plusFeeF: topperPlusFeeF.value,
       includesFeeText: topperIncludesFeeText.value,
@@ -1093,7 +1097,7 @@ const submitForm = (): void => {
       min: topperData[cryptoSelected]?.limits[fiatSelected]?.min || 50,
     },
     simplex_quote: {
-      cryptoToFiat: simplexCryptoAmount.value,
+      cryptoToFiat: BigNumber(simplexCryptoAmount.value).toString(),
       selectedCryptoName: cryptoSelected,
       plusFeeF: simplexPlusFeeF.value,
       includesFeeText: simplexIncludesFeeText.value,
@@ -1107,9 +1111,9 @@ const submitForm = (): void => {
       ).value,
       min: simplexData[cryptoSelected]?.limits[fiatSelected]?.min || 50,
     },
-    address: address,
+    address: address.toLowerCase(),
     moonpay_quote: {
-      cryptoToFiat: moonpayCryptoAmount.value,
+      cryptoToFiat: BigNumber(moonpayCryptoAmount.value).toString(),
       selectedCryptoName: cryptoSelected,
       plusFeeF: plusFeeF.value,
       includesFeeText: includesFeeText.value,
@@ -1179,13 +1183,6 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
-// Adjust (text field) prefix font size
-.v-messages__message {
-  font-weight: 300;
-  font-size: 0.9rem;
-  color: red;
-}
-
 .v-combobox__selection-text {
   white-space: nowrap;
   overflow: hidden;
@@ -1194,8 +1191,9 @@ input::-webkit-inner-spin-button {
 
 .components--buy-form {
   .v-field__outline__end,
+  .v-field__outline__notch::after,
   .v-field__outline__start {
-    border-color: #c2c2c2;
+    border-color: #c2c2c2 !important;
   }
   .no-right-border {
     .v-field__outline__end {

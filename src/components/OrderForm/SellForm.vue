@@ -144,9 +144,9 @@
         :error-messages="form.addressErrorMsg"
         :autofocus="false"
         label=""
-        :items="addressBook"
         :is-valid-address="form.validAddress"
         placeholder="Enter Crypto Address"
+        :network="props.networkSelected"
         @keyup="verifyAddress"
         @changed="addressInput"
       />
@@ -220,8 +220,8 @@ import {
   inject,
 } from "vue";
 import BigNumber from "bignumber.js";
-import { supportedFiat, getCryptoSellPrices } from "./prices";
-import { executeMoonpaySell } from "./order";
+import { supportedFiat, getCryptoSellPrices } from "./handler/prices";
+import { executeMoonpaySell } from "./handler/order";
 import { isObject, isNumber, isString, isEmpty } from "lodash";
 import WAValidator from "multicoin-address-validator";
 import { isHexStrict, isAddress, fromWei, toBN } from "web3-utils";
@@ -237,7 +237,7 @@ import { PriceItem } from "./types";
 
 const amplitude: any = inject("$amplitude");
 
-const defaultFiatValue = "0";
+const defaultFiatValue = "300";
 const polkdadot_chains = ["DOT", "KSM"];
 let gasPrice = ref("0");
 // eslint-disable-next-line no-undef
@@ -290,15 +290,6 @@ let moonpayData: { [key: string]: Data } = {
   },
 };
 
-const addressBook = [
-  {
-    address: "0xDECAF9CD2367cdbb726E904cD6397eDFcAe6068D",
-    currency: "ETH",
-    nickname: "MEW Donations",
-    resolvedAddr: "0xDECAF9CD2367cdbb726E904cD6397eDFcAe6068D",
-  },
-];
-
 const emit = defineEmits([
   "success",
   "selectedCurrency",
@@ -322,7 +313,7 @@ const props = defineProps({
   },
   fiatAmount: {
     type: String,
-    default: "0",
+    default: "300",
   },
 });
 
@@ -353,7 +344,7 @@ const updateFiatFilter = (value: string) => {
 const form = reactive({
   fiatAmount: defaultFiatValue,
   fiatSelected: "USD",
-  cryptoAmount: "1",
+  cryptoAmount: "0",
   cryptoSelected: "ETH",
   address: "",
   validAddress: false,
@@ -530,28 +521,6 @@ const getPrices = async () => {
           });
           d.prices.forEach((p: any) => (tmp.prices[p.fiat_currency] = p.price));
           const tokenName = d.crypto_currencies[0];
-          // const mainCoin = Networks.find(
-          //   (item) => item.currencyName === tokenName
-          // );
-          // If token name isnt a native network coin
-          // assume the token is ERC-20(ETH)
-          // if (!mainCoin) {
-          //   const foundToken = Networks[0].tokens.find(
-          //     (item) => item.name === tokenName
-          //   );
-          //   if (!foundToken) {
-          //     const tokenInfo = tokensInfo[tokenName];
-          //     Networks[0].tokens.push(
-          //       new Crypto(
-          //         tokenName,
-          //         tokenInfo.name,
-          //         "ETH",
-          //         tokenInfo.decimals,
-          //         getIcon(tokenName, false)
-          //       )
-          //     );
-          //   }
-          // }
           moonpayData[tokenName] = tmp;
         }
       });
@@ -799,12 +768,13 @@ const setup = async () => {
   // Get crypto Data
   await getPrices();
   await fetchGasPrice();
-  if (!isEmpty(props.fiatSelected)) {
-    form.cryptoSelected = props.cryptoSelected.symbol;
-    form.fiatSelected = props.fiatSelected.name;
-    form.fiatAmount = props.fiatAmount;
-    fiatToCrypto();
-  } else cryptoToFiat();
+  // if (!isEmpty(props.fiatSelected)) {
+  //   form.cryptoSelected = props.cryptoSelected.symbol;
+  //   form.fiatSelected = props.fiatSelected.name;
+  //   form.fiatAmount = props.fiatAmount;
+  //   fiatToCrypto();
+  // } else cryptoToFiat();
+  fiatToCrypto();
   getBalance();
   priceTimer = setInterval(getPrices, 1000 * 60 * 2);
   gasTimer = setInterval(fetchGasPrice, 1000 * 60 * 2);
@@ -866,8 +836,9 @@ const concatenate = (value: string) => {
 <style lang="scss">
 .components--sell-form {
   .v-field__outline__end,
+  .v-field__outline__notch::after,
   .v-field__outline__start {
-    border-color: #c2c2c2;
+    border-color: #c2c2c2 !important;
   }
   .no-right-border {
     .v-field__outline__end {

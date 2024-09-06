@@ -258,7 +258,7 @@ import {
   executeSimplexPayment,
   executeMoonpayBuy,
   executeTopperPayment,
-} from "./order";
+} from "./handler/order";
 import { defineComponent, inject } from "vue";
 import BigNumber from "bignumber.js";
 
@@ -318,11 +318,12 @@ export default defineComponent({
   },
   computed: {
     formattedFiat(): string {
-      return (
-        this.simplexQuote.fiatAmountF ||
-        this.moonpayQuote.fiatAmountF ||
-        this.topperQuote.fiatAmountF
-      );
+      const amount = BigNumber(this.simplexQuote.cryptoToFiat).isGreaterThan(0)
+        ? this.simplexQuote.fiatAmountF
+        : BigNumber(this.moonpayQuote.cryptoToFiat).isGreaterThan(0)
+        ? this.moonpayQuote.fiatAmountF
+        : this.topperQuote.fiatAmountF;
+      return amount;
     },
     selectedFiatName(): string {
       return this.selectedFiat.name;
@@ -446,7 +447,7 @@ export default defineComponent({
       executeTopperPayment(
         this.selectedFiatName,
         this.selectedCryptoName,
-        this.simplexQuote.fiatAmount,
+        this.topperQuote.fiatAmount,
         this.actualAddress
       )
         .then((data) => {

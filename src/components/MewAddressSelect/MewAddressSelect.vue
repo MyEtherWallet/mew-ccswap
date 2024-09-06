@@ -5,7 +5,7 @@
   <!-- ===================================================================================== -->
   <v-combobox
     ref="mewAddressSelect"
-    v-model="addressValue"
+    v-model="locAddress"
     class="address-select pa-0 rounded-lg"
     color="primary"
     :label="label"
@@ -13,15 +13,14 @@
     item-text="address"
     :placeholder="placeholder"
     :disabled="disabled"
-    :error-messages="errorMessages"
-    :hint="hint || resolvedAddr || ''"
-    :persistent-hint="resolvedAddr.length > 0 || hint.length > 0"
+    :error-messages="errors"
+    :messages="resolved ? addressValue : ''"
     :rules="rules"
     :no-data-text="noDataText"
     :menu-props="{ closeOnContentClick: true }"
     variant="outlined"
     @update:search-input="onChange"
-    @update:model-value="onInputChange"
+    @update:model-value="debouncedChange"
   >
     <!-- ===================================================================================== -->
     <!-- Blockie: displays placeholder if invalid address, otherwise displays -->
@@ -41,11 +40,27 @@
         height="25px"
       />
     </template>
+    <template #message>
+      <div>
+        <span v-if="resolved" class="overline primary--text font-weight-medium">
+          {{ addressValue }}
+        </span>
+        <div v-if="errors.length > 0">
+          <span
+            v-for="err in errors"
+            :key="err"
+            class="error font-weight-medium"
+          >
+            {{ err }}
+          </span>
+        </div>
+      </div>
+    </template>
 
     <!-- ===================================================================================== -->
     <!-- Displays each item in the dropdown. -->
     <!-- ===================================================================================== -->
-    <template #item="{ item }">
+    <!-- <template #item="{ item }">
       <div
         class="py-4 px-0 full-width d-flex align-center justify-space-between cursor-pointer"
         @click="selectAddress(item)"
@@ -53,17 +68,11 @@
         <div class="d-flex align-center justify-space-between">
           <mew-blockie
             class="mr-2 ml-2"
-            :address="
-              item.raw.resolvedAddr ? item.raw.resolvedAddr : item.raw.address
-            "
+            :address="item.raw.address"
             width="25px"
             height="25px"
           />
-          <mew-transform-hash
-            v-if="!item.raw.resolvedAddr || item.raw.resolvedAddr === ''"
-            :hash="item.raw.address"
-          />
-          <div v-else class="d-flex align-center">
+          <div class="d-flex align-center">
             <span class="mew-address">{{ item.raw.address }}</span>
             <span>{{ item.raw.address.slice(-4) }}</span>
           </div>
@@ -72,14 +81,16 @@
           {{ item.raw.nickname }}
         </div>
       </div>
-    </template>
+    </template> -->
   </v-combobox>
 </template>
 
 <script lang="ts">
 import MewBlockie from "@/components/MewBlockie/MewBlockie.vue";
-import MewTransformHash from "../MewTransformHash/MewTransformHash.vue";
 import { defineComponent } from "vue";
+import Resolver from "../OrderForm/handler/Resolver";
+import { Network } from "../OrderForm/types";
+import { debounce } from "lodash";
 
 // data
 const USER_INPUT_TYPES = {
@@ -87,24 +98,20 @@ const USER_INPUT_TYPES = {
   selected: "SELECTED",
 };
 
+interface ComponentInterface {
+  onInputChange(value: string): void;
+}
+
 export default defineComponent({
   name: "MewAddressSelect",
   components: {
     MewBlockie,
-    MewTransformHash,
   },
   props: {
     /**
      * value passed
      */
     modelValue: {
-      type: String,
-      default: "",
-    },
-    /**
-     * Text displayed under the input container.
-     */
-    hint: {
       type: String,
       default: "",
     },
@@ -123,13 +130,6 @@ export default defineComponent({
      * The text to display if there is no data.
      */
     noDataText: {
-      type: String,
-      default: "",
-    },
-    /**
-     * Resolved address for name.
-     */
-    resolvedAddr: {
       type: String,
       default: "",
     },
@@ -175,6 +175,12 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    network: {
+      type: Object,
+      default: () => {
+        return {};
+      },
+    },
   },
   data() {
     return {
@@ -186,6 +192,9 @@ export default defineComponent({
        * Indicates whether the user selected from dropdown or typed in the address
        */
       isTyped: USER_INPUT_TYPES.typed,
+      err: "",
+      locAddress: "",
+      resolved: false,
     };
   },
   computed: {
@@ -195,9 +204,16 @@ export default defineComponent({
      * the blockie for the regular address value.
      */
     blockieHash(): string {
-      return this.resolvedAddr.length > 0
-        ? this.resolvedAddr
-        : this.addressValue;
+      return this.addressValue ? this.addressValue : this.locAddress;
+    },
+    errors(): any {
+      if (this.errorMessages.length > 0) {
+        return this.errorMessages;
+      }
+      if (this.err) {
+        return [this.err];
+      }
+      return [];
     },
   },
   watch: {
@@ -234,17 +250,46 @@ export default defineComponent({
     onChange(value: string) {
       this.$emit("changed", value, this.isTyped);
     },
+    debouncedChange: debounce(function (
+      this: ComponentInterface,
+      value: string
+    ) {
+      this.onInputChange(value);
+    },
+    500),
     /**
      * Sets the value for what the user types int
      */
-    onInputChange(data: { address: string }) {
-      this.isTyped = USER_INPUT_TYPES.typed;
-      this.addressValue = data
-        ? data.address
-          ? data.address
-          : data.toString()
-        : "";
-      this.onChange(this.addressValue);
+    async onInputChange(data: string) {
+      const resolver = new Resolver(this.network as Network);
+      if (!data) {
+        this.locAddress = "";
+        this.addressValue = "";
+        this.err = "";
+        this.onChange(this.locAddress);
+        return;
+      }
+      try {
+        const name = await resolver.resolveName(
+          data as string,
+          this.network.symbol
+        );
+        this.isTyped = USER_INPUT_TYPES.typed;
+        this.locAddress = data;
+        this.addressValue = name ? name : data ? data : "";
+        this.err = "";
+        this.resolved = name ? true : false;
+        this.onChange(this.addressValue);
+      } catch (e: any) {
+        this.resolved = false;
+        if (e.message === "Invalid name!") {
+          this.locAddress = data;
+          this.addressValue = "";
+          this.onChange(this.locAddress);
+        } else {
+          this.err = e.message;
+        }
+      }
     },
   },
 });
@@ -257,6 +302,12 @@ export default defineComponent({
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.error {
+  font-weight: 300;
+  font-size: 0.9rem;
+  color: red;
 }
 </style>
 
