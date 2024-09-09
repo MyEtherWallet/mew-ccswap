@@ -1,3 +1,3 @@
 export default {
-  endpoint: "https://qa.mewwallet.dev",
+  endpoint: "https://mainnet.mewwallet.dev",
 };
