@@ -226,8 +226,10 @@ const tokensList = computed<Crypto[]>(() => {
   );
   let tokensList = [mainCoin];
   if (fiatName.value === "CAD") return tokensList;
-  if (networkSelected.value.tokens.length > 0)
+  if (networkSelected.value.tokens.length > 0) {
+    console.log(tokensList.concat(networkSelected.value.tokens));
     return tokensList.concat(networkSelected.value.tokens);
+  }
   return tokensList;
 });
 
@@ -312,19 +314,14 @@ const tokenPrice = (token: string) => {
     rate: 1,
     currency: fiatName.value,
   };
-  if (isNaN(moonpayPrice) && isNaN(topperPrice))
-    return formatFiatValue(simplexPrice.toFixed(2), currencyConfig).value;
-  if (isNaN(simplexPrice) && isNaN(topperPrice))
-    return formatFiatValue(moonpayPrice.toFixed(2), currencyConfig).value;
-  if (isNaN(simplexPrice) && isNaN(moonpayPrice))
-    return formatFiatValue(topperPrice.toFixed(2), currencyConfig).value;
-  const price =
-    simplexPrice <= moonpayPrice
-      ? simplexPrice
-      : moonpayPrice <= topperPrice
-      ? moonpayPrice
-      : topperPrice;
-  return formatFiatValue(price.toFixed(2), currencyConfig).value;
+  return formatFiatValue(
+    isNaN(simplexPrice)
+      ? isNaN(moonpayPrice)
+        ? topperPrice.toFixed(2)
+        : moonpayPrice.toFixed(2)
+      : simplexPrice.toFixed(2),
+    currencyConfig
+  ).value;
 };
 
 const hasValidPrices = (token: string) => {
