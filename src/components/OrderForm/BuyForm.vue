@@ -23,7 +23,7 @@
           class="no-left-border full-button"
           append-icon="mdi-menu-down"
           :disabled="loading.data"
-          @click="openTokenSelect"
+          @click="toggleTokenModal"
         >
           <template #prepend>
             <img
@@ -41,7 +41,7 @@
             <v-icon color="grey-2" size="large"></v-icon>
           </template>
         </v-btn>
-        <div>Network: {{ selectedNetwork.name_long }}</div>
+        <div class="mt-2 mx-4">Network: {{ selectedNetwork.name_long }}</div>
       </div>
     </div>
 
@@ -238,7 +238,7 @@ const emit = defineEmits([
 const store = useGlobalStore();
 const { selectedFiat, selectedCrypto, selectedNetwork, fiats } =
   storeToRefs(store);
-const { setNetworks, setProviders } = store;
+const { setNetworks, setProviders, toggleTokenModal, setSelectedFiat } = store;
 
 // data
 const defaultFiatValue = "300";
@@ -329,10 +329,20 @@ watch(
 
 watch(
   () => form.fiatSelected,
-  () => {
+  (newVal) => {
     verifyAddress();
     cryptoToFiat();
     minMaxError();
+
+    fiats.value.forEach((value, key) => {
+      if (key === newVal) {
+        setSelectedFiat({
+          name: key,
+          value: key,
+          img: require(`@/assets/images/fiat/${key}.svg`),
+        });
+      }
+    });
   }
 );
 
@@ -444,23 +454,19 @@ const rules = [
     return true;
   },
 ];
-const isValidData = (data: { [key: string]: Data }) => {
-  const { cryptoSelected, fiatSelected } = form;
-  return !isEmpty(data[cryptoSelected]?.limits[fiatSelected]);
-};
 
-const openTokenSelect = () => {
-  emit(
-    "selectedCurrency",
-    {
-      name: form.fiatSelected,
-      value: form.fiatSelected,
-      // eslint-disable-next-line
-      img: require(`@/assets/images/fiat/${form.fiatSelected}.svg`),
-    },
-    form.fiatAmount
-  );
-};
+// const openTokenSelect = () => {
+//   emit(
+//     "selectedCurrency",
+//     {
+//       name: form.fiatSelected,
+//       value: form.fiatSelected,
+//       // eslint-disable-next-line
+//       img: require(`@/assets/images/fiat/${form.fiatSelected}.svg`),
+//     },
+//     form.fiatAmount
+//   );
+// };
 
 const kdaValidator = (address: string) => {
   const kPrefixed = address.substr(0, 2) === "k:";
@@ -896,12 +902,14 @@ const getPrices = async () => {
     const data = await fetch("https://qa.mewwallet.dev/v5/purchase/info");
     const response = await data.json();
     const { assets, providers } = response;
+    console.log(assets);
     setNetworks(assets);
     setProviders(providers);
     filteredFiatItems.value = Array.from(fiats.value.keys());
     fiatItems.value = Array.from(fiats.value.keys());
     cryptoToFiat();
   } catch (e: any) {
+    console.log(e);
     loading.data = false;
     errorHandler(e);
   }

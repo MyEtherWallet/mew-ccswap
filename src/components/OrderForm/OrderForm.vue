@@ -2,7 +2,24 @@
   <div
     class="top-container component--buy-form elevated-box elevation-4 pa-3 pa-sm-6 pa-md-8"
   >
-    <div v-if="step === 0">
+    <div
+      :class="[isTokenModalOpen ? 'open' : '', 'token-select-slider']"
+      v-if="isTokenModalOpen"
+    >
+      <TokenSelect
+        class="pa-3 pa-sm-6 pa-md-8"
+        :is-sell="isSell"
+        @close="close"
+      />
+    </div>
+
+    <BuyProviders
+      v-else-if="isBuyProvidersOpen"
+      @close="close"
+      @reset="reset"
+    />
+
+    <div v-else>
       <MewTabs
         :items="tabItems"
         :active-tab="activeTab"
@@ -18,22 +35,13 @@
         </template>
       </MewTabs>
     </div>
-
-    <div class="token-select-slider" :class="step === 1 ? 'open' : ''">
-      <TokenSelect
-        v-if="step === 1"
-        class="pa-3 pa-sm-6 pa-md-8"
-        :is-sell="isSell"
-        @close="close"
-      />
-    </div>
-
-    <BuyProviders v-if="step === 2" @close="close" @reset="reset" />
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, inject, computed } from "vue";
+import { storeToRefs } from "pinia";
+
 import MewTabs from "../MewTabs/MewTabs.vue";
 import BuyForm from "./BuyForm.vue";
 import BuyProviders from "./BuyProviders.vue";
@@ -48,6 +56,8 @@ const amplitude: any = inject("$amplitude");
 
 const { setSelectedCrypto, setSelectedFiat, setSelectedNetwork } =
   useGlobalStore();
+
+const { isTokenModalOpen, isBuyProvidersOpen } = storeToRefs(useGlobalStore());
 
 // data
 const tabItems = ["Buy", "Sell"];

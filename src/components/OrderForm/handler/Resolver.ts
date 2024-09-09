@@ -4,7 +4,8 @@ import { createWeb3Name } from "@web3-name-sdk/core";
 import * as nameHash from "eth-ens-namehash";
 import { zeroAddress } from "viem";
 import { isAddress } from "web3-utils";
-import { Network, resolvedName } from "../types";
+import { resolvedName } from "../types";
+import { Network } from "../network/types";
 
 const normalise = function (str: string) {
   return nameHash.normalize(str);

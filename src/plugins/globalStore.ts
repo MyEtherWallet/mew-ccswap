@@ -1,15 +1,18 @@
 import { ref, computed } from "vue";
 import { defineStore } from "pinia";
-import { Crypto, Fiat, Network, Assets, Providers, NewFiat } from "@/components/OrderForm/types";
+import { Crypto, Fiat, Assets, Providers, NewFiat } from "@/components/OrderForm/types";
+import { Network } from "@/components/OrderForm/network/types";
 import { Networks } from "@/components/OrderForm/network/networks";
 import { defaultCrypto, defaultFiat } from "@/components/OrderForm/handler/defaults";
+import networkConverter from "@/components/OrderForm/network/networkConverter";
 
 export const useGlobalStore = defineStore('global', () => {
   const isTokenModalOpen = ref(false);
+  const isBuyProvidersOpen = ref(false);
   const selectedFiat = ref(defaultFiat);
   const selectedCrypto = ref(defaultCrypto);
   const selectedNetwork = ref(Networks[0]);
-  const networks = ref<Assets[]>([]);
+  const networks = ref<Network[]>([]);
   const providers = ref<Providers[]>([]);
 
   const fiats = computed(() => {
@@ -38,6 +41,9 @@ export const useGlobalStore = defineStore('global', () => {
   const toggleTokenModal = () => {
     isTokenModalOpen.value = !isTokenModalOpen.value;
   }
+  const toggleBuyProviders = () => {
+    isBuyProvidersOpen.value = !isBuyProvidersOpen.value;
+  }
 
   const setSelectedFiat = (fiat: Fiat) => {
     selectedFiat.value = fiat;
@@ -52,7 +58,11 @@ export const useGlobalStore = defineStore('global', () => {
   }
 
   const setNetworks = (passedNetwork: Array<Assets>) => {
-    networks.value = passedNetwork;
+    const newNetworks: Array<Network> = passedNetwork.map((nw) => {
+      const parsedNetwork = networkConverter(nw);
+      return parsedNetwork;
+    })
+    networks.value = newNetworks;
   }
 
   const setProviders = (passedProviders: Array<Providers>) => {
@@ -61,11 +71,14 @@ export const useGlobalStore = defineStore('global', () => {
 
   return {
     fiats,
+    networks,
     isTokenModalOpen,
+    isBuyProvidersOpen,
     selectedFiat,
     selectedCrypto,
     selectedNetwork,
     toggleTokenModal,
+    toggleBuyProviders,
     setSelectedFiat,
     setSelectedCrypto,
     setSelectedNetwork,

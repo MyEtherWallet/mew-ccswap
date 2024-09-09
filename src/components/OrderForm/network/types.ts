@@ -68,14 +68,8 @@ interface Network {
   tokens: Array<Crypto>;
   icon: any;
   currencyName: string;
-  gasPriceMultiplier: number;
-  coingeckoID: string;
-  service: string;
   url: string;
   port: number;
-  auth: boolean;
-  username: string;
-  password: string;
 }
 interface Data {
   conversion_rates: { [currency: string]: number };

@@ -43,22 +43,6 @@ interface SubmitData {
     selected_fiat: Fiat,
     disable_moonpay: boolean
 }
-interface Network {
-    name: string,
-    name_long: string,
-    chainID: number,
-    tokens: Array<Crypto>,
-    icon: any,
-    currencyName: string,
-    gasPriceMultiplier: number,
-    coingeckoID: string,
-    service: string,
-    url: string,
-    port: number,
-    auth: boolean,
-    username: string,
-    password: string
-}
 interface Data {
     conversion_rates: { [currency: string]: number };
     limits: { [currency: string]: { min: number; max: number } };
@@ -143,6 +127,6 @@ interface resolvedName {
 }
 
 export {
-    Crypto, Fiat, QuoteData, SubmitData, Network, Data, PriceItem, NameResolver,
+    Crypto, Fiat, QuoteData, SubmitData, Data, PriceItem, NameResolver,
     resolvedName, Assets, NewToken, Providers, NewFiat, LeftBtn
 }
