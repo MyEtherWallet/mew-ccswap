@@ -62,7 +62,13 @@ export const useGlobalStore = defineStore('global', () => {
       const parsedNetwork = networkConverter(nw);
       return parsedNetwork;
     })
+    const findCurrentSelected = newNetworks.find((nw) => nw.name === selectedNetwork.value.name);
+    // setSelectedNetwork();
+    if (findCurrentSelected) {
+      setSelectedNetwork(findCurrentSelected);
+    }
     networks.value = newNetworks;
+
   }
 
   const setProviders = (passedProviders: Array<Providers>) => {

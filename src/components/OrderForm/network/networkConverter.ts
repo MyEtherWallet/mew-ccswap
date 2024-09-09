@@ -55,6 +55,7 @@ export default (network: {
       network: network.chain,
       decimals: 18,
     }
+
     try {
       token.img = getIcon(asset.symbol);
     } catch (e) {
