@@ -778,16 +778,14 @@ const min = computed(() => {
   const simplexLimit = simplexData[cryptoSelected]?.limits[fiatSelected];
   const moonpayLimit = moonpayData[cryptoSelected]?.limits[fiatSelected];
   const topperLimit = topperData[cryptoSelected]?.limits[fiatSelected];
-  if (!isValidData(moonpayData) && simplexLimit) return simplexLimit.min;
-  if (!isValidData(simplexData) && moonpayLimit) return moonpayLimit.min;
-  if (!isValidData(simplexData) && !isValidData(moonpayData))
-    return topperLimit.min;
-  return simplexLimit.min < moonpayLimit.min ||
-    simplexLimit.min < topperLimit.min
+
+  return simplexLimit
     ? simplexLimit.min
-    : moonpayLimit.min < topperLimit.min
+    : moonpayLimit
     ? moonpayLimit.min
-    : topperLimit.min;
+    : topperLimit
+    ? topperLimit.min
+    : 0;
 });
 const max = computed(() => {
   const { cryptoSelected, fiatSelected } = form;
@@ -796,17 +794,13 @@ const max = computed(() => {
   const moonpayLimit = moonpayData[cryptoSelected]?.limits[fiatSelected];
   const topperLimit = topperData[cryptoSelected]?.limits[fiatSelected];
 
-  if (!isValidData(moonpayData) && simplexLimit) return simplexLimit.max;
-  if (!isValidData(simplexData) && moonpayLimit) return moonpayLimit.max;
-  if (!isValidData(simplexData) && !isValidData(moonpayData))
-    return topperLimit.max;
-
-  return moonpayLimit.max > simplexLimit.max ||
-    moonpayLimit.max > topperLimit.max
-    ? moonpayLimit.max
-    : simplexLimit.max > topperLimit.max
+  return simplexLimit
     ? simplexLimit.max
-    : topperLimit.max;
+    : moonpayLimit
+    ? moonpayLimit.max
+    : topperLimit
+    ? topperLimit.max
+    : 0;
 });
 
 const minMaxError = () => {
@@ -912,14 +906,10 @@ const bestPrice = computed(() => {
   const topperPrice = new BigNumber(
     topperData[cryptoSelected]?.prices[fiatSelected]
   );
-
-  if (moonpayPrice.isNaN() && topperPrice.isNaN()) return simplexPrice;
-  if (simplexPrice.isNaN() && topperPrice.isNaN()) return moonpayPrice;
-  if (simplexPrice.isNaN() && moonpayPrice.isNaN()) return topperPrice;
-  return simplexPrice.lte(moonpayPrice)
-    ? simplexPrice
-    : moonpayPrice.lte(topperPrice)
-    ? moonpayPrice
+  return topperPrice.isNaN()
+    ? moonpayPrice.isNaN()
+      ? simplexPrice
+      : moonpayPrice
     : topperPrice;
 });
 
