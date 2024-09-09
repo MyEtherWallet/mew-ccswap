@@ -54,8 +54,13 @@ import { defaultCrypto, defaultFiat } from "./handler/defaults";
 
 const amplitude: any = inject("$amplitude");
 
-const { setSelectedCrypto, setSelectedFiat, setSelectedNetwork } =
-  useGlobalStore();
+const {
+  setSelectedCrypto,
+  setSelectedFiat,
+  setSelectedNetwork,
+  toggleBuyProviders,
+  toggleTokenModal,
+} = useGlobalStore();
 
 const { isTokenModalOpen, isBuyProvidersOpen } = storeToRefs(useGlobalStore());
 
@@ -71,7 +76,12 @@ const isSell = computed(() => {
 
 // methods
 const close = () => {
-  step.value = 0;
+  if (isTokenModalOpen.value) {
+    toggleTokenModal();
+  }
+  if (isBuyProvidersOpen.value) {
+    toggleBuyProviders();
+  }
 };
 
 const reset = () => {

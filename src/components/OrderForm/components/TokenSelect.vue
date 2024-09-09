@@ -89,10 +89,11 @@
       <div class="d-flex token-container-overflow">
         <v-list lines="one" class="full-width">
           <v-list-item
-            v-for="(item, i) in selectedNetwork.tokens"
+            v-for="(item, i) in filteredNetworkTokens"
             :key="i"
             :value="item"
             base-color="primary"
+            @click="selectCurrency(item)"
           >
             <template #prepend>
               <img
@@ -169,10 +170,7 @@ const props = defineProps({
 // reactive data
 // const networks: Network[] = Networks;
 const networkSelected: Ref<Network> = ref<Network>(selectedNetwork.value);
-const cryptoSelected: Ref<Crypto> = ref<Crypto>(selectedCrypto.value);
 
-const networkDropdown: Ref<boolean> = ref(false);
-const cryptoDropdown: Ref<boolean> = ref(false);
 const searchInput: Ref<string> = ref("");
 const networkSearchInput: Ref<string> = ref("");
 
@@ -189,17 +187,31 @@ const filteredNetworkList: Ref<Network[]> = computed<Network[]>(() => {
   });
 });
 
-watch(
-  () => networkSelected.value,
-  () => {
-    console.log("networkSelected", networkSelected.value);
-  }
-);
+const filteredNetworkTokens = computed<Crypto[]>(() => {
+  const filterText = searchInput.value.toLowerCase();
+  const tokensCopy = selectedNetwork.value.tokens.slice();
+  if (filterText === "") return tokensCopy;
+  return tokensCopy.filter((token) => {
+    const tokenSymbol = token.symbol.toLowerCase();
+    const tokenName = token.subtext.toLowerCase();
+    if (tokenSymbol.includes(filterText) || tokenName.includes(filterText))
+      return token;
+  });
+});
 
 // methods
 const selectNetwork = (network: Network) => {
   networkSelected.value = network.value;
   setSelectedNetwork(network.value);
+};
+
+const selectCurrency = (token: Crypto) => {
+  setSelectedCrypto(token);
+  close();
+};
+
+const close = () => {
+  emit("close");
 };
 
 // computed
@@ -264,10 +276,10 @@ const selectNetwork = (network: Network) => {
 // });
 
 // beforeMount
-onBeforeMount(() => {
-  networkSelected.value = selectedNetwork.value;
-  cryptoSelected.value = selectedCrypto.value;
-});
+// onBeforeMount(() => {
+//   networkSelected.value = selectedNetwork.value;
+//   cryptoSelected.value = selectedCrypto.value;
+// });
 
 // watch
 // watch(
@@ -312,10 +324,6 @@ onBeforeMount(() => {
 //   if (selectedFiat.value.name === "JPY") return price !== "0";
 //   return price !== "0.00";
 // };
-
-const close = () => {
-  emit("close");
-};
 </script>
 
 <style lang="scss" scoped>

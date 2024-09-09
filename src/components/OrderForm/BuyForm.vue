@@ -28,15 +28,13 @@
           <template #prepend>
             <img
               class="currency-icon mr-1 padding--2"
-              :src="cryptoIcon"
+              :src="selectedCrypto.img"
               :alt="form.cryptoSelected"
               width="25px"
               height="25px"
             />
           </template>
-          <span>
-            {{ concatenate(form.cryptoSelected) }}
-          </span>
+          <span> {{ form.cryptoSelected }} - {{ selectedCrypto.symbol }} </span>
           <template v-slot:append>
             <v-icon color="grey-2" size="large"></v-icon>
           </template>
@@ -203,7 +201,7 @@ import {
   currencySymbols,
 } from "./handler/prices";
 import { isObject, isNumber, isString, isEmpty, debounce } from "lodash";
-import WAValidator from "multicoin-address-validator";
+import addressValidator from "@/helpers/addressValidator";
 import { isHexStrict, isAddress, fromWei, toBN, isHex } from "web3-utils";
 import { encodeAddress } from "@polkadot/keyring";
 import Web3 from "web3";
@@ -408,19 +406,6 @@ const topperIncludesFeeText = computed(() => {
 const fiatIcon = computed(() => {
   return require(`@/assets/images/fiat/${form.fiatSelected}.svg`);
 });
-const cryptoIcon = computed(() => {
-  if (
-    form.cryptoSelected === "PYUSD" ||
-    form.cryptoSelected === "FDUSD-SC" ||
-    form.cryptoSelected === "TUSD"
-  )
-    return require(`@/assets/images/crypto/${form.cryptoSelected}.png`);
-  if (form.cryptoSelected.includes("USDT"))
-    return require(`@/assets/images/crypto/USDT.svg`);
-  if (form.cryptoSelected.includes("USDC"))
-    return require(`@/assets/images/crypto/USDC.svg`);
-  return require(`@/assets/images/crypto/${form.cryptoSelected}.svg`);
-});
 
 // methods
 const getIcon = (currency: string, isFiat = true) => {
@@ -476,22 +461,8 @@ const kdaValidator = (address: string) => {
 
 const addressValid = computed(() => {
   const address = form.address.toLowerCase();
-  return other_chains.includes(form.cryptoSelected)
-    ? form.cryptoSelected === "KDA"
-      ? kdaValidator(address)
-      : WAValidator.validate(address, form.cryptoSelected)
-    : !polkadot_chains.includes(form.cryptoSelected)
-    ? bitcoin_chains.includes(form.cryptoSelected)
-      ? WAValidator.validate(address, form.cryptoSelected)
-      : selectedNetwork.value.name === "OP" ||
-        selectedNetwork.value.name === "ARB"
-      ? WAValidator.validate(address, "ETH")
-      : WAValidator.validate(address, form.cryptoSelected) &&
-        validAddress(address)
-    : isValidAddressPolkadotAddress(
-        address,
-        form.cryptoSelected === "DOT" ? 0 : 2
-      );
+
+  return addressValidator(address, selectedNetwork.value.name);
 });
 
 const loadUrlParameters = () => {
@@ -902,14 +873,12 @@ const getPrices = async () => {
     const data = await fetch("https://qa.mewwallet.dev/v5/purchase/info");
     const response = await data.json();
     const { assets, providers } = response;
-    console.log(assets);
     setNetworks(assets);
     setProviders(providers);
     filteredFiatItems.value = Array.from(fiats.value.keys());
     fiatItems.value = Array.from(fiats.value.keys());
     cryptoToFiat();
   } catch (e: any) {
-    console.log(e);
     loading.data = false;
     errorHandler(e);
   }
@@ -949,7 +918,7 @@ const cryptoToFiat = async () => {
   try {
     loading.data = true;
     const priceFetch = await fetch(
-      `https://qa.mewwallet.dev/v5/purchase/quote?fiatCurrency=${form.fiatSelected}&amount=${form.fiatAmount}&cryptoCurrency=${form.cryptoSelected}&chain=${selectedNetwork.value.name}`
+      `https://qa.mewwallet.dev/v5/purchase/quote?fiatCurrency=${form.fiatSelected}&amount=${form.fiatAmount}&cryptoCurrency=${selectedCrypto.value.name}&chain=${selectedNetwork.value.name}`
     );
     const priceRespone = await priceFetch.json();
     const { crypto_price, crypto_amount } = priceRespone[0]; // get best rate
@@ -961,6 +930,9 @@ const cryptoToFiat = async () => {
     loading.data = false;
   }
 };
+
+const submitForm = (): void => {};
+
 // const submitForm = (): void => {
 //   const { fiatSelected, cryptoSelected, address, fiatAmount } = form;
 //   const moonpayAvailable = isValidData(moonpayData);
@@ -1118,7 +1090,12 @@ input::-webkit-inner-spin-button {
     max-width: 282px !important;
   }
 }
-@media screen and (max-width: 1900px) {
+@media screen and (min-width: 1280px) and (max-width: 1899px) {
+  .no-right-border {
+    max-width: 500px !important;
+  }
+}
+@media screen and (min-width: 1900px) {
   .no-right-border {
     max-width: 282px !important;
   }
