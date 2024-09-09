@@ -1,6 +1,6 @@
 import { ref, computed } from "vue";
 import { defineStore } from "pinia";
-import { Crypto, Fiat, Assets, Providers, NewFiat } from "@/components/OrderForm/types";
+import { Crypto, Fiat, Assets, Providers, NewFiat, BuyProviders } from "@/components/OrderForm/types";
 import { Network } from "@/components/OrderForm/network/types";
 import { Networks } from "@/components/OrderForm/network/networks";
 import { defaultCrypto, defaultFiat } from "@/components/OrderForm/handler/defaults";
@@ -14,6 +14,8 @@ export const useGlobalStore = defineStore('global', () => {
   const selectedNetwork = ref(Networks[0]);
   const networks = ref<Network[]>([]);
   const providers = ref<Providers[]>([]);
+  const buyProviders = ref<BuyProviders[]>([]);
+
 
   const fiats = computed(() => {
     const fiatsMap = new Map<string, NewFiat>();
@@ -43,6 +45,9 @@ export const useGlobalStore = defineStore('global', () => {
   }
   const toggleBuyProviders = () => {
     isBuyProvidersOpen.value = !isBuyProvidersOpen.value;
+    if (!isBuyProvidersOpen.value) {
+      buyProviders.value = [];
+    }
   }
 
   const setSelectedFiat = (fiat: Fiat) => {
@@ -71,8 +76,15 @@ export const useGlobalStore = defineStore('global', () => {
 
   }
 
+  // providers for buy quotes
   const setProviders = (passedProviders: Array<Providers>) => {
     providers.value = passedProviders;
+  }
+
+  // providers for actual buy transactions
+  // gets cleared when buy modal is closed
+  const setBuyProviders = (passedProviders: Array<BuyProviders>) => {
+    buyProviders.value = passedProviders;
   }
 
   return {
@@ -90,5 +102,6 @@ export const useGlobalStore = defineStore('global', () => {
     setSelectedNetwork,
     setNetworks,
     setProviders,
+    setBuyProviders
   }
 })

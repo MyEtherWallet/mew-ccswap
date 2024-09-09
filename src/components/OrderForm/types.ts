@@ -113,6 +113,19 @@ interface Providers {
     provider: string
 }
 
+interface BuyProviders {
+    chain: string;
+    crypto_amount: string;
+    crypto_currency: string;
+    crypto_price: string;
+    fiat_amount: string;
+    fiat_currency: string;
+    fiat_fees: string;
+    payment_methods: string[];
+    provider: string;
+    url: string;
+}
+
 interface LeftBtn {
     method: () => void;
 }
@@ -128,5 +141,5 @@ interface resolvedName {
 
 export {
     Crypto, Fiat, QuoteData, SubmitData, Data, PriceItem, NameResolver,
-    resolvedName, Assets, NewToken, Providers, NewFiat, LeftBtn
+    resolvedName, Assets, NewToken, Providers, NewFiat, LeftBtn, BuyProviders
 }

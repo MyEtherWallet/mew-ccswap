@@ -202,7 +202,7 @@ import {
 } from "./handler/prices";
 import { isObject, isNumber, isString, isEmpty, debounce } from "lodash";
 import addressValidator from "@/helpers/addressValidator";
-import { isHexStrict, isAddress, fromWei, toBN, isHex } from "web3-utils";
+import { isHexStrict, isAddress, fromWei, toBN, isHex, sha3 } from "web3-utils";
 import { encodeAddress } from "@polkadot/keyring";
 import Web3 from "web3";
 
@@ -236,7 +236,14 @@ const emit = defineEmits([
 const store = useGlobalStore();
 const { selectedFiat, selectedCrypto, selectedNetwork, fiats } =
   storeToRefs(store);
-const { setNetworks, setProviders, toggleTokenModal, setSelectedFiat } = store;
+const {
+  setNetworks,
+  setProviders,
+  setBuyProviders,
+  toggleTokenModal,
+  setSelectedFiat,
+  toggleBuyProviders,
+} = store;
 
 // data
 const defaultFiatValue = "300";
@@ -439,25 +446,6 @@ const rules = [
     return true;
   },
 ];
-
-// const openTokenSelect = () => {
-//   emit(
-//     "selectedCurrency",
-//     {
-//       name: form.fiatSelected,
-//       value: form.fiatSelected,
-//       // eslint-disable-next-line
-//       img: require(`@/assets/images/fiat/${form.fiatSelected}.svg`),
-//     },
-//     form.fiatAmount
-//   );
-// };
-
-const kdaValidator = (address: string) => {
-  const kPrefixed = address.substr(0, 2) === "k:";
-  const checkHex = isHex(address.substring(2));
-  return kPrefixed && checkHex;
-};
 
 const addressValid = computed(() => {
   const address = form.address.toLowerCase();
@@ -931,7 +919,26 @@ const cryptoToFiat = async () => {
   }
 };
 
-const submitForm = (): void => {};
+const submitForm = async (): Promise<void> => {
+  try {
+    loading.data = true;
+    const { fiatAmount } = form;
+    const address = form.address.toLowerCase();
+    const id = sha3(address)?.substring(0, 42);
+    const providersFetch = await fetch(
+      `https://qa.mewwallet.dev/v5/purchase/buy?id=${id}&address=${address}&fiatCurrency=${selectedFiat.value.name}&amount=${fiatAmount}&cryptoCurrency=${selectedCrypto.value.symbol}&chain=${selectedNetwork.value.name}&iso=US`
+    );
+    const providers = await providersFetch.json();
+    setBuyProviders(providers);
+    toggleBuyProviders();
+    loading.data = false;
+    console.log(providers);
+  } catch (e) {
+    console.log(e);
+    loading.data = false;
+    errorHandler(e);
+  }
+};
 
 // const submitForm = (): void => {
 //   const { fiatSelected, cryptoSelected, address, fiatAmount } = form;
