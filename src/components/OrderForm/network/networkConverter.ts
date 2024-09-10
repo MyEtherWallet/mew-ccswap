@@ -1,6 +1,7 @@
 import { getIcon } from "./networks";
 import { Network } from "./types";
-import { Crypto } from "@/components/OrderForm/types";
+import { Crypto, NewToken } from "@/components/OrderForm/types";
+import { isEmpty } from "lodash";
 
 const knownChainIds: { [key: string]: number } = {
   'ETH': 1,
@@ -45,10 +46,10 @@ export default (network: {
   }
   const tokens: Array<Crypto> = [];
 
-  network.assets.forEach((asset: { chain: string, contract_address: string, providers: Array<string>, symbol: string }) => {
+  network.assets.forEach((asset: NewToken) => {
     const token: Crypto = {
       img: '',
-      name: asset.symbol,
+      name: asset.market_data && !isEmpty(asset.market_data) ? asset.market_data.name : asset.symbol,
       subtext: asset.symbol,
       value: asset.symbol,
       symbol: asset.symbol,
@@ -56,11 +57,8 @@ export default (network: {
       decimals: 18,
     }
 
-    try {
-      token.img = getIcon(asset.symbol);
-    } catch (e) {
-      token.img = newNetwork.icon;
-    }
+    const icon = getIcon(asset.symbol);
+    token.img = icon === '' ? !isEmpty(asset.market_data) ? asset.market_data.icon === '' ? newNetwork.icon : asset.market_data.icon : newNetwork.icon : icon;
     tokens.push(token);
   });
 

@@ -44,6 +44,7 @@
                 prepend-inner-icon="mdi-magnify"
                 placeholder="Search"
                 :autofocus="true"
+                @click.stop="(e) => e.preventDefault()"
               ></v-text-field>
             </div>
           </template>
@@ -110,7 +111,7 @@
                   {{ item.symbol }}
                 </span>
                 <span>
-                  {{ ` - ${item.subtext ? item.subtext : item.name}` }}
+                  {{ ` - ${item.name}` }}
                 </span>
               </div>
             </v-list-item-title>

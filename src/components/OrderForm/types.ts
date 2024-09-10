@@ -86,11 +86,23 @@ interface Assets {
     assets: Array<NewToken>;
 }
 
+interface MarketData {
+    name: string;
+    symbol: string;
+    contract_address: string;
+    icon: string;
+    price: string;
+    price_change_percentage_24h: string;
+    sparkline: string[];
+    market_cap: string;
+}
+
 interface NewToken {
     chain: string;
     contract_address: string;
     providers: Array<string>;
     symbol: string;
+    market_data?: MarketData;
 }
 
 interface NewLimits {

@@ -92,8 +92,7 @@
               density="compact"
               placeholder="Search"
               @update:model-value="updateFiatFilter"
-              @click.stop="() => {}"
-            ></v-text-field>
+            />
           </template>
           <template #item="data">
             <div
@@ -858,13 +857,15 @@ const concatenate = (value: string) => {
 const getPrices = async () => {
   try {
     loading.data = true;
-    const data = await fetch("https://qa.mewwallet.dev/v5/purchase/info");
+    const data = await fetch(
+      "https://qa.mewwallet.dev/v5/purchase/info?includeMarketData=true"
+    );
     const response = await data.json();
     const { assets, providers } = response;
     setNetworks(assets);
     setProviders(providers);
-    filteredFiatItems.value = Array.from(fiats.value.keys());
     fiatItems.value = Array.from(fiats.value.keys());
+    filteredFiatItems.value = Array.from(fiats.value.keys());
     cryptoToFiat();
   } catch (e: any) {
     loading.data = false;
