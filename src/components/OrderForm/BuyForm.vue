@@ -620,23 +620,23 @@ const topperFiatAmount = computed(() => {
   return topperAvailable.value ? form.fiatAmount : "0.00";
 });
 const topperFiatFee = computed(() => {
-  return topperAvailable.value
-    ? BigNumber(topperFiatAmount.value)
-        .times(0.029)
-        .toFixed(fiatCurrency.value.decimals)
-    : 0;
-});
-const topperMewFiatFee = computed(() => {
+  if (BigNumber(topperFiatAmount.value).lt(40)) return 1;
   return BigNumber(topperFiatAmount.value)
-    .times(0.0175)
+    .times(0.0249)
     .toFixed(fiatCurrency.value.decimals);
 });
+// const topperMewFiatFee = computed(() => {
+//   return BigNumber(topperFiatAmount.value)
+//     .times(0.00143)
+//     .toFixed(fiatCurrency.value.decimals);
+// });
 const topperPlusFee = computed(() => {
-  return BigNumber(topperFiatAmount.value)
-    .minus(topperFiatFee.value)
-    .minus(BigNumber(topperMewFiatFee.value))
-    .minus(0.2) // temp network fee
-    .toFixed(fiatCurrency.value.decimals);
+  return (
+    BigNumber(topperFiatAmount.value)
+      .minus(topperFiatFee.value)
+      // .minus(topperMewFiatFee.value) // temp network fee
+      .toFixed(fiatCurrency.value.decimals)
+  );
 });
 const topperPlusFeeF = computed(() => {
   return topperAvailable.value
@@ -779,12 +779,12 @@ const min = computed(() => {
   const moonpayLimit = moonpayData[cryptoSelected]?.limits[fiatSelected];
   const topperLimit = topperData[cryptoSelected]?.limits[fiatSelected];
 
-  return simplexLimit
-    ? simplexLimit.min
+  return topperLimit
+    ? topperLimit.min
     : moonpayLimit
     ? moonpayLimit.min
-    : topperLimit
-    ? topperLimit.min
+    : simplexLimit
+    ? simplexLimit.min
     : 0;
 });
 const max = computed(() => {
@@ -794,12 +794,12 @@ const max = computed(() => {
   const moonpayLimit = moonpayData[cryptoSelected]?.limits[fiatSelected];
   const topperLimit = topperData[cryptoSelected]?.limits[fiatSelected];
 
-  return simplexLimit
-    ? simplexLimit.max
+  return topperLimit
+    ? topperLimit.max
     : moonpayLimit
     ? moonpayLimit.max
-    : topperLimit
-    ? topperLimit.max
+    : simplexLimit
+    ? simplexLimit.max
     : 0;
 });
 
@@ -836,7 +836,11 @@ const getPrices = async () => {
           (r: any) => (tmp.conversion_rates[r.fiat_currency] = r.exchange_rate)
         );
         d.limits.forEach((l: any) => {
-          if (l.type === "WEB" || l.type === "CREDIT-CARD") {
+          if (
+            l.type === "WEB" ||
+            l.type === "CREDIT-CARD" ||
+            l.type === "DEFAULT"
+          ) {
             tmp.limits[l.fiat_currency] = l.limit;
             return;
           }
@@ -1064,6 +1068,7 @@ const verifyAddress = (): void => {
 };
 
 const submitForm = (): void => {
+  getPrices();
   const { fiatSelected, cryptoSelected, address, fiatAmount } = form;
   const moonpayAvailable = isValidData(moonpayData);
   const moonpayOverMax = moonpayAvailable

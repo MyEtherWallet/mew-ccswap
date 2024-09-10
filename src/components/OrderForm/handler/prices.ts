@@ -3,14 +3,16 @@ import { toNumber } from "lodash";
 import { sha3 } from "web3-utils";
 import api from './api';
 
-const supportedCrypto = ["ETH", "BTC", "BCH", "MATIC", "USDT", "USDC", "DAI", "DOT", "KSM", "KDA", "PYUSD", "BSC", "OP", "ARB", 'TUSD',
-  'FDUSD-SC',
-  'USDC-SC',
+const supportedCrypto = ["ETH", "BTC", "BCH", "MATIC", "USDT", "USDC", "DAI", "KSM", "KDA",
+  // "PYUSD",
+  // "DOT", "BSC", "OP", "ARB", 'TUSD',
+  // 'FDUSD-SC',
+  // 'USDC-SC',
   'USDT-SC',
   'USDC-MATIC',
   'USDT-MATIC',
-  'USDT-ARBITRUM',
-  'USDT-OPTIMISM',
+  // 'USDT-ARBITRUM',
+  // 'USDT-OPTIMISM',
   'SOL', 'DOGE', 'LTC'
 ];
 
@@ -104,7 +106,7 @@ const filterData = (res: any) => {
 async function getCryptoPrices(
   cryptoCurrency?: "ETH" | "BTC" | "BCH" | "LTC" | "DOGE" | "MATIC" | "USDT" | "USDC" | "DAI" | "DOT" | "KSM" | "KDA" | "PYUSD" | "OP" | "ARB" | "BSC" | "TUSD" | "FUDSD-SC" | "USDC-SC" | "USDT-SC" | "USDC-MATIC" | "USDT-MATIC" | "USDT-ARBITRUM" | "USDT-OPTIMISM" | "SOL"
 ) {
-  const apiQuote = `${api.endpoint}/v4/purchase/providers/web`;
+  const apiQuote = `${api.endpoint}/v4/purchase/providers/web?useV5=true`;
   if (cryptoCurrency)
     return await axios
       .get(apiQuote, {
@@ -155,7 +157,7 @@ async function getFiatRatesForBuy() {
  */
 async function getSupportedFiatToBuy(symbol: string) {
   return axios
-    .get(`${api.endpoint}/v4/purchase/providers/web?iso=us&cryptoCurrency=${symbol}`, {
+    .get(`${api.endpoint}/v4/purchase/providers/web?iso=us&cryptoCurrency=${symbol}&useV5=true`, {
       headers: {
         'Accept-Language': 'en-US'
       }
