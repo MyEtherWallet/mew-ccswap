@@ -16,7 +16,6 @@ export const useGlobalStore = defineStore('global', () => {
   const providers = ref<Providers[]>([]);
   const buyProviders = ref<BuyProviders[]>([]);
 
-
   const fiats = computed(() => {
     const fiatsMap = new Map<string, NewFiat>();
     providers.value.forEach((provider) => {
@@ -38,6 +37,10 @@ export const useGlobalStore = defineStore('global', () => {
       });
     })
     return fiatsMap;
+  })
+
+  const allCryptos = computed(() => {
+    return networks.value.flatMap((network) => network.tokens);
   })
 
   const toggleTokenModal = () => {
@@ -95,6 +98,8 @@ export const useGlobalStore = defineStore('global', () => {
     selectedFiat,
     selectedCrypto,
     selectedNetwork,
+    allCryptos,
+    buyProviders,
     toggleTokenModal,
     toggleBuyProviders,
     setSelectedFiat,
