@@ -190,7 +190,16 @@ const filteredNetworkTokens = computed<Crypto[]>(() => {
 // methods
 const selectNetwork = (passedNetwork: Network) => {
   setSelectedNetwork(passedNetwork);
-  setSelectedCrypto(passedNetwork.tokens[0]);
+  if (passedNetwork.tokens.length === 1) {
+    setSelectedCrypto(passedNetwork.tokens[0]);
+  } else {
+    const findMain = passedNetwork.tokens.find(
+      (token) => token.symbol === passedNetwork.name
+    );
+    if (findMain) {
+      setSelectedCrypto(findMain);
+    }
+  }
   networkSelected.value = passedNetwork;
 };
 
