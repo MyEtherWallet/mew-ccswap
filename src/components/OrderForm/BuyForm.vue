@@ -92,6 +92,7 @@
               density="compact"
               placeholder="Search"
               @update:model-value="updateFiatFilter"
+              @click.stop="(e) => e.preventDefault()"
             />
           </template>
           <template #item="data">
