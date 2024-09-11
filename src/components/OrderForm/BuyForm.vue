@@ -218,9 +218,9 @@ const {
   selectedFiat,
   selectedCrypto,
   selectedNetwork,
-  fiats,
+  buyFiats,
+  buyNetworks,
   allCryptos,
-  networks,
 } = storeToRefs(store);
 const {
   setNetworks,
@@ -318,7 +318,7 @@ watch(
     cryptoToFiat();
     minMaxError();
 
-    fiats.value.forEach((value, key) => {
+    buyFiats.value.forEach((value, key) => {
       if (key === newVal) {
         setSelectedFiat({
           name: key,
@@ -411,14 +411,16 @@ const loadUrlParameters = () => {
       }
     });
 
-    const supportedNetwork = networks.value.find((network: Network) => {
+    const supportedNetwork = buyNetworks.value.find((network: Network) => {
       const locNetwork = queryNetwork ? queryNetwork : "ETH";
       if (network.name.toLowerCase() === locNetwork.toLowerCase()) {
         return queryNetwork;
       }
     });
 
-    const isSupportedFiat = fiats.value.get(queryFiat?.toUpperCase() || "USD");
+    const isSupportedFiat = buyFiats.value.get(
+      queryFiat?.toUpperCase() || "USD"
+    );
 
     form.fiatSelected = isSupportedFiat?.fiat_currency || "USD";
     form.cryptoSelected = isSupportedCrypto?.symbol || "ETH";
@@ -481,7 +483,7 @@ const verifyAddress = (): void => {
 };
 
 const limits = computed(() => {
-  const lim = fiats.value.get(form.fiatSelected)?.limits || {
+  const lim = buyFiats.value.get(form.fiatSelected)?.limits || {
     min: 0,
     max: 0,
   };
@@ -523,8 +525,8 @@ const getPrices = async () => {
     const { assets, providers } = response;
     setNetworks(assets);
     setProviders(providers);
-    fiatItems.value = Array.from(fiats.value.keys());
-    filteredFiatItems.value = Array.from(fiats.value.keys());
+    fiatItems.value = Array.from(buyFiats.value.keys());
+    filteredFiatItems.value = Array.from(buyFiats.value.keys());
     cryptoToFiat();
   } catch (e: any) {
     loading.data = false;

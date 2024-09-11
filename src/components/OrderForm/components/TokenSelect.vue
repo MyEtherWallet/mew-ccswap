@@ -132,7 +132,7 @@ import { Crypto } from "../types";
 import { storeToRefs } from "pinia";
 import { useGlobalStore } from "@/plugins/globalStore";
 import { Network } from "../network/types";
-const { selectedNetwork, networks } = storeToRefs(useGlobalStore());
+const { selectedNetwork, buyNetworks } = storeToRefs(useGlobalStore());
 
 const { setSelectedNetwork, setSelectedCrypto } = useGlobalStore();
 
@@ -158,7 +158,7 @@ const searchInput: Ref<string> = ref("");
 const networkSearchInput: Ref<string> = ref("");
 
 const filteredNetworkList: Ref<Network[]> = computed<Network[]>(() => {
-  const withTokensNetwork = networks.value;
+  const withTokensNetwork = buyNetworks.value;
   const filter = networkSearchInput.value.toLowerCase();
   return withTokensNetwork.filter((network) => {
     if (
