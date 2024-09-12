@@ -7,14 +7,16 @@
       </v-icon>
       <div class="mew-heading-2 provider-text">Select provider</div>
     </div>
-    <div class="mew-heading-2 font-weight-regular pb-2">
-      Spending {{ formattedFiat }}
+    <div class="mew-heading-2 mb-10">
+      Spending {{ formattedFiat }} to buy {{ selectedCrypto.symbol }} on
+      {{ selectedNetwork.name_long }} Network
     </div>
     <div
       v-for="(provider, idx) in buyProviders"
       :key="provider.provider + idx"
       class="section-block pa-5 mb-6"
     >
+      <div v-if="idx === 0" class="best-rate">Best Rate</div>
       <img
         class="provider-logo"
         :src="parseProviderLogo(provider)"
@@ -105,7 +107,8 @@ import { BuyProviders } from "./types";
 const amplitude: any = inject("$amplitude");
 
 const store = useGlobalStore();
-const { buyProviders, selectedFiat } = storeToRefs(store);
+const { buyProviders, selectedFiat, selectedCrypto, selectedNetwork } =
+  storeToRefs(store);
 
 const formattedFiat = computed(() => {
   const amount =
@@ -259,6 +262,17 @@ $greyPrimary-base: #5a678a;
   text-align: center;
   width: 100%;
   padding-right: 20px;
+}
+
+.best-rate {
+  background-color: #05c0a5 !important;
+  text-align: center;
+  font-size: small;
+  width: 64px;
+  border-radius: 4px;
+  top: -10px;
+  position: absolute;
+  color: white;
 }
 </style>
 <style lang="scss">
