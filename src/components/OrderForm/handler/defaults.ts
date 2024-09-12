@@ -1,7 +1,7 @@
 const defaultCrypto = {
   decimals: 18,
   img: require("@/assets/images/crypto/ETH.svg"),
-  name: "ETH",
+  name: "Ethereum",
   subtext: "Ethereum",
   value: "ETH",
   symbol: "ETH",
