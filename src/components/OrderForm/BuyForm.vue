@@ -540,12 +540,12 @@ const cryptoToFiat = async () => {
     );
     const priceResponse = await priceFetch.json();
     // const { crypto_price, crypto_amount, msg } = priceResponse[0]; // get best rate
-    if (priceResponse.msg) {
-      form.quoteError = priceResponse.msg;
+    if (priceResponse[0].msg) {
+      form.quoteError = priceResponse[0].msg;
       return;
     }
-    form.cryptoAmount = priceResponse.crypto_amount;
-    price.value = priceResponse.crypto_price;
+    form.cryptoAmount = priceResponse[0].crypto_amount;
+    price.value = priceResponse[0].crypto_price;
     loading.data = false;
   } catch (e) {
     errorHandler(e);
