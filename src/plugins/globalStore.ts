@@ -91,17 +91,19 @@ export const useGlobalStore = defineStore('global', () => {
   }
 
   const setNetworks = (passedNetwork: Array<Assets>) => {
-    const sNetworks: Array<Network> = passedNetwork.filter(nItem =>
-      nItem.assets.some(asset => asset.providers.includes("MOONPAY"))
-    ).map(nw => {
-      const parsedNetwork = networkConverter(nw);
-      return parsedNetwork;
-    })
-
     const bNetworks: Array<Network> = passedNetwork.map((nw) => {
       const parsedNetwork = networkConverter(nw);
       return parsedNetwork;
     })
+    const sNetworks: Array<Network> = passedNetwork.filter(nItem =>
+      nItem.assets.some(asset => asset.providers.includes("MOONPAY"))
+    ).map(nw => {
+      const newTokens = nw.assets.filter(asset => asset.providers.includes("MOONPAY"));
+      nw.assets = newTokens;
+      const parsedNetwork = networkConverter(nw);
+      return parsedNetwork;
+    })
+
     const findCurrentSelected = bNetworks.find((nw) => nw.name === selectedNetwork.value.name);
     // setSelectedNetwork();
     if (findCurrentSelected) {
@@ -109,7 +111,6 @@ export const useGlobalStore = defineStore('global', () => {
     }
     buyNetworks.value = bNetworks;
     sellNetworks.value = sNetworks;
-
   }
 
   // providers for buy quotes

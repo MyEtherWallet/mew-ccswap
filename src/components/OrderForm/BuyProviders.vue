@@ -118,14 +118,11 @@ const isEUR = computed(() => {
 });
 
 const generateFeeLabel = (provider: BuyProviders) => {
-  const percentFee = {
-    MOONPAY: isEUR.value ? 0.7 : 4.99,
-  };
   const feeLabel: { [key: string]: string } = {
-    MOONPAY: `Includes ${percentFee}% fee`,
+    MOONPAY: `Includes ${isEUR.value ? 0.7 : 4.99}% fee`,
     SIMPLEX: "Includes fee 5.25% fee",
     TOPPER: "Includes 4.65% fee. First transaction is free.",
-    COINBASE: "Includes 4.65% fee.",
+    COINBASE: "Includes 2.5% fee. First transaction is free.",
   };
 
   return feeLabel[provider.provider];
@@ -153,7 +150,7 @@ const parseProviderLogo = (provider: BuyProviders) => {
   const providerLogos: { [key: string]: any } = {
     SIMPLEX: require("@/assets/images/icon-simplex.svg"),
     MOONPAY: require("@/assets/images/icon-moonpay.svg"),
-    TOPPER: require("@/assets/images/icon-topper.png"),
+    TOPPER: require("@/assets/images/icon-topper.svg"),
     COINBASE: require("@/assets/images/icon-coinbase.svg"),
   };
   return providerLogos[provider.provider];

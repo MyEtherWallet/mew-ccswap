@@ -74,13 +74,14 @@
           variant="outlined"
         >
           <template #prepend-inner>
-            <img
-              class="currency-icon mr-1"
-              :src="fiatIcon"
-              :alt="form.fiatSelected"
-              width="25px"
-              height="25px"
-            />
+            <div class="currency-container">
+              <img
+                :src="selectedFiat.img"
+                :alt="form.fiatSelected"
+                width="30px"
+                height="30px"
+              />
+            </div>
           </template>
           <template #prepend-item>
             <v-text-field
@@ -101,13 +102,14 @@
               @click="selectCurrency(data.item.value)"
             >
               <div class="d-flex align-center">
-                <img
-                  class="currency-icon mr-1 ml-3"
-                  :src="getIcon(data.item.value)"
-                  :alt="data.item.value"
-                  width="25px"
-                  height="25px"
-                />
+                <div class="currency-container padding--2 mr-1 ml-3">
+                  <img
+                    :src="getIcon(data.item.value)"
+                    :alt="data.item.value"
+                    width="30px"
+                    height="30px"
+                  />
+                </div>
                 <span class="text-capitalize ml-2 my-2 d-flex flex-column">{{
                   data.item.value
                 }}</span>
@@ -186,12 +188,12 @@ import {
   reactive,
   watch,
   onMounted,
-  defineEmits,
   onUnmounted,
   ref,
   Ref,
 } from "vue";
 import BigNumber from "bignumber.js";
+import { storeToRefs } from "pinia";
 import { currencySymbols } from "./handler/prices";
 import { isObject, isNumber, isString, isEmpty, debounce } from "lodash";
 import addressValidator from "@/helpers/addressValidator";
@@ -201,18 +203,6 @@ import { useGlobalStore } from "@/plugins/globalStore";
 
 import MewAddressSelect from "../MewAddressSelect/MewAddressSelect.vue";
 import { Network } from "./network/types";
-import { storeToRefs } from "pinia";
-
-// emits
-const emit = defineEmits([
-  "success",
-  "selectedCurrency",
-  "selectedFiat",
-  "toAddress",
-  "setQuotes",
-  "selectedNetwork",
-  "selectCurrency",
-]);
 
 const store = useGlobalStore();
 const {
@@ -237,27 +227,22 @@ const {
 // data
 const defaultFiatValue = "300";
 
+// nonreactive
+const rules = [
+  (e: any) => {
+    if (isString(e) && e?.length >= 1) return true;
+    if (!isNumber(e)) return "Must be a valid number";
+    return true;
+  },
+];
+
+// reactive
 // eslint-disable-next-line no-undef
 let priceTimer: NodeJS.Timer;
 
-// non-reactive
 const fiatFilter: Ref<string> = ref("");
 const fiatItems: Ref<string[]> = ref([]);
 const filteredFiatItems: Ref<string[]> = ref([]);
-const updateFiatFilter = (value: string) => {
-  if (value === "") {
-    fiatFilter.value = value;
-    filteredFiatItems.value = fiatItems.value;
-  } else {
-    const shallowArrayCopy = new Array(...fiatItems.value);
-    fiatFilter.value = value;
-    filteredFiatItems.value = shallowArrayCopy.filter((item) =>
-      item.toLowerCase().includes(fiatFilter.value.toLowerCase())
-    );
-  }
-};
-
-// reactive
 const price = ref("0");
 const form = reactive({
   fiatAmount: defaultFiatValue,
@@ -275,10 +260,6 @@ const loading = reactive({
   showAlert: false,
   processingBuyForm: false,
   alertMessage: "",
-});
-const dropdown = reactive({
-  fiat: false,
-  crypto: false,
 });
 
 onMounted(async () => {
@@ -349,24 +330,6 @@ watch(
 );
 
 // computed
-// Icons for selected token
-const fiatIcon = computed(() => {
-  return require(`@/assets/images/fiat/${form.fiatSelected}.svg`);
-});
-
-// methods
-const getIcon = (currency: string, isFiat = true) => {
-  return require(`@/assets/images/${
-    isFiat ? "fiat" : "crypto"
-  }/${currency}.svg`);
-};
-
-const selectCurrency = (currency: string) => {
-  form.fiatSelected = currency;
-  dropdown.fiat = false;
-  emit("selectedFiat", form.fiatSelected);
-};
-
 const isValidForm = computed(() => {
   return (
     form.fiatSelected &&
@@ -379,19 +342,56 @@ const isValidForm = computed(() => {
   );
 });
 
-const rules = [
-  (e: any) => {
-    if (isString(e) && e?.length >= 1) return true;
-    if (!isNumber(e)) return "Must be a valid number";
-    return true;
-  },
-];
-
 const addressValid = computed(() => {
   const address = form.address.toLowerCase();
 
   return addressValidator(address, selectedNetwork.value.name);
 });
+
+const limits = computed(() => {
+  const lim = buyFiats.value.get(form.fiatSelected)?.limits || {
+    min: 0,
+    max: 0,
+  };
+
+  return lim;
+});
+
+const min = computed(() => {
+  return limits.value.min;
+});
+const max = computed(() => {
+  return limits.value.max;
+});
+
+// methods
+const getIcon = (currency: string, isFiat = true) => {
+  return require(`@/assets/images/${
+    isFiat ? "fiat" : "crypto"
+  }/${currency}.svg`);
+};
+
+const selectCurrency = (currency: string) => {
+  form.fiatSelected = currency;
+  setSelectedFiat({
+    name: currency,
+    value: currency,
+    img: require(`@/assets/images/fiat/${currency}.svg`),
+  });
+};
+
+const updateFiatFilter = (value: string) => {
+  if (value === "") {
+    fiatFilter.value = value;
+    filteredFiatItems.value = fiatItems.value;
+  } else {
+    const shallowArrayCopy = new Array(...fiatItems.value);
+    fiatFilter.value = value;
+    filteredFiatItems.value = shallowArrayCopy.filter((item) =>
+      item.toLowerCase().includes(fiatFilter.value.toLowerCase())
+    );
+  }
+};
 
 const loadUrlParameters = () => {
   const queryString = window.location.search;
@@ -448,7 +448,6 @@ const errorHandler = (e: any): void => {
   const value = toBN(form.fiatAmount).gt(toBN(0));
   if (value) {
     const isErrorObj = isObject(e.response.data.error);
-    console.log(isErrorObj);
     if (isErrorObj) {
       // eslint-disable-next-line
       const hasErr = e.response.data.error.hasOwnProperty("errors");
@@ -482,22 +481,6 @@ const verifyAddress = (): void => {
     }
   }
 };
-
-const limits = computed(() => {
-  const lim = buyFiats.value.get(form.fiatSelected)?.limits || {
-    min: 0,
-    max: 0,
-  };
-
-  return lim;
-});
-
-const min = computed(() => {
-  return limits.value.min;
-});
-const max = computed(() => {
-  return limits.value.max;
-});
 
 const minMaxError = () => {
   const amount = new BigNumber(form.fiatAmount);
@@ -573,9 +556,7 @@ const submitForm = async (): Promise<void> => {
     setBuyProviders(providers);
     toggleBuyProviders();
     loading.data = false;
-    console.log(providers);
   } catch (e) {
-    console.log(e);
     loading.data = false;
     errorHandler(e);
   }
@@ -689,5 +670,20 @@ input::-webkit-inner-spin-button {
   width: 100% !important;
   display: flex;
   justify-content: space-between;
+}
+
+.currency-container {
+  border-radius: 50%;
+  border: 2px solid silver;
+  width: 25px;
+  height: 25px;
+  position: relative;
+  overflow: hidden;
+
+  img {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+  }
 }
 </style>
