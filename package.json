@@ -1,6 +1,6 @@
 {
   "name": "mew-ccswap",
-  "version": "6.9.13",
+  "version": "6.9.13-ccswap.1",
   "private": true,
   "packageManager": "yarn@1.22.19",
   "scripts": {

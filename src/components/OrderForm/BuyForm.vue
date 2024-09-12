@@ -34,7 +34,7 @@
               height="25px"
             />
           </template>
-          <span> {{ form.cryptoSelected }} - {{ selectedCrypto.name }} </span>
+          <span> {{ selectedCrypto.symbol }} - {{ selectedCrypto.name }} </span>
           <template v-slot:append>
             <v-icon color="grey-2" size="large"></v-icon>
           </template>
