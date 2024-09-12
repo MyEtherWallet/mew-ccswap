@@ -142,7 +142,12 @@
         @changed="addressInput"
       />
     </div>
-
+    <div
+      v-if="form.quoteError"
+      class="text-bolder text-error mew-heading-4 text-center"
+    >
+      <span class="text-gray">{{ form.quoteError }}</span>
+    </div>
     <!-- ============================================================================= -->
     <!-- Buy/Rest button -->
     <!-- ============================================================================= -->
@@ -254,6 +259,7 @@ const form = reactive({
   addressErrorMsg: "",
   reCaptchaToken: "",
   addressError: false,
+  quoteError: "",
 });
 const loading = reactive({
   data: false,
@@ -532,10 +538,14 @@ const cryptoToFiat = async () => {
     const priceFetch = await fetch(
       `https://qa.mewwallet.dev/v5/purchase/quote?fiatCurrency=${form.fiatSelected}&amount=${form.fiatAmount}&cryptoCurrency=${selectedCrypto.value.symbol}&chain=${selectedNetwork.value.name}`
     );
-    const priceRespone = await priceFetch.json();
-    const { crypto_price, crypto_amount } = priceRespone[0]; // get best rate
-    form.cryptoAmount = crypto_amount;
-    price.value = crypto_price;
+    const priceResponse = await priceFetch.json();
+    // const { crypto_price, crypto_amount, msg } = priceResponse[0]; // get best rate
+    if (priceResponse.msg) {
+      form.quoteError = priceResponse.msg;
+      return;
+    }
+    form.cryptoAmount = priceResponse.crypto_amount;
+    price.value = priceResponse.crypto_price;
     loading.data = false;
   } catch (e) {
     errorHandler(e);
