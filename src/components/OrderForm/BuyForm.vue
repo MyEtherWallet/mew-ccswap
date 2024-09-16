@@ -282,7 +282,7 @@ let simplexData: { [key: string]: Data } = {
     limits: {},
     prices: {},
   },
-  MATIC: {
+  POL: {
     conversion_rates: {},
     limits: {},
     prices: {},
@@ -309,7 +309,7 @@ let moonpayData: { [key: string]: Data } = {
     limits: {},
     prices: {},
   },
-  MATIC: {
+  POL: {
     conversion_rates: {},
     limits: {},
     prices: {},
@@ -336,7 +336,7 @@ let topperData: { [key: string]: Data } = {
     limits: {},
     prices: {},
   },
-  MATIC: {
+  POL: {
     conversion_rates: {},
     limits: {},
     prices: {},
@@ -447,7 +447,7 @@ const web3 = computed(() => {
   const supportedNodes: { [key: string]: string } = {
     ETH: "ETH",
     BNB: "BNB",
-    MATIC: "MATIC",
+    POL: "POL",
     ARB: "ARB",
     OP: "OP",
   };
@@ -876,22 +876,32 @@ const kdaValidator = (address: string) => {
 
 const addressValid = computed(() => {
   const address = form.address.toLowerCase();
-  return other_chains.includes(form.cryptoSelected)
-    ? form.cryptoSelected === "KDA"
+  if (other_chains.includes(form.cryptoSelected)) {
+    return form.cryptoSelected === "KDA"
       ? kdaValidator(address)
-      : WAValidator.validate(address, form.cryptoSelected)
-    : !polkadot_chains.includes(form.cryptoSelected)
-    ? bitcoin_chains.includes(form.cryptoSelected)
-      ? WAValidator.validate(address, form.cryptoSelected)
-      : props.networkSelected.name === "OP" ||
-        props.networkSelected.name === "ARB"
-      ? WAValidator.validate(address, "ETH")
-      : WAValidator.validate(address, form.cryptoSelected) &&
-        validAddress(address)
-    : isValidAddressPolkadotAddress(
-        address,
-        form.cryptoSelected === "DOT" ? 0 : 2
+      : WAValidator.validate(address, form.cryptoSelected);
+  } else if (!polkadot_chains.includes(form.cryptoSelected)) {
+    if (bitcoin_chains.includes(form.cryptoSelected)) {
+      return WAValidator.validate(address, form.cryptoSelected);
+    }
+    if (
+      props.networkSelected.name === "OP" ||
+      props.networkSelected.name === "ARB"
+    ) {
+      return WAValidator.validate(address, "ETH");
+    } else {
+      const selectedCrypto =
+        form.cryptoSelected === "POL" ? "ETH" : form.cryptoSelected;
+      return (
+        WAValidator.validate(address, selectedCrypto) && validAddress(address)
       );
+    }
+  } else {
+    return isValidAddressPolkadotAddress(
+      address,
+      form.cryptoSelected === "DOT" ? 0 : 2
+    );
+  }
 });
 
 // Best price for display

@@ -3,7 +3,7 @@ import { toNumber } from "lodash";
 import { sha3 } from "web3-utils";
 import api from './api';
 
-const supportedCrypto = ["ETH", "BTC", "BCH", "MATIC", "USDT", "USDC", "DAI", "DOT", "KSM", "KDA", "PYUSD", "BSC", "OP", "ARB", 'TUSD',
+const supportedCrypto = ["ETH", "BTC", "BCH", "POL", "USDT", "USDC", "DAI", "DOT", "KSM", "KDA", "PYUSD", "BSC", "OP", "ARB", 'TUSD',
   'FDUSD-SC',
   'USDC-SC',
   'USDT-SC',
@@ -102,7 +102,7 @@ const filterData = (res: any) => {
 };
 
 async function getCryptoPrices(
-  cryptoCurrency?: "ETH" | "BTC" | "BCH" | "LTC" | "DOGE" | "MATIC" | "USDT" | "USDC" | "DAI" | "DOT" | "KSM" | "KDA" | "PYUSD" | "OP" | "ARB" | "BSC" | "TUSD" | "FUDSD-SC" | "USDC-SC" | "USDT-SC" | "USDC-MATIC" | "USDT-MATIC" | "USDT-ARBITRUM" | "USDT-OPTIMISM" | "SOL"
+  cryptoCurrency?: "ETH" | "BTC" | "BCH" | "LTC" | "DOGE" | "POL" | "USDT" | "USDC" | "DAI" | "DOT" | "KSM" | "KDA" | "PYUSD" | "OP" | "ARB" | "BSC" | "TUSD" | "FUDSD-SC" | "USDC-SC" | "USDT-SC" | "USDC-MATIC" | "USDT-MATIC" | "USDT-ARBITRUM" | "USDT-OPTIMISM" | "SOL"
 ) {
   const apiQuote = `${api.endpoint}/v4/purchase/providers/web`;
   if (cryptoCurrency)
@@ -176,7 +176,7 @@ async function getSupportedFiatToSell(symbol: string) {
 }
 
 async function getCryptoSellPrices(
-  cryptoCurrency?: "ETH" | "MATIC" | "BNB" | "USDT" | "USDC"
+  cryptoCurrency?: "ETH" | "POL" | "BNB" | "USDT" | "USDC"
 ) {
   if (cryptoCurrency)
     return await getSupportedFiatToSell(cryptoCurrency)
@@ -184,7 +184,7 @@ async function getCryptoSellPrices(
       .catch((e) => {
         throw e;
       });
-  const cryptos = ["ETH", "BNB", "MATIC", "USDT", "USDC", "DAI"];
+  const cryptos = ["ETH", "BNB", "POL", "USDT", "USDC", "DAI"];
   return Promise.all(
     cryptos.map((c) =>
       getSupportedFiatToSell(c)

@@ -268,7 +268,7 @@ let moonpayData: { [key: string]: Data } = {
     limits: {},
     prices: {},
   },
-  MATIC: {
+  POL: {
     conversion_rates: {},
     limits: {},
     prices: {},
@@ -372,7 +372,7 @@ const web3 = computed(() => {
   const supportedNodes: { [key: string]: any } = {
     ETH: "ETH",
     BSC: "BSC",
-    MATIC: "MATIC",
+    POL: "POL",
   };
   const nodeType = supportedNodes[props.cryptoSelected.network];
   const node = Networks.find((network) => {

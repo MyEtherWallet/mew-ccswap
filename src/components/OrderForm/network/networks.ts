@@ -95,7 +95,7 @@ export const Networks = <Array<Network>>[
     password: '',
   },
   {
-    name: 'MATIC',
+    name: 'POL',
     name_long: 'Polygon (Matic)',
     chainID: 137,
     tokens: [
@@ -120,7 +120,7 @@ export const Networks = <Array<Network>>[
 
     ],
     icon: getIcon('MATIC'),
-    currencyName: 'MATIC',
+    currencyName: 'POL',
     gasPriceMultiplier: 1.7,
     coingeckoID: 'matic-network',
     service: 'myetherwallet.com-ws',

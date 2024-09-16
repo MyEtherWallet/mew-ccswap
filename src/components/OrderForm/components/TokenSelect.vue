@@ -254,7 +254,7 @@ const fiatName = computed<string>(() => {
 const networkList = computed<Network[]>(() => {
   return props.isSell
     ? networks.filter((network) => {
-        if (network.name === "ETH") return network;
+        if (network.name === "ETH" || network.name === "POL") return network;
       })
     : networks;
 });
