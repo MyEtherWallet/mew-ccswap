@@ -227,7 +227,6 @@ const tokensList = computed<Crypto[]>(() => {
   let tokensList = [mainCoin];
   if (fiatName.value === "CAD") return tokensList;
   if (networkSelected.value.tokens.length > 0) {
-    console.log(tokensList.concat(networkSelected.value.tokens));
     return tokensList.concat(networkSelected.value.tokens);
   }
   return tokensList;
