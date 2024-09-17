@@ -221,6 +221,7 @@ const {
   buyFiats,
   buyNetworks,
   allCryptos,
+  conversionRates,
 } = storeToRefs(store);
 const {
   setNetworks,
@@ -305,7 +306,19 @@ watch(
 
 watch(
   () => form.fiatSelected,
-  (newVal) => {
+  (newVal, oldVal) => {
+    if (oldVal === "USD") {
+      form.fiatAmount = BigNumber(form.fiatAmount)
+        .times(conversionRates.value.get(newVal))
+        .toFixed(2);
+    } else {
+      const backToUsd = BigNumber(form.fiatAmount)
+        .div(conversionRates.value.get(oldVal))
+        .toFixed(2);
+      form.fiatAmount = BigNumber(backToUsd)
+        .times(conversionRates.value.get(newVal))
+        .toFixed(2);
+    }
     verifyAddress();
     cryptoToFiat();
     minMaxError();
@@ -516,12 +529,17 @@ const getPrices = async () => {
       "https://qa.mewwallet.dev/v5/purchase/info?includeMarketData=true"
     );
     const response = await data.json();
+    const { msg } = response;
+    if (msg) {
+      form.quoteError = msg;
+      loading.data = false;
+      return;
+    }
     const { assets, providers } = response;
     setNetworks(assets);
     setProviders(providers);
     fiatItems.value = Array.from(buyFiats.value.keys());
     filteredFiatItems.value = Array.from(fiatItems.value);
-    console.log(filteredFiatItems.value.length);
     cryptoToFiat();
   } catch (e: any) {
     loading.data = false;
