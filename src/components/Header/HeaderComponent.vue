@@ -44,7 +44,7 @@
       /></v-col>
       <v-col cols="5" class="pt-4"
         ><img
-          :src="coinbase"
+          :src="isEthVm ? coinbase : coinbaseLight"
           alt="Coinbase"
           width="100%"
           style="max-width: 140px"
@@ -76,6 +76,7 @@ import googlePay from "@/assets/images/icon-google-pay-logo.svg";
 import pix from "@/assets/images/icon-pix-logo.svg";
 import simplex from "@/assets/images/icon-simplex.svg";
 import coinbase from "@/assets/images/icon-coinbase.svg";
+import coinbaseLight from "@/assets/images/icon-coinbase-light.svg";
 import simplexLight from "@/assets/images/icon-simplex-light.svg";
 import moonpay from "@/assets/images/icon-moonpay.svg";
 import moonpayWhite from "@/assets/images/icon-moonpay-white.svg";
