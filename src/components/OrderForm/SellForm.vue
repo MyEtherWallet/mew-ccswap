@@ -321,12 +321,10 @@ const formattedFiatFee = computed(() => {
 watch(
   () => form.address,
   (formAddress) => {
-    console.log(formAddress, form.address);
     form.validAddress = false;
     form.addressError = false;
     form.addressErrorMsg = "";
     if (formAddress) {
-      console.log(formAddress);
       verifyAddress();
       quoteFetch(form.address);
     }

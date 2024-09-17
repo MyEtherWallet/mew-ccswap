@@ -1,6 +1,6 @@
 import { getIcon } from "./networks";
-import { Network } from "./types";
-import { Crypto, NewToken } from "@/components/OrderForm/types";
+import { Network, Crypto } from "./types";
+import { NewToken } from "@/components/OrderForm/types";
 import { isEmpty } from "lodash";
 
 const knownChainIds: { [key: string]: number } = {
@@ -59,6 +59,9 @@ export default (network: {
 
     const icon = getIcon(asset.symbol);
     token.img = icon === '' ? !isEmpty(asset.market_data) ? asset.market_data.icon === '' ? newNetwork.icon : asset.market_data.icon : newNetwork.icon : icon;
+    if (asset.market_data && !isEmpty(asset.market_data)) {
+      token.price = asset.market_data.price;
+    }
     tokens.push(token);
   });
 

@@ -115,9 +115,9 @@
                 </span>
               </div>
             </v-list-item-title>
-            <!-- <template #append>
-              <span>{{ tokenPrice(item.symbol) }}</span>
-            </template> -->
+            <template #append>
+              <span>{{ getPrice(item) }}</span>
+            </template>
           </v-list-item>
         </v-list>
       </div>
@@ -127,14 +127,21 @@
 
 <script lang="ts" setup>
 import { defineProps, ref, Ref, computed, defineEmits } from "vue";
-import { Crypto } from "../types";
+import { Crypto } from "../network/types";
 
 import { storeToRefs } from "pinia";
 import { useGlobalStore } from "@/plugins/globalStore";
 import { Network } from "../network/types";
-const { selectedNetwork, buyNetworks, sellNetworks } = storeToRefs(
-  useGlobalStore()
-);
+import BigNumber from "bignumber.js";
+import { currencySymbols } from "../handler/prices";
+const {
+  selectedNetwork,
+  buyNetworks,
+  sellNetworks,
+  cgPrice,
+  conversionRates,
+  selectedFiat,
+} = storeToRefs(useGlobalStore());
 
 const { setSelectedNetwork, setSelectedCrypto } = useGlobalStore();
 
@@ -210,6 +217,58 @@ const selectNetwork = (passedNetwork: Network) => {
 const selectCurrency = (token: Crypto) => {
   setSelectedCrypto(token);
   close();
+};
+
+const getPrice = (token: Crypto) => {
+  const priceMap: { [key: string]: string } = {
+    ADA: "cardano",
+    AKA: "akash-network",
+    ALGO: "algorand",
+    APT: "aptos",
+    ARB: "arbitrum",
+    ATOM: "cosmos",
+    AVAX: "avalanche-2",
+    AXL: "axelar",
+    BCH: "bitcoin-cash",
+    BLAST: "blast",
+    BTC: "bitcoin",
+    CGLD: "celo",
+    CORECHAIN: "coredao",
+    DASH: "dash",
+    DOGE: "dogecoin",
+    DOT: "polkadot",
+    EGLD: "elrond-erd-2",
+    ETC: "ethereum-classic",
+    ETH: "ethereum",
+    FIL: "filecoin",
+    FLOW: "flow",
+    FLR: "flare-networks",
+    HBAR: "hedera-hashgraph",
+    KAVA: "kava",
+    KDA: "kadena",
+    KSA: "kaspa",
+    LTC: "litecoin",
+    NBL: "nbl",
+    OP: "optimism",
+    ROSE: "oasis-network",
+    SOL: "solana",
+    VET: "vechain",
+    XLM: "stellar",
+    XRP: "ripple",
+    XTZ: "tezos",
+    ZEC: "zcash",
+    ZEN: "zencash",
+  };
+
+  const price = token.price
+    ? token.price
+    : priceMap[token.symbol]
+    ? cgPrice.value.get(priceMap[token.symbol])
+    : "";
+  const selectedFiatValue = selectedFiat.value.name;
+  return `${currencySymbols[selectedFiatValue]}${BigNumber(price)
+    .times(conversionRates.value.get(selectedFiatValue))
+    .toFormat(2)}`;
 };
 
 const close = () => {

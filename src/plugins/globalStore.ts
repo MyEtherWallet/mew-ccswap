@@ -1,4 +1,4 @@
-import { ref, computed } from "vue";
+import { ref, computed, reactive } from "vue";
 import { defineStore } from "pinia";
 import { Crypto, Fiat, Assets, Providers, NewFiat, BuyProviders } from "@/components/OrderForm/types";
 import { Network } from "@/components/OrderForm/network/types";
@@ -16,6 +16,8 @@ export const useGlobalStore = defineStore('global', () => {
   const sellNetworks = ref<Network[]>([]);
   const providers = ref<Providers[]>([]);
   const buyProviders = ref<BuyProviders[]>([]);
+  const cgPrice = reactive(new Map());
+  const conversionRates = reactive(new Map());
 
   const buyFiats = computed(() => {
     const fiatsMap = new Map<string, NewFiat>();
@@ -90,6 +92,17 @@ export const useGlobalStore = defineStore('global', () => {
     selectedNetwork.value = network;
   }
 
+  const setCgPrice = (price: Array<{ id: string, usd: number, last_updated_iso8601: string }>) => {
+    price.forEach((p) => {
+      cgPrice.set(p.id, p.usd);
+    })
+  }
+  const setExchangeRates = (rates: Array<{ fiat_currency: string, exchange_rate: number }>) => {
+    rates.forEach((p) => {
+      conversionRates.set(p.fiat_currency, p.exchange_rate);
+    })
+  }
+
   const setNetworks = (passedNetwork: Array<Assets>) => {
     const bNetworks: Array<Network> = passedNetwork.map((nw) => {
       const parsedNetwork = networkConverter(nw);
@@ -126,6 +139,7 @@ export const useGlobalStore = defineStore('global', () => {
 
   return {
     buyFiats,
+    cgPrice,
     buyNetworks,
     sellNetworks,
     isTokenModalOpen,
@@ -135,6 +149,7 @@ export const useGlobalStore = defineStore('global', () => {
     selectedNetwork,
     allCryptos,
     buyProviders,
+    conversionRates,
     sellFiats,
     toggleTokenModal,
     toggleBuyProviders,
@@ -143,6 +158,8 @@ export const useGlobalStore = defineStore('global', () => {
     setSelectedNetwork,
     setNetworks,
     setProviders,
-    setBuyProviders
+    setBuyProviders,
+    setCgPrice,
+    setExchangeRates
   }
 })

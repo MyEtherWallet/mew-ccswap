@@ -7,6 +7,7 @@ class Crypto {
   symbol: string;
   network: string;
   name_long?: string;
+  price?: string
 
   constructor(
     name: string,
@@ -14,7 +15,8 @@ class Crypto {
     network: string,
     decimals: number,
     img: string,
-    name_long?: string
+    name_long?: string,
+    price?: string
   ) {
     this.decimals = decimals;
     this.img = img;
@@ -24,6 +26,7 @@ class Crypto {
     this.symbol = name;
     this.network = network;
     this.name_long = name_long;
+    this.price = price
   }
 }
 interface Fiat {

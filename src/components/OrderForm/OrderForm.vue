@@ -39,7 +39,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, inject, computed } from "vue";
+import { ref, inject, computed, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 
 import MewTabs from "../MewTabs/MewTabs.vue";
@@ -60,6 +60,8 @@ const {
   setSelectedNetwork,
   toggleBuyProviders,
   toggleTokenModal,
+  setCgPrice,
+  setExchangeRates,
 } = useGlobalStore();
 
 const { isTokenModalOpen, isBuyProvidersOpen } = storeToRefs(useGlobalStore());
@@ -68,6 +70,12 @@ const { isTokenModalOpen, isBuyProvidersOpen } = storeToRefs(useGlobalStore());
 const tabItems = ["Buy", "Sell"];
 const activeTab = ref(0);
 const step = ref(0);
+
+// mounted
+onMounted(() => {
+  prices();
+  exchangeRates();
+});
 
 // computed
 const isSell = computed(() => {
@@ -95,6 +103,27 @@ const onTab = (tab: number) => {
   activeTab.value = tab;
   step.value = 1;
   amplitude.track(`CCBuySell${tab === 0 ? "BuyTab" : "SellTab"}`);
+};
+
+const exchangeRates = async () => {
+  const ratesFetch = await fetch(
+    "https://mainnet.mewwallet.dev/v2/prices/exchange-rates"
+  );
+  const rates = await ratesFetch.json();
+  setExchangeRates(rates);
+};
+
+const prices = async () => {
+  const tokensFetch = await fetch("https://api-v3.ethvm.dev/", {
+    method: "POST",
+    headers: {
+      accept: "application/json",
+      "content-type": "application/json",
+    },
+    body: '{"operationName":null,"variables":{},"query":"{\\n  getCoinGeckoTokenPriceAll {\\n    id\\n    usd\\n    last_updated_iso8601\\n  }\\n}\\n"}',
+  });
+  const tokens = await tokensFetch.json();
+  setCgPrice(tokens.data.getCoinGeckoTokenPriceAll);
 };
 </script>
 
