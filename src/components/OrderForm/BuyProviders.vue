@@ -31,7 +31,7 @@
               <span class="mew-heading-3 pl-1 mr-1">{{
                 provider.crypto_currency
               }}</span>
-              <v-tooltip location="bottom">
+              <v-tooltip location="bottom" min-width="200px">
                 <template #activator="{ props }">
                   <v-icon
                     v-bind="props"
@@ -113,7 +113,10 @@ const { buyProviders, selectedFiat, selectedCrypto, selectedNetwork } =
 const formattedFiat = computed(() => {
   const amount =
     buyProviders.value.length > 0 ? buyProviders.value[0].fiat_amount : 0;
-  return `${currencySymbols[selectedFiat.value.name]}${amount}`;
+  const symbol = currencySymbols[selectedFiat.value.name]
+    ? currencySymbols[selectedFiat.value.name]
+    : "";
+  return `${symbol}${amount}`;
 });
 
 const isEUR = computed(() => {
@@ -125,7 +128,7 @@ const generateFeeLabel = (provider: BuyProviders) => {
     MOONPAY: `Includes ${isEUR.value ? 0.7 : 4.99}% fee`,
     SIMPLEX: "Includes fee 5.25% fee",
     TOPPER: "Includes 4.65% fee. First transaction is free.",
-    COINBASE: "Includes 2.5% fee. First transaction is free.",
+    COINBASE: "Includes 2.5% fee.",
   };
 
   return feeLabel[provider.provider];
@@ -273,6 +276,14 @@ $greyPrimary-base: #5a678a;
   top: -10px;
   position: absolute;
   color: white;
+}
+
+.elevated-box {
+  border-radius: 20px;
+  background-color: white;
+  box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.6) !important;
+  // box-shadow: 0px 0px 1px 0px rgba(0, 0, 0, 0.05);
+  width: 300px;
 }
 </style>
 <style lang="scss">

@@ -266,7 +266,10 @@ const getPrice = (token: Crypto) => {
     ? cgPrice.value.get(priceMap[token.symbol])
     : "";
   const selectedFiatValue = selectedFiat.value.name;
-  return `${currencySymbols[selectedFiatValue]}${BigNumber(price)
+  const symbol = currencySymbols[selectedFiatValue]
+    ? currencySymbols[selectedFiatValue]
+    : "";
+  return `${symbol}${BigNumber(price)
     .times(conversionRates.value.get(selectedFiatValue))
     .toFormat(2)}`;
 };

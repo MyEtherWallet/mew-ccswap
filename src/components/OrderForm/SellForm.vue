@@ -312,9 +312,10 @@ onMounted(async () => {
 // computed
 const formattedFiatFee = computed(() => {
   const amount = form.fees;
-  return `${currencySymbols[selectedFiat.value.name]}${amount} ${
-    selectedFiat.value.name
-  }`;
+  const symbol = currencySymbols[selectedFiat.value.name]
+    ? currencySymbols[selectedFiat.value.name]
+    : "";
+  return `${symbol}${amount} ${selectedFiat.value.name}`;
 });
 
 // watchers

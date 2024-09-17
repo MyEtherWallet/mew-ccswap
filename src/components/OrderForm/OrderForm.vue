@@ -28,7 +28,7 @@
         @onTab="onTab"
       >
         <template #tabContent1>
-          <BuyForm />
+          <BuyForm @addressInput="holdAddress" :held-address="locAddress" />
         </template>
         <template #tabContent2>
           <SellForm />
@@ -70,6 +70,7 @@ const { isTokenModalOpen, isBuyProvidersOpen } = storeToRefs(useGlobalStore());
 const tabItems = ["Buy", "Sell"];
 const activeTab = ref(0);
 const step = ref(0);
+const locAddress = ref("");
 
 // mounted
 onMounted(() => {
@@ -97,6 +98,10 @@ const reset = () => {
   setSelectedFiat(defaultFiat);
   setSelectedNetwork(Networks[0]);
   close();
+};
+
+const holdAddress = (address: string) => {
+  locAddress.value = address;
 };
 
 const onTab = (tab: number) => {

@@ -200,6 +200,8 @@ import {
   onUnmounted,
   ref,
   Ref,
+  defineEmits,
+  defineProps,
 } from "vue";
 import BigNumber from "bignumber.js";
 import { storeToRefs } from "pinia";
@@ -212,6 +214,13 @@ import { useGlobalStore } from "@/plugins/globalStore";
 
 import MewAddressSelect from "../MewAddressSelect/MewAddressSelect.vue";
 import { Network } from "./network/types";
+
+const props = defineProps({
+  heldAddress: {
+    type: String,
+    default: "",
+  },
+});
 
 const store = useGlobalStore();
 const {
@@ -246,6 +255,8 @@ const rules = [
   },
 ];
 
+const emit = defineEmits(["addressInput"]);
+
 // reactive
 // eslint-disable-next-line no-undef
 let priceTimer: NodeJS.Timer;
@@ -274,8 +285,7 @@ const loading = reactive({
 });
 
 onMounted(async () => {
-  form.address = "";
-
+  addressInput(props.heldAddress);
   // Get crypto Data
   await getPrices();
   if (!isEmpty(selectedFiat.value)) {
@@ -460,8 +470,8 @@ const loadUrlParameters = () => {
         img: require(`@/assets/images/fiat/${isSupportedFiat.fiat_currency}.svg`),
       });
     }
-    form.address = queryTo ? queryTo : "";
     if (queryTo) {
+      form.address = queryTo ? queryTo : "";
       verifyAddress();
     }
   }
@@ -485,6 +495,7 @@ const errorHandler = (e: any): void => {
 
 const addressInput = (value: string): void => {
   form.address = value;
+  emit("addressInput", value);
   verifyAddress();
 };
 
@@ -512,10 +523,11 @@ const minMaxError = () => {
     amount.lte(new BigNumber(max.value));
 
   if (!valid) {
+    const symbol = currencySymbols[form.fiatSelected]
+      ? currencySymbols[form.fiatSelected]
+      : "";
     loading.showAlert = true;
-    loading.alertMessage = `Fiat price must be between ${
-      currencySymbols[form.fiatSelected]
-    }${min.value} and ${currencySymbols[form.fiatSelected]}${max.value}`;
+    loading.alertMessage = `Fiat price must be between ${symbol}${min.value} and ${symbol}${max.value}`;
     return;
   }
   loading.showAlert = false;

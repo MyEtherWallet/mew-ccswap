@@ -222,6 +222,7 @@ export default defineComponent({
     },
     modelValue(val) {
       this.addressValue = val;
+      this.locAddress = val;
     },
   },
   methods: {
