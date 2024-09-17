@@ -69,6 +69,7 @@
           :items="filteredFiatItems"
           :disabled="loading.data"
           :menu-props="{ closeOnContentClick: true }"
+          :list-props="{ density: 'compact' }"
           base-color="primary"
           return-object
           variant="outlined"
@@ -96,25 +97,28 @@
               @click.stop="(e) => e.preventDefault()"
             />
           </template>
-          <template #item="data">
-            <div
+          <template #item="{ item, props }">
+            <v-list-item
+              v-bind="props"
               class="d-flex align-center justify-space-between full-width cursor-pointer"
-              @click="selectCurrency(data.item.value)"
+              @click="selectCurrency(item.value)"
             >
-              <div class="d-flex align-center">
-                <div class="currency-container padding--2 mr-1 ml-3">
-                  <img
-                    :src="getIcon(data.item.value)"
-                    :alt="data.item.value"
-                    width="30px"
-                    height="30px"
-                  />
+              <template #title>
+                <div class="d-flex align-center">
+                  <div class="currency-container mr-1 ml-3">
+                    <img
+                      :src="getIcon(item.value)"
+                      :alt="item.value"
+                      width="30px"
+                      height="30px"
+                    />
+                  </div>
+                  <span class="text-capitalize ml-2 my-2 d-flex flex-column">{{
+                    item.value
+                  }}</span>
                 </div>
-                <span class="text-capitalize ml-2 my-2 d-flex flex-column">{{
-                  data.item.value
-                }}</span>
-              </div>
-            </div>
+              </template>
+            </v-list-item>
           </template>
         </v-select>
       </div>
@@ -516,7 +520,8 @@ const getPrices = async () => {
     setNetworks(assets);
     setProviders(providers);
     fiatItems.value = Array.from(buyFiats.value.keys());
-    filteredFiatItems.value = Array.from(buyFiats.value.keys());
+    filteredFiatItems.value = Array.from(fiatItems.value);
+    console.log(filteredFiatItems.value.length);
     cryptoToFiat();
   } catch (e: any) {
     loading.data = false;
