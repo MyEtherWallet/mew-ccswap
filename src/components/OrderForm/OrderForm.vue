@@ -39,7 +39,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, inject, computed, onMounted } from "vue";
+import { ref, inject, computed, onMounted, watch } from "vue";
 import { storeToRefs } from "pinia";
 
 import MewTabs from "../MewTabs/MewTabs.vue";
@@ -81,6 +81,16 @@ onMounted(() => {
 const isSell = computed(() => {
   return activeTab.value === 1;
 });
+
+// watchers
+watch(
+  () => isSell.value,
+  (isSell) => {
+    if (isSell) {
+      setSelectedFiat(defaultFiat);
+    }
+  }
+);
 
 // methods
 const close = () => {
