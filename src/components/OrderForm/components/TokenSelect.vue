@@ -275,6 +275,11 @@ const getPrice = (token: Crypto) => {
     XTZ: "tezos",
     ZEC: "zcash",
     ZEN: "zencash",
+    USDC: "usd-coin",
+    USDT: "tether",
+    DAI: "dai",
+    CBETH: "coinbase-wrapped-staked-eth",
+    WBTC: "wrapped-bitcoin",
   };
 
   const price = token.price
@@ -286,9 +291,12 @@ const getPrice = (token: Crypto) => {
   const symbol = currencySymbols[selectedFiatValue]
     ? currencySymbols[selectedFiatValue]
     : "";
-  return `${symbol}${BigNumber(price)
-    .times(conversionRates.value.get(selectedFiatValue))
-    .toFormat(2)}`;
+
+  return price
+    ? `${symbol}${BigNumber(price)
+        .times(conversionRates.value.get(selectedFiatValue))
+        .toFormat(2)}`
+    : price; // returns blank for tokens without price
 };
 
 const close = () => {
