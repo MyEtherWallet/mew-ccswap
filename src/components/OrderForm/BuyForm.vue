@@ -376,9 +376,7 @@ const isValidForm = computed(() => {
 });
 
 const addressValid = computed(() => {
-  const address = form.address.toLowerCase();
-
-  return addressValidator(address, selectedNetwork.value.name);
+  return addressValidator(form.address, selectedNetwork.value.name);
 });
 
 const limits = computed(() => {
