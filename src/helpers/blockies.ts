@@ -21,6 +21,5 @@ export default (address: string, network: string, opts?: options) => {
   if (!blockiesForNetwork[network]) {
     return ethereumBlockies(address, opts || {});
   }
-  console.log(address);
   return blockiesForNetwork[network](address, opts || {});
 }
