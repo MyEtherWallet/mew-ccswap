@@ -19,7 +19,7 @@ const blockiesForNetwork: { [key: string]: (address: string, opts?: options) => 
 
 export default (address: string, network: string, opts?: options) => {
   if (!blockiesForNetwork[network]) {
-    return ethereumBlockies(address, opts || {});
+    return ethereumBlockies(address.toLowerCase(), opts ? opts : {});
   }
-  return blockiesForNetwork[network](address, opts || {});
+  return blockiesForNetwork[network](address, opts ? opts : {});
 }
