@@ -47,6 +47,7 @@ export default (network: {
   const tokens: Array<Crypto> = [];
 
   network.assets.forEach((asset: NewToken) => {
+    if (tokens.some((token) => token.symbol === asset.symbol || token.name === asset.market_data?.name)) return; // Prevent duplicates
     const token: Crypto = {
       img: '',
       name: asset.market_data && !isEmpty(asset.market_data) ? asset.market_data.name : asset.symbol,

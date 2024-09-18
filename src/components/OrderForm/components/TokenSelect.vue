@@ -171,31 +171,48 @@ const filteredNetworkList: Ref<Network[]> = computed<Network[]>(() => {
     ? sellNetworks.value
     : buyNetworks.value;
   const filter = networkSearchInput.value.toLowerCase();
-  return withTokensNetwork.filter((network) => {
+  const filteredNetwork: Array<Network> = [];
+  if (filter === "") return withTokensNetwork;
+  withTokensNetwork.forEach((network) => {
     if (
+      network.name.toLowerCase() === filter ||
+      network.name_long.toLowerCase() === filter ||
+      network.currencyName.toLowerCase() === filter
+    )
+      filteredNetwork.unshift(network);
+    else if (
       network.name.toLowerCase().includes(filter) ||
       network.name_long.toLowerCase().includes(filter) ||
       network.currencyName.toLowerCase().includes(filter)
     )
-      return network;
+      filteredNetwork.push(network);
   });
+  return filteredNetwork;
 });
 
 const filteredNetworkTokens = computed<Crypto[]>(() => {
   const filterText = searchInput.value.toLowerCase();
   const tokensCopy = networkSelected.value.tokens?.slice();
   if (filterText === "") return tokensCopy;
-  return tokensCopy.filter((token) => {
+  const filteredTokens: Array<Crypto> = [];
+  tokensCopy.forEach((token) => {
+    if (filteredTokens.some((t) => t.symbol === token.symbol)) return; // remove duplicates
     const tokenSymbol = token.symbol.toLowerCase();
     const tokenSubtext = token.subtext.toLowerCase();
     const tokenName = token.name.toLowerCase();
     if (
-      tokenSymbol.includes(filterText) ||
-      tokenName.includes(filterText) ||
-      tokenSubtext.includes(filterText)
+      tokenSymbol === filterText.toLowerCase() ||
+      tokenName === filterText.toLowerCase()
     )
-      return token;
+      filteredTokens.unshift(token);
+    else if (
+      tokenSymbol.includes(filterText.toLowerCase()) ||
+      tokenName.includes(filterText.toLowerCase()) ||
+      tokenSubtext.includes(filterText.toLowerCase())
+    )
+      filteredTokens.push(token);
   });
+  return filteredTokens;
 });
 
 // methods
