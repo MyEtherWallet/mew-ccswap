@@ -56,6 +56,7 @@ export default (network: {
       symbol: asset.symbol,
       network: network.chain,
       decimals: 18,
+      cgId: asset.coingecko_id
     }
 
     const icon = getIcon(asset.symbol);

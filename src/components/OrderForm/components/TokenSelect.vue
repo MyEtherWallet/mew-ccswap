@@ -237,66 +237,23 @@ const selectCurrency = (token: Crypto) => {
 };
 
 const getPrice = (token: Crypto) => {
-  const priceMap: { [key: string]: string } = {
-    ADA: "cardano",
-    AKA: "akash-network",
-    ALGO: "algorand",
-    APT: "aptos",
-    ARB: "arbitrum",
-    ATOM: "cosmos",
-    AVAX: "avalanche-2",
-    AXL: "axelar",
-    BCH: "bitcoin-cash",
-    BLAST: "blast",
-    BTC: "bitcoin",
-    CGLD: "celo",
-    CORECHAIN: "coredao",
-    DASH: "dash",
-    DOGE: "dogecoin",
-    DOT: "polkadot",
-    EGLD: "elrond-erd-2",
-    ETC: "ethereum-classic",
-    ETH: "ethereum",
-    FIL: "filecoin",
-    FLOW: "flow",
-    FLR: "flare-networks",
-    HBAR: "hedera-hashgraph",
-    KAVA: "kava",
-    KDA: "kadena",
-    KSA: "kaspa",
-    LTC: "litecoin",
-    NBL: "nbl",
-    OP: "optimism",
-    ROSE: "oasis-network",
-    SOL: "solana",
-    VET: "vechain",
-    XLM: "stellar",
-    XRP: "ripple",
-    XTZ: "tezos",
-    ZEC: "zcash",
-    ZEN: "zencash",
-    USDC: "usd-coin",
-    USDT: "tether",
-    DAI: "dai",
-    CBETH: "coinbase-wrapped-staked-eth",
-    WBTC: "wrapped-bitcoin",
-  };
+  const locale = "en-US";
 
-  const price = token.price
-    ? token.price
-    : priceMap[token.symbol]
-    ? cgPrice.value.get(priceMap[token.symbol])
-    : "";
+  const price = token.price ? token.price : cgPrice.value.get(token.cgId);
   const selectedFiatValue = selectedFiat.value.name;
   const symbol = currencySymbols[selectedFiatValue]
     ? currencySymbols[selectedFiatValue]
     : "";
-
-  return price
-    ? `${symbol}${BigNumber(price)
-        .times(conversionRates.value.get(selectedFiatValue))
-        .toFormat(2)}`
-    : price; // returns blank for tokens without price
+  const priceFormatted = price
+    ? new Intl.NumberFormat(locale, {
+        currency: selectedFiatValue,
+      }).format(
+        BigNumber(price)
+          .times(conversionRates.value.get(selectedFiatValue))
+          .toNumber()
+      )
+    : price;
+  return price ? `${symbol}${priceFormatted}` : price; // returns blank for tokens without price
 };
 
 const close = () => {

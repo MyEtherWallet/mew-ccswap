@@ -100,6 +100,7 @@ interface MarketData {
 interface NewToken {
     chain: string;
     contract_address: string;
+    coingecko_id: string;
     providers: Array<string>;
     symbol: string;
     market_data?: MarketData;
