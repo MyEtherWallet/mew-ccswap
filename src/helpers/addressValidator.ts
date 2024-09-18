@@ -21,7 +21,7 @@ const CHAIN_TO_REGEXP_MAP: {
   CORE: /^0x[a-fA-F0-9]{40}$/, // Core address format
   DASH: /^[Xx][1-9A-HJ-NP-Za-km-z]{33}$/, // Dash address format
   DESO: /^BC1[0-9A-HJ-NP-Za-km-z]{53}$/, // Decentralized Social address format
-  DOGE: /^D{1}[5-9A-HJ-NP-U]{1}[1-9A-HJ-NP-Za-km-z]{32}$/, // Dogecoin address format
+  DOGE: /^D{1}[5-9A-HJ-NP-U]{1}[1-9A-HJ-NP-Za-km-z]{32}$/,
   DOT: /^1[a-zA-Z0-9]{47}$/,
   EGLD: /^erd1[a-z0-9]{58}$/, // Elrond address format
   EOS: /^EOS[1-5]{1}[1-9A-HJ-NP-Za-km-z]{50}$/, // EOS address format
@@ -59,7 +59,6 @@ const CHAIN_TO_REGEXP_MAP: {
   ZEN: /^zn[0-9A-Za-z]{33}$/ // Horizen address format
 }
 export default (address: string, network: string): boolean => {
-  if (!CHAIN_TO_REGEXP_MAP[network] || !RegExp(CHAIN_TO_REGEXP_MAP[network]).test(address))
-    return WAValidator.validate(address, network.toLowerCase());
-  return true;
+  if (!CHAIN_TO_REGEXP_MAP[network]) return WAValidator.validate(address, network.toLowerCase());
+  return CHAIN_TO_REGEXP_MAP[network].test(address);
 }
