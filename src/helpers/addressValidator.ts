@@ -15,7 +15,7 @@ const CHAIN_TO_REGEXP_MAP: {
   AXL: /^axelar1[0-9a-z]{38}$/, // Axelar address format
   BASE: /^0x[a-fA-F0-9]{40}$/,
   BCH: /^(bitcoincash:)?[qQpP][0-9a-zA-Z]{41}$|^[13][a-km-zA-HJ-NP-Z1-9]{25,34}$/,
-  BLAST: /^blast1[0-9a-z]{38}$/, // Blast address format
+  BLAST: /^0x[a-fA-F0-9]{40}$/, // Blast address format
   BSC: /^0x[a-fA-F0-9]{40}$/,
   BTC: /^(1[a-km-zA-HJ-NP-Z1-9]{25,34}|3[a-km-zA-HJ-NP-Z1-9]{25,34}|bc1[ac-hj-np-z02-9]{39,59})$/,
   CELO: /^0x[a-fA-F0-9]{40}$/, // Celo address format
@@ -37,7 +37,7 @@ const CHAIN_TO_REGEXP_MAP: {
   KDA: /^(k:)?[0-9a-fA-F]{64}$/,
   KSA: /^0x[a-fA-F0-9]{40}$/,
   KSM: /^G[1-9A-HJ-NP-Za-km-z]{47}$/, // Kusama address format
-  LTC: /^(L|M|ltc1)[a-km-zA-HJ-NP-Z1-9]{26,49}$/,
+  LTC: /^([LM][1-9A-HJ-NP-Za-km-z]{26,33}|ltc1[02-9ac-hj-np-z]{39,87})$/,
   MATIC: /^0x[a-fA-F0-9]{40}$/,
   MINA: /^B62[a-km-zA-HJ-NP-Z1-9]{52}$/, // Mina address format
   NBL: /^0x[a-fA-F0-9]{40}$/, // Nobility address format

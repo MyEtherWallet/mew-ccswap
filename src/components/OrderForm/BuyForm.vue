@@ -371,7 +371,8 @@ const isValidForm = computed(() => {
     !form.addressError &&
     form.addressErrorMsg === "" &&
     loading.alertMessage === "" &&
-    form.validAddress
+    form.validAddress &&
+    form.quoteError === ""
   );
 });
 
@@ -597,9 +598,9 @@ const submitForm = async (): Promise<void> => {
       `https://qa.mewwallet.dev/v5/purchase/buy?id=${id}&address=${address}&fiatCurrency=${selectedFiat.value.name}&amount=${fiatAmount}&cryptoCurrency=${selectedCrypto.value.symbol}&chain=${selectedNetwork.value.name}&iso=US`
     );
     const providers = await providersFetch.json();
-    if (providers.error) {
+    if (providers.msg || providers.error) {
       loading.data = false;
-      loading.alertMessage = providers.error;
+      loading.alertMessage = providers.msg || providers.error;
       return;
     }
     setBuyProviders(providers);
