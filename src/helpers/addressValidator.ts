@@ -1,4 +1,5 @@
 import WAValidator from "multicoin-address-validator";
+import { encodeAddress as polkadotEncodeAddress } from '@polkadot/util-crypto';
 
 const CHAIN_TO_REGEXP_MAP: {
   [key: string]: RegExp
@@ -59,6 +60,9 @@ const CHAIN_TO_REGEXP_MAP: {
   ZEN: /^zn[0-9A-Za-z]{33}$/ // Horizen address format
 }
 export default (address: string, network: string): boolean => {
+  if (address === "") return false;
+  if (network === 'DOT') return polkadotEncodeAddress(address, 0) === address;
+  if (network === 'KSM') return polkadotEncodeAddress(address, 2) === address;
   if (!CHAIN_TO_REGEXP_MAP[network]) return WAValidator.validate(address, network.toLowerCase());
   return CHAIN_TO_REGEXP_MAP[network].test(address);
 }

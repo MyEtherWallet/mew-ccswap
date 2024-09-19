@@ -208,7 +208,7 @@ import { storeToRefs } from "pinia";
 import { currencySymbols } from "./handler/prices";
 import { isObject, isNumber, isString, isEmpty, debounce } from "lodash";
 import addressValidator from "@/helpers/addressValidator";
-import { toBN, sha3 } from "web3-utils";
+import { sha3 } from "web3-utils";
 
 import { useGlobalStore } from "@/plugins/globalStore";
 
@@ -476,7 +476,7 @@ const loadUrlParameters = () => {
 };
 
 const errorHandler = (e: any): void => {
-  const value = toBN(form.fiatAmount).gt(toBN(0));
+  const value = BigNumber(form.fiatAmount).gt(BigNumber(0));
   if (value) {
     const isErrorObj = isObject(e.response.data.error);
     if (isErrorObj) {
@@ -568,13 +568,15 @@ const fiatToCrypto = debounce(() => {
 const cryptoToFiat = async () => {
   try {
     loading.data = true;
+    form.quoteError = "";
     const priceFetch = await fetch(
-      `https://qa.mewwallet.dev/v5/purchase/quote?fiatCurrency=${form.fiatSelected}&amount=${form.fiatAmount}&cryptoCurrency=${selectedCrypto.value.symbol}&chain=${selectedNetwork.value.name}`
+      `https://qa.mewwallet.dev/v5/purchase/quote?fiatCurrency=${selectedFiat.value.name}&amount=${form.fiatAmount}&cryptoCurrency=${selectedCrypto.value.symbol}&chain=${selectedNetwork.value.name}`
     );
     const priceResponse = await priceFetch.json();
-    // const { crypto_price, crypto_amount, msg } = priceResponse[0]; // get best rate
-    if (priceResponse[0].msg) {
-      form.quoteError = priceResponse[0].msg;
+
+    if (priceResponse.msg) {
+      form.quoteError = priceResponse.msg;
+      loading.data = false;
       return;
     }
     form.cryptoAmount = priceResponse[0].crypto_amount;
@@ -589,13 +591,17 @@ const cryptoToFiat = async () => {
 const submitForm = async (): Promise<void> => {
   try {
     loading.data = true;
-    const { fiatAmount } = form;
-    const address = form.address.toLowerCase();
+    const { fiatAmount, address } = form;
     const id = sha3(address)?.substring(0, 42);
     const providersFetch = await fetch(
       `https://qa.mewwallet.dev/v5/purchase/buy?id=${id}&address=${address}&fiatCurrency=${selectedFiat.value.name}&amount=${fiatAmount}&cryptoCurrency=${selectedCrypto.value.symbol}&chain=${selectedNetwork.value.name}&iso=US`
     );
     const providers = await providersFetch.json();
+    if (providers.error) {
+      loading.data = false;
+      loading.alertMessage = providers.error;
+      return;
+    }
     setBuyProviders(providers);
     toggleBuyProviders();
     loading.data = false;

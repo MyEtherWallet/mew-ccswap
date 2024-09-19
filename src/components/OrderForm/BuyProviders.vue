@@ -5,7 +5,7 @@
       <v-icon color="textDark" class="cursor-pointer" @click="$emit('close')">
         mdi-arrow-left mr-4
       </v-icon>
-      <div class="mew-heading-2 provider-text">Select provider</div>
+      <div class="mew-heading-2 provider-text">Select a provider to buy</div>
     </div>
     <div class="mew-heading-2 mb-10">
       Spending {{ formattedFiat }} to buy {{ selectedCrypto.symbol }} on
@@ -14,70 +14,72 @@
     <div
       v-for="(provider, idx) in buyProviders"
       :key="provider.provider + idx"
-      class="section-block pa-5 mb-6"
+      class="section-block ripple pa-5 mb-6"
+      @click="buy(provider)"
     >
       <div v-if="idx === 0" class="best-rate">Best Rate</div>
-      <img
-        class="provider-logo"
-        :src="parseProviderLogo(provider)"
-        :alt="provider.provider + ' logo'"
-        width="140"
-      />
-      <div class="mb-3">
-        <div class="d-flex mb-1 align-center justify-space-between">
-          <div class="d-flex mew-heading-3">
-            {{ provider.crypto_amount }}
-            <div class="d-flex align-center">
-              <span class="mew-heading-3 pl-1 mr-1">{{
-                provider.crypto_currency
-              }}</span>
-              <v-tooltip location="bottom" min-width="200px">
-                <template #activator="{ props }">
-                  <v-icon
-                    v-bind="props"
-                    color="grey-lighten-1"
-                    size="x-small"
-                    class="cursor-pointer"
-                  >
-                    mdi-information
-                  </v-icon>
-                </template>
-                <div class="elevated-box pa-3">
-                  {{ generateFeeLabel(provider) }}
-                  <br />
-                  <br />
-                  <br />
-                  {{ generateLimits(provider.provider) }}
-                  <br />
-                  {{ generateLimits(provider.provider, false) }}
-                </div>
-              </v-tooltip>
+      <div>
+        <div class="d-flex mew-heading-3">
+          {{ provider.crypto_amount }}
+          <div class="d-flex align-center">
+            <span class="mew-heading-3 pl-1 mr-1">{{
+              provider.crypto_currency
+            }}</span>
+            <v-tooltip location="bottom" min-width="200px">
+              <template #activator="{ props }">
+                <v-icon
+                  v-bind="props"
+                  color="grey-lighten-1"
+                  size="x-small"
+                  class="cursor-pointer"
+                >
+                  mdi-information
+                </v-icon>
+              </template>
+              <div class="elevated-box pa-3">
+                {{ generateFeeLabel(provider) }}
+                <br />
+                <br />
+                <br />
+                {{ generateLimits(provider.provider) }}
+                <br />
+                {{ generateLimits(provider.provider, false) }}
+              </div>
+            </v-tooltip>
+          </div>
+        </div>
+        <div class="d-flex align-center justify-space-between mt-3">
+          <img
+            :src="parseProviderLogo(provider)"
+            :alt="provider.provider + ' logo'"
+            width="100"
+          />
+          <div class="d-flex flex-column align-center mb-1">
+            <div
+              class="d-flex align-center justify-end mb-1"
+              style="width: 100%"
+            >
+              <img
+                v-for="(logo, idx) in parsePaymentMethods(
+                  provider.payment_methods
+                )"
+                :key="idx + logo"
+                :src="logo"
+                :alt="provider.provider + ' payment method'"
+                height="15"
+                :class="
+                  parsePaymentMethods(provider.payment_methods).length - 1 ===
+                  idx
+                    ? ''
+                    : 'mr-2'
+                "
+              />
+            </div>
+            <div class="mew-label d-none d-sm-block">
+              {{ parsePaymentMethods(provider.payment_methods, true) }}
             </div>
           </div>
         </div>
-      </div>
-      <div class="d-flex align-center mb-1">
-        <img
-          v-for="(logo, idx) in parsePaymentMethods(provider.payment_methods)"
-          :key="idx"
-          :src="logo"
-          :alt="provider.provider + ' payment method'"
-          height="24"
-          class="mr-2"
-        />
-      </div>
-      <div class="mew-label mb-5">
-        {{ parsePaymentMethods(provider.payment_methods, true) }}
-      </div>
-      <div>
-        <v-btn
-          size="large"
-          class="grey-light greyPrimary--text"
-          width="100%"
-          variant="flat"
-          @click="buy(provider)"
-          >BUY WITH {{ provider.provider.toUpperCase() }}</v-btn
-        >
       </div>
     </div>
     <div class="pt-2 text-center mew-label">
@@ -157,7 +159,7 @@ const parseProviderLogo = (provider: BuyProviders) => {
     SIMPLEX: require("@/assets/images/icon-simplex.svg"),
     MOONPAY: require("@/assets/images/icon-moonpay.svg"),
     TOPPER: require("@/assets/images/icon-topper.svg"),
-    COINBASE: require("@/assets/images/icon-coinbase.svg"),
+    COINBASE: require("@/assets/images/icon-coinbase-light.svg"),
   };
   return providerLogos[provider.provider];
 };
@@ -180,7 +182,8 @@ const parsePaymentMethods = (
 
   if (
     (paymentMethods.includes("ACH") ||
-      paymentMethods.includes("ACH_BANK_ACCOUNT")) &&
+      paymentMethods.includes("ACH_BANK_ACCOUNT") ||
+      paymentMethods.includes("SEPA_OPEN_BANKING")) &&
     isEUR.value
   ) {
     logos.push(bankLogo);
@@ -234,6 +237,20 @@ const buy = (provider: BuyProviders) => {
 <style lang="scss" scoped>
 $greyLight-base: #f2f3f6;
 $greyPrimary-base: #5a678a;
+/* Ripple effect */
+.ripple {
+  background-position: center;
+  transition: background 0.8s;
+}
+.ripple:hover {
+  background: #f2f3f6 radial-gradient(circle, transparent 1%, #f2f3f6 1%)
+    center/15000%;
+}
+.ripple:active {
+  background-color: #d7dae3;
+  background-size: 100%;
+  transition: background 0s;
+}
 .section-block {
   border-radius: 12px;
   left: 0px;
@@ -246,6 +263,7 @@ $greyPrimary-base: #5a678a;
   flex-grow: 0;
   margin: 8px 0px;
   position: relative;
+  cursor: pointer;
 }
 .provider-logo {
   position: absolute;
