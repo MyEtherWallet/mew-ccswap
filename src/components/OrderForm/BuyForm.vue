@@ -724,8 +724,8 @@ input::-webkit-inner-spin-button {
 .currency-container {
   border-radius: 50%;
   border: 2px solid silver;
-  width: 25px;
-  height: 25px;
+  width: 24px;
+  height: 24px;
   position: relative;
   overflow: hidden;
 
