@@ -20,14 +20,14 @@
       <v-col cols="12"
         ><div class="text-color mr-4 font-weight-bold">Powered by</div></v-col
       >
-      <v-col cols="5" class="pt-4"
+      <v-col cols="6" sm="5" class="pt-4"
         ><img
           :src="isEthVm ? moonpayWhite : moonpay"
           alt="Moonpay"
           width="100%"
           style="max-width: 140px"
       /></v-col>
-      <v-col cols="5" class="pt-4"
+      <v-col cols="6" sm="5" class="pt-4"
         ><img
           class="mr-2"
           :src="isEthVm ? simplexLight : simplex"
@@ -35,14 +35,14 @@
           width="100%"
           style="max-width: 140px"
       /></v-col>
-      <v-col cols="5" class="pt-4"
+      <v-col cols="6" sm="5" class="pt-4"
         ><img
           :src="isEthVm ? topperDark : topper"
           alt="Topper"
           width="100%"
           style="max-width: 140px"
       /></v-col>
-      <v-col cols="5" class="pt-4"
+      <v-col cols="6" sm="5" class="pt-4"
         ><img
           :src="isEthVm ? coinbase : coinbaseLight"
           alt="Coinbase"

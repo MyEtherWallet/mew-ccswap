@@ -112,13 +112,15 @@ const store = useGlobalStore();
 const { buyProviders, selectedFiat, selectedCrypto, selectedNetwork } =
   storeToRefs(store);
 
+const amount = computed(() => {
+  return buyProviders.value.length > 0 ? buyProviders.value[0].fiat_amount : 0;
+});
+
 const formattedFiat = computed(() => {
-  const amount =
-    buyProviders.value.length > 0 ? buyProviders.value[0].fiat_amount : 0;
   const symbol = currencySymbols[selectedFiat.value.name]
     ? currencySymbols[selectedFiat.value.name]
     : "";
-  return `${symbol}${amount}`;
+  return `${symbol}${amount.value}`;
 });
 
 const isEUR = computed(() => {

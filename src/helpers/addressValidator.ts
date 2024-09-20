@@ -44,6 +44,7 @@ const CHAIN_TO_REGEXP_MAP: {
   NEAR: /^near1[0-9a-z]{40}$/, // NEAR address format
   OP: /^0x[a-fA-F0-9]{40}$/,
   OSMO: /^osmo1[0-9a-z]{38}$/, // Osmosis address format
+  POL: /^0x[a-fA-F0-9]{40}$/,
   RON: /^ron1[0-9a-z]{40}$/, // Ronin address format
   ROSE: /^0x[a-fA-F0-9]{40}$/, // Oasis Network address format
   SEI: /^sei1[0-9a-z]{38}$/, // Sei Network address format
