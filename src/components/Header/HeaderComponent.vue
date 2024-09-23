@@ -20,14 +20,14 @@
       <v-col cols="12"
         ><div class="text-color mr-4 font-weight-bold">Powered by</div></v-col
       >
-      <v-col cols="4" align-self="center" style="text-align: center"
+      <v-col cols="6" sm="5" class="pt-4"
         ><img
           :src="isEthVm ? moonpayWhite : moonpay"
           alt="Moonpay"
           width="100%"
           style="max-width: 140px"
       /></v-col>
-      <v-col cols="4" align-self="center" style="text-align: center"
+      <v-col cols="6" sm="5" class="pt-4"
         ><img
           class="mr-2"
           :src="isEthVm ? simplexLight : simplex"
@@ -35,10 +35,17 @@
           width="100%"
           style="max-width: 140px"
       /></v-col>
-      <v-col cols="4" align-self="center" style="text-align: center"
+      <v-col cols="6" sm="5" class="pt-4"
         ><img
           :src="isEthVm ? topperDark : topper"
           alt="Topper"
+          width="100%"
+          style="max-width: 140px"
+      /></v-col>
+      <v-col cols="6" sm="5" class="pt-4"
+        ><img
+          :src="isEthVm ? coinbase : coinbaseLight"
+          alt="Coinbase"
           width="100%"
           style="max-width: 140px"
       /></v-col>
@@ -49,6 +56,7 @@
       <div class="d-flex align-center">
         <img class="mr-2" :src="visa" alt="Visa" height="22" />
         <img class="mr-2" :src="master" alt="Master" height="22" />
+        <img class="mr-2" :src="bank" alt="Master" height="22" />
         <img class="mr-2" :src="paypal" alt="paypal" height="30" />
         <img class="mr-2" :src="applePay" alt="Visa" height="24" />
         <img class="mr-2" :src="googlePay" alt="google pay" height="30" />
@@ -61,16 +69,19 @@
 <script setup lang="ts">
 import visa from "@/assets/images/icon-visa.svg";
 import master from "@/assets/images/icon-master.svg";
+import bank from "@/assets/images/icon-bank.svg";
 import applePay from "@/assets/images/icon-apple-pay.svg";
 import paypal from "@/assets/images/icon-paypal-logo.svg";
 import googlePay from "@/assets/images/icon-google-pay-logo.svg";
 import pix from "@/assets/images/icon-pix-logo.svg";
 import simplex from "@/assets/images/icon-simplex.svg";
+import coinbase from "@/assets/images/icon-coinbase.webp";
+import coinbaseLight from "@/assets/images/icon-coinbase-light.webp";
 import simplexLight from "@/assets/images/icon-simplex-light.svg";
 import moonpay from "@/assets/images/icon-moonpay.svg";
 import moonpayWhite from "@/assets/images/icon-moonpay-white.svg";
-import topper from "@/assets/images/icon-topper.png";
-import topperDark from "@/assets/images/icon-topper-dark.png";
+import topper from "@/assets/images/icon-topper.svg";
+import topperDark from "@/assets/images/icon-topper-dark.svg";
 import enkryptDarkLogo from "@/assets/images/icon-enkrypt-logo-dark.svg";
 import ethvmLogo from "@/assets/images/icon-ethvm-logo.svg";
 import mewLogo from "@/assets/images/icon-mew-logo-dark.svg";

@@ -10,17 +10,17 @@
           How much do you want to sell?
         </div>
         <div v-if="!loading.data" class="text-mew">
-          Balance: {{ displayBalance() }}
+          <!-- Balance: {{ displayBalance() }} -->
         </div>
       </div>
       <div class="d-flex mt-2">
         <v-text-field
-          @input="cryptoToFiat"
-          type="number"
-          v-model.number="form.cryptoAmount"
+          type="string"
+          v-model="form.cryptoAmount"
           required
           variant="outlined"
           rounded="left"
+          hide-details="auto"
           :rules="rules"
           :disabled="loading.data"
           :error-messages="form.balanceErrorMsg"
@@ -40,20 +40,21 @@
           <template #prepend>
             <img
               class="currency-icon mr-1 padding--2"
-              :src="cryptoIcon"
+              :src="selectedCrypto.img"
               :alt="form.cryptoSelected"
               width="25px"
               height="25px"
             />
           </template>
           <span>
-            {{ concatenate(form.cryptoSelected) }}
+            {{ form.cryptoSelected }}
           </span>
           <template v-slot:append>
             <v-icon color="grey-2" size="large"></v-icon>
           </template>
         </v-btn>
       </div>
+      <div class="mt-2 mx-4">Network: {{ selectedNetwork.name_long }}</div>
     </div>
 
     <!-- ============================================================================= -->
@@ -63,9 +64,8 @@
       <div class="mew-heading-4 textDark--text mb-3">You will get</div>
       <div class="d-flex mt-2">
         <v-text-field
-          @input="fiatToCrypto"
-          type="number"
-          v-model.number="form.fiatAmount"
+          type="string"
+          v-model="form.fiatAmount"
           required
           variant="outlined"
           rounded="left"
@@ -86,13 +86,14 @@
           variant="outlined"
         >
           <template #prepend-inner>
-            <img
-              class="currency-icon mr-1"
-              :src="fiatIcon"
-              :alt="form.fiatSelected"
-              width="25px"
-              height="25px"
-            />
+            <div class="currency-container">
+              <img
+                :src="selectedFiat.img"
+                :alt="form.fiatSelected"
+                width="30px"
+                height="30px"
+              />
+            </div>
           </template>
           <template #prepend-item>
             <v-text-field
@@ -104,6 +105,7 @@
               placeholder="Search"
               :autofocus="true"
               @update:model-value="updateFiatFilter"
+              @click.stop="(e) => e.preventDefault()"
             ></v-text-field>
           </template>
           <template #item="data">
@@ -112,13 +114,14 @@
               @click="selectCurrency(data.item.value)"
             >
               <div class="d-flex align-center">
-                <img
-                  class="currency-icon padding--2 mr-1 ml-3"
-                  :src="getIcon(data.item.value)"
-                  :alt="data.item.value"
-                  width="25px"
-                  height="25px"
-                />
+                <div class="currency-container padding--2 mr-1 ml-3">
+                  <img
+                    :src="getIcon(data.item.value)"
+                    :alt="data.item.value"
+                    width="30px"
+                    height="30px"
+                  />
+                </div>
                 <span class="text-capitalize ml-2 my-2 d-flex flex-column">{{
                   data.item.value
                 }}</span>
@@ -146,7 +149,7 @@
         label=""
         :is-valid-address="form.validAddress"
         placeholder="Enter Crypto Address"
-        :network="props.networkSelected"
+        :network="selectedNetwork"
         @keyup="verifyAddress"
         @changed="addressInput"
       />
@@ -158,11 +161,17 @@
       transaction fees.
       <br />
       <br />
-      <div class="text-bolder">
-        <span class="text-gray">Network Fee:</span>
-        <span class="text-gray" style="float: right"
-          >~{{ networkFeeF }} {{ props.networkSelected.currencyName }}</span
-        >
+      <div v-if="form.fees" class="text-bolder">
+        <span class="text-gray">Fees:</span>
+        <span class="text-gray" style="float: right">{{
+          formattedFiatFee
+        }}</span>
+      </div>
+      <div
+        v-if="form.quoteError"
+        class="text-bolder text-error mew-heading-4 text-center"
+      >
+        <span class="text-gray">{{ form.quoteError }}</span>
       </div>
     </div>
     <!-- ============================================================================= -->
@@ -183,22 +192,6 @@
         </v-btn>
       </div>
     </div>
-
-    <div v-else class="text-center py-5">
-      <v-progress-circular
-        :size="70"
-        :width="7"
-        indeterminate
-        color="#05c0a5"
-      ></v-progress-circular>
-      <div
-        class="text-center font-weight-bold mt-3"
-        style="line-height: 1.4rem"
-      >
-        Processing purchase....
-      </div>
-    </div>
-
     <!-- ============================================================================= -->
     <!-- END -->
     <!-- ============================================================================= -->
@@ -206,280 +199,32 @@
 </template>
 
 <script setup lang="ts">
-import {
-  computed,
-  reactive,
-  watch,
-  onMounted,
-  defineEmits,
-  defineProps,
-  PropType,
-  onUnmounted,
-  ref,
-  Ref,
-  inject,
-} from "vue";
-import BigNumber from "bignumber.js";
-import { supportedFiat, getCryptoSellPrices } from "./handler/prices";
-import { executeMoonpaySell } from "./handler/order";
-import { isObject, isNumber, isString, isEmpty } from "lodash";
-import WAValidator from "multicoin-address-validator";
-import { isHexStrict, isAddress, fromWei, toBN } from "web3-utils";
-import { encodeAddress } from "@polkadot/keyring";
+import { computed, reactive, watch, onMounted, ref, Ref, inject } from "vue";
+import { currencySymbols } from "./handler/prices";
+import { isNumber, isString } from "lodash";
+import { sha3 } from "web3-utils";
 import MewAddressSelect from "../MewAddressSelect/MewAddressSelect.vue";
-import { Networks } from "./network/networks";
-import { Crypto, Data, Network, Fiat } from "./network/types";
-import Web3 from "web3";
-import { formatFloatingPointValue } from "@/helpers/numberFormatHelper";
-import { abi } from "./handler/abiERC20";
-import { fromBase, toBase } from "@/helpers/units";
-import { PriceItem } from "./types";
+import { Network } from "./network/types";
+
+import { storeToRefs } from "pinia";
+import { useGlobalStore } from "@/plugins/globalStore";
+import addressValidator from "@/helpers/addressValidator";
+import api from "./handler/api";
 
 const amplitude: any = inject("$amplitude");
 
+const store = useGlobalStore();
+const {
+  selectedFiat,
+  selectedCrypto,
+  selectedNetwork,
+  sellFiats,
+  sellNetworks,
+} = storeToRefs(store);
+
+const { setSelectedNetwork, toggleTokenModal, setSelectedFiat } = store;
+
 const defaultFiatValue = "300";
-const polkdadot_chains = ["DOT", "KSM"];
-let gasPrice = ref("0");
-// eslint-disable-next-line no-undef
-let priceTimer: NodeJS.Timer, gasTimer: NodeJS.Timer;
-let fiatFilter = "";
-// Hard code names/decimals for now
-const tokensInfo: { [key: string]: any } = {
-  USDT: {
-    name: "USDT",
-    decimals: 6,
-    contract: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
-  },
-  USDC: {
-    name: "USDC",
-    decimals: 6,
-    contract: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-  },
-  DAI: {
-    name: "DAI",
-    decimals: 18,
-    contract: "0x6B175474E89094C44Da98b954EedeAC495271d0F",
-  },
-};
-
-let moonpayData: { [key: string]: Data } = {
-  ETH: {
-    conversion_rates: {},
-    limits: {},
-    prices: {},
-  },
-  MATIC: {
-    conversion_rates: {},
-    limits: {},
-    prices: {},
-  },
-  BNB: {
-    conversion_rates: {},
-    limits: {},
-    prices: {},
-  },
-  DOT: {
-    conversion_rates: {},
-    limits: {},
-    prices: {},
-  },
-  KSM: {
-    conversion_rates: {},
-    limits: {},
-    prices: {},
-  },
-};
-
-const emit = defineEmits([
-  "success",
-  "selectedCurrency",
-  "selectedFiat",
-  "toAddress",
-  "setQuotes",
-]);
-
-const props = defineProps({
-  cryptoSelected: {
-    type: Object as PropType<Crypto>,
-    default: () => ({}),
-  },
-  networkSelected: {
-    type: Object as PropType<Network>,
-    default: () => ({}),
-  },
-  fiatSelected: {
-    type: Object as PropType<Fiat>,
-    default: () => ({}),
-  },
-  fiatAmount: {
-    type: String,
-    default: "300",
-  },
-});
-
-onMounted(async () => {
-  form.address = "";
-
-  // Load URL parameter value and verify crypto address
-  setup();
-});
-
-onUnmounted(async () => {
-  clearInterval(priceTimer);
-  clearInterval(gasTimer);
-});
-
-// reactive
-const fiatItems: string[] = supportedFiat;
-const filteredFiatItems: Ref<string[]> = ref(fiatItems);
-const updateFiatFilter = (value: string) => {
-  fiatFilter = value;
-  const items = Object.getOwnPropertyNames(moonpayData["ETH"]?.prices);
-  filteredFiatItems.value = items.filter((item) =>
-    item.toLowerCase().includes(fiatFilter.toLowerCase())
-  );
-};
-
-// reactive
-const form = reactive({
-  fiatAmount: defaultFiatValue,
-  fiatSelected: "USD",
-  cryptoAmount: "0",
-  cryptoSelected: "ETH",
-  address: "",
-  validAddress: false,
-  addressErrorMsg: "",
-  reCaptchaToken: "",
-  addressError: false,
-  balance: "",
-  balanceWei: "",
-  balanceETH: "",
-  balanceError: false,
-  balanceErrorMsg: "",
-});
-const loading = reactive({
-  data: false,
-  showAlert: false,
-  processingBuyForm: false,
-  alertMessage: "",
-});
-const dropdown = reactive({
-  fiat: false,
-  crypto: false,
-});
-
-const web3 = computed(() => {
-  const supportedNodes: { [key: string]: any } = {
-    ETH: "ETH",
-    BSC: "BSC",
-    MATIC: "MATIC",
-  };
-  const nodeType = supportedNodes[props.cryptoSelected.network];
-  const node = Networks.find((network) => {
-    return network.name === nodeType;
-  });
-  return new Web3(node ? node.url : "");
-});
-
-// watchers
-watch(
-  () => form.cryptoSelected,
-  () => {
-    verifyAddress();
-    fiatToCrypto();
-    fetchGasPrice();
-    checkBalance();
-  }
-);
-
-watch(
-  () => form.fiatSelected,
-  () => {
-    const inList = filteredFiatItems.value.findIndex(
-      (item) => item === form.fiatSelected
-    );
-    if (inList < 0) form.fiatSelected = "USD";
-    verifyAddress();
-    cryptoToFiat();
-  }
-);
-
-watch(
-  () => form.fiatAmount,
-  () => {
-    fetchGasPrice();
-    if (!loading.data) {
-      checkBalance();
-    }
-  }
-);
-watch(
-  () => form.cryptoAmount,
-  () => {
-    fetchGasPrice();
-    if (!loading.data) {
-      checkBalance();
-    }
-  }
-);
-
-watch(
-  () => form.address,
-  () => {
-    verifyAddress();
-    fetchGasPrice();
-    if (!loading.data) {
-      getBalance();
-    }
-  }
-);
-
-// Computed Icons for selected token
-const fiatIcon = computed(() => {
-  return require(`@/assets/images/fiat/${form.fiatSelected}.svg`);
-});
-const cryptoIcon = computed(() => {
-  return require(`@/assets/images/crypto/${props.cryptoSelected.symbol}.svg`);
-});
-
-const networkFee = computed(() => {
-  return toBN(gasPrice.value).muln(21000);
-});
-const networkFeeF = computed(() => {
-  return formatFloatingPointValue(fromWei(networkFee.value.toString())).value;
-});
-
-// methods
-const getIcon = (currency: string, isFiat = true) => {
-  return require(`@/assets/images/${
-    isFiat ? "fiat" : "crypto"
-  }/${currency}.svg`);
-};
-
-const selectCurrency = (currency: string) => {
-  form.fiatSelected = currency;
-  dropdown.fiat = false;
-};
-
-const hasData = () => {
-  const { cryptoSelected } = form;
-  return !isEmpty(moonpayData[cryptoSelected]?.limits[cryptoSelected]);
-};
-
-const isValidForm = computed(() => {
-  return (
-    minMax.value &&
-    form.fiatSelected &&
-    form.cryptoSelected &&
-    form.address &&
-    !form.addressError &&
-    form.addressErrorMsg === "" &&
-    loading.alertMessage === "" &&
-    form.validAddress &&
-    form.balanceErrorMsg === ""
-  );
-});
-
 const rules = [
   (e: any) => {
     if (isString(e) && e?.length >= 1) return true;
@@ -488,234 +233,110 @@ const rules = [
   },
 ];
 
-const minMax = computed(() => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { cryptoSelected, cryptoAmount, address } = form; // wont update without address
-  const validData = hasData();
-  if (!validData) return false;
-  const limit = moonpayData[cryptoSelected].limits[cryptoSelected];
-  const decimals = props.cryptoSelected.decimals;
-  const parsedAmount = BigNumber(cryptoAmount).isNaN() ? "0" : cryptoAmount;
-  const amount = toBN(toBase(parseFloat(parsedAmount), decimals));
-  const valid =
-    amount.gte(toBN(toBase(limit.min, decimals))) &&
-    amount.lte(toBN(toBase(limit.max, decimals)));
-  return valid;
+// reactive
+const fiatFilter = ref("");
+const fiatItems: Ref<string[]> = ref(Array.from(sellFiats.value.keys()));
+const filteredFiatItems: Ref<string[]> = ref(
+  Array.from(sellFiats.value.keys())
+);
+const updateFiatFilter = (filter: string) => {
+  fiatFilter.value = filter;
+  if (filter) {
+    filteredFiatItems.value = fiatItems.value.filter((item) =>
+      item.toLowerCase().includes(fiatFilter.value.toLowerCase())
+    );
+  } else {
+    filteredFiatItems.value = fiatItems.value;
+  }
+};
+
+// reactive
+const form = reactive({
+  fiatAmount: defaultFiatValue,
+  fiatSelected: "USD",
+  cryptoAmount: ".1",
+  cryptoSelected: "ETH",
+  address: "",
+  validAddress: false,
+  addressErrorMsg: "",
+  addressError: false,
+  fees: "",
+  quoteError: "",
+  balance: "",
+  balanceWei: "",
+  balanceETH: "",
+  balanceError: false,
+  balanceErrorMsg: "",
+  url: "",
+});
+const loading = reactive({
+  data: false,
+  showAlert: false,
+  processingBuyForm: false,
+  alertMessage: "",
 });
 
-const getPrices = async () => {
-  try {
-    loading.data = true;
-    const data: any[] = (await getCryptoSellPrices()) || [];
-    data.forEach((arr: any) => {
-      arr.forEach((d: PriceItem) => {
-        if (isObject(d)) {
-          const tmp: Data = { conversion_rates: {}, limits: {}, prices: {} };
+onMounted(async () => {
+  form.address = "";
+  form.cryptoSelected = selectedCrypto.value.symbol;
+  form.fiatSelected = selectedFiat.value.name;
 
-          d.conversion_rates.forEach(
-            (r: any) =>
-              (tmp.conversion_rates[r.fiat_currency] = r.exchange_rate)
-          );
-          d.limits.forEach((l: any) => {
-            if (l.type === "WEB") tmp.limits[l.crypto_currency] = l.limit;
-          });
-          d.prices.forEach((p: any) => (tmp.prices[p.fiat_currency] = p.price));
-          const tokenName = d.crypto_currencies[0];
-          moonpayData[tokenName] = tmp;
-        }
-      });
-    });
-    loading.data = false;
-    emit("setQuotes", moonpayData);
-  } catch (e: any) {
-    errorHandler(e);
-  }
-};
-
-const getBalance = async () => {
-  if (!form.validAddress) return "0";
-  const isMainCoin =
-    props.networkSelected.currencyName === props.cryptoSelected.symbol;
-  const balance = form.address ? await getETHBalance() : "0";
-  if (isMainCoin) {
-    form.balanceWei = balance;
-    form.balance = fromWei(balance);
-  } else await getTokenBalance(props.cryptoSelected.symbol);
-
-  checkBalance();
-  return balance;
-};
-const getETHBalance = async () => {
-  if (!form.validAddress) return "0";
-  const balance = form.address
-    ? await web3.value.eth.getBalance(form.address, "latest")
-    : "0";
-  form.balanceETH = balance;
-  return balance;
-};
-
-const displayBalance = () => {
-  if (!form.balance) return "0";
-
-  return formatFloatingPointValue(form.balance).value;
-};
-const userBalance = () => {
-  if (!form.balanceWei) return toBN(0);
-
-  return toBN(form.balanceWei);
-};
-
-const hasEnoughCrypto = () => {
-  if (!form.balanceWei || form.balanceWei === "0") return false;
-  const isMainCoin =
-    props.networkSelected.currencyName === props.cryptoSelected.symbol;
-  return isMainCoin
-    ? totalWithFee.value.lte(toBN(form.balanceETH))
-    : networkFee.value.lte(toBN(form.balanceETH));
-};
-
-const totalWithFee = computed(() => {
-  if (subtotalSell.value === toBN(0)) return networkFee.value;
-  return subtotalSell.value.add(networkFee.value);
-});
-const subtotalSell = computed(() => {
-  if (!form.balance || form.balance === "0") return toBN(0);
-  const amount = toBase(
-    parseFloat(form.cryptoAmount),
-    props.cryptoSelected.decimals
+  // check if current selected network is supported in sell networks
+  const network = sellNetworks.value.find(
+    (n: Network) => n.name === selectedNetwork.value.name
   );
-  return toBN(amount);
+
+  if (!network) {
+    setSelectedNetwork(sellNetworks.value[0]);
+  } else {
+    setSelectedNetwork(network);
+  }
+
+  // check if current selected fiat is supported in sell fiats
+  const fiat = sellFiats.value.get(selectedFiat.value.name);
+
+  if (!fiat) {
+    const fiat = sellFiats.value.get("USD");
+    setSelectedFiat(
+      fiat
+        ? { name: fiat.fiat_currency, value: fiat.fiat_currency, img: fiat.img }
+        : {
+            name: "USD",
+            value: "USD",
+            img: require("@/assets/images/fiat/USD.svg"),
+          }
+    );
+  }
+  quoteFetch(form.address);
 });
 
-const checkBalance = () => {
-  const validData = hasData();
-  if (validData) {
-    // MinMax check
-    const limit = moonpayData[form.cryptoSelected].limits[form.cryptoSelected];
-    if (!minMax.value) {
-      const decimals = props.cryptoSelected.decimals;
-      const amount = toBN(
-        toBase(
-          parseFloat(
-            BigNumber(form.cryptoAmount).isNaN() ? "0" : form.cryptoAmount
-          ),
-          decimals
-        )
-      );
-      const min = toBN(toBase(limit.min, decimals));
-      const max = toBN(toBase(limit.max, decimals));
-      if (amount.lt(min))
-        form.balanceErrorMsg = `Minimum is ${limit.min} ${form.cryptoSelected}`;
-      else if (amount.gt(max))
-        form.balanceErrorMsg = `Maximum is ${limit.max} ${form.cryptoSelected}`;
-      form.balanceError = true;
-      return;
+// computed
+const formattedFiatFee = computed(() => {
+  const amount = form.fees;
+  const symbol = currencySymbols[selectedFiat.value.name]
+    ? currencySymbols[selectedFiat.value.name]
+    : "";
+  return `${symbol}${amount} ${selectedFiat.value.name}`;
+});
+
+// watchers
+watch(
+  () => form.address,
+  (formAddress) => {
+    form.validAddress = false;
+    form.addressError = false;
+    form.addressErrorMsg = "";
+    if (formAddress) {
+      verifyAddress();
+      quoteFetch(form.address);
     }
-  }
+  },
+  { deep: true }
+);
 
-  // User balance check
-  if (form.validAddress) {
-    const balance = userBalance();
-    if (subtotalSell.value.gt(balance)) {
-      form.balanceErrorMsg = `You do not have enough ${props.cryptoSelected.name} to sell`;
-      return;
-    }
-    if (!hasEnoughCrypto()) {
-      form.balanceErrorMsg = `You do not have enough ${props.networkSelected.currencyName} to pay for network fees`;
-      return;
-    }
-  }
-  form.balanceErrorMsg = "";
-  form.balanceError = false;
-};
-
-const fiatToCrypto = () => {
-  const { fiatSelected, fiatAmount } = form;
-  const decimals = props.cryptoSelected.decimals;
-  const price = parseFloat(
-    moonpayData[props.cryptoSelected.symbol].prices[fiatSelected]
-  );
-  const amount = parseFloat(fiatAmount || "0");
-  const cryptoAmount = amount / price;
-  // Make sure decimal amount is valid
-  const decimalAmount = cryptoAmount.toString().split(".")[1]?.length || 0;
-  form.cryptoAmount =
-    decimalAmount > decimals
-      ? cryptoAmount.toFixed(decimals)
-      : cryptoAmount.toString();
-};
-
-const cryptoToFiat = () => {
-  const price = parseFloat(
-    moonpayData[form.cryptoSelected].prices[form.fiatSelected]
-  );
-  const amount = parseFloat(form.cryptoAmount || "0");
-  const fiatAmount = amount * price;
-  form.fiatAmount = fiatAmount.toFixed(2);
-};
-
-const loadUrlParameters = () => {
-  const queryString = window.location.search;
-  if (queryString) {
-    const urlParams = new URLSearchParams(queryString);
-    const queryCryptoAmount = urlParams.get("crypto_amount");
-    const queryFiat = urlParams.get("fiat");
-    const queryCrypto = urlParams.get("crypto");
-    const queryTo = urlParams.get("to");
-    form.fiatSelected = queryFiat ? queryFiat : "USD";
-    form.fiatAmount = queryCryptoAmount ? queryCryptoAmount : "100";
-    form.cryptoSelected = queryCrypto ? queryCrypto : "ETH";
-    form.cryptoAmount = queryCryptoAmount ? queryCryptoAmount : "1";
-    form.address = queryTo ? queryTo : "";
-  }
-};
-
-const errorHandler = (e: any): void => {
-  const value = parseFloat(form.fiatAmount) > 0;
-  if (value) {
-    const isErrorObj = isObject(e.response.data.error);
-    if (isErrorObj) {
-      // eslint-disable-next-line
-      const hasErr = e.response.data.error.hasOwnProperty("errors");
-      if (hasErr) {
-        loading.alertMessage = e.response.data.error.errors[0].message;
-      }
-    } else {
-      loading.alertMessage = e.response.data.error;
-    }
-  }
-};
-
-const validAddress = (address: string) => {
-  return address && isHexStrict(address) && isAddress(address);
-};
-
-const isValidAddressPolkadotAddress = (
-  address: string,
-  cryptoPrefix: number
-) => {
-  try {
-    const encodedAddress = encodeAddress(address, cryptoPrefix);
-    return address === encodedAddress;
-  } catch (error) {
-    return false;
-  }
-};
-
-const addressInput = (value: string): void => {
-  form.address = value;
-  verifyAddress();
-};
-
-const verifyAddress = (): void => {
-  const polkdadot_chains = ["DOT", "KSM"];
-  const valid = !polkdadot_chains.includes(form.cryptoSelected)
-    ? WAValidator.validate(form.address, form.cryptoSelected) &&
-      validAddress(form.address)
-    : isValidAddressPolkadotAddress(
-        form.address,
-        form.cryptoSelected === "DOT" ? 0 : 2
-      );
+// methods
+const verifyAddress = () => {
+  const valid = addressValidator(form.address, form.cryptoSelected);
   if (valid) {
     form.addressErrorMsg = "";
     form.addressError = false;
@@ -731,95 +352,91 @@ const verifyAddress = (): void => {
   }
 };
 
+const openTokenSelect = () => {
+  toggleTokenModal();
+};
+
+const quoteFetch = async (address: string): Promise<void> => {
+  const defaultAddress: { [key: string]: string } = {
+    ADA: "addr1vx7j284mqe59w2mka36gf5xq0hvu8ms2989553fk5qh3prcapfpj3",
+    ALGO: "4H5UNRBJ2Q6JENAXQ6HNTGKLKINP4J4VTQBEPK5F3I6RDICMZBPGNH6KD4",
+    ARB: "0xDECAF9CD2367cdbb726E904cD6397eDFcAe6068D",
+    ATOM: "cosmos10taaryv2hhjwxlztes38sqxfce6q090a2m2sss",
+    BASE: "0xDECAF9CD2367cdbb726E904cD6397eDFcAe6068D",
+    BCH: "bitcoincash:qzrzqwm4tllqevxplgcz4qdcrt837r7wyg0k5l2gwq",
+    BSC: "0xDECAF9CD2367cdbb726E904cD6397eDFcAe6068D",
+    BTC: "1DECAF2uSpFTP4L1fAHR8GCLrPqdwdLse9",
+    DOGE: "DCGqu6EtF5m83NYgSWPQiGM3mDuxn8Hgtm",
+    ETH: "0xDECAF9CD2367cdbb726E904cD6397eDFcAe6068D",
+    LTC: "LcNS6c8RddAMjewDrUAAi8BzecKoosnkN3",
+    OP: "0xDECAF9CD2367cdbb726E904cD6397eDFcAe6068D",
+    POL: "0xDECAF9CD2367cdbb726E904cD6397eDFcAe6068D",
+    SOL: "7ngWv14ECRwq8QNQJCaYGCL7wppJYrh4UUgSTCZQeaca",
+    XLM: "GCJ2RDQLOVNOYBD2LELEGEVIDZ3LRLPHGANVOFJZXTUQHKHVZX2LMRFB",
+  };
+  const userAddress = address
+    ? address
+    : defaultAddress[selectedNetwork.value.name]; // mew donation to enable fetch before user adds address
+  const data = await fetch(
+    `${api.endpoint}/v5/purchase/sell?id=${sha3(userAddress)?.substring(
+      0,
+      42
+    )}&address=${userAddress}&fiatCurrency=${selectedFiat.value.name}&amount=${
+      form.cryptoAmount
+    }&cryptoCurrency=${selectedCrypto.value.symbol}&chain=${
+      selectedNetwork.value.name
+    }&iso=US`
+  );
+  const quote = await data.json();
+  const { msg } = quote;
+  if (msg) {
+    form.quoteError = msg;
+    return;
+  }
+  form.fiatAmount = quote[0].fiat_amount;
+  form.fees = quote[0].fiat_fees;
+  if (address) form.url = quote[0].url; // only set url if address is provided
+};
+
+// methods
+const getIcon = (currency: string, isFiat = true) => {
+  return require(`@/assets/images/${
+    isFiat ? "fiat" : "crypto"
+  }/${currency}.svg`);
+};
+
+const selectCurrency = (currency: string) => {
+  form.fiatSelected = currency;
+  setSelectedFiat({
+    name: currency,
+    value: currency,
+    img: require(`@/assets/images/fiat/${currency}.svg`),
+  });
+};
+
+const isValidForm = computed(() => {
+  return (
+    form.fiatSelected &&
+    form.cryptoSelected &&
+    form.address &&
+    !form.addressError &&
+    form.addressErrorMsg === "" &&
+    form.quoteError === "" &&
+    loading.alertMessage === "" &&
+    form.validAddress
+  );
+});
+
+const addressInput = (value: string): void => {
+  form.address = value;
+  verifyAddress();
+};
+
 const submitForm = async (): Promise<void> => {
   loading.processingBuyForm = true;
   amplitude.track("CCBuySellSellWithMoonpay");
-  executeMoonpaySell(form.cryptoSelected, form.cryptoAmount, form.address).then(
-    (res) => {
-      if (res) {
-        window.open(res, "_blank");
-        reset();
-      }
-    }
-  );
-};
-
-const reset = () => {
-  form.fiatAmount = defaultFiatValue;
-  form.cryptoAmount = "1";
-  form.address = "";
-  form.validAddress = false;
-  form.addressErrorMsg = "";
-  form.addressError = false;
-  form.balance = "";
-  form.balanceWei = "";
-  form.balanceETH = "";
-  form.balanceError = false;
-  form.balanceErrorMsg = "";
+  window.open(form.url, "_blank");
   loading.processingBuyForm = false;
-  loading.alertMessage = "";
-  setup();
-};
-
-const setup = async () => {
-  loadUrlParameters();
-  verifyAddress();
-
-  // Get crypto Data
-  await getPrices();
-  await fetchGasPrice();
-  // if (!isEmpty(props.fiatSelected)) {
-  //   form.cryptoSelected = props.cryptoSelected.symbol;
-  //   form.fiatSelected = props.fiatSelected.name;
-  //   form.fiatAmount = props.fiatAmount;
-  //   fiatToCrypto();
-  // } else cryptoToFiat();
-  fiatToCrypto();
-  getBalance();
-  priceTimer = setInterval(getPrices, 1000 * 60 * 2);
-  gasTimer = setInterval(fetchGasPrice, 1000 * 60 * 2);
-  filteredFiatItems.value = Object.getOwnPropertyNames(
-    moonpayData["ETH"]?.prices
-  );
-};
-
-const openTokenSelect = () => {
-  emit(
-    "selectedCurrency",
-    {
-      name: form.fiatSelected,
-      value: form.fiatSelected,
-      // eslint-disable-next-line
-      img: require(`@/assets/images/fiat/${form.fiatSelected}.svg`),
-    },
-    form.fiatAmount
-  );
-};
-
-const fetchGasPrice = async (): Promise<void> => {
-  if (polkdadot_chains.includes(form.cryptoSelected)) {
-    gasPrice.value = "0";
-    return;
-  }
-  gasPrice.value = await web3.value.eth.getGasPrice();
-};
-
-const getTokenBalance = async (tokenName: string) => {
-  // if (!isValidAddress(contract)) return;
-  const newContract = new web3.value.eth.Contract(
-    abi as any,
-    tokensInfo[tokenName].contract
-  );
-  const bal = await newContract.methods
-    .balanceOf(form.address)
-    .call()
-    .catch((e: Error) => console.error(e));
-  form.balanceWei = bal.toString();
-  form.balance = fromBase(form.balanceWei, tokensInfo[tokenName].decimals);
-};
-
-const concatenate = (value: string) => {
-  return value.length > 3 ? `${value.slice(0, 3)}...` : value;
 };
 </script>
 
@@ -863,6 +480,21 @@ const concatenate = (value: string) => {
 
   &:hover {
     border: 1px solid rgba(211, 211, 211, 1);
+  }
+}
+
+.currency-container {
+  border-radius: 50%;
+  border: 2px solid silver;
+  width: 25px;
+  height: 25px;
+  position: relative;
+  overflow: hidden;
+
+  img {
+    position: absolute;
+    top: -5px;
+    right: -5px;
   }
 }
 </style>

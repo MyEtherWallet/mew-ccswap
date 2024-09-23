@@ -43,22 +43,6 @@ interface SubmitData {
     selected_fiat: Fiat,
     disable_moonpay: boolean
 }
-interface Network {
-    name: string,
-    name_long: string,
-    chainID: number,
-    tokens: Array<Crypto>,
-    icon: any,
-    currencyName: string,
-    gasPriceMultiplier: number,
-    coingeckoID: string,
-    service: string,
-    url: string,
-    port: number,
-    auth: boolean,
-    username: string,
-    password: string
-}
 interface Data {
     conversion_rates: { [currency: string]: number };
     limits: { [currency: string]: { min: number; max: number } };
@@ -96,6 +80,69 @@ interface PriceItem {
     name: string;
 }
 
+interface Assets {
+    chain: string;
+    name: string;
+    assets: Array<NewToken>;
+}
+
+interface MarketData {
+    name: string;
+    symbol: string;
+    contract_address: string;
+    icon: string;
+    price: string;
+    price_change_percentage_24h: string;
+    sparkline: string[];
+    market_cap: string;
+}
+
+interface NewToken {
+    chain: string;
+    contract_address: string;
+    coingecko_id: string;
+    providers: Array<string>;
+    symbol: string;
+    market_data?: MarketData;
+}
+
+interface NewLimits {
+    min: number;
+    max: number;
+}
+
+interface NewFiat {
+    fiat_currency: string;
+    is_sell_supported: boolean;
+    limits: NewLimits;
+    payment_methods: Array<string>;
+    img?: string;
+}
+
+interface Providers {
+    fiats: Array<NewFiat>
+    fiats_list: Array<string>
+    isos_list: Array<string>
+    provider: string
+}
+
+interface BuyProviders {
+    chain: string;
+    crypto_amount: string;
+    crypto_currency: string;
+    crypto_price: string;
+    fiat_amount: string;
+    fiat_currency: string;
+    fiat_fees: string;
+    payment_methods: string[];
+    provider: string;
+    url: string;
+}
+
+interface LeftBtn {
+    method: () => void;
+}
+
 
 interface NameResolver {
     resolveAddress(name: string, type: string): Promise<string>;
@@ -106,6 +153,6 @@ interface resolvedName {
 }
 
 export {
-    Crypto, Fiat, QuoteData, SubmitData, Network, Data, PriceItem, NameResolver,
-    resolvedName
+    Crypto, Fiat, QuoteData, SubmitData, Data, PriceItem, NameResolver,
+    resolvedName, Assets, NewToken, Providers, NewFiat, LeftBtn, BuyProviders
 }

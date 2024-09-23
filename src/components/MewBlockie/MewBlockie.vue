@@ -24,39 +24,42 @@
 </template>
 
 <script lang="ts">
-import Blockies from '@/helpers/blockies';
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue";
+import { mapStores } from "pinia";
+
+import Blockies from "@/helpers/blockies";
+import { useGlobalStore } from "@/plugins/globalStore";
 
 export default defineComponent({
-  name: 'MewBlockie',
+  name: "MewBlockie",
   props: {
     /**
      * Currency image url
      */
     currency: {
       type: String,
-      default: '',
+      default: "",
     },
     /**
      * Valid address
      */
     address: {
       type: String,
-      default: '',
+      default: "",
     },
     /**
      * Blockie width
      */
     width: {
       type: String,
-      default: '64px',
+      default: "64px",
     },
     /**
      * Blockie height
      */
     height: {
       type: String,
-      default: '64px',
+      default: "64px",
     },
     /**
      * Remove inset shadow
@@ -70,8 +73,11 @@ export default defineComponent({
     return {
       scale: 16,
       size: 8,
-      blockieImg: '',
+      blockieImg: "",
     };
+  },
+  computed: {
+    ...mapStores(useGlobalStore),
   },
   watch: {
     address() {
@@ -95,11 +101,15 @@ export default defineComponent({
   },
   methods: {
     createBlockie() {
-      this.blockieImg = Blockies({
-        seed: this.address ? this.address.toLowerCase() : '',
-        size: this.size,
-        scale: this.scale,
-      }).toDataURL();
+      const locBlockieImg = Blockies(
+        this.address ? this.address : "",
+        this.globalStore.selectedNetwork.name,
+        { size: this.size, scale: this.scale }
+      );
+      this.blockieImg =
+        typeof locBlockieImg === "string"
+          ? locBlockieImg
+          : locBlockieImg.toDataURL();
       const blockieElem = this.$refs.blockie as HTMLImageElement;
       blockieElem.style.width = this.width;
       blockieElem.style.height = this.height;

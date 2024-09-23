@@ -89,8 +89,8 @@
 import MewBlockie from "@/components/MewBlockie/MewBlockie.vue";
 import { defineComponent } from "vue";
 import Resolver from "../OrderForm/handler/Resolver";
-import { Network } from "../OrderForm/types";
 import { debounce } from "lodash";
+import { Network } from "../OrderForm/network/types";
 
 // data
 const USER_INPUT_TYPES = {
@@ -222,6 +222,7 @@ export default defineComponent({
     },
     modelValue(val) {
       this.addressValue = val;
+      this.locAddress = val;
     },
   },
   methods: {

@@ -7,6 +7,8 @@ class Crypto {
   symbol: string;
   network: string;
   name_long?: string;
+  price?: string
+  cgId?: string
 
   constructor(
     name: string,
@@ -14,7 +16,9 @@ class Crypto {
     network: string,
     decimals: number,
     img: string,
-    name_long?: string
+    name_long?: string,
+    price?: string,
+    cgId?: string
   ) {
     this.decimals = decimals;
     this.img = img;
@@ -24,6 +28,8 @@ class Crypto {
     this.symbol = name;
     this.network = network;
     this.name_long = name_long;
+    this.price = price
+    this.cgId = cgId
   }
 }
 interface Fiat {
@@ -68,14 +74,8 @@ interface Network {
   tokens: Array<Crypto>;
   icon: any;
   currencyName: string;
-  gasPriceMultiplier: number;
-  coingeckoID: string;
-  service: string;
   url: string;
   port: number;
-  auth: boolean;
-  username: string;
-  password: string;
 }
 interface Data {
   conversion_rates: { [currency: string]: number };

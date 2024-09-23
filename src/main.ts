@@ -1,10 +1,12 @@
 import { createApp, h } from "vue";
+import * as amplitude from '@amplitude/analytics-browser';
+import { createPinia } from "pinia";
+
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 import vuetify from "./plugins/vuetify";
 import { loadFonts } from "./plugins/webfontloader";
-import * as amplitude from '@amplitude/analytics-browser';
 
 
 amplitude.init(
@@ -33,11 +35,14 @@ amplitude.init(
 
 loadFonts();
 
+const pinia = createPinia();
+
 createApp({
   render: () => h(App),
 })
   .use(router)
   .use(store)
   .use(vuetify)
+  .use(pinia)
   .provide("$amplitude", amplitude)
   .mount("#app");
