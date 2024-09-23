@@ -209,6 +209,7 @@ import { Network } from "./network/types";
 import { storeToRefs } from "pinia";
 import { useGlobalStore } from "@/plugins/globalStore";
 import addressValidator from "@/helpers/addressValidator";
+import api from "./handler/api";
 
 const amplitude: any = inject("$amplitude");
 
@@ -377,13 +378,14 @@ const quoteFetch = async (address: string): Promise<void> => {
     ? address
     : defaultAddress[selectedNetwork.value.name]; // mew donation to enable fetch before user adds address
   const data = await fetch(
-    `https://qa.mewwallet.dev/v5/purchase/sell?id=${sha3(
-      userAddress
-    )?.substring(0, 42)}&address=${userAddress}&fiatCurrency=${
-      selectedFiat.value.name
-    }&amount=${form.cryptoAmount}&cryptoCurrency=${
-      selectedCrypto.value.symbol
-    }&chain=${selectedNetwork.value.name}&iso=US`
+    `${api.endpoint}/v5/purchase/sell?id=${sha3(userAddress)?.substring(
+      0,
+      42
+    )}&address=${userAddress}&fiatCurrency=${selectedFiat.value.name}&amount=${
+      form.cryptoAmount
+    }&cryptoCurrency=${selectedCrypto.value.symbol}&chain=${
+      selectedNetwork.value.name
+    }&iso=US`
   );
   const quote = await data.json();
   const { msg } = quote;

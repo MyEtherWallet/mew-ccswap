@@ -214,6 +214,7 @@ import { useGlobalStore } from "@/plugins/globalStore";
 
 import MewAddressSelect from "../MewAddressSelect/MewAddressSelect.vue";
 import { Network } from "./network/types";
+import api from "./handler/api";
 
 const props = defineProps({
   heldAddress: {
@@ -537,7 +538,7 @@ const getPrices = async () => {
   try {
     loading.data = true;
     const data = await fetch(
-      "https://qa.mewwallet.dev/v5/purchase/info?includeMarketData=true"
+      `${api.endpoint}/v5/purchase/info?includeMarketData=true`
     );
     const response = await data.json();
     const { msg } = response;
@@ -571,7 +572,7 @@ const cryptoToFiat = async () => {
     loading.data = true;
     form.quoteError = "";
     const priceFetch = await fetch(
-      `https://qa.mewwallet.dev/v5/purchase/quote?fiatCurrency=${selectedFiat.value.name}&amount=${form.fiatAmount}&cryptoCurrency=${selectedCrypto.value.symbol}&chain=${selectedNetwork.value.name}`
+      `${api.endpoint}/v5/purchase/quote?fiatCurrency=${selectedFiat.value.name}&amount=${form.fiatAmount}&cryptoCurrency=${selectedCrypto.value.symbol}&chain=${selectedNetwork.value.name}`
     );
     const priceResponse = await priceFetch.json();
 
@@ -595,7 +596,7 @@ const submitForm = async (): Promise<void> => {
     const { fiatAmount, address } = form;
     const id = sha3(address)?.substring(0, 42);
     const providersFetch = await fetch(
-      `https://qa.mewwallet.dev/v5/purchase/buy?id=${id}&address=${address}&fiatCurrency=${selectedFiat.value.name}&amount=${fiatAmount}&cryptoCurrency=${selectedCrypto.value.symbol}&chain=${selectedNetwork.value.name}&iso=US`
+      `${api.endpoint}/v5/purchase/buy?id=${id}&address=${address}&fiatCurrency=${selectedFiat.value.name}&amount=${fiatAmount}&cryptoCurrency=${selectedCrypto.value.symbol}&chain=${selectedNetwork.value.name}&iso=US`
     );
     const providers = await providersFetch.json();
     if (providers.msg || providers.error) {
