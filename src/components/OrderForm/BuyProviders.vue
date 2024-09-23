@@ -161,7 +161,7 @@ const parseProviderLogo = (provider: BuyProviders) => {
     SIMPLEX: require("@/assets/images/icon-simplex.svg"),
     MOONPAY: require("@/assets/images/icon-moonpay.svg"),
     TOPPER: require("@/assets/images/icon-topper.svg"),
-    COINBASE: require("@/assets/images/icon-coinbase-light.svg"),
+    COINBASE: require("@/assets/images/icon-coinbase-light.webp"),
   };
   return providerLogos[provider.provider];
 };
