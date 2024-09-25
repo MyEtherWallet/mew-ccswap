@@ -215,6 +215,7 @@ import { useGlobalStore } from "@/plugins/globalStore";
 import MewAddressSelect from "../MewAddressSelect/MewAddressSelect.vue";
 import { Network } from "./network/types";
 import api from "./handler/api";
+import enkryptNetworkMap from "@/helpers/enkryptNetworkMap";
 
 const props = defineProps({
   heldAddress: {
@@ -434,21 +435,23 @@ const loadUrlParameters = () => {
     const queryCrypto = urlParams.get("crypto");
     const queryTo = urlParams.get("to");
     const queryNetwork = urlParams.get("network");
+    const locParsedNetwork = enkryptNetworkMap(queryNetwork || "ETH")
+      ? queryNetwork
+      : "ETH";
 
     // validate queries
     const isSupportedCrypto = allCryptos.value.find((cItem) => {
       if (
         cItem.symbol.toLowerCase() === queryCrypto?.toLowerCase() &&
-        queryNetwork?.toLowerCase() === cItem.network.toLowerCase()
+        locParsedNetwork?.toLowerCase() === cItem.network.toLowerCase()
       ) {
         return queryCrypto;
       }
     });
 
     const supportedNetwork = buyNetworks.value.find((network: Network) => {
-      const locNetwork = queryNetwork ? queryNetwork : "ETH";
-      if (network.name.toLowerCase() === locNetwork.toLowerCase()) {
-        return queryNetwork;
+      if (network.name.toLowerCase() === locParsedNetwork?.toLowerCase()) {
+        return locParsedNetwork;
       }
     });
 

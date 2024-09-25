@@ -1,6 +1,6 @@
 {
   "name": "mew-ccswap",
-  "version": "6.9.13-ccswap.1",
+  "version": "6.9.13-ccswap.2",
   "private": true,
   "packageManager": "yarn@1.22.19",
   "scripts": {
@@ -20,6 +20,7 @@
   "dependencies": {
     "@amplitude/analytics-browser": "^2.5.2",
     "@enkryptcom/name-resolution": "^0.0.8",
+    "@enkryptcom/types": "^0.0.5",
     "@mdi/font": "5.9.55",
     "@polkadot/keyring": "^10.1.7",
     "@polkadot/ui-shared": "^3.9.1",

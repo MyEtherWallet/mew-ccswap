@@ -1169,6 +1169,11 @@
     "@unstoppabledomains/resolution" "^9.2.2"
     ethers "^5.7.2"
 
+"@enkryptcom/types@^0.0.5":
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/@enkryptcom/types/-/types-0.0.5.tgz#706de8296c8ae23c1c3788f8deb88ee7a7c5be0c"
+  integrity sha512-GzSq2pu7LO1iuAcKFUORd+SyGm3907/ZHupAn/49sRbLXfJZ3HzTY65jeHG/EWPL4lyv2xyuhy7JEpo+x0tIUQ==
+
 "@ensdomains/address-encoder@^0.1.7":
   version "0.1.9"
   resolved "https://registry.yarnpkg.com/@ensdomains/address-encoder/-/address-encoder-0.1.9.tgz#f948c485443d9ef7ed2c0c4790e931c33334d02d"
