@@ -296,16 +296,21 @@ onMounted(async () => {
   const fiat = sellFiats.value.get(selectedFiat.value.name);
 
   if (!fiat) {
-    const fiat = sellFiats.value.get("USD");
+    const locFiat = sellFiats.value.get("USD");
     setSelectedFiat(
-      fiat
-        ? { name: fiat.fiat_currency, value: fiat.fiat_currency, img: fiat.img }
+      locFiat
+        ? {
+            name: locFiat.fiat_currency,
+            value: locFiat.fiat_currency,
+            img: locFiat.img,
+          }
         : {
             name: "USD",
             value: "USD",
             img: require("@/assets/images/fiat/USD.svg"),
           }
     );
+    form.fiatSelected = "USD";
   }
   quoteFetch(form.address);
 });
