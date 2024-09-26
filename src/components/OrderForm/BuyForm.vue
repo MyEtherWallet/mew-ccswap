@@ -294,7 +294,6 @@ onMounted(async () => {
     form.cryptoSelected = selectedCrypto.value.symbol;
     form.fiatSelected = selectedFiat.value.name;
     form.fiatAmount = "300";
-    fiatToCrypto();
   }
   // Load URL parameter value and verify crypto address
   loadUrlParameters();
@@ -555,7 +554,7 @@ const getPrices = async () => {
     setProviders(providers);
     fiatItems.value = Array.from(buyFiats.value.keys());
     filteredFiatItems.value = Array.from(fiatItems.value);
-    cryptoToFiat();
+    loading.data = false;
   } catch (e: any) {
     loading.data = false;
     errorHandler(e);
