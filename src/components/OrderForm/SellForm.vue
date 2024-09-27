@@ -362,6 +362,7 @@ const openTokenSelect = () => {
 };
 
 const quoteFetch = async (address: string): Promise<void> => {
+  if (address === "" || !form.validAddress) return;
   const defaultAddress: { [key: string]: string } = {
     ADA: "addr1vx7j284mqe59w2mka36gf5xq0hvu8ms2989553fk5qh3prcapfpj3",
     ALGO: "4H5UNRBJ2Q6JENAXQ6HNTGKLKINP4J4VTQBEPK5F3I6RDICMZBPGNH6KD4",
