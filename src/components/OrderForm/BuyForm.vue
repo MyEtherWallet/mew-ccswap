@@ -435,9 +435,8 @@ const loadUrlParameters = () => {
     const queryTo = urlParams.get("to");
     const queryNetwork = urlParams.get("network");
     const locParsedNetwork = enkryptNetworkMap(queryNetwork || "ETH")
-      ? queryNetwork
+      ? enkryptNetworkMap(queryNetwork as string)
       : "ETH";
-
     // validate queries
     const isSupportedCrypto = allCryptos.value.find((cItem) => {
       if (

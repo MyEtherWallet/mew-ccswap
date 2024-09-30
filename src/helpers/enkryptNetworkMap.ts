@@ -16,6 +16,7 @@ export default (networkName: string): string => {
     [NetworkNames.Litecoin]: 'LTC',
     [NetworkNames.Matic]: 'POL',
     [NetworkNames.Optimism]: 'OP',
+    [NetworkNames.Solana]: 'SOL',
   }
 
   return supportedMap[networkName];

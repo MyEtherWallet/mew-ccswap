@@ -66,7 +66,7 @@
                 :key="idx + logo"
                 :src="logo"
                 :alt="provider.provider + ' payment method'"
-                height="15"
+                width="35"
                 :class="
                   parsePaymentMethods(provider.payment_methods).length - 1 ===
                   idx
