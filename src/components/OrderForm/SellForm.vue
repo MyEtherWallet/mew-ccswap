@@ -296,16 +296,21 @@ onMounted(async () => {
   const fiat = sellFiats.value.get(selectedFiat.value.name);
 
   if (!fiat) {
-    const fiat = sellFiats.value.get("USD");
+    const locFiat = sellFiats.value.get("USD");
     setSelectedFiat(
-      fiat
-        ? { name: fiat.fiat_currency, value: fiat.fiat_currency, img: fiat.img }
+      locFiat
+        ? {
+            name: locFiat.fiat_currency,
+            value: locFiat.fiat_currency,
+            img: locFiat.img,
+          }
         : {
             name: "USD",
             value: "USD",
             img: require("@/assets/images/fiat/USD.svg"),
           }
     );
+    form.fiatSelected = "USD";
   }
   quoteFetch(form.address);
 });
@@ -357,6 +362,7 @@ const openTokenSelect = () => {
 };
 
 const quoteFetch = async (address: string): Promise<void> => {
+  if (address === "" || !form.validAddress) return;
   const defaultAddress: { [key: string]: string } = {
     ADA: "addr1vx7j284mqe59w2mka36gf5xq0hvu8ms2989553fk5qh3prcapfpj3",
     ALGO: "4H5UNRBJ2Q6JENAXQ6HNTGKLKINP4J4VTQBEPK5F3I6RDICMZBPGNH6KD4",

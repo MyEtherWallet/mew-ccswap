@@ -294,7 +294,6 @@ onMounted(async () => {
     form.cryptoSelected = selectedCrypto.value.symbol;
     form.fiatSelected = selectedFiat.value.name;
     form.fiatAmount = "300";
-    fiatToCrypto();
   }
   // Load URL parameter value and verify crypto address
   loadUrlParameters();
@@ -436,9 +435,8 @@ const loadUrlParameters = () => {
     const queryTo = urlParams.get("to");
     const queryNetwork = urlParams.get("network");
     const locParsedNetwork = enkryptNetworkMap(queryNetwork || "ETH")
-      ? queryNetwork
+      ? enkryptNetworkMap(queryNetwork as string)
       : "ETH";
-
     // validate queries
     const isSupportedCrypto = allCryptos.value.find((cItem) => {
       if (
@@ -555,7 +553,7 @@ const getPrices = async () => {
     setProviders(providers);
     fiatItems.value = Array.from(buyFiats.value.keys());
     filteredFiatItems.value = Array.from(fiatItems.value);
-    cryptoToFiat();
+    loading.data = false;
   } catch (e: any) {
     loading.data = false;
     errorHandler(e);

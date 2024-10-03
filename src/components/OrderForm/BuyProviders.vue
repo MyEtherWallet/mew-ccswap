@@ -56,8 +56,13 @@
           />
           <div class="d-flex flex-column align-center mb-1">
             <div
-              class="d-flex align-center justify-end mb-1"
-              style="width: 100%"
+              :class="[
+                'd-flex align-center mb-1 justify-end',
+                $vuetify.display.mdAndDown ? 'flex-wrap' : '',
+              ]"
+              :style="
+                $vuetify.display.mdAndDown ? 'width : 150px;' : 'width: 100%'
+              "
             >
               <img
                 v-for="(logo, idx) in parsePaymentMethods(
@@ -66,13 +71,8 @@
                 :key="idx + logo"
                 :src="logo"
                 :alt="provider.provider + ' payment method'"
-                height="15"
-                :class="
-                  parsePaymentMethods(provider.payment_methods).length - 1 ===
-                  idx
-                    ? ''
-                    : 'mr-2'
-                "
+                width="40"
+                class="mr-1"
               />
             </div>
             <div class="mew-label d-none d-sm-block">

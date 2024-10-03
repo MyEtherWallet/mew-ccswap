@@ -54,13 +54,13 @@
     <div class="d-flex flex-wrap align-center mt-4">
       <div class="text-color mr-2">We accept</div>
       <div class="d-flex align-center">
-        <img class="mr-2" :src="visa" alt="Visa" height="22" />
-        <img class="mr-2" :src="master" alt="Master" height="22" />
-        <img class="mr-2" :src="bank" alt="Master" height="22" />
-        <img class="mr-2" :src="paypal" alt="paypal" height="30" />
-        <img class="mr-2" :src="applePay" alt="Visa" height="24" />
-        <img class="mr-2" :src="googlePay" alt="google pay" height="30" />
-        <img class="mr-2" :src="pix" alt="pix" height="22" />
+        <img class="mr-2" :src="visa" alt="Visa" height="28" />
+        <img class="mr-2" :src="master" alt="Master" height="28" />
+        <img class="mr-2" :src="bank" alt="Master" height="28" />
+        <img class="mr-2" :src="paypal" alt="paypal" height="42" />
+        <img class="mr-2" :src="applePay" alt="Visa" height="28" />
+        <img class="mr-2" :src="googlePay" alt="google pay" height="42" />
+        <img class="mr-2" :src="pix" alt="pix" height="28" />
       </div>
     </div>
   </div>
