@@ -380,6 +380,9 @@ const quoteFetch = async (address: string): Promise<void> => {
     SOL: "7ngWv14ECRwq8QNQJCaYGCL7wppJYrh4UUgSTCZQeaca",
     XLM: "GCJ2RDQLOVNOYBD2LELEGEVIDZ3LRLPHGANVOFJZXTUQHKHVZX2LMRFB",
   };
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const platform = urlParams.get("platform") || "web";
   const userAddress = address
     ? address
     : defaultAddress[selectedNetwork.value.name]; // mew donation to enable fetch before user adds address
@@ -391,7 +394,7 @@ const quoteFetch = async (address: string): Promise<void> => {
       form.cryptoAmount
     }&cryptoCurrency=${selectedCrypto.value.symbol}&chain=${
       selectedNetwork.value.name
-    }&iso=US`
+    }&iso=US&platform=${platform}`
   );
   const quote = await data.json();
   const { msg } = quote;
