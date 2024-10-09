@@ -595,9 +595,12 @@ const submitForm = async (): Promise<void> => {
   try {
     loading.data = true;
     const { fiatAmount, address } = form;
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const platform = urlParams.get("platform") || "web";
     const id = sha3(address)?.substring(0, 42);
     const providersFetch = await fetch(
-      `${api.endpoint}/v5/purchase/buy?id=${id}&address=${address}&fiatCurrency=${selectedFiat.value.name}&amount=${fiatAmount}&cryptoCurrency=${selectedCrypto.value.symbol}&chain=${selectedNetwork.value.name}&iso=US`
+      `${api.endpoint}/v5/purchase/buy?id=${id}&address=${address}&fiatCurrency=${selectedFiat.value.name}&amount=${fiatAmount}&cryptoCurrency=${selectedCrypto.value.symbol}&chain=${selectedNetwork.value.name}&iso=US&platform=${platform}`
     );
     const providers = await providersFetch.json();
     if (providers.msg || providers.error) {
