@@ -251,7 +251,7 @@ export default defineComponent({
      * Emits 'changed' when there is a v-model value change.
      */
     onChange(value: string) {
-      this.$emit("changed", value, this.isTyped);
+      this.$emit("changed", value, this.locAddress);
     },
     debouncedChange: debounce(function (
       this: ComponentInterface,
