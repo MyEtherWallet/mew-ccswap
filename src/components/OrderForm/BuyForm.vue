@@ -286,8 +286,14 @@ const loading = reactive({
   alertMessage: "",
 });
 
+const addressSelect = ref(null);
+
 onMounted(async () => {
-  addressInput(props.heldAddress);
+  if (addressSelect.value) {
+    addressSelect.value.locAddress = props.heldAddress;
+    addressSelect.value.onInputChange(props.heldAddress);
+  }
+  // addressInput(props.heldAddress, "");
   // Get crypto Data
   await getPrices();
   if (!isEmpty(selectedFiat.value)) {
@@ -494,9 +500,9 @@ const errorHandler = (e: any): void => {
   }
 };
 
-const addressInput = (value: string): void => {
+const addressInput = (value: string, isResolved: string): void => {
   form.address = value;
-  emit("addressInput", value);
+  emit("addressInput", isResolved ? isResolved : value);
   verifyAddress();
 };
 

@@ -199,7 +199,17 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, watch, onMounted, ref, Ref, inject } from "vue";
+import {
+  computed,
+  reactive,
+  watch,
+  onMounted,
+  ref,
+  Ref,
+  inject,
+  defineProps,
+  defineEmits,
+} from "vue";
 import { currencySymbols } from "./handler/prices";
 import { isNumber, isString } from "lodash";
 import { sha3 } from "web3-utils";
@@ -212,6 +222,15 @@ import addressValidator from "@/helpers/addressValidator";
 import api from "./handler/api";
 
 const amplitude: any = inject("$amplitude");
+
+const props = defineProps({
+  heldAddress: {
+    type: String,
+    default: "",
+  },
+});
+
+const emit = defineEmits(["addressInput"]);
 
 const store = useGlobalStore();
 const {
@@ -276,10 +295,17 @@ const loading = reactive({
   alertMessage: "",
 });
 
+const addressSelect = ref(null);
+
 onMounted(async () => {
   form.address = "";
   form.cryptoSelected = selectedCrypto.value.symbol;
   form.fiatSelected = selectedFiat.value.name;
+
+  if (addressSelect.value) {
+    addressSelect.value.locAddress = props.heldAddress;
+    addressSelect.value.onInputChange(props.heldAddress);
+  }
 
   // check if current selected network is supported in sell networks
   const network = sellNetworks.value.find(
@@ -436,8 +462,9 @@ const isValidForm = computed(() => {
   );
 });
 
-const addressInput = (value: string): void => {
+const addressInput = (value: string, isResolved: string): void => {
   form.address = value;
+  emit("addressInput", isResolved ? isResolved : value);
   verifyAddress();
 };
 

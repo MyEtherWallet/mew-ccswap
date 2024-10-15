@@ -31,7 +31,7 @@
           <BuyForm @addressInput="holdAddress" :held-address="locAddress" />
         </template>
         <template #tabContent2>
-          <SellForm />
+          <SellForm @addressInput="holdAddress" :held-address="locAddress" />
         </template>
       </MewTabs>
     </div>
