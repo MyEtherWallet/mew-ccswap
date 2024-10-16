@@ -26,6 +26,7 @@
           :error-messages="form.balanceErrorMsg"
           :error="form.balanceError"
           class="no-right-border"
+          @input="cryptoToAmount"
         ></v-text-field>
         <v-btn
           v-model="form.cryptoSelected"
@@ -73,6 +74,7 @@
           :error-messages="loading.alertMessage"
           :disabled="loading.data"
           class="no-right-border"
+          @input="fiatToCrypto"
         ></v-text-field>
         <v-select
           style="max-width: 130px"
@@ -211,7 +213,7 @@ import {
   defineEmits,
 } from "vue";
 import { currencySymbols } from "./handler/prices";
-import { isNumber, isString } from "lodash";
+import { debounce, isNumber, isString } from "lodash";
 import { sha3 } from "web3-utils";
 import MewAddressSelect from "../MewAddressSelect/MewAddressSelect.vue";
 import { Network } from "./network/types";
@@ -220,6 +222,7 @@ import { storeToRefs } from "pinia";
 import { useGlobalStore } from "@/plugins/globalStore";
 import addressValidator from "@/helpers/addressValidator";
 import api from "./handler/api";
+import BigNumber from "bignumber.js";
 
 const amplitude: any = inject("$amplitude");
 
@@ -239,6 +242,7 @@ const {
   selectedNetwork,
   sellFiats,
   sellNetworks,
+  cgPrice,
 } = storeToRefs(store);
 
 const { setSelectedNetwork, toggleTokenModal, setSelectedFiat } = store;
@@ -350,6 +354,22 @@ const formattedFiatFee = computed(() => {
   return `${symbol}${amount} ${selectedFiat.value.name}`;
 });
 
+const cryptoPrice = computed(() => {
+  if (selectedCrypto.value.price) return selectedCrypto.value.price;
+  const foundToken = selectedNetwork.value.tokens.find((token) => {
+    if (token.symbol === selectedCrypto.value.symbol) {
+      return token;
+    }
+  });
+  if (!foundToken) return 100;
+  if (foundToken.price) return foundToken.price;
+  if (foundToken.cgId) {
+    const price = cgPrice.value.get(foundToken.cgId);
+    if (price) return price;
+  }
+  return 100;
+});
+
 // watchers
 watch(
   () => form.address,
@@ -366,6 +386,19 @@ watch(
 );
 
 // methods
+const fiatToCrypto = debounce(() => {
+  form.cryptoAmount = BigNumber(form.fiatAmount)
+    .div(cryptoPrice.value)
+    .toString();
+  if (form.fiatAmount) quoteFetch(form.address);
+}, 500);
+const cryptoToAmount = debounce(() => {
+  form.fiatAmount = BigNumber(form.cryptoAmount)
+    .times(cryptoPrice.value)
+    .toString();
+  if (form.fiatAmount) quoteFetch(form.address);
+}, 500);
+
 const verifyAddress = () => {
   const valid = addressValidator(form.address, form.cryptoSelected);
   if (valid) {
@@ -389,6 +422,7 @@ const openTokenSelect = () => {
 
 const quoteFetch = async (address: string): Promise<void> => {
   if (address === "" || !form.validAddress) return;
+  form.quoteError = "";
   const defaultAddress: { [key: string]: string } = {
     ADA: "addr1vx7j284mqe59w2mka36gf5xq0hvu8ms2989553fk5qh3prcapfpj3",
     ALGO: "4H5UNRBJ2Q6JENAXQ6HNTGKLKINP4J4VTQBEPK5F3I6RDICMZBPGNH6KD4",
@@ -417,18 +451,27 @@ const quoteFetch = async (address: string): Promise<void> => {
       0,
       42
     )}&address=${userAddress}&fiatCurrency=${selectedFiat.value.name}&amount=${
-      form.cryptoAmount
+      form.fiatAmount
     }&cryptoCurrency=${selectedCrypto.value.symbol}&chain=${
       selectedNetwork.value.name
-    }&iso=US&platform=${platform}`
+    }&platform=${platform}`
   );
   const quote = await data.json();
-  const { msg } = quote;
+  const { msg, errors } = quote;
   if (msg) {
+    let message = "";
+    if (errors) {
+      errors.forEach((error: any) => {
+        message += `${error} `;
+      });
+
+      form.quoteError = `${msg}. ${message}`;
+      return;
+    }
     form.quoteError = msg;
     return;
   }
-  form.fiatAmount = quote[0].fiat_amount;
+  // form.fiatAmount = quote[0].fiat_amount;
   form.fees = quote[0].fiat_fees;
   if (address) form.url = quote[0].url; // only set url if address is provided
 };
