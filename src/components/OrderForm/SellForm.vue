@@ -343,6 +343,7 @@ onMounted(async () => {
     form.fiatSelected = "USD";
   }
   quoteFetch(form.address);
+  cryptoToAmount();
 });
 
 // computed
@@ -451,7 +452,7 @@ const quoteFetch = async (address: string): Promise<void> => {
       0,
       42
     )}&address=${userAddress}&fiatCurrency=${selectedFiat.value.name}&amount=${
-      form.fiatAmount
+      form.cryptoAmount
     }&cryptoCurrency=${selectedCrypto.value.symbol}&chain=${
       selectedNetwork.value.name
     }&platform=${platform}`

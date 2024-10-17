@@ -114,7 +114,7 @@ export const useGlobalStore = defineStore('global', () => {
       //   nItem.assets.some(asset => asset.chain === "ETH")
       // )
       .map(nw => {
-        const newTokens = nw.assets.filter(asset => asset.providers.includes("MOONPAY"));
+        const newTokens = nw.assets.filter(asset => asset.providers.includes("MOONPAY") && asset.is_sell_supported);
         nw.assets = newTokens;
         const parsedNetwork = networkConverter(nw);
         return parsedNetwork;
