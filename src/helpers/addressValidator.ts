@@ -58,7 +58,8 @@ const CHAIN_TO_REGEXP_MAP: {
   XRP: /^r[0-9a-zA-Z]{33}$/, // XRP address format
   XTZ: /^tz1[0-9a-zA-Z]{33}$/, // Tezos address format
   ZEC: /^t1[0-9A-Za-z]{33}$/, // Zcash address format
-  ZEN: /^zn[0-9A-Za-z]{33}$/ // Horizen address format
+  ZEN: /^zn[0-9A-Za-z]{33}$/, // Horizen address format
+  ZKSYNC_MAINNET: /^0x[a-fA-F0-9]{40}$/, // ZkSync address format
 }
 export default (address: string, network: string): boolean => {
   if (address === "") return false;
