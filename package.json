@@ -12,7 +12,8 @@
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
     "lint": "vue-cli-service lint",
-    "publish-gh-pages": "git subtree push --prefix dist origin gh-pages"
+    "publish-gh-pages": "git subtree push --prefix dist origin gh-pages",
+    "postinstall": "patch-package"
   },
   "engines": {
     "node": ">= 18.17"
@@ -37,6 +38,7 @@
     "lodash": "^4.17.21",
     "multicoin-address-validator": "^0.5.9",
     "node-polyfill-webpack-plugin": "^1.1.4",
+    "patch-package": "^8.0.0",
     "pinia": "^2.2.2",
     "register-service-worker": "^1.7.2",
     "roboto-fontface": "*",

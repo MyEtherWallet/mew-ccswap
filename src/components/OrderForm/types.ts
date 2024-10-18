@@ -104,6 +104,7 @@ interface NewToken {
     providers: Array<string>;
     symbol: string;
     market_data?: MarketData;
+    is_sell_supported?: boolean;
 }
 
 interface NewLimits {

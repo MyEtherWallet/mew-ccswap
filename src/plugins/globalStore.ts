@@ -104,19 +104,21 @@ export const useGlobalStore = defineStore('global', () => {
   }
 
   const setNetworks = (passedNetwork: Array<Assets>) => {
-    const sellSupportedTokens = ['0xdac17f958d2ee523a2206206994597c13d831ec7', '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee']
+    // const sellSupportedTokens = ['0xdac17f958d2ee523a2206206994597c13d831ec7', '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee']
     const bNetworks: Array<Network> = passedNetwork.map((nw) => {
       const parsedNetwork = networkConverter(nw);
       return parsedNetwork;
     })
-    const sNetworks: Array<Network> = passedNetwork.filter(nItem =>
-      nItem.assets.some(asset => asset.chain === "ETH")
-    ).map(nw => {
-      const newTokens = nw.assets.filter(asset => asset.providers.includes("MOONPAY") && sellSupportedTokens.includes(asset.contract_address));
-      nw.assets = newTokens;
-      const parsedNetwork = networkConverter(nw);
-      return parsedNetwork;
-    })
+    const sNetworks: Array<Network> = passedNetwork
+      // .filter(nItem =>
+      //   nItem.assets.some(asset => asset.chain === "ETH")
+      // )
+      .map(nw => {
+        const newTokens = nw.assets.filter(asset => asset.providers.includes("MOONPAY") && asset.is_sell_supported);
+        nw.assets = newTokens;
+        const parsedNetwork = networkConverter(nw);
+        return parsedNetwork;
+      })
 
     const findCurrentSelected = bNetworks.find((nw) => nw.name === selectedNetwork.value.name);
     // setSelectedNetwork();
@@ -124,7 +126,7 @@ export const useGlobalStore = defineStore('global', () => {
       setSelectedNetwork(findCurrentSelected);
     }
     buyNetworks.value = bNetworks;
-    sellNetworks.value = sNetworks;
+    sellNetworks.value = sNetworks.filter(nw => nw.tokens.length > 0);
   }
 
   // providers for buy quotes
