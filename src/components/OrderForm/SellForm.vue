@@ -481,7 +481,6 @@ const quoteFetch = async (address: string): Promise<void> => {
     SOL: "7ngWv14ECRwq8QNQJCaYGCL7wppJYrh4UUgSTCZQeaca",
     XLM: "GCJ2RDQLOVNOYBD2LELEGEVIDZ3LRLPHGANVOFJZXTUQHKHVZX2LMRFB",
   };
-  console.log("called ");
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   const platform = urlParams.get("platform") || "web";
