@@ -23,7 +23,6 @@
           hide-details="auto"
           :rules="rules"
           :disabled="loading.data"
-          :error-messages="form.balanceErrorMsg"
           :error="form.balanceError"
           class="no-right-border"
           @input="cryptoToAmount"
@@ -70,7 +69,7 @@
           required
           variant="outlined"
           rounded="left"
-          :rules="rules"
+          :rules="fiatRules"
           :error-messages="loading.alertMessage"
           :disabled="loading.data"
           class="no-right-border"
@@ -100,15 +99,18 @@
           <template #prepend-item>
             <v-text-field
               v-model="fiatFilter"
+              ref="fiatForm"
               variant="outlined"
               class="px-2"
               prepend-inner-icon="mdi-magnify"
               density="compact"
               placeholder="Search"
               :autofocus="true"
+              :error-messages="form.fiatAmountError"
               @update:model-value="updateFiatFilter"
               @click.stop="(e) => e.preventDefault()"
-            ></v-text-field>
+            >
+            </v-text-field>
           </template>
           <template #item="data">
             <div
@@ -213,7 +215,7 @@ import {
   defineEmits,
 } from "vue";
 import { currencySymbols } from "./handler/prices";
-import { debounce, isNumber, isString } from "lodash";
+import { debounce, isNumber } from "lodash";
 import { sha3 } from "web3-utils";
 import MewAddressSelect from "../MewAddressSelect/MewAddressSelect.vue";
 import { Network } from "./network/types";
@@ -250,8 +252,21 @@ const { setSelectedNetwork, toggleTokenModal, setSelectedFiat } = store;
 const defaultFiatValue = "300";
 const rules = [
   (e: any) => {
-    if (isString(e) && e?.length >= 1) return true;
-    if (!isNumber(e)) return "Must be a valid number";
+    if (!isNumber(Number(e))) return "Must be a valid number";
+    if (BigNumber(e).lte(0)) return "Must be greater than 0";
+    if (BigNumber(e).isNaN()) return "Must be a valid number";
+    return true;
+  },
+];
+const fiatRules = [
+  (e: any) => {
+    if (!isNumber(Number(e))) return "Must be a valid number";
+    if (BigNumber(e).lte(0)) return "Must be greater than 0";
+    if (BigNumber(e).isNaN()) return "Must be a valid number";
+    if (BigNumber(e).gt(max.value))
+      return `Maximum amount is ${max.value} ${selectedFiat.value.name}`;
+    if (BigNumber(e).lt(min.value))
+      return `Minimum amount is ${min.value} ${selectedFiat.value.name}`;
     return true;
   },
 ];
@@ -273,6 +288,8 @@ const updateFiatFilter = (filter: string) => {
   }
 };
 
+const fiatForm = ref(null);
+
 // reactive
 const form = reactive({
   fiatAmount: defaultFiatValue,
@@ -291,6 +308,7 @@ const form = reactive({
   balanceError: false,
   balanceErrorMsg: "",
   url: "",
+  fiatAmountError: "",
 });
 const loading = reactive({
   data: false,
@@ -371,7 +389,26 @@ const cryptoPrice = computed(() => {
   return 100;
 });
 
+const min = computed(() => {
+  const fiat = sellFiats.value.get(selectedFiat.value.name);
+  return fiat ? fiat.limits.min : 50;
+});
+
+const max = computed(() => {
+  const fiat = sellFiats.value.get(selectedFiat.value.name);
+  return fiat ? fiat.limits.max : 20000;
+});
+
 // watchers
+watch(
+  () => selectedFiat.value,
+  () => {
+    fiatForm?.value.validate().then(() => {
+      cryptoToAmount();
+    });
+  },
+  { deep: true }
+);
 watch(
   () => form.address,
   (formAddress) => {
@@ -387,17 +424,21 @@ watch(
 );
 
 // methods
-const fiatToCrypto = debounce(() => {
-  form.cryptoAmount = BigNumber(form.fiatAmount)
-    .div(cryptoPrice.value)
-    .toString();
-  if (form.fiatAmount) quoteFetch(form.address);
+const fiatToCrypto = debounce((onlyGenerate = false) => {
+  if (isNumber(Number(form.fiatAmount))) {
+    form.cryptoAmount = BigNumber(form.fiatAmount)
+      .div(cryptoPrice.value)
+      .toString();
+    if (form.fiatAmount && !onlyGenerate) quoteFetch(form.address);
+  }
 }, 500);
 const cryptoToAmount = debounce(() => {
-  form.fiatAmount = BigNumber(form.cryptoAmount)
-    .times(cryptoPrice.value)
-    .toString();
-  if (form.fiatAmount) quoteFetch(form.address);
+  if (isNumber(Number(form.fiatAmount))) {
+    form.fiatAmount = BigNumber(form.cryptoAmount)
+      .times(cryptoPrice.value)
+      .toString();
+    if (form.fiatAmount) quoteFetch(form.address);
+  }
 }, 500);
 
 const verifyAddress = () => {
@@ -422,7 +463,6 @@ const openTokenSelect = () => {
 };
 
 const quoteFetch = async (address: string): Promise<void> => {
-  if (address === "" || !form.validAddress) return;
   form.quoteError = "";
   const defaultAddress: { [key: string]: string } = {
     ADA: "addr1vx7j284mqe59w2mka36gf5xq0hvu8ms2989553fk5qh3prcapfpj3",
@@ -441,6 +481,7 @@ const quoteFetch = async (address: string): Promise<void> => {
     SOL: "7ngWv14ECRwq8QNQJCaYGCL7wppJYrh4UUgSTCZQeaca",
     XLM: "GCJ2RDQLOVNOYBD2LELEGEVIDZ3LRLPHGANVOFJZXTUQHKHVZX2LMRFB",
   };
+  console.log("called ");
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   const platform = urlParams.get("platform") || "web";
@@ -472,9 +513,10 @@ const quoteFetch = async (address: string): Promise<void> => {
     form.quoteError = msg;
     return;
   }
-  // form.fiatAmount = quote[0].fiat_amount;
+  form.fiatAmount = quote[0].fiat_amount;
   form.fees = quote[0].fiat_fees;
   if (address) form.url = quote[0].url; // only set url if address is provided
+  fiatToCrypto(true);
 };
 
 // methods
@@ -502,7 +544,8 @@ const isValidForm = computed(() => {
     form.addressErrorMsg === "" &&
     form.quoteError === "" &&
     loading.alertMessage === "" &&
-    form.validAddress
+    form.validAddress &&
+    !loading.data
   );
 });
 
