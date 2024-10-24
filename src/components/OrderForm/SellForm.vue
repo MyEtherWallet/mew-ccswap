@@ -215,7 +215,7 @@ import {
   defineEmits,
 } from "vue";
 import { currencySymbols } from "./handler/prices";
-import { debounce, isNumber } from "lodash";
+import { debounce, isNumber, isObject } from "lodash";
 import { sha3 } from "web3-utils";
 import MewAddressSelect from "../MewAddressSelect/MewAddressSelect.vue";
 import { Network } from "./network/types";
@@ -365,6 +365,21 @@ onMounted(async () => {
 });
 
 // computed
+const validFiatAmount = computed(() => {
+  if (!isNumber(Number(form.fiatAmount))) return false;
+  if (BigNumber(form.fiatAmount).lte(0)) return false;
+  if (BigNumber(form.fiatAmount).isNaN()) return false;
+  if (BigNumber(form.fiatAmount).gt(max.value)) return false;
+  if (BigNumber(form.fiatAmount).lt(min.value)) return false;
+  return true;
+});
+
+const validCryptoAmount = computed(() => {
+  if (!isNumber(Number(form.cryptoAmount))) return false;
+  if (BigNumber(form.cryptoAmount).lte(0)) return false;
+  if (BigNumber(form.cryptoAmount).isNaN()) return false;
+  return true;
+});
 const formattedFiatFee = computed(() => {
   const amount = form.fees;
   const symbol = currencySymbols[selectedFiat.value.name]
@@ -429,7 +444,10 @@ const fiatToCrypto = debounce((onlyGenerate = false) => {
     form.cryptoAmount = BigNumber(form.fiatAmount)
       .div(cryptoPrice.value)
       .toString();
-    if (form.fiatAmount && !onlyGenerate) quoteFetch(form.address);
+    const generated = isObject(onlyGenerate) ? false : onlyGenerate;
+    if (form.cryptoAmount && !generated) {
+      quoteFetch(form.address);
+    }
   }
 }, 500);
 const cryptoToAmount = debounce(() => {
@@ -437,7 +455,9 @@ const cryptoToAmount = debounce(() => {
     form.fiatAmount = BigNumber(form.cryptoAmount)
       .times(cryptoPrice.value)
       .toString();
-    if (form.fiatAmount) quoteFetch(form.address);
+    if (form.fiatAmount) {
+      quoteFetch(form.address, true);
+    }
   }
 }, 500);
 
@@ -462,7 +482,10 @@ const openTokenSelect = () => {
   toggleTokenModal();
 };
 
-const quoteFetch = async (address: string): Promise<void> => {
+const quoteFetch = async (
+  address: string,
+  fromCrypto = false
+): Promise<void> => {
   form.quoteError = "";
   const defaultAddress: { [key: string]: string } = {
     ADA: "addr1vx7j284mqe59w2mka36gf5xq0hvu8ms2989553fk5qh3prcapfpj3",
@@ -512,10 +535,12 @@ const quoteFetch = async (address: string): Promise<void> => {
     form.quoteError = msg;
     return;
   }
-  form.fiatAmount = quote[0].fiat_amount;
+  if (fromCrypto) form.fiatAmount = quote[0].fiat_amount;
+  else {
+    form.cryptoAmount = quote[0].crypto_amount;
+  }
   form.fees = quote[0].fiat_fees;
   if (address) form.url = quote[0].url; // only set url if address is provided
-  fiatToCrypto(true);
 };
 
 // methods
@@ -544,7 +569,9 @@ const isValidForm = computed(() => {
     form.quoteError === "" &&
     loading.alertMessage === "" &&
     form.validAddress &&
-    !loading.data
+    !loading.data &&
+    validFiatAmount.value &&
+    validCryptoAmount.value
   );
 });
 
