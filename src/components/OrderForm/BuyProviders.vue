@@ -36,7 +36,7 @@
                   mdi-information
                 </v-icon>
               </template>
-              <div class="elevated-box pa-3">
+              <div class="elevated-box pa-3 textDark--text">
                 {{ generateFeeLabel(provider) }}
                 <br />
                 <br />
@@ -304,6 +304,7 @@ $greyPrimary-base: #5a678a;
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.6) !important;
   // box-shadow: 0px 0px 1px 0px rgba(0, 0, 0, 0.05);
   width: 300px;
+  color: black;
 }
 </style>
 <style lang="scss">
