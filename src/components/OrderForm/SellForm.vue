@@ -238,6 +238,7 @@ const props = defineProps({
 const emit = defineEmits(["addressInput"]);
 
 const store = useGlobalStore();
+const { setSelectedCrypto } = store;
 const {
   selectedFiat,
   selectedCrypto,
@@ -321,8 +322,8 @@ const addressSelect = ref(null);
 
 onMounted(async () => {
   form.address = "";
-  form.cryptoSelected = selectedCrypto.value.symbol;
-  form.fiatSelected = selectedFiat.value.name;
+  // form.cryptoSelected = selectedCrypto.value.symbol;
+  // form.fiatSelected = selectedFiat.value.name;
 
   if (addressSelect.value) {
     addressSelect.value.locAddress = props.heldAddress;
@@ -342,6 +343,13 @@ onMounted(async () => {
 
   // check if current selected fiat is supported in sell fiats
   const fiat = sellFiats.value.get(selectedFiat.value.name);
+  const crypto = selectedNetwork.value.tokens.find(
+    (token) => token.symbol === selectedCrypto.value.symbol
+  );
+
+  if (!crypto) {
+    setSelectedCrypto(selectedNetwork.value.tokens[0]);
+  }
 
   if (!fiat) {
     const locFiat = sellFiats.value.get("USD");
@@ -418,9 +426,11 @@ const max = computed(() => {
 watch(
   () => selectedFiat.value,
   () => {
-    fiatForm?.value.validate().then(() => {
-      cryptoToAmount();
-    });
+    if (fiatForm.value) {
+      fiatForm?.value.validate().then(() => {
+        cryptoToAmount();
+      });
+    }
   },
   { deep: true }
 );

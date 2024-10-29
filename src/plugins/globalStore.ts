@@ -46,7 +46,8 @@ export const useGlobalStore = defineStore('global', () => {
     const fiatsMap = new Map<string, NewFiat>();
     const moonpay = providers.value.find((provider) => provider.provider === 'MOONPAY');
     if (moonpay) {
-      moonpay.fiats.forEach((fiat) => {
+      const fiats = moonpay.fiats.filter((fiat) => fiat.is_sell_supported);
+      fiats.forEach((fiat) => {
         const fiatMap = fiatsMap.get(fiat.fiat_currency);
         if (fiatMap) {
           const max = fiatMap.limits.max;
