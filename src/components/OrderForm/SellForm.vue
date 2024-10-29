@@ -440,7 +440,7 @@ watch(
 
 // methods
 const fiatToCrypto = debounce((onlyGenerate = false) => {
-  if (isNumber(Number(form.fiatAmount))) {
+  if (form.fiatAmount && isNumber(Number(form.fiatAmount))) {
     form.cryptoAmount = BigNumber(form.fiatAmount)
       .div(cryptoPrice.value)
       .toString();
@@ -451,7 +451,7 @@ const fiatToCrypto = debounce((onlyGenerate = false) => {
   }
 }, 500);
 const cryptoToAmount = debounce(() => {
-  if (isNumber(Number(form.fiatAmount))) {
+  if (form.cryptoAmount && isNumber(Number(form.cryptoAmount))) {
     form.fiatAmount = BigNumber(form.cryptoAmount)
       .times(cryptoPrice.value)
       .toString();
