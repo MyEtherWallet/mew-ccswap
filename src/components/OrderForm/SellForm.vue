@@ -521,8 +521,8 @@ const quoteFetch = async (
     }&platform=${platform}`
   );
   const quote = await data.json();
-  const { msg, errors } = quote;
-  if (msg) {
+  const { msg, errors, error } = quote;
+  if (msg || error) {
     let message = "";
     if (errors) {
       errors.forEach((error: any) => {
@@ -645,5 +645,9 @@ const submitForm = async (): Promise<void> => {
     top: -5px;
     right: -5px;
   }
+}
+
+.error {
+  color: rgb(var(--v-theme-error)) !important;
 }
 </style>
