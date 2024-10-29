@@ -14,6 +14,7 @@ const CHAIN_TO_REGEXP_MAP: {
   AVAX: /^(X|P)-avax1[0-9a-z]{38}$|^0x[a-fA-F0-9]{40}$/,
   AXL: /^axelar1[0-9a-z]{38}$/, // Axelar address format
   BASE: /^0x[a-fA-F0-9]{40}$/,
+  BNB: /^bnb1[0-9a-z]{38}$/,
   BCH: /^(bitcoincash:)?[qQpP][0-9a-zA-Z]{41}$|^[13][a-km-zA-HJ-NP-Z1-9]{25,34}$/,
   BLAST: /^0x[a-fA-F0-9]{40}$/, // Blast address format
   BSC: /^0x[a-fA-F0-9]{40}$/,

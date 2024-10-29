@@ -15,7 +15,7 @@
       </div>
       <div class="d-flex mt-2">
         <v-text-field
-          type="string"
+          type="number"
           v-model="form.cryptoAmount"
           required
           variant="outlined"
@@ -64,7 +64,7 @@
       <div class="mew-heading-4 textDark--text mb-3">You will get</div>
       <div class="d-flex mt-2">
         <v-text-field
-          type="string"
+          type="number"
           v-model="form.fiatAmount"
           required
           variant="outlined"
