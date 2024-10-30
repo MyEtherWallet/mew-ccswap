@@ -369,7 +369,7 @@ onMounted(async () => {
     form.fiatSelected = "USD";
   }
   quoteFetch(form.address);
-  cryptoToAmount();
+  fiatToCrypto();
 });
 
 // computed
@@ -394,6 +394,22 @@ const formattedFiatFee = computed(() => {
     ? currencySymbols[selectedFiat.value.name]
     : "";
   return `${symbol}${amount} ${selectedFiat.value.name}`;
+});
+
+const isValidForm = computed(() => {
+  return (
+    form.fiatSelected &&
+    form.cryptoSelected &&
+    form.address &&
+    !form.addressError &&
+    form.addressErrorMsg === "" &&
+    form.quoteError === "" &&
+    loading.alertMessage === "" &&
+    form.validAddress &&
+    !loading.data &&
+    validFiatAmount.value &&
+    validCryptoAmount.value
+  );
 });
 
 const cryptoPrice = computed(() => {
@@ -568,22 +584,6 @@ const selectCurrency = (currency: string) => {
     img: require(`@/assets/images/fiat/${currency}.svg`),
   });
 };
-
-const isValidForm = computed(() => {
-  return (
-    form.fiatSelected &&
-    form.cryptoSelected &&
-    form.address &&
-    !form.addressError &&
-    form.addressErrorMsg === "" &&
-    form.quoteError === "" &&
-    loading.alertMessage === "" &&
-    form.validAddress &&
-    !loading.data &&
-    validFiatAmount.value &&
-    validCryptoAmount.value
-  );
-});
 
 const addressInput = (value: string, isResolved: string): void => {
   form.address = value;
