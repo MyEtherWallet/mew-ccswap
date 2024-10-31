@@ -295,7 +295,7 @@ const fiatForm = ref(null);
 const form = reactive({
   fiatAmount: defaultFiatValue,
   fiatSelected: "USD",
-  cryptoAmount: ".1",
+  cryptoAmount: "1",
   cryptoSelected: "ETH",
   address: "",
   validAddress: false,
@@ -371,8 +371,7 @@ onMounted(async () => {
   } else {
     form.fiatSelected = selectedFiat.value.name;
   }
-  quoteFetch(form.address);
-  fiatToCrypto();
+  quoteFetch(form.address).then(() => fiatToCrypto(true));
 });
 
 // computed
@@ -475,7 +474,7 @@ const fiatToCrypto = debounce((onlyGenerate = false) => {
       .toString();
     const generated = isObject(onlyGenerate) ? false : onlyGenerate;
     if (form.cryptoAmount && !generated) {
-      quoteFetch(form.address);
+      quoteFetch(form.address, generated);
     }
   }
 }, 500);
@@ -563,10 +562,6 @@ const quoteFetch = async (
     }
     form.quoteError = msg;
     return;
-  }
-  if (fromCrypto) form.fiatAmount = quote[0].fiat_amount;
-  else {
-    form.cryptoAmount = quote[0].crypto_amount;
   }
   form.fees = quote[0].fiat_fees;
   if (address) form.url = quote[0].url; // only set url if address is provided
