@@ -215,7 +215,7 @@ import {
   defineEmits,
 } from "vue";
 import { currencySymbols } from "./handler/prices";
-import { debounce, isNumber, isObject } from "lodash";
+import { debounce, isNumber } from "lodash";
 import { sha3 } from "web3-utils";
 import MewAddressSelect from "../MewAddressSelect/MewAddressSelect.vue";
 import { Network } from "./network/types";
@@ -371,7 +371,7 @@ onMounted(async () => {
   } else {
     form.fiatSelected = selectedFiat.value.name;
   }
-  quoteFetch(form.address).then(() => fiatToCrypto(true));
+  quoteFetch(form.address).then(() => fiatToCrypto());
 });
 
 // computed
@@ -467,14 +467,14 @@ watch(
 );
 
 // methods
-const fiatToCrypto = debounce((onlyGenerate = false) => {
+const fiatToCrypto = debounce(() => {
   if (form.fiatAmount && isNumber(Number(form.fiatAmount))) {
     form.cryptoAmount = BigNumber(form.fiatAmount)
       .div(cryptoPrice.value)
       .toString();
-    const generated = isObject(onlyGenerate) ? false : onlyGenerate;
-    if (form.cryptoAmount && !generated) {
-      quoteFetch(form.address, generated);
+    // const generated = isObject(onlyGenerate) ? false : onlyGenerate;
+    if (form.cryptoAmount) {
+      quoteFetch(form.address);
     }
   }
 }, 500);
@@ -484,7 +484,7 @@ const cryptoToAmount = debounce(() => {
       .times(cryptoPrice.value)
       .toString();
     if (form.fiatAmount) {
-      quoteFetch(form.address, true);
+      quoteFetch(form.address);
     }
   }
 }, 500);
@@ -510,10 +510,7 @@ const openTokenSelect = () => {
   toggleTokenModal();
 };
 
-const quoteFetch = async (
-  address: string,
-  fromCrypto = false
-): Promise<void> => {
+const quoteFetch = async (address: string): Promise<void> => {
   form.quoteError = "";
   const defaultAddress: { [key: string]: string } = {
     ADA: "addr1vx7j284mqe59w2mka36gf5xq0hvu8ms2989553fk5qh3prcapfpj3",
