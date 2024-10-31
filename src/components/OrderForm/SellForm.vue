@@ -322,8 +322,6 @@ const addressSelect = ref(null);
 
 onMounted(async () => {
   form.address = "";
-  // form.cryptoSelected = selectedCrypto.value.symbol;
-  // form.fiatSelected = selectedFiat.value.name;
 
   if (addressSelect.value) {
     addressSelect.value.locAddress = props.heldAddress;
@@ -348,7 +346,10 @@ onMounted(async () => {
   );
 
   if (!crypto) {
+    form.cryptoSelected = selectedCrypto.value.symbol;
     setSelectedCrypto(selectedNetwork.value.tokens[0]);
+  } else {
+    form.cryptoSelected = crypto.symbol;
   }
 
   if (!fiat) {
@@ -367,6 +368,8 @@ onMounted(async () => {
           }
     );
     form.fiatSelected = "USD";
+  } else {
+    form.fiatSelected = selectedFiat.value.name;
   }
   quoteFetch(form.address);
   fiatToCrypto();
