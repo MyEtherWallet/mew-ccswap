@@ -233,6 +233,7 @@ const {
   buyNetworks,
   allCryptos,
   conversionRates,
+  urlParamsLoaded,
 } = storeToRefs(store);
 const {
   setNetworks,
@@ -243,6 +244,7 @@ const {
   toggleTokenModal,
   setSelectedFiat,
   toggleBuyProviders,
+  setUrlParamsLoaded,
 } = store;
 
 // data
@@ -433,6 +435,7 @@ const updateFiatFilter = (value: string) => {
 };
 
 const loadUrlParameters = () => {
+  if (urlParamsLoaded.value) return;
   const queryString = window.location.search;
   if (queryString) {
     const urlParams = new URLSearchParams(queryString);
@@ -482,6 +485,7 @@ const loadUrlParameters = () => {
       verifyAddress();
     }
   }
+  setUrlParamsLoaded();
 };
 
 const errorHandler = (e: any): void => {
