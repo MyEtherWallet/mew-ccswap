@@ -4,6 +4,7 @@ export default (networkName: string): string => {
   const supportedMap: { [key: string]: string } = {
     [NetworkNames.Ethereum]: 'ETH',
     [NetworkNames.Arbitrum]: 'ARB',
+    [NetworkNames.Binance]: 'BSC',
     [NetworkNames.Avalanche]: 'AVAX',
     [NetworkNames.Base]: 'BASE',
     [NetworkNames.Bitcoin]: 'BTC',
