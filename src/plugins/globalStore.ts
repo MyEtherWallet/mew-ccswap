@@ -16,6 +16,7 @@ export const useGlobalStore = defineStore('global', () => {
   const sellNetworks = ref<Network[]>([]);
   const providers = ref<Providers[]>([]);
   const buyProviders = ref<BuyProviders[]>([]);
+  const urlParamsLoaded = ref(false);
   const cgPrice = reactive(new Map());
   const conversionRates = reactive(new Map());
 
@@ -141,7 +142,12 @@ export const useGlobalStore = defineStore('global', () => {
     buyProviders.value = passedProviders;
   }
 
+  const setUrlParamsLoaded = () => {
+    urlParamsLoaded.value = true;
+  }
+
   return {
+    urlParamsLoaded,
     buyFiats,
     cgPrice,
     buyNetworks,
@@ -164,6 +170,7 @@ export const useGlobalStore = defineStore('global', () => {
     setProviders,
     setBuyProviders,
     setCgPrice,
-    setExchangeRates
+    setExchangeRates,
+    setUrlParamsLoaded
   }
 })
