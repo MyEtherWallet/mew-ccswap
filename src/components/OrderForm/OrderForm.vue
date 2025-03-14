@@ -112,7 +112,7 @@ const onTab = (tab: number) => {
 
 const exchangeRates = async () => {
   const ratesFetch = await fetch(
-    "https://mainnet.mewwallet.dev/v2/prices/exchange-rates"
+    "https://qa.mewwallet.dev/v2/prices/exchange-rates"
   );
   const rates = await ratesFetch.json();
   setExchangeRates(rates);
