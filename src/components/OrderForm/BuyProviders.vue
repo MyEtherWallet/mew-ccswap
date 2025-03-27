@@ -158,7 +158,7 @@ const generateLimits = (provider: string, daily = true) => {
 
 const parseProviderLogo = (provider: BuyProviders) => {
   const providerLogos: { [key: string]: any } = {
-    SIMPLEX: require("@/assets/images/icon-simplex.svg"),
+    SIMPLEX: require("@/assets/images/icon-simplex.png"),
     MOONPAY: require("@/assets/images/icon-moonpay.svg"),
     TOPPER: require("@/assets/images/icon-topper.svg"),
     COINBASE: require("@/assets/images/icon-coinbase-light.webp"),
